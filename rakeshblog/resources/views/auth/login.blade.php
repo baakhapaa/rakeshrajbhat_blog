@@ -32,16 +32,17 @@
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                     <input type="email" id="email" name="email" value="{{ old('email') }}" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition @error('email') border-red-500 @enderror"
+                        class="w-full px-4 py-3 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition @error('email') border-red-500 @enderror"
                         placeholder="you@example.com">
                 </div>
 
                 <div class="mb-6">
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                    <input type="password" id="password" name="password" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition"
-                        placeholder="••••••••">
+                <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                <input  type="password" id="password" name="password" required
+                class="w-full px-4 py-3 text-black placeholder:text-gray-400 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition"
+                placeholder="••••••••">
                 </div>
+                
                 <div class="flex items-center justify-between mb-6">
                 <label class="flex items-center text-sm text-gray-600">
                     <input type="checkbox" name="remember" class="mr-2 rounded border-gray-300">Remember me</label>

@@ -32,28 +32,35 @@
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                     <input type="text" id="name" name="name" value="{{ old('name') }}" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition @error('name') border-red-500 @enderror"
+                        class="w-full px-4 py-3 text-black placeholder:text-gray-400 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition @error('name') border-red-500 @enderror"
                         placeholder="John Doe">
                 </div>
 
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                     <input type="email" id="email" name="email" value="{{ old('email') }}" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition @error('email') border-red-500 @enderror"
+                        class="w-full px-4 py-3 text-black placeholder:text-gray-400 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition @error('email') border-red-500 @enderror"
                         placeholder="you@example.com">
+                </div>
+
+                <div class="mb-4">
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <input type="phone" id="phone" name="phone" value="{{ old('phone') }}" required
+                        class="w-full px-4 py-3 text-black placeholder:text-gray-400 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition @error('email') border-red-500 @enderror"
+                        placeholder="123456789">
                 </div>
 
                 <div class="mb-4">
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
                     <input type="password" id="password" name="password" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition @error('password') border-red-500 @enderror"
+                        class="w-full px-4 py-3 text-black placeholder:text-gray-400 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition @error('password') border-red-500 @enderror"
                         placeholder="Min 8 characters">
                 </div>
 
                 <div class="mb-6">
                     <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
                     <input type="password" id="password_confirmation" name="password_confirmation" required
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition"
+                        class="w-full px-4 py-3 text-black placeholder:text-gray-400 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition"
                         placeholder="Confirm your password">
                 </div>
 
