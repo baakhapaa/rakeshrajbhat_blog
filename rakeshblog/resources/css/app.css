@@ -15,7 +15,7 @@
 @layer base {
   body {
     background-color: var(--color-brand-dark);
-    color: #f0efe7;
+    color: #0f1419;
     font-family: var(--font-family-sans);
   }
   

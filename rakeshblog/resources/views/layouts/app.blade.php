@@ -15,7 +15,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="bg-[#101417] text-[#f0efe7] antialiased font-sans">
+<body class="bg-[#101417] text-[#0f1419] antialiased font-sans">
 
     @include('partials.header')
     

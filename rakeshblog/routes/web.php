@@ -12,10 +12,8 @@ use App\Http\Controllers\ProfileController;
 |--------------------------------------------------------------------------
 */
 
-// Home route
+// Home & Blog
 Route::get('/', [HomeController::class, 'index'])->name('home');
-
-// Blog route
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 
 // Authentication Routes (Public)
@@ -24,14 +22,17 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 
+// Password Reset Routes (OTP Based)
+Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendOtp'])->name('password.send-otp');
+Route::get('/verify-otp', [AuthController::class, 'showVerifyOtp'])->name('password.verify-otp');
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('password.verify-otp.submit');
+
 // Protected Routes (Requires Authentication)
 Route::middleware('auth')->group(function () {
-    // Profile Routes
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::get('/settings', [ProfileController::class, 'settings'])->name('settings');
     Route::put('/settings', [ProfileController::class, 'update'])->name('settings.update');
     Route::delete('/account', [ProfileController::class, 'destroy'])->name('account.delete');
-    
-    // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
