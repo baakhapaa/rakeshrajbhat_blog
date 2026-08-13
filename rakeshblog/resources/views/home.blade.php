@@ -8,7 +8,7 @@
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
             <img 
-                src="https://lh3.googleusercontent.com/aida/AP1WRLugnpUZsYCxEVnPuzJiOiwR3nYC4ntjGXe5yJOEcF-R4LMP36wU_L5IjXAhtjZEclxCmHX7zNeLbf55lbxjoPsSh0S10H3oxId_q3uBPwmtrS1Z3c-Gae1DrbcVX6p9gnHLlTZ_cWPDVdozxTN1szLykWCFXufZ5XPe90d7kecOuqg6iON0cyJzb3UJpx6YqgkkWz_bth18pdEBM98dZ0NysqBgWrQ6TkWPKaJTzslKCBQK5_XpceBqH6Q" 
+                src="https://media.licdn.com/dms/image/v2/C5603AQE6POjIis5YCw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1660678334379?e=1788393600&v=beta&t=eHlLVtp2b2sIXaemzCtK5XZOMHi3bWvMBJf5hwJBb8c" 
                 alt="Rakesh Rajbhat" 
                 class="w-full h-full object-cover opacity-50 saturate-[1.1]"
             >
@@ -181,7 +181,7 @@
         </div>
     </section>
 
-    <!-- Impact Stats -->
+        <!-- Impact Stats -->
     <section id="impact" class="py-20 bg-[#0c1016] scroll-mt-20">
         <div class="max-w-7xl mx-auto px-6">
             <div class="mb-12">
@@ -254,4 +254,4 @@
             </div>
         </div>
     </section>
-    @endsection
+@endsection

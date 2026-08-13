@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between">
         {{-- Logo --}}
         <a href="{{ route('home') }}" class="text-2xl font-serif font-bold italic tracking-tight text-white">
-            R <span class="text-[#D4AF37]">Rakesh Rajbhat</span>
+            DR <span class="text-[#D4AF37]">Rakesh Rajbhat</span>
         </a>
 
         {{-- Navigation --}}

@@ -15,7 +15,7 @@
 @layer base {
   body {
     background-color: var(--color-brand-dark);
-    color: #0f1419;
+    color: #f0efe7;
     font-family: var(--font-family-sans);
   }
   
@@ -52,4 +52,35 @@
     border-color: var(--color-brand-gold);
     background: #23282e;
   }
+}
+
+@keyframes pulse-dot {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+.dot-btn.active {
+    animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #statsSlider {
+        transition: none !important;
+    }
+    
+    .dot-btn.active {
+        animation: none !important;
+    }
+    
+    .slider-slide {
+        transition: none !important;
+    }
+    
+    #prevBtn, #nextBtn {
+        transition: none !important;
+    }
 }

@@ -46,9 +46,9 @@
         <div class="mt-24 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold tracking-widest text-gray-500 uppercase">
             <p>© {{ date('Y') }} RAKESH RAJBHAT. ALL RIGHTS RESERVED.</p>
             <div class="flex gap-6 mt-4 md:mt-0">
-                <a href="#" class="hover:text-[#D4AF37] transition-colors">LinkedIn</a>
-                <a href="#" class="hover:text-[#D4AF37] transition-colors">Twitter</a>
-                <a href="#" class="hover:text-[#D4AF37] transition-colors">Instagram</a>
+                <a href="https://www.linkedin.com/in/raacb/" class="hover:text-[#D4AF37] transition-colors">LinkedIn</a>
+                <a href="https://www.instagram.com/raa_case7/" class="hover:text-[#D4AF37] transition-colors">Instagram</a>
+                <a href="https://www.facebook.com/raacb/" class="hover:text-[#D4AF37] transition-colors">Facebook</a>
                 <a href="#" class="hover:text-[#D4AF37] transition-colors">Contact</a>
             </div>
         </div>
