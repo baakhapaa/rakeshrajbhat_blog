@@ -2,17 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\BlogController as FrontendBlogController;
+use App\Http\Controllers\FrontendBlogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
-use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\StatController;
+use App\Http\Controllers\Admin\ImageController;
+use App\Http\Controllers\Admin\SettingsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,7 @@ use App\Http\Controllers\Admin\StatController;
 // Home & Blog
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/blog', [FrontendBlogController::class, 'index'])->name('blog');
+Route::get('/blog/{slug}', [FrontendBlogController::class, 'show'])->name('blog.show');
 
 // Authentication Routes (Public)
 Route::controller(AuthController::class)->group(function () {
@@ -88,15 +90,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/logout', 'logout')->name('logout');
         });
         
-        Route::resource('stats', StatController::class);
+        // Image Upload Routes
+        Route::post('/upload-image', [ImageController::class, 'upload'])->name('upload-image');
+        Route::delete('/delete-image', [ImageController::class, 'delete'])->name('delete-image');
+        
+        // Resource Routes
+        Route::resource('stats', StatController::class);       
         Route::resource('team-members', TeamMemberController::class);
         Route::resource('blogs', AdminBlogController::class);
         Route::resource('users', UserController::class);
         Route::resource('comments', CommentController::class);
+        
+        // Additional Admin Routes
         Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
         
-        Route::get('/settings', function () {
-            return view('admin.settings');
-        })->name('settings');
+        // Settings Routes
+        Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
+        Route::put('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.update-profile');
+        Route::put('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');
+        Route::put('/settings/general', [SettingsController::class, 'updateGeneral'])->name('settings.update-general');
     });
 });

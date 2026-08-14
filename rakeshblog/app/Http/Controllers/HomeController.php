@@ -14,21 +14,21 @@ class HomeController extends Controller
         try {
             $stats = Stat::where('is_active', true)->orderBy('order', 'asc')->get();
         } catch (\Exception $e) {
-            $stats = collect(); // Empty collection if table doesn't exist
+            $stats = collect();
         }
-        
-        // Get latest blog posts
+
+        // Get latest blog posts from admin
         try {
             $latestBlogs = Blog::where('is_published', true)
                 ->whereNotNull('published_at')
                 ->where('published_at', '<=', now())
                 ->orderBy('published_at', 'desc')
-                ->take(3)
+                ->take(3) // Get only 3 latest posts for homepage
                 ->get();
         } catch (\Exception $e) {
             $latestBlogs = collect();
         }
-        
+
         return view('home', compact('stats', 'latestBlogs'));
     }
 }

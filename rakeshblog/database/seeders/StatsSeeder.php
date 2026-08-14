@@ -39,7 +39,7 @@ class StatsSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'number' => '5 Lakh+',
+                'number' => '5M+',
                 'label' => 'NPR Budget',
                 'sub_label' => 'Invested in Youth',
                 'order' => 5,

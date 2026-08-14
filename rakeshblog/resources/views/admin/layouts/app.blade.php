@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin · Rakesh Rajbhat')</title>
     
     <!-- Google Fonts -->
@@ -12,6 +13,9 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- CKEditor 5 CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
     
     <style>
         body {
@@ -55,6 +59,63 @@
             color: #D4AF37;
             border-right: 2px solid #D4AF37;
         }
+
+        /* CKEditor Dark Theme Overrides */
+        .ck-editor__editable {
+            min-height: 300px !important;
+            background: #1a1f26 !important;
+            color: #e5e7eb !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        .ck-editor__editable p {
+            color: #e5e7eb !important;
+        }
+        .ck.ck-editor__main > .ck-editor__editable:not(.ck-focused) {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        .ck.ck-editor__main > .ck-editor__editable.ck-focused {
+            border-color: #D4AF37 !important;
+            box-shadow: 0 0 0 1px #D4AF37 !important;
+        }
+        .ck.ck-toolbar {
+            background: #0f1419 !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        .ck.ck-toolbar .ck-button {
+            color: #e5e7eb !important;
+        }
+        .ck.ck-toolbar .ck-button:hover {
+            background: rgba(212, 175, 55, 0.1) !important;
+        }
+        .ck.ck-toolbar .ck-button.ck-on {
+            background: rgba(212, 175, 55, 0.2) !important;
+            color: #D4AF37 !important;
+        }
+        .ck.ck-dropdown .ck-dropdown__panel {
+            background: #1a1f26 !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        .ck.ck-list__item .ck-button {
+            color: #e5e7eb !important;
+        }
+        .ck.ck-list__item .ck-button:hover {
+            background: rgba(212, 175, 55, 0.1) !important;
+        }
+        .ck.ck-list__item .ck-button.ck-on {
+            background: rgba(212, 175, 55, 0.2) !important;
+            color: #D4AF37 !important;
+        }
+        .ck.ck-input {
+            background: #0f1419 !important;
+            color: #e5e7eb !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        .ck.ck-input:focus {
+            border-color: #D4AF37 !important;
+        }
+        .ck.ck-labeled-field-view__status {
+            color: #e5e7eb !important;
+        }
     </style>
     
     @stack('styles')
@@ -82,9 +143,22 @@
                     </div>
                     <div class="flex items-center gap-4">
                         <span class="text-sm text-white/60 hidden sm:block">Welcome, {{ Auth::guard('admin')->user()->name }}</span>
-                        <div class="w-8 h-8 rounded-full gold-bg text-[#0b0e12] flex items-center justify-center font-bold">
-                            {{ strtoupper(substr(Auth::guard('admin')->user()->name, 0, 1)) }}
-                        </div>
+                        
+                        <!-- Profile Picture / Avatar -->
+                        @php
+                            $admin = Auth::guard('admin')->user();
+                            $avatar = $admin->profile_pic ?? null;
+                            $initial = strtoupper(substr($admin->name, 0, 1));
+                        @endphp
+                        
+                        @if($avatar)
+                            <img src="{{ $avatar }}" alt="{{ $admin->name }}" 
+                                class="w-8 h-8 rounded-full object-cover border-2 border-[#D4AF37]">
+                        @else
+                            <div class="w-8 h-8 rounded-full gold-bg text-[#0b0e12] flex items-center justify-center font-bold text-sm">
+                                {{ $initial }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </header>
@@ -108,20 +182,72 @@
 
     <script>
         // Mobile drawer toggle
-        document.getElementById('mobileMenuToggle').addEventListener('click', function() {
-            document.getElementById('mobileDrawer').classList.remove('hidden');
-        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileToggle = document.getElementById('mobileMenuToggle');
+            const mobileDrawer = document.getElementById('mobileDrawer');
+            const drawerOverlay = document.getElementById('drawerOverlay');
 
-        document.getElementById('drawerOverlay').addEventListener('click', function() {
-            document.getElementById('mobileDrawer').classList.add('hidden');
-        });
-
-        // Close drawer on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                document.getElementById('mobileDrawer').classList.add('hidden');
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function() {
+                    mobileDrawer.classList.remove('hidden');
+                });
             }
+
+            if (drawerOverlay) {
+                drawerOverlay.addEventListener('click', function() {
+                    mobileDrawer.classList.add('hidden');
+                });
+            }
+
+            // Close drawer on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    mobileDrawer.classList.add('hidden');
+                }
+            });
         });
+
+        // CKEditor Initialization Function (to be called on pages with editor)
+        function initCKEditor(selector = '#content', config = {}) {
+            const element = document.querySelector(selector);
+            if (!element) return;
+
+            const defaultConfig = {
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'underline', 'strikethrough', '|',
+                        'alignment', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'link', 'imageUpload', '|',
+                        'blockQuote', 'insertTable', 'mediaEmbed', '|',
+                        'undo', 'redo'
+                    ]
+                },
+                heading: {
+                    options: [
+                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+                    ]
+                },
+                language: 'en',
+                height: 500,
+                removePlugins: ['Title'],
+                ...config
+            };
+
+            ClassicEditor
+                .create(element, defaultConfig)
+                .then(editor => {
+                    console.log('CKEditor initialized successfully');
+                    window.editor = editor;
+                })
+                .catch(error => {
+                    console.error('CKEditor Error:', error);
+                });
+        }
     </script>
     
     @stack('scripts')

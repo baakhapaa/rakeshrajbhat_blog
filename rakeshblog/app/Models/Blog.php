@@ -31,10 +31,43 @@ class Blog extends Model
     ];
 
     // ==========================================
+    // MUTATORS
+    // ==========================================
+
+    public function setContentAttribute($value)
+    {
+        $this->attributes['content'] = html_entity_decode($value);
+    }
+
+    public function getContentAttribute($value)
+    {
+        return $value ?? '';
+    }
+
+    public function setTagsAttribute($value)
+    {
+        if (is_string($value)) {
+            $tags = array_map('trim', explode(',', $value));
+            $tags = array_filter($tags);
+            $this->attributes['tags'] = json_encode(array_values($tags));
+        } else {
+            $this->attributes['tags'] = json_encode($value ?? []);
+        }
+    }
+
+    public function getTagsAttribute($value)
+    {
+        if (is_null($value)) {
+            return [];
+        }
+        $tags = json_decode($value, true);
+        return is_array($tags) ? $tags : [];
+    }
+
+    // ==========================================
     // SCOPES
     // ==========================================
 
-    // Scope for published posts
     public function scopePublished($query)
     {
         return $query->where('is_published', true)
@@ -42,19 +75,11 @@ class Blog extends Model
                      ->where('published_at', '<=', now());
     }
 
-    // Scope for draft posts
     public function scopeDraft($query)
     {
         return $query->where('is_published', false);
     }
 
-    // Scope for featured posts
-    public function scopeFeatured($query)
-    {
-        return $query->where('is_featured', true);
-    }
-
-    // Scope for searching
     public function scopeSearch($query, $search)
     {
         return $query->where('title', 'LIKE', '%' . $search . '%')
@@ -66,7 +91,6 @@ class Blog extends Model
     // ACCESSORS
     // ==========================================
 
-    // Get formatted date
     public function getFormattedDateAttribute()
     {
         return $this->published_at 
@@ -74,7 +98,6 @@ class Blog extends Model
             : $this->created_at->format('F d, Y');
     }
 
-    // Get formatted date for short display
     public function getShortDateAttribute()
     {
         return $this->published_at 
@@ -82,55 +105,49 @@ class Blog extends Model
             : $this->created_at->format('M d, Y');
     }
 
-    // Get reading time
     public function getReadingTimeAttribute()
     {
-        $words = str_word_count(strip_tags($this->content));
-        $minutes = ceil($words / 200);
+        $words = str_word_count(strip_tags($this->content ?? ''));
+        $minutes = max(1, ceil($words / 200));
         return $minutes . ' min read';
     }
 
-    // Get excerpt if not set
     public function getExcerptAttribute($value)
     {
         if ($value) {
             return $value;
         }
-        return Str::limit(strip_tags($this->content), 150);
+        return Str::limit(strip_tags($this->content ?? ''), 150);
     }
 
-    // Get short title
     public function getShortTitleAttribute()
     {
         return Str::limit($this->title, 30);
     }
 
-    // Get tags as string
     public function getTagsStringAttribute()
     {
-        if (is_array($this->tags)) {
-            return implode(', ', $this->tags);
+        $tags = $this->getTagsAttribute($this->attributes['tags'] ?? null);
+        if (is_array($tags) && count($tags) > 0) {
+            return implode(', ', $tags);
         }
-        return $this->tags;
+        return '';
     }
 
     // ==========================================
     // HELPERS
     // ==========================================
 
-    // Check if blog is published
     public function isPublished()
     {
         return $this->is_published && $this->published_at && $this->published_at <= now();
     }
 
-    // Increment views
     public function incrementViews()
     {
         $this->increment('views');
     }
 
-    // Get previous blog
     public function getPrevious()
     {
         return self::where('id', '<', $this->id)
@@ -139,7 +156,6 @@ class Blog extends Model
             ->first();
     }
 
-    // Get next blog
     public function getNext()
     {
         return self::where('id', '>', $this->id)
@@ -148,7 +164,6 @@ class Blog extends Model
             ->first();
     }
 
-    // Get related blogs by category
     public function getRelated($limit = 3)
     {
         return self::where('category', $this->category)
@@ -169,7 +184,32 @@ class Blog extends Model
         // Auto-generate slug if not provided
         static::creating(function ($blog) {
             if (empty($blog->slug)) {
-                $blog->slug = Str::slug($blog->title);
+                $slug = Str::slug($blog->title);
+                $originalSlug = $slug;
+                $counter = 1;
+                
+                while (self::where('slug', $slug)->exists()) {
+                    $slug = $originalSlug . '-' . $counter;
+                    $counter++;
+                }
+                
+                $blog->slug = $slug;
+            }
+        });
+
+        // Update slug if title changes
+        static::updating(function ($blog) {
+            if ($blog->isDirty('title')) {
+                $slug = Str::slug($blog->title);
+                $originalSlug = $slug;
+                $counter = 1;
+                
+                while (self::where('slug', $slug)->where('id', '!=', $blog->id)->exists()) {
+                    $slug = $originalSlug . '-' . $counter;
+                    $counter++;
+                }
+                
+                $blog->slug = $slug;
             }
         });
     }

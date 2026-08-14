@@ -305,3 +305,130 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 }); 
+// ==========================================
+// SCROLL-TRIGGERED COUNT-UP ANIMATION
+// ==========================================
+
+(function() {
+    // Wait for DOM to be ready
+    const initCounter = function() {
+        const counters = document.querySelectorAll('.counter');
+        let started = false;
+        let animationFrame = null;
+
+        // Function to animate a single counter
+        function animateCounter(counter) {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const duration = 2000; // 2 seconds
+            const startTime = performance.now();
+            const startValue = 0;
+
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function for smooth animation
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = Math.floor(easeOutQuart * target);
+                
+                counter.textContent = currentValue;
+                
+                if (progress < 1) {
+                    animationFrame = requestAnimationFrame(updateCounter);
+                } else {
+                    counter.textContent = target;
+                    animationFrame = null;
+                }
+            }
+
+            animationFrame = requestAnimationFrame(updateCounter);
+        }
+
+        // Function to check if element is in viewport
+        function isInViewport(element) {
+            const rect = element.getBoundingClientRect();
+            const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+            const threshold = 100; // Start animation when element is 100px from viewport
+            
+            return rect.top <= windowHeight - threshold && rect.bottom >= threshold;
+        }
+
+        // Function to start counting
+        function startCounting() {
+            const section = document.getElementById('impact');
+            if (!section) return;
+
+            // Check if section is visible
+            if (isInViewport(section) && !started) {
+                started = true;
+                
+                // Animate each counter with a delay
+                counters.forEach((counter, index) => {
+                    setTimeout(() => {
+                        animateCounter(counter);
+                    }, index * 200); // 200ms delay between each counter
+                });
+            }
+        }
+
+        // Throttle function for scroll events
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        }
+
+        // Check on scroll with throttling
+        const throttledStartCounting = throttle(startCounting, 200);
+
+        // Add scroll listener
+        window.addEventListener('scroll', throttledStartCounting, { passive: true });
+        
+        // Check on load
+        window.addEventListener('load', function() {
+            setTimeout(startCounting, 300);
+        });
+
+        // Also check on resize
+        window.addEventListener('resize', throttledStartCounting, { passive: true });
+    };
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCounter);
+    } else {
+        initCounter();
+    }
+})();
+// ==========================================
+// BACK TO TOP BUTTON
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    const backToTopBtn = document.querySelector('.go-top-btn');
+    if (!backToTopBtn) return;
+
+    // Show/hide button on scroll
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 400) {
+            backToTopBtn.classList.add('visible');
+        } else {
+            backToTopBtn.classList.remove('visible');
+        }
+    });
+
+    // Scroll to top on click
+    backToTopBtn.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+});
