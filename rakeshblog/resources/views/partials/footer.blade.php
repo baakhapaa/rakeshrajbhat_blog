@@ -49,7 +49,7 @@
                 <a href="https://www.linkedin.com/in/raacb/" class="hover:text-[#D4AF37] transition-colors">LinkedIn</a>
                 <a href="https://www.instagram.com/raa_case7/" class="hover:text-[#D4AF37] transition-colors">Instagram</a>
                 <a href="https://www.facebook.com/raacb/" class="hover:text-[#D4AF37] transition-colors">Facebook</a>
-                <a href="#" class="hover:text-[#D4AF37] transition-colors">Contact</a>
+                <a href="{{ route('contact') }}" class="hover:text-[#D4AF37] transition-colors">Contact</a>
             </div>
         </div>
     </div>

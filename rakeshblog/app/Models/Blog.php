@@ -22,6 +22,12 @@ class Blog extends Model
         'is_published',
         'published_at',
         'views',
+        'quiz_question',
+        'quiz_option_1',
+        'quiz_option_2',
+        'quiz_option_3',
+        'quiz_option_4',
+        'quiz_correct_answer',
     ];
 
     protected $casts = [
@@ -29,6 +35,45 @@ class Blog extends Model
         'is_published' => 'boolean',
         'published_at' => 'datetime',
     ];
+
+    // ==========================================
+    // RELATIONSHIPS
+    // ==========================================
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
+    }
+
+    public function allComments()
+    {
+        return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get the quiz associated with the blog (One-to-One - Legacy).
+     */
+    public function quiz()
+    {
+        return $this->hasOne(Quiz::class);
+    }
+
+    /**
+     * Get all quizzes for this blog (One-to-Many - New).
+     * This allows multiple quizzes per blog.
+     */
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
+
+    /**
+     * Get the active quiz for this blog.
+     */
+    public function activeQuiz()
+    {
+        return $this->hasOne(Quiz::class)->where('is_active', true)->with('questions');
+    }
 
     // ==========================================
     // MUTATORS
@@ -135,6 +180,95 @@ class Blog extends Model
     }
 
     // ==========================================
+    // QUIZ HELPERS
+    // ==========================================
+
+    /**
+     * Check if blog has a quiz (single question - legacy).
+     */
+    public function hasLegacyQuiz()
+    {
+        return $this->quiz_question && 
+               $this->quiz_option_1 && 
+               $this->quiz_option_2 && 
+               $this->quiz_option_3 && 
+               $this->quiz_option_4 && 
+               $this->quiz_correct_answer !== null;
+    }
+
+    /**
+     * Check if blog has a multiple question quiz.
+     */
+    public function hasMultipleQuiz()
+    {
+        return $this->quiz()->exists() && $this->quiz->questions()->count() > 0;
+    }
+
+    /**
+     * Check if blog has any quiz (legacy or multiple).
+     */
+    public function hasQuiz()
+    {
+        return $this->hasLegacyQuiz() || $this->hasMultipleQuiz();
+    }
+
+    /**
+     * Get quiz data for frontend display.
+     */
+    public function getQuizData()
+    {
+        // First check for multiple question quiz
+        if ($this->hasMultipleQuiz()) {
+            $quiz = $this->quiz;
+            return [
+                'type' => 'multiple',
+                'title' => $quiz->title,
+                'description' => $quiz->description,
+                'passing_score' => $quiz->passing_score,
+                'questions' => $quiz->questions,
+            ];
+        }
+        
+        // Then check for legacy single question quiz
+        if ($this->hasLegacyQuiz()) {
+            return [
+                'type' => 'single',
+                'question' => $this->quiz_question,
+                'options' => $this->getQuizOptionsAttribute(),
+                'correct_answer' => $this->quiz_correct_answer,
+                'correct_letter' => $this->getCorrectAnswerLetterAttribute(),
+            ];
+        }
+
+        return null;
+    }
+
+    public function getQuizOptionsAttribute()
+    {
+        return [
+            1 => $this->quiz_option_1,
+            2 => $this->quiz_option_2,
+            3 => $this->quiz_option_3,
+            4 => $this->quiz_option_4,
+        ];
+    }
+
+    public function getCorrectAnswerLetterAttribute()
+    {
+        $letters = ['', 'A', 'B', 'C', 'D'];
+        return $letters[$this->quiz_correct_answer] ?? 'Not set';
+    }
+
+    // ==========================================
+    // COMMENT HELPERS
+    // ==========================================
+
+    public function commentsCount()
+    {
+        return $this->comments()->count();
+    }
+
+    // ==========================================
     // HELPERS
     // ==========================================
 
@@ -181,7 +315,6 @@ class Blog extends Model
     {
         parent::boot();
 
-        // Auto-generate slug if not provided
         static::creating(function ($blog) {
             if (empty($blog->slug)) {
                 $slug = Str::slug($blog->title);
@@ -197,7 +330,6 @@ class Blog extends Model
             }
         });
 
-        // Update slug if title changes
         static::updating(function ($blog) {
             if ($blog->isDirty('title')) {
                 $slug = Str::slug($blog->title);

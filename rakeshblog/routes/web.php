@@ -5,16 +5,18 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\FrontendBlogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\QuizController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\CommentController;
-use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\AdminCommentController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\StatController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\SettingsController;
-
+use App\Http\Controllers\Admin\QuizController as AdminQuizController;
+use App\Http\Controllers\ContactController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -46,6 +48,11 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/verify-otp', 'verifyOtp')->name('password.verify-otp.submit');
 });
 
+
+// Contact Routes
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+
 // ==========================================
 // PROTECTED ROUTES (Requires Authentication)
 // ==========================================
@@ -61,6 +68,24 @@ Route::middleware(['auth'])->group(function () {
     
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    
+    // Comment Routes (CRUD)
+    Route::post('/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::put('/comments/{id}', [CommentController::class, 'update'])->name('comments.update');
+    Route::delete('/comments/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    
+    // Comment Like Routes
+    Route::post('/comments/{id}/like', [CommentController::class, 'like'])->name('comments.like');
+    Route::post('/comments/{id}/unlike', [CommentController::class, 'unlike'])->name('comments.unlike');
+    
+    // Quiz Submission Route
+    Route::post('/quiz/submit/{quizId}', [QuizController::class, 'submit'])->name('quiz.submit');
+    
+    // Quiz Reset Route
+    Route::post('/quiz/reset', function() {
+        session()->forget(['quiz_completed', 'quiz_results']);
+        return response()->json(['success' => true]);
+    })->name('quiz.reset');
 });
 
 // ==========================================
@@ -69,9 +94,7 @@ Route::middleware(['auth'])->group(function () {
 
 Route::prefix('admin')->name('admin.')->group(function () {
     
-    // ------------------------------------------
     // Admin Guest Routes (Not Logged In)
-    // ------------------------------------------
     Route::middleware(['guest'])->group(function () {
         Route::controller(AdminAuthController::class)->group(function () {
             Route::get('/login', 'showLogin')->name('login');
@@ -79,9 +102,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
     });
     
-    // ------------------------------------------
     // Admin Protected Routes (Must Be Logged In)
-    // ------------------------------------------
     Route::middleware(['admin.auth'])->group(function () {
         
         // Dashboard & Logout
@@ -99,10 +120,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('team-members', TeamMemberController::class);
         Route::resource('blogs', AdminBlogController::class);
         Route::resource('users', UserController::class);
-        Route::resource('comments', CommentController::class);
         
-        // Additional Admin Routes
-        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
+        // ==========================================
+        // ADMIN QUIZ ROUTES
+        // ==========================================
+        
+        Route::get('/blogs/{blogId}/quizzes/create', [AdminQuizController::class, 'create'])->name('quizzes.create');
+        Route::post('/quizzes', [AdminQuizController::class, 'store'])->name('quizzes.store');
+        Route::get('/quizzes/{id}/edit', [AdminQuizController::class, 'edit'])->name('quizzes.edit');
+        Route::put('/quizzes/{id}', [AdminQuizController::class, 'update'])->name('quizzes.update');
+        Route::delete('/quizzes/{id}', [AdminQuizController::class, 'destroy'])->name('quizzes.destroy');
+        Route::post('/quizzes/add-question', [AdminQuizController::class, 'addQuestion'])->name('quizzes.add-question');
+        Route::delete('/quizzes/remove-question/{id}', [AdminQuizController::class, 'removeQuestion'])->name('quizzes.remove-question');
+        Route::get('/blogs/{blogId}/quiz', [AdminQuizController::class, 'index'])->name('quizzes.index');
+        
+        // Admin Comment Routes
+        Route::get('/comments', [AdminCommentController::class, 'index'])->name('comments.index');
+        Route::delete('/comments/{id}', [AdminCommentController::class, 'destroy'])->name('comments.destroy');
         
         // Settings Routes
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');

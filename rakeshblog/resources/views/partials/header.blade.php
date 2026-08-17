@@ -28,13 +28,13 @@
                 Research
             </a>
             <a href="{{ route('blog') }}" 
-               class="nav-link transition-colors {{ request()->routeIs('blog') ? 'active text-[#D4AF37] border-b-2 border-[#D4AF37] pb-1' : 'hover:text-[#D4AF37]' }}">
+               class="nav-link transition-colors {{ request()->routeIs('blog') || request()->routeIs('blog.show') ? 'active text-[#D4AF37] border-b-2 border-[#D4AF37] pb-1' : 'hover:text-[#D4AF37]' }}">
                 Blog
             </a>
         </nav>
 
         {{-- Right Side Actions --}}
-        @if(request()->routeIs('blog'))
+        @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
             {{-- Blog Page Authentication --}}
             @auth
                 <div class="relative group">

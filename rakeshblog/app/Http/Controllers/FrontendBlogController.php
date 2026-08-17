@@ -8,9 +8,6 @@ use Illuminate\Support\Str;
 
 class FrontendBlogController extends Controller
 {
-    /**
-     * Display a listing of the blog posts.
-     */
     public function index()
     {
         $blogs = Blog::where('is_published', true)
@@ -22,17 +19,24 @@ class FrontendBlogController extends Controller
         return view('blog', compact('blogs'));
     }
 
-    /**
-     * Display the specified blog post.
-     */
     public function show($slug)
     {
         $blog = Blog::where('slug', $slug)
             ->where('is_published', true)
+            ->with([
+                'comments' => function($query) {
+                    $query->with('user')->orderBy('created_at', 'desc');
+                },
+                'quizzes' => function($query) {
+                    $query->with('questions')->where('is_active', true);
+                }
+            ])
             ->firstOrFail();
 
+        // Increment view count
         $blog->increment('views');
 
+        // Get related blogs
         $relatedBlogs = Blog::where('category', $blog->category)
             ->where('id', '!=', $blog->id)
             ->where('is_published', true)

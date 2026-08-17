@@ -24,7 +24,7 @@
     </a>
 
     {{-- Stats --}}
-    {{-- <a href="{{ route('admin.stats.index') }}"
+    <a href="{{ route('admin.stats.index') }}"
         class="block px-4 py-3 rounded-lg transition-all duration-200
         {{ Str::startsWith(Route::currentRouteName(), 'admin.stats') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
         <span class="flex items-center">
@@ -38,7 +38,7 @@
     </a>
 
     {{-- Team Members --}}
-    {{-- <a href="{{ route('admin.team-members.index') }}"
+    <a href="{{ route('admin.team-members.index') }}"
         class="block px-4 py-3 rounded-lg transition-all duration-200
         {{ Str::startsWith(Route::currentRouteName(), 'admin.team-members') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
         <span class="flex items-center">
@@ -49,7 +49,7 @@
             </svg>
             Team Members
         </span>
-    </a> --}} 
+    </a>
 
     {{-- Blogs --}}
     <a href="{{ route('admin.blogs.index') }}"
@@ -91,7 +91,10 @@
         </span>
     </a>
 
-    {{-- Activity Logs --}}
+    {{-- ========================================== --}}
+    {{-- ACTIVITY LOGS - REMOVED / COMMENTED OUT --}}
+    {{-- ========================================== --}}
+    {{-- 
     <a href="{{ route('admin.activity.logs') }}"
         class="block px-4 py-3 rounded-lg transition-all duration-200
         {{ Route::currentRouteName() === 'admin.activity.logs' ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
@@ -104,21 +107,22 @@
             Activity Logs
         </span>
     </a>
+    --}}
 
-        {{-- Settings --}}
-        <a href="{{ route('admin.settings') }}"
-            class="block px-4 py-3 rounded-lg transition-all duration-200
-            {{ Route::currentRouteName() === 'admin.settings' ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-            <span class="flex items-center">
-                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
-                Settings
-            </span>
-        </a>
+    {{-- Settings --}}
+    <a href="{{ route('admin.settings') }}"
+        class="block px-4 py-3 rounded-lg transition-all duration-200
+        {{ Route::currentRouteName() === 'admin.settings' ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+        <span class="flex items-center">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Settings
+        </span>
+    </a>
 
     {{-- Logout --}}
     <form action="{{ route('admin.logout') }}" method="POST" class="block pt-4 border-t border-white/5">
