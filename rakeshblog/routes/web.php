@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\QuizController as AdminQuizController;
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\ContactController;
 
 /*
@@ -155,6 +156,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
         Route::delete('/activity-logs/{id}', [ActivityLogController::class, 'destroy'])->name('activity.logs.destroy');
         Route::post('/activity-logs/clear', [ActivityLogController::class, 'clearAll'])->name('activity.logs.clear');
+        
+        // ==========================================
+        // PROJECTS ROUTES
+        // ==========================================
+        Route::resource('projects', ProjectController::class);
+        Route::post('/projects/{id}/toggle-status', [ProjectController::class, 'toggleStatus'])->name('projects.toggle-status');
+        Route::post('/projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
         
         // Settings Routes
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');

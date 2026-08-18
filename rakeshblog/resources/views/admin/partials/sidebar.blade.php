@@ -93,13 +93,24 @@
     </a>
 
   {{-- Activity Logs --}}
-  
+
         <a href="{{ route('admin.activity.logs') }}"
             class="block px-4 py-3 rounded-lg transition-all duration-200
             {{ Route::currentRouteName() === 'admin.activity.logs' ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
             <span class="flex items-center">
                 <i class="fas fa-history w-5 h-5 mr-3"></i>
                 Activity Logs
+            </span>
+        </a>
+
+        {{-- Projects --}}
+        
+        <a href="{{ route('admin.projects.index') }}"
+            class="block px-4 py-3 rounded-lg transition-all duration-200
+            {{ Str::startsWith(Route::currentRouteName(), 'admin.projects') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+            <span class="flex items-center">
+                <i class="fas fa-project-diagram w-5 h-5 mr-3"></i>
+                Projects
             </span>
         </a>
 

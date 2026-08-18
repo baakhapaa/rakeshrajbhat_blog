@@ -134,48 +134,46 @@
                 </a>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-                <!-- Baakhapaa -->
-                <div class="bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white/96 hover:shadow-lg hover:-translate-y-1 transition-all">
-                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mb-6"><span class="text-3xl font-bold text-orange-600">B</span></div>
-                    <h4 class="font-bold text-[#1e1e1a] mb-3">Baakhapaa</h4>
-                    <p class="text-xs text-gray-600 mb-6 flex-grow">Play • Learn • Earn ecosystem that rewards knowledge.</p>
-                    <a class="text-[#D4AF37] text-xs font-bold flex items-center gap-1" href="#">Learn More →</a>
-                </div>
-                <!-- Skill Sikka -->
-                <div class="bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white/96 hover:shadow-lg hover:-translate-y-1 transition-all">
-                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6"><svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg></div>
-                    <h4 class="font-bold text-[#1e1e1a] mb-3">Skill Sikka</h4>
-                    <p class="text-xs text-gray-600 mb-6 flex-grow">Education OS empowering schools and learners.</p>
-                    <a class="text-[#D4AF37] text-xs font-bold flex items-center gap-1" href="#">Learn More →</a>
-                </div>
-                <!-- HillyChilly -->
-                <div class="bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white/96 hover:shadow-lg hover:-translate-y-1 transition-all">
-                    <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-6 overflow-hidden"><img alt="HillyChilly" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtVw82X70xhiu3XiyMuulIp1IUKvKbscyTnVn07plv5jPl_9xfV8KE0oMpsWFLaTklXBW78elL5V5GChnbiw_VkaGWP5NgXsodX6c4wG3SfpRROuy245T6ukKH95NYOrzNkZAxgtvrA79tJ5rjgHb6LsQrd1zVBM8GEpI0z9FGDwU64Ijd4hYQPWTv9LFP2EPIZMZqSDmPYwwwsj-hhwYek9agWMYb5M4PRpm-Ly-A7_oq9CxjvEKQ"/></div>
-                    <h4 class="font-bold text-[#1e1e1a] mb-3">HillyChilly</h4>
-                    <p class="text-xs text-gray-600 mb-6 flex-grow">Gamified tourism platform for local destinations.</p>
-                    <a class="text-[#D4AF37] text-xs font-bold flex items-center gap-1" href="#">Learn More →</a>
-                </div>
-                <!-- Future Builders -->
-                <div class="bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white/96 hover:shadow-lg hover:-translate-y-1 transition-all">
-                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-6"><svg class="h-8 w-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></svg></div>
-                    <h4 class="font-bold text-[#1e1e1a] mb-3">Future Builders</h4>
-                    <p class="text-xs text-gray-600 mb-6 flex-grow">Youth movement building skills &amp; entrepreneurs.</p>
-                    <a class="text-[#D4AF37] text-xs font-bold flex items-center gap-1" href="#">Learn More →</a>
-                </div>
-                <!-- Marsyangdi -->
-                <div class="bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white/96 hover:shadow-lg hover:-translate-y-1 transition-all">
-                    <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-6"><svg class="h-8 w-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></svg></div>
-                    <h4 class="font-bold text-[#1e1e1a] mb-3 leading-tight">Marsyangdi Doctrine</h4>
-                    <p class="text-xs text-gray-600 mb-6 flex-grow">100-year vision for sustainable development.</p>
-                    <a class="text-[#D4AF37] text-xs font-bold flex items-center gap-1" href="#">Learn More →</a>
-                </div>
-                <!-- Kholso -->
-                <div class="bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white/96 hover:shadow-lg hover:-translate-y-1 transition-all">
-                    <div class="w-16 h-16 bg-stone-100 rounded-full flex items-center justify-center mb-6"><svg class="h-8 w-8 text-stone-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></svg></div>
-                    <h4 class="font-bold text-[#1e1e1a] mb-3">Kholso</h4>
-                    <p class="text-xs text-gray-600 mb-6 flex-grow">Regenerative living spaces celebrating culture.</p>
-                    <a class="text-[#D4AF37] text-xs font-bold flex items-center gap-1" href="#">Learn More →</a>
-                </div>
+                @forelse($projects ?? [] as $project)
+                    <div class="tooltip-container bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white/96 hover:shadow-lg hover:-translate-y-1 transition-all">
+                        <!-- Project Image -->
+                        <div class="w-24 h-24 rounded-full flex items-center justify-center mb-6 overflow-hidden border-2 border-[#D4AF37]/20 hover:border-[#D4AF37] transition-all">
+                            @if($project->image)
+                                <img src="{{ $project->image_url }}" alt="{{ $project->name }}" 
+                                     class="w-full h-full object-cover hover:scale-110 transition-transform duration-300">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
+                                    <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-4xl font-bold">📦</span>
+                                </div>
+                            @endif
+                        </div>
+                        <h4 class="font-bold text-[#1e1e1a] mb-3">{{ $project->name }}</h4>
+                        <p class="text-xs text-gray-600 mb-6 flex-grow">{{ $project->short_description ?? 'Click to learn more' }}</p>
+                        <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1">Learn More →</span>
+
+                        <!-- Hover Popup Tooltip - Positioned BELOW the card -->
+                        <div class="tooltip-popup p-6 min-w-[280px] max-w-[320px] text-left bg-white text-[#1e1e1a] rounded-xl shadow-2xl border border-[#D4AF37]/20">
+                            <div class="relative">
+                                @if($project->image)
+                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" 
+                                         class="w-full h-32 object-cover rounded-lg mb-4">
+                                @endif
+                                <h5 class="font-bold text-lg text-[#1e1e1a] mb-2">{{ $project->name }}</h5>
+                                <p class="text-sm text-gray-600 mb-3">{{ $project->short_description }}</p>
+                                <p class="text-xs text-gray-500 mb-4 leading-relaxed">{{ $project->description ?? $project->short_description }}</p>
+                                @if($project->url)
+                                    <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
+                                        Visit Website <span class="text-xs">→</span>
+                                    </a>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-6 text-center py-12 text-gray-500">
+                        <p>No projects available yet.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </section>
@@ -293,3 +291,89 @@
         </div>
     </section>
 @endsection
+
+<style>
+    /* Container must be relative so the popup positions itself correctly */
+    .tooltip-container {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    /* Base style for the hidden popup - Positioned BELOW the card */
+    .tooltip-popup {
+        position: absolute;
+        top: 110%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-10px);
+        width: 280px;
+        max-width: 320px;
+        min-width: 200px;
+        background-color: #ffffff;
+        color: #1e1e1a;
+        text-align: left;
+        padding: 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        z-index: 50;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        
+        /* Smooth fade-in setup */
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+    }
+
+    /* The magic: Show the popup when hovering over the container */
+    .tooltip-container:hover .tooltip-popup {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    /* Optional: Add a small triangle arrow pointing UP */
+    .tooltip-popup::before {
+        content: "";
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        margin-left: -8px;
+        border-width: 8px;
+        border-style: solid;
+        border-color: transparent transparent #ffffff transparent;
+        z-index: 51;
+    }
+
+    /* Hover effects for project cards */
+    .tooltip-container {
+        transition: all 0.3s ease;
+    }
+    
+    .tooltip-container:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(212, 175, 55, 0.15);
+    }
+
+    .tooltip-container .w-24.h-24 {
+        transition: all 0.3s ease;
+    }
+    
+    .tooltip-container:hover .w-24.h-24 {
+        transform: scale(1.05);
+        border-color: #D4AF37;
+    }
+
+    @media (max-width: 768px) {
+        .tooltip-popup {
+            width: 200px;
+            max-width: 250px;
+            padding: 16px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+        }
+        .tooltip-container:hover .tooltip-popup {
+            transform: translateX(-50%) translateY(0);
+        }
+    }
+</style>
