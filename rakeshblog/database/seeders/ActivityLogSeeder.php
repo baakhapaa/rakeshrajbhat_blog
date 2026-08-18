@@ -1,0 +1,173 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use App\Models\ActivityLog;
+
+class ActivityLogSeeder extends Seeder
+{
+    public function run()
+    {
+        $activities = [
+            [
+                'user_name' => 'Admin User',
+                'user_email' => 'admin@rakeshrajbhat.com',
+                'activity' => 'blog_updated',
+                'description' => 'Updated blog "Collaboration with "Rising Star" YouTube Content Creators"',
+                'ip_address' => '27.34.111.218',
+                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'browser' => 'Chrome',
+                'platform' => 'Windows',
+                'created_at' => now()->subDays(5)->subHours(2),
+            ],
+            [
+                'user_name' => 'Niki',
+                'user_email' => 'niki@example.com',
+                'activity' => 'admin_login',
+                'description' => 'Admin logged in',
+                'ip_address' => '27.34.111.218',
+                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'browser' => 'Chrome',
+                'platform' => 'Windows',
+                'created_at' => now()->subDays(5)->subHours(3),
+            ],
+            [
+                'user_name' => 'System / Admin',
+                'user_email' => null,
+                'activity' => 'failed_login',
+                'description' => 'Failed login attempt',
+                'ip_address' => '192.42.116.113',
+                'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                'browser' => 'Chrome',
+                'platform' => 'Mac',
+                'created_at' => now()->subDays(10)->subHours(2),
+            ],
+            [
+                'user_name' => 'Geraldfruts',
+                'user_email' => 'geraldfruts@example.com',
+                'activity' => 'user_login',
+                'description' => 'User logged in',
+                'ip_address' => '178.20.47.39',
+                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'browser' => 'Chrome',
+                'platform' => 'Windows',
+                'created_at' => now()->subDays(10)->subHours(3),
+            ],
+            [
+                'user_name' => 'MichaelSkike',
+                'user_email' => 'michaelskike@example.com',
+                'activity' => 'user_login',
+                'description' => 'User logged in',
+                'ip_address' => '84.54.44.19',
+                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'browser' => 'Chrome',
+                'platform' => 'Windows',
+                'created_at' => now()->subDays(10)->subHours(4),
+            ],
+            [
+                'user_name' => 'POcuYKEbwiArVcwblITkYtc',
+                'user_email' => 'user1@example.com',
+                'activity' => 'user_registered',
+                'description' => 'User registered',
+                'ip_address' => '23.190.216.25',
+                'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                'browser' => 'Safari',
+                'platform' => 'Mac',
+                'created_at' => now()->subDays(10)->subHours(5),
+            ],
+            [
+                'user_name' => 'JigoYEjAlqDAtRWCH',
+                'user_email' => 'user2@example.com',
+                'activity' => 'user_registered',
+                'description' => 'User registered',
+                'ip_address' => '45.84.107.222',
+                'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                'browser' => 'Safari',
+                'platform' => 'Mac',
+                'created_at' => now()->subDays(10)->subHours(6),
+            ],
+            [
+                'user_name' => 'Niki',
+                'user_email' => 'niki@example.com',
+                'activity' => 'user_login',
+                'description' => 'User logged in',
+                'ip_address' => '27.34.111.218',
+                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'browser' => 'Chrome',
+                'platform' => 'Windows',
+                'created_at' => now()->subDays(11)->subHours(2),
+            ],
+            [
+                'user_name' => 'System / Admin',
+                'user_email' => null,
+                'activity' => 'failed_login',
+                'description' => 'Failed login attempt',
+                'ip_address' => '192.42.116.99',
+                'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                'browser' => 'Chrome',
+                'platform' => 'Mac',
+                'created_at' => now()->subDays(15)->subHours(2),
+            ],
+            [
+                'user_name' => 'Admin User',
+                'user_email' => 'admin@rakeshrajbhat.com',
+                'activity' => 'blog_created',
+                'description' => 'Created new blog "Getting Started with Laravel"',
+                'ip_address' => '27.34.111.218',
+                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'browser' => 'Chrome',
+                'platform' => 'Windows',
+                'created_at' => now()->subDays(20),
+            ],
+            [
+                'user_name' => 'Admin User',
+                'user_email' => 'admin@rakeshrajbhat.com',
+                'activity' => 'quiz_created',
+                'description' => 'Created new quiz "PHP Basics Quiz"',
+                'ip_address' => '27.34.111.218',
+                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'browser' => 'Chrome',
+                'platform' => 'Windows',
+                'created_at' => now()->subDays(18),
+            ],
+            [
+                'user_name' => 'John Doe',
+                'user_email' => 'john@example.com',
+                'activity' => 'comment_posted',
+                'description' => 'Posted a comment on blog "Getting Started with Laravel"',
+                'ip_address' => '192.168.1.100',
+                'user_agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+                'browser' => 'Safari',
+                'platform' => 'Mac',
+                'created_at' => now()->subDays(15),
+            ],
+            [
+                'user_name' => 'Jane Smith',
+                'user_email' => 'jane@example.com',
+                'activity' => 'quiz_submitted',
+                'description' => 'Submitted quiz "PHP Basics Quiz" and scored 80%',
+                'ip_address' => '192.168.1.101',
+                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'browser' => 'Edge',
+                'platform' => 'Windows',
+                'created_at' => now()->subDays(12),
+            ],
+            [
+                'user_name' => 'Admin User',
+                'user_email' => 'admin@rakeshrajbhat.com',
+                'activity' => 'user_updated',
+                'description' => 'Updated user profile for "John Doe"',
+                'ip_address' => '27.34.111.218',
+                'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'browser' => 'Chrome',
+                'platform' => 'Windows',
+                'created_at' => now()->subDays(8),
+            ],
+        ];
+
+        foreach ($activities as $activity) {
+            ActivityLog::create($activity);
+        }
+    }
+}

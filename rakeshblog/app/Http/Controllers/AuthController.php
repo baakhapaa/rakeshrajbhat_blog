@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use App\Models\User;
 use App\Models\PasswordResetOtp;
+use App\Helpers\ActivityLogger;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -54,10 +55,22 @@ class AuthController extends Controller
                 \Log::warning('Could not update login tracking: ' . $e->getMessage());
             }
             
+            // Log successful login
+            ActivityLogger::log('user_login', 'User logged in', [
+                'email' => $user->email,
+                'ip' => $request->ip()
+            ]);
+            
             return redirect()->intended('/');
         }
 
         RateLimiter::hit($throttleKey, 60);
+
+        // Log failed login attempt
+        ActivityLogger::log('failed_login', 'Failed login attempt', [
+            'email' => $request->email,
+            'ip' => $request->ip()
+        ]);
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
@@ -88,9 +101,15 @@ class AuthController extends Controller
             'phone' => $request->phone ?? null,
         ]);
 
+        // Log registration
+        ActivityLogger::log('user_registered', 'User registered', [
+            'email' => $user->email,
+            'ip' => $request->ip()
+        ]);
+
         Auth::login($user);
 
-        return redirect('/');
+        return redirect('/')->with('success', 'Registration successful!');
     }
 
     // Show forgot password form
@@ -228,6 +247,11 @@ class AuthController extends Controller
         // Clear session
         session()->forget(['reset_email', 'reset_token']);
 
+        // Log password reset
+        ActivityLogger::log('password_reset', 'User reset their password', [
+            'email' => $email
+        ]);
+
         return redirect()->route('login')->with('status', 'Your password has been reset successfully! You can now login with your new password.');
     }
 
@@ -290,6 +314,15 @@ class AuthController extends Controller
     // Handle logout
     public function logout(Request $request)
     {
+        $user = Auth::user();
+        
+        // Log logout
+        if ($user) {
+            ActivityLogger::log('user_logout', 'User logged out', [
+                'email' => $user->email
+            ]);
+        }
+        
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

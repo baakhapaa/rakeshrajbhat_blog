@@ -16,7 +16,9 @@ use App\Http\Controllers\Admin\StatController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\QuizController as AdminQuizController;
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\ContactController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -47,7 +49,6 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/verify-otp', 'showVerifyOtp')->name('password.verify-otp');
     Route::post('/verify-otp', 'verifyOtp')->name('password.verify-otp.submit');
 });
-
 
 // Contact Routes
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
@@ -119,7 +120,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('stats', StatController::class);       
         Route::resource('team-members', TeamMemberController::class);
         Route::resource('blogs', AdminBlogController::class);
-        Route::resource('users', UserController::class);
+        
+        // ==========================================
+        // USER MANAGEMENT ROUTES (No Create)
+        // ==========================================
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
+        Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::post('/users/{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+        Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
         
         // ==========================================
         // ADMIN QUIZ ROUTES
@@ -137,6 +148,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Admin Comment Routes
         Route::get('/comments', [AdminCommentController::class, 'index'])->name('comments.index');
         Route::delete('/comments/{id}', [AdminCommentController::class, 'destroy'])->name('comments.destroy');
+        
+        // ==========================================
+        // ACTIVITY LOGS ROUTES
+        // ==========================================
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
+        Route::delete('/activity-logs/{id}', [ActivityLogController::class, 'destroy'])->name('activity.logs.destroy');
+        Route::post('/activity-logs/clear', [ActivityLogController::class, 'clearAll'])->name('activity.logs.clear');
         
         // Settings Routes
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');

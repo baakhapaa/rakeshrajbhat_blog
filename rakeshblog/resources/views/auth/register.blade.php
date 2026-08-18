@@ -44,7 +44,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number (Optional)</label>
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                     <input type="tel" id="phone" name="phone" value="{{ old('phone') }}"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition @error('phone') border-red-500 @enderror"
                         placeholder="+977 98XXXXXXXX">

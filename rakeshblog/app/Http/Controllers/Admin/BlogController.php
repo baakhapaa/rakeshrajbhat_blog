@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Quiz;
 use App\Models\QuizQuestion;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -34,14 +35,6 @@ class BlogController extends Controller
             'featured_image' => 'nullable|string|max:500',
             'is_published' => 'nullable|boolean',
             'published_at' => 'nullable|date',
-            // Single question quiz (backward compatibility)
-            'quiz_question' => 'nullable|string|max:500',
-            'quiz_option_1' => 'nullable|string|max:255',
-            'quiz_option_2' => 'nullable|string|max:255',
-            'quiz_option_3' => 'nullable|string|max:255',
-            'quiz_option_4' => 'nullable|string|max:255',
-            'quiz_correct_answer' => 'nullable|integer|min:1|max:4',
-            // New multi-question quiz validation
             'quiz_title' => 'nullable|string|max:255',
             'quiz_description' => 'nullable|string',
             'quiz_passing_score' => 'nullable|integer|min:0|max:100',
@@ -111,17 +104,20 @@ class BlogController extends Controller
             'is_published' => $isPublished,
             'published_at' => $publishedAt,
             'author' => auth()->guard('admin')->user()->name ?? 'Admin',
-            // Single question quiz fields (backward compatibility)
-            'quiz_question' => $validated['quiz_question'] ?? null,
-            'quiz_option_1' => $validated['quiz_option_1'] ?? null,
-            'quiz_option_2' => $validated['quiz_option_2'] ?? null,
-            'quiz_option_3' => $validated['quiz_option_3'] ?? null,
-            'quiz_option_4' => $validated['quiz_option_4'] ?? null,
-            'quiz_correct_answer' => $validated['quiz_correct_answer'] ?? null,
         ]);
 
         // Handle multi-question quiz
         $this->handleQuizCreation($request, $blog);
+
+        // ========================================== */
+        // LOG BLOG CREATION
+        // ========================================== */
+        ActivityLogger::log('blog_created', 'Created new blog "' . $blog->title . '"', [
+            'blog_id' => $blog->id,
+            'title' => $blog->title,
+            'category' => $blog->category,
+            'is_published' => $blog->is_published
+        ]);
 
         return redirect()->route('admin.blogs.edit', $blog->id)
             ->with('success', 'Blog created successfully with quiz!');
@@ -152,14 +148,6 @@ class BlogController extends Controller
             'featured_image' => 'nullable|string|max:500',
             'is_published' => 'nullable|boolean',
             'published_at' => 'nullable|date',
-            // Single question quiz (backward compatibility)
-            'quiz_question' => 'nullable|string|max:500',
-            'quiz_option_1' => 'nullable|string|max:255',
-            'quiz_option_2' => 'nullable|string|max:255',
-            'quiz_option_3' => 'nullable|string|max:255',
-            'quiz_option_4' => 'nullable|string|max:255',
-            'quiz_correct_answer' => 'nullable|integer|min:1|max:4',
-            // New multi-question quiz validation
             'quiz_title' => 'nullable|string|max:255',
             'quiz_description' => 'nullable|string',
             'quiz_passing_score' => 'nullable|integer|min:0|max:100',
@@ -238,29 +226,33 @@ class BlogController extends Controller
             'featured_image' => $featuredImage,
             'is_published' => $isPublished,
             'published_at' => $publishedAt,
-            // Single question quiz fields (backward compatibility)
-            'quiz_question' => $validated['quiz_question'] ?? null,
-            'quiz_option_1' => $validated['quiz_option_1'] ?? null,
-            'quiz_option_2' => $validated['quiz_option_2'] ?? null,
-            'quiz_option_3' => $validated['quiz_option_3'] ?? null,
-            'quiz_option_4' => $validated['quiz_option_4'] ?? null,
-            'quiz_correct_answer' => $validated['quiz_correct_answer'] ?? null,
         ]);
 
         // Handle quiz removal
         if ($request->has('remove_quiz') && $request->remove_quiz == 1) {
             $this->deleteQuiz($blog);
+            
+            // Log quiz removal
+            ActivityLogger::log('quiz_deleted', 'Removed quiz from blog "' . $blog->title . '"', [
+                'blog_id' => $blog->id
+            ]);
+            
             return redirect()->route('admin.blogs.edit', $blog->id)
                 ->with('success', 'Blog updated successfully! Quiz removed.');
         }
 
+        // Handle multi-question quiz
+        $this->handleQuizUpdate($request, $blog);
+
         // ========================================== */
-        // FIXED: ONLY HANDLE QUIZ IF QUIZ_TITLE IS PROVIDED
+        // LOG BLOG UPDATE
         // ========================================== */
-        if ($request->filled('quiz_title')) {
-            $this->handleQuizUpdate($request, $blog);
-        }
-        // If quiz_title is empty, KEEP the existing quiz (don't delete it)
+        ActivityLogger::log('blog_updated', 'Updated blog "' . $blog->title . '"', [
+            'blog_id' => $blog->id,
+            'title' => $blog->title,
+            'category' => $blog->category,
+            'is_published' => $blog->is_published
+        ]);
 
         return redirect()->route('admin.blogs.edit', $blog->id)
             ->with('success', 'Blog and quiz updated successfully!');
@@ -269,6 +261,7 @@ class BlogController extends Controller
     public function destroy($id)
     {
         $blog = Blog::findOrFail($id);
+        $blogTitle = $blog->title;
         
         // Delete featured image if exists
         if ($blog->featured_image) {
@@ -282,6 +275,14 @@ class BlogController extends Controller
         $this->deleteQuiz($blog);
         
         $blog->delete();
+
+        // ========================================== */
+        // LOG BLOG DELETION
+        // ========================================== */
+        ActivityLogger::log('blog_deleted', 'Deleted blog "' . $blogTitle . '"', [
+            'blog_id' => $id,
+            'title' => $blogTitle
+        ]);
 
         return redirect()->route('admin.blogs.index')->with('success', 'Blog deleted successfully!');
     }
@@ -305,6 +306,13 @@ class BlogController extends Controller
             'is_active' => $request->has('quiz_is_active') && $request->quiz_is_active == 1,
         ]);
 
+        // Log quiz creation
+        ActivityLogger::log('quiz_created', 'Created new quiz "' . $quiz->title . '" for blog "' . $blog->title . '"', [
+            'quiz_id' => $quiz->id,
+            'blog_id' => $blog->id,
+            'title' => $quiz->title
+        ]);
+
         // Create questions
         if ($request->has('questions')) {
             foreach ($request->questions as $index => $questionData) {
@@ -313,7 +321,7 @@ class BlogController extends Controller
                     continue;
                 }
 
-                QuizQuestion::create([
+                $question = QuizQuestion::create([
                     'quiz_id' => $quiz->id,
                     'question' => $questionData['question'],
                     'option_1' => $questionData['option_1'],
@@ -335,18 +343,26 @@ class BlogController extends Controller
     {
         // Check if quiz data is present
         if (!$request->filled('quiz_title')) {
-            // FIXED: Don't delete quiz, just return
             return;
         }
 
         // Create or update quiz
         $quiz = $blog->quiz;
         if ($quiz) {
+            $oldTitle = $quiz->title;
             $quiz->update([
                 'title' => $request->quiz_title,
                 'description' => $request->quiz_description ?? null,
                 'passing_score' => $request->quiz_passing_score ?? 60,
                 'is_active' => $request->has('quiz_is_active') && $request->quiz_is_active == 1,
+            ]);
+            
+            // Log quiz update
+            ActivityLogger::log('quiz_updated', 'Updated quiz "' . $oldTitle . '" to "' . $request->quiz_title . '" for blog "' . $blog->title . '"', [
+                'quiz_id' => $quiz->id,
+                'blog_id' => $blog->id,
+                'old_title' => $oldTitle,
+                'new_title' => $request->quiz_title
             ]);
         } else {
             $quiz = Quiz::create([
@@ -355,6 +371,13 @@ class BlogController extends Controller
                 'description' => $request->quiz_description ?? null,
                 'passing_score' => $request->quiz_passing_score ?? 60,
                 'is_active' => $request->has('quiz_is_active') && $request->quiz_is_active == 1,
+            ]);
+            
+            // Log quiz creation
+            ActivityLogger::log('quiz_created', 'Created new quiz "' . $quiz->title . '" for blog "' . $blog->title . '"', [
+                'quiz_id' => $quiz->id,
+                'blog_id' => $blog->id,
+                'title' => $quiz->title
             ]);
         }
 
@@ -422,9 +445,17 @@ class BlogController extends Controller
     public function togglePublish($id)
     {
         $blog = Blog::findOrFail($id);
+        $oldStatus = $blog->is_published;
         $blog->is_published = !$blog->is_published;
         $blog->published_at = $blog->is_published ? now() : null;
         $blog->save();
+
+        // Log publish status change
+        ActivityLogger::log('blog_publish_toggled', 'Changed blog "' . $blog->title . '" publish status from ' . ($oldStatus ? 'Published' : 'Draft') . ' to ' . ($blog->is_published ? 'Published' : 'Draft'), [
+            'blog_id' => $blog->id,
+            'old_status' => $oldStatus ? 'Published' : 'Draft',
+            'new_status' => $blog->is_published ? 'Published' : 'Draft'
+        ]);
 
         return redirect()->back()->with('success', 
             $blog->is_published ? 'Blog published!' : 'Blog unpublished!'

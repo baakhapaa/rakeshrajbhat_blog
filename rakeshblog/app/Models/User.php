@@ -15,6 +15,8 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
+        'role',
+        'is_active',
         'ip_address',
         'last_login_ip',
         'last_login_at',
@@ -39,6 +41,7 @@ class User extends Authenticatable
             'quiz_attempts' => 'integer',
             'correct_answers' => 'integer',
             'total_questions_answered' => 'integer',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -54,6 +57,50 @@ class User extends Authenticatable
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    // ==========================================
+    // ACCESSORS
+    // ==========================================
+
+    public function getInitialsAttribute()
+    {
+        $words = explode(' ', $this->name);
+        $initials = '';
+        foreach ($words as $word) {
+            if (!empty($word)) {
+                $initials .= strtoupper($word[0]);
+            }
+        }
+        return substr($initials, 0, 2);
+    }
+
+    public function getRoleBadgeAttribute()
+    {
+        $badges = [
+            'admin' => 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+            'editor' => 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+            'user' => 'bg-gray-500/20 text-gray-400 border border-gray-500/30',
+        ];
+        return $badges[$this->role ?? 'user'] ?? $badges['user'];
+    }
+
+    public function getStatusBadgeAttribute()
+    {
+        if ($this->is_active) {
+            return 'bg-green-500/20 text-green-400 border border-green-500/30';
+        }
+        return 'bg-red-500/20 text-red-400 border border-red-500/30';
+    }
+
+    public function getStatusTextAttribute()
+    {
+        return $this->is_active ? 'Active' : 'Inactive';
+    }
+
+    public function getRoleTextAttribute()
+    {
+        return ucfirst($this->role ?? 'User');
     }
 
     // ==========================================
@@ -177,17 +224,5 @@ class User extends Authenticatable
         }
         
         return $badges;
-    }
-
-    public function getInitialsAttribute()
-    {
-        $words = explode(' ', $this->name);
-        $initials = '';
-        foreach ($words as $word) {
-            if (!empty($word)) {
-                $initials .= strtoupper($word[0]);
-            }
-        }
-        return substr($initials, 0, 2);
     }
 }

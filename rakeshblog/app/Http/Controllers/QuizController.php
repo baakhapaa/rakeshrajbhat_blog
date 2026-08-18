@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Quiz;
 use App\Models\UserQuizResult;
+use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,15 +15,14 @@ class QuizController extends Controller
      */
     public function submit(Request $request, $quizId)
     {
-        // Debug: Log the request
-        \Log::info('Quiz submitted for user: ' . Auth::id());
+        // Debug logging
+        \Log::info('=== QUIZ SUBMISSION START ===');
+        \Log::info('User ID: ' . Auth::id());
+        \Log::info('Quiz ID: ' . $quizId);
         \Log::info('Answers:', $request->all());
         
         $quiz = Quiz::with('questions')->findOrFail($quizId);
         $answers = $request->input('answers', []);
-        
-        // Debug: Log answers
-        \Log::info('Answers array:', $answers);
         
         $score = 0;
         $total = $quiz->questions->count();
@@ -78,42 +78,59 @@ class QuizController extends Controller
             $pointsEarned += 10; // Bonus points for passing
         }
         
-        // Debug: Log points
-        \Log::info('Points earned: ' . $pointsEarned);
-        \Log::info('Correct count: ' . $correctCount);
-        \Log::info('Total questions: ' . $total);
+        \Log::info('Score: ' . $score);
+        \Log::info('Correct Count: ' . $correctCount);
+        \Log::info('Points Earned: ' . $pointsEarned);
         
         // ========================================== */
-        // SAVE TO DATABASE - FIXED
+        // SAVE TO DATABASE
         // ========================================== */
         if (Auth::check()) {
             $user = Auth::user();
             
-            // Debug: Log user before update
             \Log::info('User before update - total_points: ' . ($user->total_points ?? 0));
+            \Log::info('User before update - quiz_attempts: ' . ($user->quiz_attempts ?? 0));
             
             // Save quiz result
-            UserQuizResult::create([
-                'user_id' => $user->id,
-                'quiz_id' => $quiz->id,
-                'score' => $score,
-                'correct_count' => $correctCount,
-                'total_questions' => $total,
-                'percentage' => $percentage,
-                'passed' => $passed,
-                'points_earned' => $pointsEarned,
-            ]);
+            try {
+                $result = UserQuizResult::create([
+                    'user_id' => $user->id,
+                    'quiz_id' => $quiz->id,
+                    'score' => $score,
+                    'correct_count' => $correctCount,
+                    'total_questions' => $total,
+                    'percentage' => $percentage,
+                    'passed' => $passed,
+                    'points_earned' => $pointsEarned,
+                ]);
+                \Log::info('UserQuizResult created with ID: ' . $result->id);
+            } catch (\Exception $e) {
+                \Log::error('Error saving UserQuizResult: ' . $e->getMessage());
+            }
             
             // Update user stats
-            $user->total_points = ($user->total_points ?? 0) + $pointsEarned;
-            $user->quiz_attempts = ($user->quiz_attempts ?? 0) + 1;
-            $user->correct_answers = ($user->correct_answers ?? 0) + $correctCount;
-            $user->total_questions_answered = ($user->total_questions_answered ?? 0) + $total;
-            $user->save();
-            
-            // Debug: Log user after update
-            \Log::info('User after update - total_points: ' . ($user->total_points ?? 0));
-            \Log::info('Quiz attempt saved successfully for user: ' . $user->id);
+            try {
+                $user->total_points = ($user->total_points ?? 0) + $pointsEarned;
+                $user->quiz_attempts = ($user->quiz_attempts ?? 0) + 1;
+                $user->correct_answers = ($user->correct_answers ?? 0) + $correctCount;
+                $user->total_questions_answered = ($user->total_questions_answered ?? 0) + $total;
+                $user->save();
+                
+                // Log quiz submission
+                ActivityLogger::log('quiz_submitted', 'User ' . $user->name . ' submitted quiz "' . $quiz->title . '" and scored ' . $percentage . '%', [
+                    'quiz_id' => $quiz->id,
+                    'score' => $score,
+                    'percentage' => $percentage,
+                    'passed' => $passed
+                ]);
+                
+                \Log::info('User after update - total_points: ' . ($user->total_points ?? 0));
+                \Log::info('User after update - quiz_attempts: ' . ($user->quiz_attempts ?? 0));
+                \Log::info('User after update - correct_answers: ' . ($user->correct_answers ?? 0));
+                \Log::info('User after update - total_questions_answered: ' . ($user->total_questions_answered ?? 0));
+            } catch (\Exception $e) {
+                \Log::error('Error updating user stats: ' . $e->getMessage());
+            }
         } else {
             \Log::warning('User not authenticated for quiz submission');
         }
@@ -132,6 +149,8 @@ class QuizController extends Controller
                 'details' => $details,
             ]
         ]);
+        
+        \Log::info('=== QUIZ SUBMISSION END ===');
         
         return redirect()->back()->with('success', 'Quiz submitted successfully! You earned ' . $pointsEarned . ' points!');
     }

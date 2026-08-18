@@ -24,7 +24,7 @@
     </a>
 
     {{-- Stats --}}
-    <a href="{{ route('admin.stats.index') }}"
+    {{-- <a href="{{ route('admin.stats.index') }}"
         class="block px-4 py-3 rounded-lg transition-all duration-200
         {{ Str::startsWith(Route::currentRouteName(), 'admin.stats') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
         <span class="flex items-center">
@@ -35,10 +35,10 @@
             </svg>
             Stats
         </span>
-    </a>
+    </a> --}}
 
     {{-- Team Members --}}
-    <a href="{{ route('admin.team-members.index') }}"
+    {{-- <a href="{{ route('admin.team-members.index') }}"
         class="block px-4 py-3 rounded-lg transition-all duration-200
         {{ Str::startsWith(Route::currentRouteName(), 'admin.team-members') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
         <span class="flex items-center">
@@ -49,7 +49,7 @@
             </svg>
             Team Members
         </span>
-    </a>
+    </a> --}}
 
     {{-- Blogs --}}
     <a href="{{ route('admin.blogs.index') }}"
@@ -66,17 +66,18 @@
     </a>
 
     {{-- Users --}}
-    <a href="{{ route('admin.users.index') }}"
-        class="block px-4 py-3 rounded-lg transition-all duration-200
-        {{ Str::startsWith(Route::currentRouteName(), 'admin.users') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-        <span class="flex items-center">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 20h5V18a4 4 0 00-5-3.87M9 20H4V18a4 4 0 015-3.87m8-6.13a4 4 0 11-8 0 4 4 0 018 0zM5 8a3 3 0 106 0 3 3 0 00-6 0z"/>
-            </svg>
-            Users
-        </span>
-    </a>
+        <a href="{{ route('admin.users.index') }}"
+            class="block px-4 py-3 rounded-lg transition-all duration-200
+            {{ Str::startsWith(Route::currentRouteName(), 'admin.users') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+            <span class="flex items-center">
+                <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a4 4 0 0 0-4-4h-1M9 20H4v-2a4 4 0 0 1 4-4h1m4-4a4 4 0 1 0-2 0 4 4 0 0 0 2 0zm6 0a3 3 0 1 0-6 0 3 3 0 0 0 6 0z">
+                    </path>
+                </svg>
+                Users
+            </span>
+        </a>
 
     {{-- Comments --}}
     <a href="{{ route('admin.comments.index') }}"
@@ -91,23 +92,16 @@
         </span>
     </a>
 
-    {{-- ========================================== --}}
-    {{-- ACTIVITY LOGS - REMOVED / COMMENTED OUT --}}
-    {{-- ========================================== --}}
-    {{-- 
-    <a href="{{ route('admin.activity.logs') }}"
-        class="block px-4 py-3 rounded-lg transition-all duration-200
-        {{ Route::currentRouteName() === 'admin.activity.logs' ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
-        <span class="flex items-center">
-            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 17v-6h13M9 7h13M4 7h.01M4 17h.01M4 12h.01M9 12h13">
-                </path>
-            </svg>
-            Activity Logs
-        </span>
-    </a>
-    --}}
+  {{-- Activity Logs --}}
+  
+        <a href="{{ route('admin.activity.logs') }}"
+            class="block px-4 py-3 rounded-lg transition-all duration-200
+            {{ Route::currentRouteName() === 'admin.activity.logs' ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+            <span class="flex items-center">
+                <i class="fas fa-history w-5 h-5 mr-3"></i>
+                Activity Logs
+            </span>
+        </a>
 
     {{-- Settings --}}
     <a href="{{ route('admin.settings') }}"

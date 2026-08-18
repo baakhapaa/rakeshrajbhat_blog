@@ -364,9 +364,7 @@
     </div>
 </div>
 
-<!-- ========================================== -->
 <!-- DELETE CONFIRMATION MODAL -->
-<!-- ========================================== -->
 <div id="deleteModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeDeleteModal()"></div>
     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">

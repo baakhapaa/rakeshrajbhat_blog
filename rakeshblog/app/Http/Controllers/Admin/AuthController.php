@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
+use App\Helpers\ActivityLogger;
 
 class AuthController extends Controller
 {
@@ -32,8 +33,14 @@ class AuthController extends Controller
             $admin->last_login_ip = $request->ip();
             $admin->save();
             
+            // Log admin login
+            ActivityLogger::log('admin_login', 'Admin logged in', ['email' => $admin->email]);
+            
             return redirect()->intended('/admin/dashboard');
         }
+
+        // Log failed login attempt
+        ActivityLogger::log('failed_login', 'Failed admin login attempt', ['email' => $request->email]);
 
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
@@ -49,6 +56,13 @@ class AuthController extends Controller
     // Handle logout
     public function logout(Request $request)
     {
+        $admin = Auth::guard('admin')->user();
+        
+        // Log admin logout
+        if ($admin) {
+            ActivityLogger::log('admin_logout', 'Admin logged out', ['email' => $admin->email]);
+        }
+        
         Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

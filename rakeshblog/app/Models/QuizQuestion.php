@@ -24,6 +24,7 @@ class QuizQuestion extends Model
     protected $casts = [
         'points' => 'integer',
         'order' => 'integer',
+        'correct_answer' => 'integer',
     ];
 
     // Relationships
@@ -46,5 +47,23 @@ class QuizQuestion extends Model
     {
         $letters = ['', 'A', 'B', 'C', 'D'];
         return $letters[$this->correct_answer] ?? 'Not set';
+    }
+
+    // Helper methods
+    public function getOptionLetter($index)
+    {
+        $letters = ['', 'A', 'B', 'C', 'D'];
+        return $letters[$index] ?? 'Unknown';
+    }
+
+    public function getOptionByIndex($index)
+    {
+        $options = $this->getOptionsAttribute();
+        return $options[$index] ?? null;
+    }
+
+    public function isCorrectAnswer($userAnswerIndex)
+    {
+        return (int)$userAnswerIndex === (int)$this->correct_answer;
     }
 }
