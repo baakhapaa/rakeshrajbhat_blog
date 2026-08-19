@@ -57,21 +57,27 @@
                             </td>
                             <td class="py-4 px-4">
                                 <div class="flex items-center justify-center gap-2">
+                                    <!-- Edit Link -->
                                     <a href="{{ route('admin.projects.edit', $project->id) }}" 
                                        class="p-1.5 text-yellow-400 hover:text-yellow-300 hover:bg-yellow-500/10 rounded transition" 
                                        title="Edit">
                                         <i class="fas fa-edit text-sm"></i>
                                     </a>
-                                    <a href="{{ route('admin.projects.toggle-status', $project->id) }}" 
-                                       class="p-1.5 text-{{ $project->is_active ? 'red' : 'green' }}-400 hover:text-{{ $project->is_active ? 'red' : 'green' }}-300 hover:bg-{{ $project->is_active ? 'red' : 'green' }}-500/10 rounded transition"
-                                       title="{{ $project->is_active ? 'Deactivate' : 'Activate' }}"
-                                       onclick="event.preventDefault(); if(confirm('{{ $project->is_active ? 'Deactivate' : 'Activate' }} this project?')) document.getElementById('toggle-form-{{ $project->id }}').submit();">
+                                    
+                                    <!-- Toggle Status Button (Fixed) -->
+                                    <button type="button" 
+                                            onclick="event.preventDefault(); if(confirm('{{ $project->is_active ? 'Deactivate' : 'Activate' }} this project?')) document.getElementById('toggle-form-{{ $project->id }}').submit();"
+                                            class="p-1.5 text-{{ $project->is_active ? 'red' : 'green' }}-400 hover:text-{{ $project->is_active ? 'red' : 'green' }}-300 hover:bg-{{ $project->is_active ? 'red' : 'green' }}-500/10 rounded transition"
+                                            title="{{ $project->is_active ? 'Deactivate' : 'Activate' }}">
                                         <i class="fas fa-{{ $project->is_active ? 'pause' : 'play' }} text-sm"></i>
-                                    </a>
+                                    </button>
                                     <form id="toggle-form-{{ $project->id }}" action="{{ route('admin.projects.toggle-status', $project->id) }}" method="POST" style="display:none;">
                                         @csrf
                                     </form>
-                                    <button onclick="if(confirm('Delete project "{{ $project->name }}"?')) document.getElementById('delete-form-{{ $project->id }}').submit();" 
+                                    
+                                    <!-- Delete Button (Fixed) -->
+                                    <button type="button" 
+                                            onclick="event.preventDefault(); if(confirm('Are you sure you want to delete this project?')) document.getElementById('delete-form-{{ $project->id }}').submit();" 
                                             class="p-1.5 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded transition"
                                             title="Delete">
                                         <i class="fas fa-trash text-sm"></i>
