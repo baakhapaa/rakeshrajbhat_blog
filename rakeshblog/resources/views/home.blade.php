@@ -123,7 +123,8 @@
 
     <!-- Projects Section -->
     <section id="projects" class="py-24 bg-[#fff6e0] scroll-mt-20">
-        <div class="max-w-7xl mx-auto px-6">
+        <!-- UPDATED: changed max-w-7xl to max-w-8xl for wider container -->
+        <div class="max-w-8xl mx-auto px-6">
             <div class="flex justify-between items-end mb-12">
                 <div>
                     <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">What I'm Building</p>
@@ -133,44 +134,53 @@
                     View All Projects <span class="group-hover:translate-x-1 transition-transform">→</span>
                 </a>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+            
+            <!-- UPDATED: changed to grid-cols-4 for wider cards. Changed gap to gap-16 for huge spacing -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-16">
                 @forelse($projects ?? [] as $project)
-                    <div class="tooltip-container bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white/96 hover:shadow-lg hover:-translate-y-1 transition-all">
-                        <!-- Project Image -->
-                        <div class="w-24 h-24 rounded-full flex items-center justify-center mb-6 overflow-hidden border-2 border-[#D4AF37]/20 hover:border-[#D4AF37] transition-all">
-                            @if($project->image)
-                                <img src="{{ $project->image_url }}" alt="{{ $project->name }}" 
-                                     class="w-full h-full object-cover hover:scale-110 transition-transform duration-300">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
-                                    <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-4xl font-bold">📦</span>
-                                </div>
-                            @endif
-                        </div>
-                        <h4 class="font-bold text-[#1e1e1a] mb-3">{{ $project->name }}</h4>
-                        <p class="text-xs text-gray-600 mb-6 flex-grow">{{ $project->short_description ?? 'Click to learn more' }}</p>
-                        <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1">Learn More →</span>
+                    <!-- UPDATED: Increased p-8 to p-10 for more internal padding -->
+                    <div class="tooltip-container bg-white/80 p-10 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
 
-                        <!-- Hover Popup Tooltip - Positioned BELOW the card -->
-                        <div class="tooltip-popup p-6 min-w-[280px] max-w-[320px] text-left bg-white text-[#1e1e1a] rounded-xl shadow-2xl border border-[#D4AF37]/20">
-                            <div class="relative">
+                        <!-- Normal Card Content -->
+                        <div class="project-default w-full flex flex-col items-center">
+                            <!-- Project Image -->
+                            <div class="project-image w-24 h-24 rounded-full flex items-center justify-center mb-6 overflow-hidden border-2 border-[#D4AF37]/20">
                                 @if($project->image)
-                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" 
-                                         class="w-full h-32 object-cover rounded-lg mb-4">
+                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;"> <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-4xl font-bold">📦</span> </div>
                                 @endif
-                                <h5 class="font-bold text-lg text-[#1e1e1a] mb-2">{{ $project->name }}</h5>
-                                <p class="text-sm text-gray-600 mb-3">{{ $project->short_description }}</p>
-                                <p class="text-xs text-gray-500 mb-4 leading-relaxed">{{ $project->description ?? $project->short_description }}</p>
+                            </div>
+
+                            <h4 class="font-bold text-[#1e1e1a] mb-3"> {{ $project->name }} </h4>
+                            <p class="text-xs text-gray-600 mb-6 flex-grow"> {{ $project->short_description ?? 'Click to learn more' }} </p>
+                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
+                        </div>
+
+ <!-- Expanded Hover Content -->
+                        <div class="tooltip-popup">
+                            <div class="project-popup-content">
+                                <!-- Icon / Image -->
+                                <div class="popup-image">
+                                    @if($project->image)
+                                        <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
+                                    @else
+                                        <span style="color: {{ $project->color ?? '#D4AF37' }};"> 📦</span>
+                                    @endif
+                                </div>
+                                <h5 class="font-bold text-xl text-[#1e1e1a] mb-3"> {{ $project->name }} </h5>
+                                <p class="text-sm text-black-600 mb-4 leading-relaxed"> {{ $project->short_description }}</p>
+                                <p class="text-xs text-black-500 mb-6 leading-relaxed antialiased" style="-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;"> {{ $project->description ?? $project->short_description }}</p>
                                 @if($project->url)
-                                    <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
-                                        Visit Website <span class="text-xs">→</span>
+                                    <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">Visit Website
+                                        <span>→</span>
                                     </a>
                                 @endif
                             </div>
                         </div>
                     </div>
                 @empty
-                    <div class="col-span-6 text-center py-12 text-gray-500">
+                    <div class="col-span-full text-center py-12 text-gray-500">
                         <p>No projects available yet.</p>
                     </div>
                 @endforelse
@@ -293,87 +303,188 @@
 @endsection
 
 <style>
-    /* Container must be relative so the popup positions itself correctly */
-    .tooltip-container {
-        position: relative;
-        display: inline-block;
-        cursor: pointer;
-    }
+/* =========================================
+   PROJECT SECTION OVERHAUL
+   ========================================= */
 
-    /* Base style for the hidden popup - Positioned BELOW the card */
-    .tooltip-popup {
-        position: absolute;
-        top: 110%;
-        left: 50%;
-        transform: translateX(-50%) translateY(-10px);
-        width: 280px;
-        max-width: 320px;
-        min-width: 200px;
-        background-color: #ffffff;
-        color: #1e1e1a;
-        text-align: left;
-        padding: 24px;
-        border-radius: 12px;
-        font-size: 14px;
-        z-index: 50;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        
-        /* Smooth fade-in setup */
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
-    }
+/* Main Container Grid Safety */
+#projects {
+    overflow: visible !important;
+    padding: 6.5rem;
+}
 
-    /* The magic: Show the popup when hovering over the container */
-    .tooltip-container:hover .tooltip-popup {
-        opacity: 1;
-        visibility: visible;
-        transform: translateX(-50%) translateY(0);
-    }
+#projects .grid {
+    perspective: 1200px;
+}
 
-    /* Optional: Add a small triangle arrow pointing UP */
-    .tooltip-popup::before {
-        content: "";
-        position: absolute;
-        bottom: 100%;
-        left: 50%;
-        margin-left: -8px;
-        border-width: 8px;
-        border-style: solid;
-        border-color: transparent transparent #ffffff transparent;
-        z-index: 51;
-    }
+/* Base Project Card */
+.tooltip-container {
+    position: relative;
+    cursor: pointer;
+    overflow: visible;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 16px;
+    border: 1px solid rgba(212, 175, 55, 0.18);
+    transition: 
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.4s ease,
+        background-color 0.4s ease;
+    will-change: transform, box-shadow;
+}
 
-    /* Hover effects for project cards */
-    .tooltip-container {
-        transition: all 0.3s ease;
-    }
-    
+.tooltip-container:hover {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-1deg);
+    background: #ffffff;
+    border-color: rgba(212, 175, 55, 0.6);
+    z-index: 50;
+    box-shadow:
+        0 20px 40px -15px rgba(212, 175, 55, 0.25),
+        0 0 30px 0 rgba(212, 175, 55, 0.1),
+        inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Default Card Content */
+.project-default {
+    opacity: 1;
+    transform: scale(1);
+    transition: 
+        opacity 0.25s ease,
+        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tooltip-container:hover .project-default {
+    opacity: 0;
+    transform: scale(0.94);
+    pointer-events: none;
+}
+
+/* Image Wrapper */
+.project-image {
+    position: relative;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.12);
+}
+
+.tooltip-container:hover .project-image {
+    transform: scale(1.08);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.25);
+}
+
+/* Expanded Popup Card */
+.tooltip-popup {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 320px;
+    min-height: 380px;
+    padding: 28px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: #1e1e1a;
+    border-radius: 20px;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow:
+        0 30px 60px -12px rgba(0, 0, 0, 0.25),
+        0 18px 36px -18px rgba(212, 175, 55, 0.3),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    text-align: left;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, -46%) scale(0.85);
+    transition:
+        opacity 0.3s ease,
+        visibility 0.3s ease,
+        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tooltip-container:hover .tooltip-popup {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Popup Image Container */
+.popup-image {
+    width: 100%;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    overflow: hidden;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #fbf8f1 0%, #f4ece0 100%);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    position: relative;
+}
+
+.popup-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tooltip-container:hover .popup-image img {
+    transform: scale(1.08);
+}
+
+/* Micro-Interactions on Popup Link */
+.tooltip-popup a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.tooltip-popup a::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 1.5px;
+    bottom: -2px;
+    left: 0;
+    background-color: #D4AF37;
+    transform-origin: bottom right;
+    transition: transform 0.25s cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+.tooltip-popup a:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN (MOBILE & TABLET)
+   ========================================= */
+
+@media (max-width: 1024px) {
+    /* Disable 3D tilt on touch devices for smoother performance */
     .tooltip-container:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 40px rgba(212, 175, 55, 0.15);
-    }
-
-    .tooltip-container .w-24.h-24 {
-        transition: all 0.3s ease;
     }
     
-    .tooltip-container:hover .w-24.h-24 {
-        transform: scale(1.05);
-        border-color: #D4AF37;
+    .tooltip-popup {
+        width: 290px;
+        padding: 22px;
     }
+}
 
-    @media (max-width: 768px) {
-        .tooltip-popup {
-            width: 200px;
-            max-width: 250px;
-            padding: 16px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-10px);
-        }
-        .tooltip-container:hover .tooltip-popup {
-            transform: translateX(-50%) translateY(0);
-        }
+@media (max-width: 640px) {
+    .tooltip-popup {
+        width: calc(100vw - 48px);
+        max-width: 320px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
     }
+}
 </style>
