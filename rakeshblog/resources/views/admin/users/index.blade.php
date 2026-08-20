@@ -13,12 +13,13 @@
             </h1>
             <p class="text-gray-400 text-sm mt-1">Manage all registered users</p>
         </div>
-        <div class="flex gap-3 mt-4 md:mt-0">
-            <a href="{{ route('admin.users.export') }}" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2">
+        {{-- <div class="flex gap-3 mt-4 md:mt-0">
+            <a href="{{ route('admin.users.export') }}" 
+               class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2">
                 <i class="fas fa-download"></i>
                 Export CSV
             </a>
-        </div>
+        </div> --}}
     </div>
 
     {{-- Success Message --}}
@@ -50,7 +51,9 @@
         <form method="GET" action="{{ route('admin.users.index') }}" class="flex flex-wrap gap-4">
             {{-- Search --}}
             <div class="flex-1 min-w-[200px]">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by name, email or phone..." class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                <input type="text" name="search" value="{{ request('search') }}" 
+                       placeholder="Search by name, email or phone..." 
+                       class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
             </div>
             {{-- Role --}}
             <div class="min-w-[150px]">
@@ -131,7 +134,7 @@
                         <td class="py-4 px-4">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-[#D4AF37] text-[#0b0e12] flex items-center justify-center font-bold text-sm">
-                                    {{ $user->initials ?? strtoupper(substr($user->name, 0, 1)) }}
+                                    {{ $user->initials ?? strtoupper(substr($user->name, 0, 2)) }}
                                 </div>
                                 <span class="text-white font-medium">{{ $user->name }}</span>
                             </div>
@@ -173,6 +176,20 @@
                                 </a>
 
                                 @if($user->id !== auth()->id())
+                                    {{-- Toggle Status --}}
+                                    {{-- <button type="button"
+                                            onclick="toggleUserStatus({{ $user->id }}, {{ $user->is_active ? 'true' : 'false' }}, '{{ addslashes($user->name) }}')"
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1.5
+                                                   text-{{ $user->is_active ? 'orange' : 'green' }}-400 
+                                                   bg-{{ $user->is_active ? 'orange' : 'green' }}-500/10 
+                                                   border border-{{ $user->is_active ? 'orange' : 'green' }}-500/20
+                                                   hover:bg-{{ $user->is_active ? 'orange' : 'green' }}-500/20 
+                                                   hover:text-{{ $user->is_active ? 'orange' : 'green' }}-300
+                                                   rounded-md transition-all duration-200"
+                                            title="{{ $user->is_active ? 'Deactivate' : 'Activate' }} User">
+                                        <i class="fas {{ $user->is_active ? 'fa-pause-circle' : 'fa-play-circle' }} text-xs"></i>
+                                        <span class="text-xs font-medium">{{ $user->is_active ? 'Deactivate' : 'Activate' }}</span>
+                                    </button> --}}
 
                                     {{-- Toggle Form --}}
                                     <form id="toggle-form-{{ $user->id }}"
@@ -202,6 +219,8 @@
                                         @csrf
                                         @method('DELETE')
                                     </form>
+                                @else
+                                    <span class="text-xs text-gray-500 italic">(You)</span>
                                 @endif
                             </div>
                         </td>

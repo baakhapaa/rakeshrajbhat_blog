@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\StatController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\SettingsController;
-use App\Http\Controllers\Admin\QuizController as AdminQuizController;
+use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\ContactController;

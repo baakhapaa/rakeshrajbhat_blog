@@ -160,36 +160,57 @@ class UserController extends Controller
      */
     public function export()
     {
-        $users = User::all();
-        $filename = 'users_' . date('Y-m-d') . '.csv';
-
-        $headers = [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => "attachment; filename=\"$filename\"",
-        ];
-
-        $callback = function() use ($users) {
-            $file = fopen('php://output', 'w');
-            fputcsv($file, ['ID', 'Name', 'Email', 'Phone', 'Role', 'Status', 'Points', 'Quiz Attempts', 'Accuracy', 'Joined']);
-
-            foreach ($users as $user) {
-                fputcsv($file, [
-                    $user->id,
-                    $user->name,
-                    $user->email,
-                    $user->phone ?? '-',
-                    $user->role ?? 'user',
-                    $user->is_active ? 'Active' : 'Inactive',
-                    $user->total_points ?? 0,
-                    $user->quiz_attempts ?? 0,
-                    $user->accuracy ?? '0%',
-                    $user->created_at->format('Y-m-d'),
-                ]);
+        try {
+            $users = User::all();
+            
+            if ($users->isEmpty()) {
+                return redirect()->route('admin.users.index')
+                    ->with('error', 'No users found to export!');
             }
+            
+            $filename = 'users_' . date('Y-m-d_H-i-s') . '.csv';
 
-            fclose($file);
-        };
+            $headers = [
+                'Content-Type' => 'text/csv',
+                'Content-Disposition' => "attachment; filename=\"$filename\"",
+                'Pragma' => 'no-cache',
+                'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+                'Expires' => '0',
+            ];
 
-        return response()->stream($callback, 200, $headers);
+            $callback = function() use ($users) {
+                $file = fopen('php://output', 'w');
+                
+                // Add UTF-8 BOM for Excel compatibility
+                fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+                
+                // Add CSV headers
+                fputcsv($file, ['ID', 'Name', 'Email', 'Phone', 'Role', 'Status', 'Points', 'Quiz Attempts', 'Accuracy', 'Joined']);
+
+                foreach ($users as $user) {
+                    fputcsv($file, [
+                        $user->id,
+                        $user->name,
+                        $user->email,
+                        $user->phone ?? '-',
+                        $user->role ?? 'user',
+                        $user->is_active ? 'Active' : 'Inactive',
+                        $user->total_points ?? 0,
+                        $user->quiz_attempts ?? 0,
+                        $user->accuracy ?? '0%',
+                        $user->created_at->format('Y-m-d'),
+                    ]);
+                }
+
+                fclose($file);
+            };
+
+            return response()->stream($callback, 200, $headers);
+            
+        } catch (\Exception $e) {
+            \Log::error('User export failed: ' . $e->getMessage());
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Failed to export users. Please try again.');
+        }
     }
 }
