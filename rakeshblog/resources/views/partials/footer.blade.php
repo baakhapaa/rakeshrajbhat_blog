@@ -7,11 +7,13 @@
             </div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <div class="bg-[#1b1f24] p-4 text-center rounded-xl border border-[#2a2f36] hover:border-[#D4AF37] transition-all shadow-lg shadow-black/10 cursor-pointer">
-                    <div class="text-[#D4AF37] mb-3 flex justify-center">
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    </div>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Municipalities</p>
-                    <p class="text-[11px] font-bold text-white">Book Bootcamp</p>
+                    <a href="{{ route('bootcamp') }}" class="block w-full h-full">
+                        <div class="text-[#D4AF37] mb-3 flex justify-center">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        </div>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase mb-1">Municipalities</p>
+                        <p class="text-[11px] font-bold text-white">Book Bootcamp</p>
+                    </a>
                 </div>
                 <div class="bg-[#1b1f24] p-4 text-center rounded-xl border border-[#2a2f36] hover:border-[#D4AF37] transition-all shadow-lg shadow-black/10 cursor-pointer">
                     <div class="text-[#D4AF37] mb-3 flex justify-center">

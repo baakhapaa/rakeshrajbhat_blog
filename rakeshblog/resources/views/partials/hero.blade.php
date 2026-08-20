@@ -26,7 +26,7 @@
                     <a href="#projects" class="bg-[#D4AF37] text-[#0b0e12] px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20">
                         Explore My Projects
                     </a>
-                    <a href="#" class="border border-white/30 text-white px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:bg-white/10 transition-all">
+                    <a href="{{ route('work-with-me') }}" class="border border-white/30 text-white px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:bg-white/10 transition-all">
                         Work With Me
                     </a>
                     <a href="#about" class="text-[#D4AF37] text-sm font-bold flex items-center gap-2 group">

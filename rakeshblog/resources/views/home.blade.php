@@ -8,7 +8,7 @@
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
             <img 
-                src="https://scontent.fktm8-1.fna.fbcdn.net/v/t51.82787-15/726977468_18023061839835682_944316572110925859_n.jpg?stp=dst-jpegr_tt6&cstp=mx2768x2768&ctp=s2768x2768&_nc_cat=100&ccb=1-7&_nc_sid=127cfc&_nc_ohc=vvS7DL0gPmAQ7kNvwG3GMt8&_nc_oc=AdqNp7hHD_SnbpxoUJ-7XICTD1aMOS5zmKPifbDanZ4m8_KTNn_i0zGBRy8w7-jX6T4&_nc_zt=23&se=-1&_nc_ht=scontent.fktm8-1.fna&_nc_gid=oqMXMv2lx69XVzOuIntFwQ&_nc_ss=7b2a8&oh=00_AQGpiC9YXj41dbfPOnkikicIKm4zOLQi2Tvi6JB6i9JrEQ&oe=6A84BCAF"
+                src="{{ asset('images/rakeshrajbhat.jpg') }}"
                 class="w-full h-full object-cover opacity-50 saturate-[1.1]"
             >
             <div class="absolute inset-0 bg-gradient-to-r from-[#0b0e12] via-[#0b0e12]/70 to-transparent"></div>
@@ -31,7 +31,7 @@
                         <a href="#projects" class="bg-[#D4AF37] text-[#0b0e12] px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20">
                             Explore My Projects
                         </a>
-                        <a href="#" class="border border-white/30 text-white px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:bg-white/10 transition-all">
+                        <a href="{{ route('work-with-me') }}" class="border border-white/30 text-white px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:bg-white/10 transition-all">
                             Work With Me
                         </a>
                         <a href="#about" class="text-[#D4AF37] text-sm font-bold flex items-center gap-2 group">
@@ -121,72 +121,124 @@
         </div>
     </section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="py-24 bg-[#fff6e0] scroll-mt-20">
-        <!-- UPDATED: changed max-w-7xl to max-w-8xl for wider container -->
-        <div class="max-w-8xl mx-auto px-6">
-            <div class="flex justify-between items-end mb-12">
-                <div>
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">What I'm Building</p>
-                    <h2 class="text-4xl font-serif font-bold text-[#1e1e1a]">Projects &amp; Initiatives</h2>
-                </div>
-                <a class="text-[#1e1e1a] font-bold text-sm flex items-center gap-1 group hover:text-[#D4AF37]" href="#">
-                    View All Projects <span class="group-hover:translate-x-1 transition-transform">→</span>
-                </a>
+<!-- Projects Section -->
+<section id="projects" class="py-28 bg-[#fff6e0] scroll-mt-20 overflow-visible">
+    <div class="max-w-8xl mx-auto px-6 mb-10">
+        <div class="flex justify-between items-end">
+            <div>
+                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">What I'm Building</p>
+                <h2 class="text-4xl font-serif font-bold text-[#1e1e1a]">Projects &amp; Initiatives</h2>
             </div>
+        </div>
+    </div>
+
+    <!-- Infinite Carousel Outer Container -->
+    <div class="carousel-container relative w-full py-16">
+        <!-- Scrolling Track -->
+        <div class="carousel-track flex items-center gap-8 w-max">
             
-            <!-- UPDATED: changed to grid-cols-4 for wider cards. Changed gap to gap-16 for huge spacing -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-16">
-                @forelse($projects ?? [] as $project)
-                    <!-- UPDATED: Increased p-8 to p-10 for more internal padding -->
-                    <div class="tooltip-container bg-white/80 p-10 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
-
-                        <!-- Normal Card Content -->
-                        <div class="project-default w-full flex flex-col items-center">
-                            <!-- Project Image -->
-                            <div class="project-image w-24 h-24 rounded-full flex items-center justify-center mb-6 overflow-hidden border-2 border-[#D4AF37]/20">
-                                @if($project->image)
-                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;"> <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-4xl font-bold">📦</span> </div>
-                                @endif
-                            </div>
-
-                            <h4 class="font-bold text-[#1e1e1a] mb-3"> {{ $project->name }} </h4>
-                            <p class="text-xs text-gray-600 mb-6 flex-grow"> {{ $project->short_description ?? 'Click to learn more' }} </p>
-                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
+            {{-- FIRST SET --}}
+            @forelse($projects ?? [] as $project)
+                <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
+                    <!-- Normal Card Content -->
+                    <div class="project-default w-full flex flex-col items-center">
+                        <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
+                            @if($project->image)
+                                <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;"> 
+                                    <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span> 
+                                </div>
+                            @endif
                         </div>
+                        <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
+                        <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
+                        <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
+                    </div>
 
- <!-- Expanded Hover Content -->
-                        <div class="tooltip-popup">
-                            <div class="project-popup-content">
-                                <!-- Icon / Image -->
+                    <!-- Popup Content -->
+                    <div class="tooltip-popup">
+                        <div class="project-popup-content flex flex-col justify-between h-full">
+                            <div>
                                 <div class="popup-image">
                                     @if($project->image)
                                         <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
                                     @else
-                                        <span style="color: {{ $project->color ?? '#D4AF37' }};"> 📦</span>
+                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
                                     @endif
                                 </div>
-                                <h5 class="font-bold text-xl text-[#1e1e1a] mb-3"> {{ $project->name }} </h5>
-                                <p class="text-sm text-black-600 mb-4 leading-relaxed"> {{ $project->short_description }}</p>
-                                <p class="text-xs text-black-500 mb-6 leading-relaxed antialiased" style="-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;"> {{ $project->description ?? $project->short_description }}</p>
-                                @if($project->url)
-                                    <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">Visit Website
-                                        <span>→</span>
-                                    </a>
-                                @endif
+                                <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
+                                
+                                <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1"> 
+                                    {{ $project->description ?? $project->long_description ?? $project->short_description }}
+                                </p>
                             </div>
+
+                            @if($project->url)
+                                <div class="pt-4 mt-2 border-t border-gray-100">
+                                    <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
+                                        Visit Website <span>→</span>
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                     </div>
-                @empty
-                    <div class="col-span-full text-center py-12 text-gray-500">
-                        <p>No projects available yet.</p>
+                </div>
+            @empty
+                <p class="text-gray-500">No projects available yet.</p>
+            @endforelse
+
+            {{-- SECOND SET (DUPLICATED FOR SEAMLESS INFINITE LOOP) --}}
+            @foreach($projects ?? [] as $project)
+                <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
+                    <!-- Normal Card Content -->
+                    <div class="project-default w-full flex flex-col items-center">
+                        <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
+                            @if($project->image)
+                                <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;"> 
+                                    <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span> 
+                                </div>
+                            @endif
+                        </div>
+                        <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
+                        <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
+                        <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
                     </div>
-                @endforelse
-            </div>
+
+                    <!-- Popup Content -->
+                    <div class="tooltip-popup">
+                        <div class="project-popup-content flex flex-col justify-between h-full">
+                            <div>
+                                <div class="popup-image">
+                                    @if($project->image)
+                                        <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
+                                    @else
+                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
+                                    @endif
+                                </div>
+                                <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
+                                
+                                <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1"> 
+                                    {{ $project->description ?? $project->long_description ?? $project->short_description }}
+                                </p>
+                            </div>
+
+                            @if($project->url)
+                                <div class="pt-4 mt-2 border-t border-gray-100">
+                                    <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
+                                        Visit Website <span>→</span>
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Impact Stats -->
     <section id="impact" class="py-20 bg-[#0c1016] scroll-mt-20">
@@ -303,104 +355,88 @@
 @endsection
 
 <style>
-/* =========================================
-   PROJECT SECTION OVERHAUL
-   ========================================= */
-
-/* Main Container Grid Safety */
 #projects {
-    overflow: visible !important;
-    padding: 6.5rem;
+    overflow: hidden !important;
 }
 
-#projects .grid {
-    perspective: 1200px;
+/* Gradient Fade Masks on Screen Edges */
+/* =========================================
+   CAROUSEL & EXPANDED TOOLTIP OVERHAUL
+   ========================================= */
+
+.carousel-container {
+    mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+
+.carousel-track {
+    animation: infiniteScroll 30s linear infinite;
+    will-change: transform;
+}
+
+.carousel-track:hover {
+    animation-play-state: paused;
+}
+@keyframes infiniteScroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 /* Base Project Card */
 .tooltip-container {
     position: relative;
     cursor: pointer;
-    overflow: visible;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-radius: 16px;
     border: 1px solid rgba(212, 175, 55, 0.18);
-    transition: 
-        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-        box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-        border-color 0.4s ease,
-        background-color 0.4s ease;
-    will-change: transform, box-shadow;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
 }
 
 .tooltip-container:hover {
-    transform: translateY(-8px) rotateX(2deg) rotateY(-1deg);
-    background: #ffffff;
-    border-color: rgba(212, 175, 55, 0.6);
-    z-index: 50;
-    box-shadow:
-        0 20px 40px -15px rgba(212, 175, 55, 0.25),
-        0 0 30px 0 rgba(212, 175, 55, 0.1),
-        inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+    z-index: 100;
 }
 
-/* Default Card Content */
+/* Default Inner Content */
 .project-default {
     opacity: 1;
-    transform: scale(1);
-    transition: 
-        opacity 0.25s ease,
-        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.25s ease, transform 0.35s ease;
 }
 
 .tooltip-container:hover .project-default {
     opacity: 0;
-    transform: scale(0.94);
+    transform: scale(0.95);
     pointer-events: none;
 }
 
-/* Image Wrapper */
-.project-image {
-    position: relative;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
-    box-shadow: 0 4px 14px rgba(212, 175, 55, 0.12);
-}
-
-.tooltip-container:hover .project-image {
-    transform: scale(1.08);
-    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.25);
-}
-
-/* Expanded Popup Card */
+/* Expanded Tooltip Popup Container */
 .tooltip-popup {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 320px;
-    min-height: 380px;
-    padding: 28px;
-    background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    width: 400px; /* EXPANDED WIDTH */
+    min-height: 380px; /* ADEQUATE HEIGHT */
+    padding: 24px;
+    background: #ffffff;
     color: #1e1e1a;
     border-radius: 20px;
-    border: 1px solid rgba(212, 175, 55, 0.4);
-    box-shadow:
-        0 30px 60px -12px rgba(0, 0, 0, 0.25),
-        0 18px 36px -18px rgba(212, 175, 55, 0.3),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    border: 1.5px solid rgba(212, 175, 55, 0.4);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     text-align: left;
-    z-index: 100;
+    z-index: 999;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: translate(-50%, -46%) scale(0.85);
+    transform: translate(-50%, -50%) scale(0.85);
     transition:
         opacity 0.3s ease,
         visibility 0.3s ease,
-        transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .tooltip-container:hover .tooltip-popup {
@@ -410,81 +446,40 @@
     transform: translate(-50%, -50%) scale(1);
 }
 
-/* Popup Image Container */
+/* Image container inside expanded popup */
 .popup-image {
     width: 100%;
-    height: 140px;
+    height: 140px; /* Expanded image frame */
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
+    padding: 12px;
     overflow: hidden;
     border-radius: 12px;
-    background: linear-gradient(135deg, #fbf8f1 0%, #f4ece0 100%);
-    border: 1px solid rgba(212, 175, 55, 0.25);
-    position: relative;
+    background: #ffffff;
+    border: 1px solid rgba(212, 175, 55, 0.2);
 }
 
 .popup-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    object-fit: contain; /* Prevents logo clipping */
 }
 
-.tooltip-container:hover .popup-image img {
-    transform: scale(1.08);
+/* Scrollbar styling for modal text */
+.tooltip-popup p::-webkit-scrollbar {
+    width: 4px;
+}
+.tooltip-popup p::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.5);
+    border-radius: 4px;
 }
 
-/* Micro-Interactions on Popup Link */
-.tooltip-popup a {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    transition: color 0.2s ease;
-}
-
-.tooltip-popup a::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    transform: scaleX(0);
-    height: 1.5px;
-    bottom: -2px;
-    left: 0;
-    background-color: #D4AF37;
-    transform-origin: bottom right;
-    transition: transform 0.25s cubic-bezier(0.86, 0, 0.07, 1);
-}
-
-.tooltip-popup a:hover::after {
-    transform: scaleX(1);
-    transform-origin: bottom left;
-}
-
-/* =========================================
-   RESPONSIVE DESIGN (MOBILE & TABLET)
-   ========================================= */
-
-@media (max-width: 1024px) {
-    /* Disable 3D tilt on touch devices for smoother performance */
-    .tooltip-container:hover {
-        transform: translateY(-4px);
-    }
-    
-    .tooltip-popup {
-        width: 290px;
-        padding: 22px;
-    }
-}
-
-@media (max-width: 640px) {
-    .tooltip-popup {
-        width: calc(100vw - 48px);
-        max-width: 320px;
-        position: fixed;
-        top: 50%;
-        left: 50%;
+/* Reduced Motion Safety */
+@media (prefers-reduced-motion: reduce) {
+    .carousel-track {
+        animation: none;
     }
 }
 </style>

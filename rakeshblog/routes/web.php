@@ -56,6 +56,21 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 // ==========================================
+// BOOTCAMP ROUTES 
+// ==========================================
+Route::get('/bootcamp', function () {
+    return view('partials.bootcamp');
+})->name('bootcamp');
+
+Route::post('/bootcamp', [ContactController::class, 'sendBootcamp'])->name('bootcamp.submit');
+
+// ==========================================
+// WORK WITH ME ROUTE (UPDATED TO POINT TO PARTIALS)
+// ==========================================
+Route::view('/work-with-me', 'partials.work-with-me')->name('work-with-me');
+Route::post('/work-with-me/send', [ContactController::class, 'sendWorkWithMe'])->name('work-with-me.send');
+
+// ==========================================
 // PROTECTED ROUTES (Requires Authentication)
 // ==========================================
 

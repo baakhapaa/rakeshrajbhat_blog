@@ -3,7 +3,7 @@
 @section('title', 'Contact Us · Rakesh Rajbhat')
 
 @section('content')
-<section class="min-h-screen pt-32 pb-20 bg-gradient-to-b from-[#f8f6f0] to-[#f2f2f2] text-[#1e1e1a]">
+<section class="min-h-screen pt-32 pb-20 bg-[#f8f6f0] text-[#1e1e1a]">
     <div class="max-w-5xl mx-auto px-6">
         <!-- Page Header -->
         <div class="text-center mb-16">
@@ -161,7 +161,7 @@
                                 </div>
                                 <div>
                                     <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Working Hours</p>
-                                    <p class="text-gray-700 font-medium">Mon - Fri: 9:00 AM - 6:00 PM</p>
+                                    <p class="text-gray-700 font-medium">Mon - Fri: 11:00 AM - 6:00 PM</p>
                                     <p class="text-sm text-gray-400">Weekend: Closed</p>
                                 </div>
                             </div>
@@ -178,19 +178,19 @@
                         </h3>
                         
                         <div class="grid grid-cols-5 gap-3">
-                            <a href="#" class="w-full aspect-square rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center hover:bg-[#D4AF37]/20 transition-all hover:-translate-y-1 hover:shadow-lg text-[#D4AF37] hover:text-[#b8922a]">
+                            <a href="https://www.facebook.com/raacb/" class="w-full aspect-square rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center hover:bg-[#D4AF37]/20 transition-all hover:-translate-y-1 hover:shadow-lg text-[#D4AF37] hover:text-[#b8922a]">
                                 <i class="fab fa-facebook-f text-xl"></i>
                             </a>
-                            <a href="#" class="w-full aspect-square rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center hover:bg-[#D4AF37]/20 transition-all hover:-translate-y-1 hover:shadow-lg text-[#D4AF37] hover:text-[#b8922a]">
-                                <i class="fab fa-twitter text-xl"></i>
+                            <a href="https://www.linkedin.com/in/raacb/" class="w-full aspect-square rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center hover:bg-[#D4AF37]/20 transition-all hover:-translate-y-1 hover:shadow-lg text-[#D4AF37] hover:text-[#b8922a]">
+                                <i class="fab fa-linkedin text-xl"></i>
                             </a>
-                            <a href="#" class="w-full aspect-square rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center hover:bg-[#D4AF37]/20 transition-all hover:-translate-y-1 hover:shadow-lg text-[#D4AF37] hover:text-[#b8922a]">
+                            <a href="https://www.instagram.com/raa_case7/" class="w-full aspect-square rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center hover:bg-[#D4AF37]/20 transition-all hover:-translate-y-1 hover:shadow-lg text-[#D4AF37] hover:text-[#b8922a]">
                                 <i class="fab fa-instagram text-xl"></i>
                             </a>
-                            <a href="#" class="w-full aspect-square rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center hover:bg-[#D4AF37]/20 transition-all hover:-translate-y-1 hover:shadow-lg text-[#D4AF37] hover:text-[#b8922a]">
+                            <a href="https://www.youtube.com/channel/UCtydr8KirarNpQ9sj2QSXQw" class="w-full aspect-square rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center hover:bg-[#D4AF37]/20 transition-all hover:-translate-y-1 hover:shadow-lg text-[#D4AF37] hover:text-[#b8922a]">
                                 <i class="fab fa-youtube text-xl"></i>
                             </a>
-                            <a href="#" class="w-full aspect-square rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center hover:bg-[#D4AF37]/20 transition-all hover:-translate-y-1 hover:shadow-lg text-[#D4AF37] hover:text-[#b8922a]">
+                            <a href="https://github.com/baakhapaa" class="w-full aspect-square rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center hover:bg-[#D4AF37]/20 transition-all hover:-translate-y-1 hover:shadow-lg text-[#D4AF37] hover:text-[#b8922a]">
                                 <i class="fab fa-github text-xl"></i>
                             </a>
                         </div>

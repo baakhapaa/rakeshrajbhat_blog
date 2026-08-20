@@ -98,7 +98,7 @@
             @endauth
         @else
             {{-- Primary CTA --}}
-            <a href="#" class="border border-[#D4AF37] text-[#D4AF37] px-5 py-2 rounded-sm text-xs font-semibold tracking-widest hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all">
+            <a href="{{ route('work-with-me') }}" class="border border-[#D4AF37] text-[#D4AF37] px-5 py-2 rounded-sm text-xs font-semibold tracking-widest hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all">
                 WORK WITH ME
             </a>
         @endif
