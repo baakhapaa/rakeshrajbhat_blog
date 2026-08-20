@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Quiz;
-use App\Models\QuizQuestion;
+use App\Models\Question;
 use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -13,10 +13,39 @@ use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $blogs = Blog::with('quiz')->orderBy('created_at', 'desc')->paginate(10);
-        return view('admin.blogs.index', compact('blogs'));
+        $query = Blog::query();
+
+        // Filter by type
+        if ($request->has('filter')) {
+            switch ($request->filter) {
+                case 'featured':
+                    $query->where('is_featured', true);
+                    break;
+                case 'published':
+                    $query->where('is_published', true);
+                    break;
+                case 'draft':
+                    $query->where('is_published', false);
+                    break;
+                case 'has_quiz':
+                    $query->has('quiz');
+                    break;
+            }
+        }
+
+        // Get counts for stats
+        $totalBlogs = Blog::count();
+        $featuredCount = Blog::where('is_featured', true)->count();
+        $publishedCount = Blog::where('is_published', true)->count();
+        $draftCount = Blog::where('is_published', false)->count();
+
+        $blogs = $query->with('quiz')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('admin.blogs.index', compact('blogs', 'totalBlogs', 'featuredCount', 'publishedCount', 'draftCount'));
     }
 
     public function create()
@@ -34,6 +63,7 @@ class BlogController extends Controller
             'tags' => 'nullable|string',
             'featured_image' => 'nullable|string|max:500',
             'is_published' => 'nullable|boolean',
+            'is_featured' => 'nullable|boolean',
             'published_at' => 'nullable|date',
             'quiz_title' => 'nullable|string|max:255',
             'quiz_description' => 'nullable|string',
@@ -78,7 +108,11 @@ class BlogController extends Controller
             $tags = array_map('trim', explode(',', $request->tags));
         }
 
-        $featuredImage = $request->featured_image ?? null;
+         $featuredImage = null;
+            if ($request->hasFile('featured_image')) {
+                $path = $request->file('featured_image')->store('blogs', 'public');
+                $featuredImage = $path;
+            }
 
         // Generate a unique slug
         $slug = Str::slug($validated['title']);
@@ -91,6 +125,7 @@ class BlogController extends Controller
         }
 
         $isPublished = $request->has('is_published') && $request->is_published == 1;
+        $isFeatured = $request->has('is_featured') && $request->is_featured == 1;
         $publishedAt = $isPublished ? now() : null;
 
         $blog = Blog::create([
@@ -102,21 +137,22 @@ class BlogController extends Controller
             'tags' => $tags,
             'featured_image' => $featuredImage,
             'is_published' => $isPublished,
+            'is_featured' => $isFeatured,
             'published_at' => $publishedAt,
             'author' => auth()->guard('admin')->user()->name ?? 'Admin',
+            // 'user_id' => auth()->id(),
         ]);
 
         // Handle multi-question quiz
         $this->handleQuizCreation($request, $blog);
 
-        // ========================================== */
-        // LOG BLOG CREATION
-        // ========================================== */
+        // Log blog creation
         ActivityLogger::log('blog_created', 'Created new blog "' . $blog->title . '"', [
             'blog_id' => $blog->id,
             'title' => $blog->title,
             'category' => $blog->category,
-            'is_published' => $blog->is_published
+            'is_published' => $blog->is_published,
+            'is_featured' => $blog->is_featured
         ]);
 
         return redirect()->route('admin.blogs.edit', $blog->id)
@@ -147,6 +183,7 @@ class BlogController extends Controller
             'tags' => 'nullable|string',
             'featured_image' => 'nullable|string|max:500',
             'is_published' => 'nullable|boolean',
+            'is_featured' => 'nullable|boolean',
             'published_at' => 'nullable|date',
             'quiz_title' => 'nullable|string|max:255',
             'quiz_description' => 'nullable|string',
@@ -154,7 +191,7 @@ class BlogController extends Controller
             'quiz_is_active' => 'nullable|boolean',
             'remove_quiz' => 'nullable|boolean',
             'questions' => 'nullable|array',
-            'questions.*.id' => 'nullable|exists:quiz_questions,id',
+            'questions.*.id' => 'nullable|exists:questions,id',
             'questions.*.question' => 'nullable|string',
             'questions.*.option_1' => 'nullable|string',
             'questions.*.option_2' => 'nullable|string',
@@ -206,6 +243,7 @@ class BlogController extends Controller
         }
 
         $isPublished = $request->has('is_published') && $request->is_published == 1;
+        $isFeatured = $request->has('is_featured') && $request->is_featured == 1;
         $publishedAt = $isPublished ? now() : null;
 
         // Delete old image if new one is uploaded
@@ -225,6 +263,7 @@ class BlogController extends Controller
             'tags' => $tags,
             'featured_image' => $featuredImage,
             'is_published' => $isPublished,
+            'is_featured' => $isFeatured,
             'published_at' => $publishedAt,
         ]);
 
@@ -232,7 +271,6 @@ class BlogController extends Controller
         if ($request->has('remove_quiz') && $request->remove_quiz == 1) {
             $this->deleteQuiz($blog);
             
-            // Log quiz removal
             ActivityLogger::log('quiz_deleted', 'Removed quiz from blog "' . $blog->title . '"', [
                 'blog_id' => $blog->id
             ]);
@@ -244,14 +282,13 @@ class BlogController extends Controller
         // Handle multi-question quiz
         $this->handleQuizUpdate($request, $blog);
 
-        // ========================================== */
-        // LOG BLOG UPDATE
-        // ========================================== */
+        // Log blog update
         ActivityLogger::log('blog_updated', 'Updated blog "' . $blog->title . '"', [
             'blog_id' => $blog->id,
             'title' => $blog->title,
             'category' => $blog->category,
-            'is_published' => $blog->is_published
+            'is_published' => $blog->is_published,
+            'is_featured' => $blog->is_featured
         ]);
 
         return redirect()->route('admin.blogs.edit', $blog->id)
@@ -276,9 +313,7 @@ class BlogController extends Controller
         
         $blog->delete();
 
-        // ========================================== */
-        // LOG BLOG DELETION
-        // ========================================== */
+        // Log blog deletion
         ActivityLogger::log('blog_deleted', 'Deleted blog "' . $blogTitle . '"', [
             'blog_id' => $id,
             'title' => $blogTitle
@@ -321,7 +356,7 @@ class BlogController extends Controller
                     continue;
                 }
 
-                $question = QuizQuestion::create([
+                $question = Question::create([
                     'quiz_id' => $quiz->id,
                     'question' => $questionData['question'],
                     'option_1' => $questionData['option_1'],
@@ -357,7 +392,6 @@ class BlogController extends Controller
                 'is_active' => $request->has('quiz_is_active') && $request->quiz_is_active == 1,
             ]);
             
-            // Log quiz update
             ActivityLogger::log('quiz_updated', 'Updated quiz "' . $oldTitle . '" to "' . $request->quiz_title . '" for blog "' . $blog->title . '"', [
                 'quiz_id' => $quiz->id,
                 'blog_id' => $blog->id,
@@ -373,7 +407,6 @@ class BlogController extends Controller
                 'is_active' => $request->has('quiz_is_active') && $request->quiz_is_active == 1,
             ]);
             
-            // Log quiz creation
             ActivityLogger::log('quiz_created', 'Created new quiz "' . $quiz->title . '" for blog "' . $blog->title . '"', [
                 'quiz_id' => $quiz->id,
                 'blog_id' => $blog->id,
@@ -407,7 +440,7 @@ class BlogController extends Controller
 
                 // Check if updating existing question
                 if (isset($questionData['id']) && $questionData['id']) {
-                    $question = QuizQuestion::find($questionData['id']);
+                    $question = Question::find($questionData['id']);
                     if ($question && $question->quiz_id == $quiz->id) {
                         $question->update($questionFields);
                         $updatedQuestionIds[] = $question->id;
@@ -416,14 +449,14 @@ class BlogController extends Controller
                 }
 
                 // Create new question
-                $newQuestion = QuizQuestion::create(array_merge($questionFields, ['quiz_id' => $quiz->id]));
+                $newQuestion = Question::create(array_merge($questionFields, ['quiz_id' => $quiz->id]));
                 $updatedQuestionIds[] = $newQuestion->id;
             }
 
             // Delete questions that were removed
             $questionsToDelete = array_diff($existingQuestionIds, $updatedQuestionIds);
             if (!empty($questionsToDelete)) {
-                QuizQuestion::whereIn('id', $questionsToDelete)->delete();
+                Question::whereIn('id', $questionsToDelete)->delete();
             }
         }
     }
@@ -450,7 +483,6 @@ class BlogController extends Controller
         $blog->published_at = $blog->is_published ? now() : null;
         $blog->save();
 
-        // Log publish status change
         ActivityLogger::log('blog_publish_toggled', 'Changed blog "' . $blog->title . '" publish status from ' . ($oldStatus ? 'Published' : 'Draft') . ' to ' . ($blog->is_published ? 'Published' : 'Draft'), [
             'blog_id' => $blog->id,
             'old_status' => $oldStatus ? 'Published' : 'Draft',
@@ -459,6 +491,42 @@ class BlogController extends Controller
 
         return redirect()->back()->with('success', 
             $blog->is_published ? 'Blog published!' : 'Blog unpublished!'
+        );
+    }
+
+    /**
+     * Toggle blog featured status
+     */
+    public function toggleFeatured($id)
+    {
+        $blog = Blog::findOrFail($id);
+        $oldStatus = $blog->is_featured;
+        $blog->is_featured = !$blog->is_featured;
+        $blog->save();
+
+        // If this blog is now featured, unfeature all other blogs (optional - only 3 featured allowed)
+        if ($blog->is_featured) {
+            $featuredCount = Blog::where('is_featured', true)->count();
+            if ($featuredCount > 3) {
+                // Unfeature the oldest featured blog
+                $oldestFeatured = Blog::where('is_featured', true)
+                    ->orderBy('updated_at', 'asc')
+                    ->first();
+                if ($oldestFeatured && $oldestFeatured->id !== $blog->id) {
+                    $oldestFeatured->is_featured = false;
+                    $oldestFeatured->save();
+                }
+            }
+        }
+
+        ActivityLogger::log('blog_featured_toggled', 'Changed blog "' . $blog->title . '" featured status from ' . ($oldStatus ? 'Featured' : 'Not Featured') . ' to ' . ($blog->is_featured ? 'Featured' : 'Not Featured'), [
+            'blog_id' => $blog->id,
+            'old_status' => $oldStatus ? 'Featured' : 'Not Featured',
+            'new_status' => $blog->is_featured ? 'Featured' : 'Not Featured'
+        ]);
+
+        return redirect()->back()->with('success', 
+            $blog->is_featured ? 'Blog marked as featured!' : 'Blog removed from featured!'
         );
     }
 }

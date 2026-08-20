@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class Blog extends Model
 {
@@ -19,7 +20,9 @@ class Blog extends Model
         'category',
         'tags',
         'author',
+        'user_id',
         'is_published',
+        'is_featured',
         'published_at',
         'views',
         'quiz_question',
@@ -33,18 +36,42 @@ class Blog extends Model
     protected $casts = [
         'tags' => 'array',
         'is_published' => 'boolean',
+        'is_featured' => 'boolean',
         'published_at' => 'datetime',
+        'views' => 'integer',
+    ];
+
+    protected $appends = [
+        'reading_time',
+        'has_quiz',
+        'formatted_date',
+        'short_date',
+        'featured_image_url',
     ];
 
     // ==========================================
     // RELATIONSHIPS
     // ==========================================
 
+    /**
+     * Get the user who authored the blog.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get comments for the blog (approved comments only).
+     */
     public function comments()
     {
         return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
     }
 
+    /**
+     * Get all comments (including unapproved) for admin.
+     */
     public function allComments()
     {
         return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
@@ -110,46 +137,32 @@ class Blog extends Model
     }
 
     // ==========================================
-    // SCOPES
-    // ==========================================
-
-    public function scopePublished($query)
-    {
-        return $query->where('is_published', true)
-                     ->whereNotNull('published_at')
-                     ->where('published_at', '<=', now());
-    }
-
-    public function scopeDraft($query)
-    {
-        return $query->where('is_published', false);
-    }
-
-    public function scopeSearch($query, $search)
-    {
-        return $query->where('title', 'LIKE', '%' . $search . '%')
-                     ->orWhere('content', 'LIKE', '%' . $search . '%')
-                     ->orWhere('excerpt', 'LIKE', '%' . $search . '%');
-    }
-
-    // ==========================================
     // ACCESSORS
     // ==========================================
 
+    /**
+     * Get formatted date.
+     */
     public function getFormattedDateAttribute()
     {
         return $this->published_at 
             ? $this->published_at->format('F d, Y') 
-            : $this->created_at->format('F d, Y');
+            : ($this->created_at ? $this->created_at->format('F d, Y') : null);
     }
 
+    /**
+     * Get short date.
+     */
     public function getShortDateAttribute()
     {
         return $this->published_at 
             ? $this->published_at->format('M d, Y') 
-            : $this->created_at->format('M d, Y');
+            : ($this->created_at ? $this->created_at->format('M d, Y') : null);
     }
 
+    /**
+     * Get reading time in minutes.
+     */
     public function getReadingTimeAttribute()
     {
         $words = str_word_count(strip_tags($this->content ?? ''));
@@ -157,6 +170,9 @@ class Blog extends Model
         return $minutes . ' min read';
     }
 
+    /**
+     * Get excerpt with fallback.
+     */
     public function getExcerptAttribute($value)
     {
         if ($value) {
@@ -165,11 +181,17 @@ class Blog extends Model
         return Str::limit(strip_tags($this->content ?? ''), 150);
     }
 
+    /**
+     * Get short title.
+     */
     public function getShortTitleAttribute()
     {
         return Str::limit($this->title, 30);
     }
 
+    /**
+     * Get tags as string.
+     */
     public function getTagsStringAttribute()
     {
         $tags = $this->getTagsAttribute($this->attributes['tags'] ?? null);
@@ -177,6 +199,86 @@ class Blog extends Model
             return implode(', ', $tags);
         }
         return '';
+    }
+
+    /**
+     * Get featured image URL - IMPROVED VERSION
+     * Handles all possible image path formats:
+     * - Full URLs (https://...)
+     * - Storage paths (/storage/... or storage/...)
+     * - Relative paths (blog-images/...)
+     */
+    public function getFeaturedImageUrlAttribute()
+    {
+        if (empty($this->featured_image)) {
+            return null;
+        }
+
+        $path = $this->featured_image;
+
+        // 1. If it's already a full URL (starts with http:// or https://)
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        // 2. If it starts with /storage/, remove the leading slash
+        if (str_starts_with($path, '/storage/')) {
+            return asset($path);
+        }
+
+        // 3. If it starts with storage/ (without slash)
+        if (str_starts_with($path, 'storage/')) {
+            return asset($path);
+        }
+
+        // 4. Default: assume it's a storage path
+        return asset('storage/' . $path);
+    }
+
+    /**
+     * Check if blog has a quiz.
+     */
+    public function getHasQuizAttribute()
+    {
+        return $this->hasLegacyQuiz() || $this->hasMultipleQuiz();
+    }
+
+    /**
+     * Get status badge class.
+     */
+    public function getStatusBadgeAttribute()
+    {
+        if ($this->is_published) {
+            return 'bg-green-500/20 text-green-400 border border-green-500/30';
+        }
+        return 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30';
+    }
+
+    /**
+     * Get status text.
+     */
+    public function getStatusTextAttribute()
+    {
+        return $this->is_published ? 'Published' : 'Draft';
+    }
+
+    /**
+     * Get featured badge class.
+     */
+    public function getFeaturedBadgeAttribute()
+    {
+        if ($this->is_featured) {
+            return 'bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30';
+        }
+        return 'bg-gray-500/20 text-gray-400 border border-gray-500/30';
+    }
+
+    /**
+     * Get featured text.
+     */
+    public function getFeaturedTextAttribute()
+    {
+        return $this->is_featured ? '⭐ Featured' : 'Not Featured';
     }
 
     // ==========================================
@@ -201,7 +303,7 @@ class Blog extends Model
      */
     public function hasMultipleQuiz()
     {
-        return $this->quiz()->exists() && $this->quiz->questions()->count() > 0;
+        return $this->quizzes()->where('is_active', true)->exists();
     }
 
     /**
@@ -218,14 +320,15 @@ class Blog extends Model
     public function getQuizData()
     {
         // First check for multiple question quiz
-        if ($this->hasMultipleQuiz()) {
-            $quiz = $this->quiz;
+        $activeQuiz = $this->quizzes()->where('is_active', true)->with('questions')->first();
+        if ($activeQuiz) {
             return [
                 'type' => 'multiple',
-                'title' => $quiz->title,
-                'description' => $quiz->description,
-                'passing_score' => $quiz->passing_score,
-                'questions' => $quiz->questions,
+                'id' => $activeQuiz->id,
+                'title' => $activeQuiz->title,
+                'description' => $activeQuiz->description,
+                'passing_score' => $activeQuiz->passing_score,
+                'questions' => $activeQuiz->questions,
             ];
         }
         
@@ -260,55 +363,233 @@ class Blog extends Model
     }
 
     // ==========================================
+    // SCOPES
+    // ==========================================
+
+    /**
+     * Scope to only include published blogs.
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true)
+                     ->whereNotNull('published_at')
+                     ->where('published_at', '<=', now());
+    }
+
+    /**
+     * Scope to only include draft blogs.
+     */
+    public function scopeDraft($query)
+    {
+        return $query->where('is_published', false);
+    }
+
+    /**
+     * Scope to only include featured blogs.
+     */
+    public function scopeFeatured($query)
+    {
+        return $query->where('is_featured', true);
+    }
+
+    /**
+     * Scope to search blogs.
+     */
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function($q) use ($search) {
+            $q->where('title', 'LIKE', '%' . $search . '%')
+              ->orWhere('content', 'LIKE', '%' . $search . '%')
+              ->orWhere('excerpt', 'LIKE', '%' . $search . '%')
+              ->orWhere('category', 'LIKE', '%' . $search . '%')
+              ->orWhere('tags', 'LIKE', '%' . $search . '%');
+        });
+    }
+
+    /**
+     * Scope to filter by category.
+     */
+    public function scopeByCategory($query, $category)
+    {
+        return $query->where('category', $category);
+    }
+
+    /**
+     * Scope to get popular blogs.
+     */
+    public function scopePopular($query, $limit = 5)
+    {
+        return $query->orderBy('views', 'desc')->limit($limit);
+    }
+
+    /**
+     * Scope to get recent blogs.
+     */
+    public function scopeRecent($query, $limit = 5)
+    {
+        return $query->orderBy('published_at', 'desc')->limit($limit);
+    }
+
+    /**
+     * Scope to get blogs with quiz.
+     */
+    public function scopeWithQuiz($query)
+    {
+        return $query->has('quizzes');
+    }
+
+    /**
+     * Scope to get blogs without quiz.
+     */
+    public function scopeWithoutQuiz($query)
+    {
+        return $query->doesntHave('quizzes');
+    }
+
+    // ==========================================
     // COMMENT HELPERS
     // ==========================================
 
+    /**
+     * Get total approved comments count.
+     */
     public function commentsCount()
     {
         return $this->comments()->count();
+    }
+
+    /**
+     * Get total comments count (including unapproved).
+     */
+    public function totalCommentsCount()
+    {
+        return $this->allComments()->count();
     }
 
     // ==========================================
     // HELPERS
     // ==========================================
 
+    /**
+     * Check if blog is published.
+     */
     public function isPublished()
     {
         return $this->is_published && $this->published_at && $this->published_at <= now();
     }
 
+    /**
+     * Check if blog is featured.
+     */
+    public function isFeatured()
+    {
+        return $this->is_featured;
+    }
+
+    /**
+     * Increment view count.
+     */
     public function incrementViews()
     {
         $this->increment('views');
+        return $this;
     }
 
+    /**
+     * Get previous blog post.
+     */
     public function getPrevious()
     {
-        return self::where('id', '<', $this->id)
-            ->where('is_published', true)
-            ->orderBy('id', 'desc')
+        return self::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->where('published_at', '<', $this->published_at)
+            ->orderBy('published_at', 'desc')
             ->first();
     }
 
+    /**
+     * Get next blog post.
+     */
     public function getNext()
     {
-        return self::where('id', '>', $this->id)
-            ->where('is_published', true)
-            ->orderBy('id', 'asc')
+        return self::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->where('published_at', '>', $this->published_at)
+            ->orderBy('published_at', 'asc')
             ->first();
     }
 
+    /**
+     * Get related blogs (same category).
+     */
     public function getRelated($limit = 3)
     {
         return self::where('category', $this->category)
             ->where('id', '!=', $this->id)
             ->where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
             ->limit($limit)
             ->get();
     }
 
+    /**
+     * Get all categories with blog count.
+     */
+    public static function getCategoriesWithCount()
+    {
+        return self::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->select('category')
+            ->selectRaw('count(*) as total')
+            ->groupBy('category')
+            ->get();
+    }
+
+    /**
+     * Get blog archives by year/month.
+     */
+    public static function getArchives()
+    {
+        return self::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->selectRaw('YEAR(published_at) as year')
+            ->selectRaw('MONTH(published_at) as month')
+            ->selectRaw('MONTHNAME(published_at) as month_name')
+            ->selectRaw('count(*) as total')
+            ->groupBy('year', 'month', 'month_name')
+            ->orderBy('year', 'desc')
+            ->orderBy('month', 'desc')
+            ->get();
+    }
+
+    /**
+     * Get dashboard stats for admin.
+     */
+    public static function getDashboardStats()
+    {
+        return [
+            'total' => self::count(),
+            'published' => self::where('is_published', true)->count(),
+            'drafts' => self::where('is_published', false)->count(),
+            'featured' => self::where('is_featured', true)->count(),
+            'with_quiz' => self::has('quizzes')->count(),
+            'most_viewed' => self::orderBy('views', 'desc')->first(),
+            'recent_published' => self::where('is_published', true)
+                ->whereNotNull('published_at')
+                ->orderBy('published_at', 'desc')
+                ->limit(5)
+                ->get(),
+        ];
+    }
+
     // ==========================================
-    // BOOT METHOD
+    // BOOT METHOD (Auto-generate slug)
     // ==========================================
 
     protected static function boot()

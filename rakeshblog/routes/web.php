@@ -35,6 +35,31 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/blog', [FrontendBlogController::class, 'index'])->name('blog');
 Route::get('/blog/{slug}', [FrontendBlogController::class, 'show'])->name('blog.show');
 
+// ==========================================
+// BLOG FEATURES
+// ==========================================
+Route::get('/blog/category/{category}', [FrontendBlogController::class, 'byCategory'])->name('blog.category');
+Route::get('/blog/search', [FrontendBlogController::class, 'search'])->name('blog.search');
+Route::get('/blog/archive/{year}/{month}', [FrontendBlogController::class, 'archive'])->name('blog.archive');
+Route::get('/blog/feed', [FrontendBlogController::class, 'feed'])->name('blog.feed');
+
+// ==========================================
+// BLOG API ROUTES (AJAX)
+// ==========================================
+Route::get('/api/blog/popular', [FrontendBlogController::class, 'popular'])->name('api.blog.popular');
+Route::get('/api/blog/featured', [FrontendBlogController::class, 'featured'])->name('api.blog.featured');
+Route::get('/api/blog/latest', [FrontendBlogController::class, 'latest'])->name('api.blog.latest');
+Route::get('/api/blog/categories', [FrontendBlogController::class, 'categories'])->name('api.blog.categories');
+Route::get('/api/blog/archives', [FrontendBlogController::class, 'archives'])->name('api.blog.archives');
+
+// ==========================================
+// HOME API ROUTES (AJAX)
+// ==========================================
+Route::get('/api/projects', [HomeController::class, 'getProjects'])->name('api.projects');
+Route::get('/api/projects/{slug}', [HomeController::class, 'getProject'])->name('api.project');
+Route::get('/api/featured-blogs', [HomeController::class, 'getFeaturedBlogs'])->name('api.featured-blogs');
+Route::get('/api/latest-blogs', [HomeController::class, 'getLatestBlogs'])->name('api.latest-blogs');
+
 // Authentication Routes (Public)
 Route::controller(AuthController::class)->group(function () {
     Route::get('/login', 'showLogin')->name('login');
@@ -65,7 +90,7 @@ Route::get('/bootcamp', function () {
 Route::post('/bootcamp', [ContactController::class, 'sendBootcamp'])->name('bootcamp.submit');
 
 // ==========================================
-// WORK WITH ME ROUTE (UPDATED TO POINT TO PARTIALS)
+// WORK WITH ME ROUTE
 // ==========================================
 Route::view('/work-with-me', 'partials.work-with-me')->name('work-with-me');
 Route::post('/work-with-me/send', [ContactController::class, 'sendWorkWithMe'])->name('work-with-me.send');
@@ -95,14 +120,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/comments/{id}/like', [CommentController::class, 'like'])->name('comments.like');
     Route::post('/comments/{id}/unlike', [CommentController::class, 'unlike'])->name('comments.unlike');
     
-    // Quiz Submission Route
+    // Quiz Routes
+    Route::get('/quiz/{id}', [QuizController::class, 'show'])->name('quiz.show');
     Route::post('/quiz/submit/{quizId}', [QuizController::class, 'submit'])->name('quiz.submit');
-    
-    // Quiz Reset Route
-    Route::post('/quiz/reset', function() {
-        session()->forget(['quiz_completed', 'quiz_results']);
-        return response()->json(['success' => true]);
-    })->name('quiz.reset');
+    Route::post('/quiz/reset', [QuizController::class, 'reset'])->name('quiz.reset');
+    Route::get('/quiz/history', [QuizController::class, 'history'])->name('quiz.history');
+    Route::get('/quiz/retake/{quizId}', [QuizController::class, 'retake'])->name('quiz.retake');
+    Route::get('/quiz/leaderboard', [QuizController::class, 'leaderboard'])->name('quiz.leaderboard');
+    Route::get('/quiz/results/{userId?}', [QuizController::class, 'getResults'])->name('quiz.results');
+    Route::get('/quiz/stats/{userId?}', [QuizController::class, 'getStats'])->name('quiz.stats');
 });
 
 // ==========================================
@@ -138,7 +164,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('blogs', AdminBlogController::class);
         
         // ==========================================
-        // USER MANAGEMENT ROUTES (No Create)
+        // USER MANAGEMENT ROUTES
         // ==========================================
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
@@ -149,9 +175,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
         
         // ==========================================
+        // ADMIN BLOG FEATURES
+        // ==========================================
+        Route::post('/blogs/{id}/toggle-publish', [AdminBlogController::class, 'togglePublish'])->name('blogs.toggle-publish');
+        Route::patch('/blogs/{id}/toggle-featured', [AdminBlogController::class, 'toggleFeatured'])->name('blogs.toggle-featured');
+        
+        // ==========================================
         // ADMIN QUIZ ROUTES
         // ==========================================
-        
         Route::get('/blogs/{blogId}/quizzes/create', [AdminQuizController::class, 'create'])->name('quizzes.create');
         Route::post('/quizzes', [AdminQuizController::class, 'store'])->name('quizzes.store');
         Route::get('/quizzes/{id}/edit', [AdminQuizController::class, 'edit'])->name('quizzes.edit');
@@ -161,9 +192,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/quizzes/remove-question/{id}', [AdminQuizController::class, 'removeQuestion'])->name('quizzes.remove-question');
         Route::get('/blogs/{blogId}/quiz', [AdminQuizController::class, 'index'])->name('quizzes.index');
         
-        // Admin Comment Routes
+        // ==========================================
+        // ADMIN COMMENT ROUTES
+        // ==========================================
         Route::get('/comments', [AdminCommentController::class, 'index'])->name('comments.index');
         Route::delete('/comments/{id}', [AdminCommentController::class, 'destroy'])->name('comments.destroy');
+        Route::post('/comments/{id}/approve', [AdminCommentController::class, 'approve'])->name('comments.approve');
+        Route::post('/comments/{id}/reject', [AdminCommentController::class, 'reject'])->name('comments.reject');
         
         // ==========================================
         // ACTIVITY LOGS ROUTES
@@ -171,6 +206,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity.logs');
         Route::delete('/activity-logs/{id}', [ActivityLogController::class, 'destroy'])->name('activity.logs.destroy');
         Route::post('/activity-logs/clear', [ActivityLogController::class, 'clearAll'])->name('activity.logs.clear');
+        Route::get('/activity-logs/export', [ActivityLogController::class, 'export'])->name('activity.logs.export');
         
         // ==========================================
         // PROJECTS ROUTES
@@ -179,7 +215,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/projects/{id}/toggle-status', [ProjectController::class, 'toggleStatus'])->name('projects.toggle-status');
         Route::post('/projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
         
-        // Settings Routes
+        // ==========================================
+        // SETTINGS ROUTES
+        // ==========================================
         Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
         Route::put('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.update-profile');
         Route::put('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');

@@ -27,10 +27,10 @@
                class="nav-link transition-colors hover:text-[#D4AF37]">
                 Research
             </a>
-            <a href="{{ route('blog') }}" 
-               class="nav-link transition-colors {{ request()->routeIs('blog') || request()->routeIs('blog.show') ? 'active text-[#D4AF37] border-b-2 border-[#D4AF37] pb-1' : 'hover:text-[#D4AF37]' }}">
+             <a href="{{ route('home') }}#featured-blogs" 
+                class="nav-link transition-colors {{ request()->routeIs('home') && request()->has('section') && request('section') == 'featured-blogs' ? 'text-[#D4AF37] border-b-2 border-[#D4AF37] pb-1' : 'hover:text-[#D4AF37]' }}">
                 Blog
-            </a>
+             </a>
         </nav>
 
         {{-- Right Side Actions --}}

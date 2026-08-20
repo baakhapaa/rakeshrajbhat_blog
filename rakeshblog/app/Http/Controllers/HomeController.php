@@ -18,17 +18,33 @@ class HomeController extends Controller
             $stats = collect();
         }
 
-        // Get latest blog posts from admin
+        // Get FEATURED blogs for homepage (from admin panel)
+        try {
+            $featuredBlogs = Blog::where('is_published', true)
+                ->where('is_featured', true)  // Only get featured blogs
+                ->whereNotNull('published_at')
+                ->where('published_at', '<=', now())
+                ->orderBy('published_at', 'desc')
+                ->limit(3) // Show up to 3 featured blogs
+                ->get();
+        } catch (\Exception $e) {
+            $featuredBlogs = collect();
+        }
+
+        // Get latest blogs (as fallback if no featured blogs exist)
         try {
             $latestBlogs = Blog::where('is_published', true)
                 ->whereNotNull('published_at')
                 ->where('published_at', '<=', now())
                 ->orderBy('published_at', 'desc')
-                ->take(3) // Get only 3 latest posts for homepage
+                ->limit(3)
                 ->get();
         } catch (\Exception $e) {
             $latestBlogs = collect();
         }
+
+        // If there are featured blogs, use them; otherwise use latest blogs
+        $homeBlogs = $featuredBlogs->isNotEmpty() ? $featuredBlogs : $latestBlogs;
 
         // Get all active projects ordered by order field
         try {
@@ -43,12 +59,24 @@ class HomeController extends Controller
         try {
             $totalBlogs = Blog::where('is_published', true)->count();
             $totalProjects = Project::where('is_active', true)->count();
+            $totalFeaturedBlogs = Blog::where('is_published', true)
+                ->where('is_featured', true)
+                ->count();
         } catch (\Exception $e) {
             $totalBlogs = 0;
             $totalProjects = 0;
+            $totalFeaturedBlogs = 0;
         }
 
-        return view('home', compact('stats', 'latestBlogs', 'projects', 'totalBlogs', 'totalProjects'));
+        return view('home', compact(
+            'stats', 
+            'homeBlogs', 
+            'projects', 
+            'totalBlogs', 
+            'totalProjects',
+            'totalFeaturedBlogs',
+            'featuredBlogs'  // Pass separately for the featured section
+        ));
     }
 
     /**
@@ -92,6 +120,57 @@ class HomeController extends Controller
                 'success' => false,
                 'message' => 'Project not found'
             ], 404);
+        }
+    }
+
+    /**
+     * Get featured blogs for AJAX/widget
+     */
+    public function getFeaturedBlogs()
+    {
+        try {
+            $blogs = Blog::where('is_published', true)
+                ->where('is_featured', true)
+                ->whereNotNull('published_at')
+                ->where('published_at', '<=', now())
+                ->orderBy('published_at', 'desc')
+                ->limit(3)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $blogs
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get latest blogs for AJAX/widget
+     */
+    public function getLatestBlogs()
+    {
+        try {
+            $blogs = Blog::where('is_published', true)
+                ->whereNotNull('published_at')
+                ->where('published_at', '<=', now())
+                ->orderBy('published_at', 'desc')
+                ->limit(5)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $blogs
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }
