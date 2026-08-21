@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\UserQuizResult;
 use Illuminate\Http\Request;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
-class QuizController extends Controller
+class AdminQuizController extends Controller
 {
     /**
      * Display a specific quiz for taking.
@@ -18,7 +19,7 @@ class QuizController extends Controller
     {
         $quiz = Quiz::with('questions.options')->findOrFail($quizId);
         
-        // Check if user has already completed this quiz
+        // Check if user has already completed this quiz1
         $completed = false;
         $previousResult = null;
         

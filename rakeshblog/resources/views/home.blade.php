@@ -312,120 +312,488 @@
     </section>
 
     <!-- Research Section -->
-    <section id="research" class="py-24 bg-[#f2efe8] text-[#1e1e1a] scroll-mt-20">
-        <div class="max-w-7xl mx-auto px-6">
-            <!-- Section Title -->
-            <div class="text-center mb-16">
-                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">Knowledge & Insights</p>
-                <h2 class="text-4xl md:text-5xl font-serif font-bold">Research & Resources</h2>
-                <p class="text-[#3a3a34] mt-3 max-w-2xl mx-auto">Exploring ideas, frameworks, and stories that shape Nepal's future.</p>
+<section id="research" class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a] scroll-mt-20">
+    <div class="max-w-7xl mx-auto px-6">
+        <!-- Section Title -->
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-2 bg-[#D4AF37]/10 px-4 py-2 rounded-full mb-4">
+                <span class="text-[#D4AF37]">✦</span>
+                <span class="text-xs font-semibold text-[#D4AF37] uppercase tracking-widest">Knowledge & Insights</span>
             </div>
+            <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#1e1e1a] leading-tight">
+                Stories, Ideas &amp; <br class="hidden sm:block">
+                <span class="text-[#D4AF37]">Research</span> That Matters
+            </h2>
+            <p class="text-[#5a5a52] mt-4 max-w-2xl mx-auto text-lg leading-relaxed">
+                Exploring ideas, frameworks, and stories that shape Nepal's future — 
+                <span class="text-[#1e1e1a] font-medium">one insight at a time.</span>
+            </p>
+        </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                @php
-                    $categories = [
-                        'vision' => ['label' => 'Vision for Nepal', 'button_text' => 'Explore the Vision'],
-                        'research' => ['label' => 'Research & Papers', 'button_text' => 'Explore Research'],
-                        'media' => ['label' => 'Media & Stories', 'button_text' => 'Watch & Listen']
-                    ];
-                @endphp
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            @php
+                $categories = [
+                    'vision' => [
+                        'label' => 'Vision for Nepal', 
+                        'button_text' => 'Explore the Vision', 
+                        'icon' => 'fa-eye',
+                        'color' => 'amber',
+                        'emoji' => '🌟',
+                        'description' => 'Big ideas for a better tomorrow'
+                    ],
+                    'research' => [
+                        'label' => 'Research & Papers', 
+                        'button_text' => 'Explore Research', 
+                        'icon' => 'fa-book',
+                        'color' => 'blue',
+                        'emoji' => '📚',
+                        'description' => 'Evidence-based insights'
+                    ],
+                    'media' => [
+                        'label' => 'Media & Stories', 
+                        'button_text' => 'Watch & Listen', 
+                        'icon' => 'fa-video',
+                        'color' => 'purple',
+                        'emoji' => '🎬',
+                        'description' => 'Inspiring stories from the field'
+                    ]
+                ];
+            @endphp
 
-                @foreach($categories as $key => $category)
-                    <div class="space-y-6">
-                        <div class="flex items-center gap-3">
-                            <div class="text-[#D4AF37]">
-                                @if(isset($research[$key]) && $research[$key]->isNotEmpty())
-                                    {!! $research[$key]->first()->category_icon !!}
-                                @else
-                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
-                                    </svg>
-                                @endif
-                            </div>
-                            <p class="text-xs font-bold tracking-widest uppercase">{{ $category['label'] }}</p>
+            @foreach($categories as $key => $category)
+                <div class="space-y-5">
+                    <!-- Category Header -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
+                            <i class="fas {{ $category['icon'] }} text-sm"></i>
                         </div>
+                        <div>
+                            <p class="text-xs font-bold tracking-widest uppercase text-[#4a4a42]">
+                                {{ $category['label'] }}
+                            </p>
+                            <p class="text-[10px] text-[#8a8a82]">{{ $category['description'] }}</p>
+                        </div>
+                        @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
+                            <span class="ml-auto px-2.5 py-1 text-[9px] font-medium bg-gradient-to-r from-[#D4AF37]/20 to-[#D4AF37]/10 text-[#D4AF37] rounded-full flex items-center gap-1">
+                                <i class="fas fa-star text-[8px]"></i> Featured
+                            </span>
+                        @endif
+                    </div>
 
-                        @if(isset($research[$key]) && $research[$key]->isNotEmpty())
-                            @foreach($research[$key] as $item)
-                                <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
-                                    <div class="aspect-video bg-gray-200 relative overflow-hidden">
-                                        @if($item->video_url || $item->video_file)
-                                            <!-- Video Play Button Overlay -->
-                                            <div class="absolute inset-0 bg-black/30 flex items-center justify-center cursor-pointer" onclick="playVideo(this, '{{ $item->id }}')">
-                                                <div class="w-16 h-16 bg-[#D4AF37] rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
-                                                    <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                                                        <path d="M8 5v14l11-7z"/>
-                                                    </svg>
-                                                </div>
+                    @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
+                        @foreach($featuredResearch[$key] as $item)
+                            <div class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100/50 hover:border-[#D4AF37]/20">
+                                <!-- Image/Video Section -->
+                                <div class="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-50 overflow-hidden cursor-pointer" onclick="openResearchDetail({{ $item->id }})">
+                                    @if($item->video_url || $item->video_file)
+                                        <!-- Video Play Button -->
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center cursor-pointer z-10 group-hover:bg-black/40 transition-all duration-500" onclick="event.stopPropagation(); playVideo(this, '{{ $item->id }}')">
+                                            <div class="w-14 h-14 bg-[#D4AF37] rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all duration-300">
+                                                <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                                    <path d="M8 5v14l11-7z"/>
+                                                </svg>
                                             </div>
-                                            @if($item->video_file)
-                                                <video class="w-full h-full object-cover" preload="metadata">
-                                                    <source src="{{ $item->video_file }}#t=0.1" type="video/mp4">
-                                                </video>
-                                            @elseif($item->video_url)
-                                                <img src="{{ $item->video_thumbnail ?: $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover">
-                                            @endif
-                                        @elseif($item->image_url)
-                                            <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover">
-                                        @else
-                                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#D4AF37]/10 to-[#D4AF37]/5">
-                                                <span class="text-4xl text-[#D4AF37] opacity-30">📚</span>
-                                            </div>
+                                        </div>
+                                        @if($item->video_file)
+                                            <video class="w-full h-full object-cover" preload="metadata">
+                                                <source src="{{ $item->video_file }}#t=0.1" type="video/mp4">
+                                            </video>
+                                        @elseif($item->video_url)
+                                            <img src="{{ $item->video_thumbnail ?: $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
                                         @endif
+                                    @elseif($item->image_url)
+                                        <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#D4AF37]/5 to-[#D4AF37]/10">
+                                            <span class="text-5xl opacity-20">{{ $category['emoji'] }}</span>
+                                        </div>
+                                    @endif
+                                    
+                                    <!-- Featured Badge -->
+                                    <div class="absolute top-3 right-3 z-10">
+                                        <span class="px-2.5 py-1 bg-[#D4AF37] text-[#0b0e12] text-[10px] font-bold rounded-full flex items-center gap-1 shadow-lg shadow-[#D4AF37]/20">
+                                            <i class="fas fa-star text-[8px]"></i> Featured
+                                        </span>
                                     </div>
-                                    <div class="p-6">
-                                        <h3 class="text-lg font-bold text-[#1e1e1a] mb-2">{{ $item->title }}</h3>
-                                        <p class="text-sm text-[#3a3a34] leading-relaxed line-clamp-3">{{ $item->description }}</p>
-                                        @if($item->content)
-                                            <div class="text-sm text-[#3a3a34] leading-relaxed mt-2 line-clamp-2">
-                                                {{ Str::limit($item->content, 150) }}
-                                            </div>
-                                        @endif
-                                        <div class="mt-4 flex flex-wrap items-center gap-3">
+                                    
+                                    <!-- Category Badge -->
+                                    <div class="absolute bottom-3 left-3 z-10">
+                                        <span class="px-2.5 py-1 bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium rounded-full flex items-center gap-1 border border-white/10">
+                                            <i class="fas {{ $category['icon'] }} text-[8px]"></i>
+                                            {{ $category['label'] }}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Content -->
+                                <div class="p-5">
+                                    <h3 class="text-lg font-serif font-bold text-[#1e1e1a] mb-2 group-hover:text-[#D4AF37] transition-colors duration-300 line-clamp-2 cursor-pointer" onclick="openResearchDetail({{ $item->id }})">
+                                        {{ $item->title }}
+                                    </h3>
+                                    
+                                    <p class="text-sm text-[#5a5a52] leading-relaxed line-clamp-2">
+                                        {{ $item->description }}
+                                    </p>
+                                    
+                                    <div class="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
+                                        <button onclick="openResearchDetail({{ $item->id }})" 
+                                                class="text-[#D4AF37] text-sm font-medium hover:text-[#c4a030] transition flex items-center gap-2 group/btn">
+                                            <span>Read the story</span>
+                                            <span class="group-hover/btn:translate-x-1 transition-transform">→</span>
+                                        </button>
+                                        
+                                        <div class="flex items-center gap-2">
                                             @if($item->link_url)
                                                 <a href="{{ $item->link_url }}" target="_blank" rel="noopener noreferrer" 
-                                                class="text-[#D4AF37] text-xs font-bold border-b border-[#D4AF37] pb-1 hover:text-[#c4a030] transition-colors">
-                                                    {{ $category['button_text'] }} →
+                                                   class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#D4AF37]/10 flex items-center justify-center text-gray-400 hover:text-[#D4AF37] transition-colors duration-300">
+                                                    <i class="fas fa-external-link-alt text-xs"></i>
                                                 </a>
                                             @endif
                                             @if($item->video_url || $item->video_file)
-                                                <button onclick="playVideo(this, '{{ $item->id }}')" class="text-[#D4AF37] text-xs font-bold border-b border-[#D4AF37] pb-1 hover:text-[#c4a030] transition-colors">
-                                                    Watch Video →
+                                                <button onclick="event.stopPropagation(); playVideo(this, '{{ $item->id }}')" 
+                                                        class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#D4AF37]/10 flex items-center justify-center text-gray-400 hover:text-[#D4AF37] transition-colors duration-300">
+                                                    <i class="fas fa-play text-xs"></i>
                                                 </button>
                                             @endif
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
-                        @else
-                            <div class="bg-white rounded-xl p-8 text-center shadow-md">
-                                <div class="aspect-video bg-gray-200 rounded-xl overflow-hidden mb-6">
-                                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#D4AF37]/10 to-[#D4AF37]/5">
-                                        <span class="text-4xl text-[#D4AF37] opacity-30">📚</span>
-                                    </div>
-                                </div>
-                                <p class="text-sm text-[#3a3a34]">Content coming soon...</p>
                             </div>
-                        @endif
-                    </div>
-                @endforeach
-            </div>
+                        @endforeach
+                    @else
+                        <!-- Empty State -->
+                        <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100/50 hover:shadow-md transition-all duration-300">
+                            <div class="aspect-video bg-gradient-to-br from-gray-100 to-gray-50 rounded-xl overflow-hidden mb-4 flex items-center justify-center">
+                                <span class="text-5xl opacity-20">{{ $category['emoji'] }}</span>
+                            </div>
+                            <p class="text-sm text-[#5a5a52] font-medium">No featured content yet</p>
+                            <p class="text-xs text-[#8a8a82] mt-1">Check back soon for updates</p>
+                        </div>
+                    @endif
+                </div>
+            @endforeach
         </div>
-    </section>
+        
+        <!-- View All Button -->
+        <div class="text-center mt-16">
+            <a href="{{ route('research.featured') }}" 
+                class="inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#c4a030] text-[#0b0e12] font-medium rounded-2xl hover:shadow-xl hover:shadow-[#D4AF37]/25 transition-all duration-300 hover:-translate-y-0.5 group">
+                    <span>Explore All Research</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </a>
+            <p class="text-xs text-[#8a8a82] mt-3">Discover insights, stories, and ideas that inspire change</p>
+        </div>
+    </div>
+</section>
 
-    <!-- Video Modal -->
-    <div id="videoModal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4" onclick="closeVideoModal(event)">
-        <div class="relative max-w-4xl w-full bg-black rounded-xl overflow-hidden" onclick="event.stopPropagation()">
-            <button onclick="closeVideoModal()" class="absolute top-4 right-4 text-white hover:text-[#D4AF37] z-10 bg-black/50 rounded-full p-2 transition">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
+<!-- Research Detail Modal -->
+<div id="researchModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+    <div class="min-h-screen px-4 py-8 flex items-center justify-center">   
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResearchDetail()"></div>
+        <div class="relative bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <!-- Close Button -->
+            <button onclick="closeResearchDetail()" class="sticky top-4 right-4 float-right z-10 text-gray-400 hover:text-[#D4AF37] bg-white/95 backdrop-blur-sm rounded-full p-2.5 shadow-lg transition-all duration-300 hover:scale-110 ml-4 border border-gray-100">
+                <i class="fas fa-times text-lg"></i>
             </button>
-            <div id="videoContainer" class="aspect-video">
-                <!-- Video will be loaded here -->
+
+            <!-- Content -->
+            <div class="px-8 pb-8 pt-4" id="researchDetailContent">
+                <div class="text-center py-12">
+                    <div class="inline-block">
+                        <i class="fas fa-spinner fa-spin text-3xl text-[#D4AF37]"></i>
+                    </div>
+                    <p class="mt-3 text-[#8a8a82]">Loading story...</p>
+                </div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Video Modal -->
+<div id="videoModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeVideoModal()"></div>
+    <div class="relative max-w-4xl w-full bg-black rounded-2xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+        <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-10 text-white hover:text-[#D4AF37] bg-black/50 rounded-full p-2 transition-all duration-300 hover:scale-110">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+        <div id="videoContainer" class="aspect-video">
+            <!-- Video will be loaded here -->
+        </div>
+    </div>
+</div>
+
+<script>
+function openResearchDetail(id) {
+    const modal = document.getElementById('researchModal');
+    const content = document.getElementById('researchDetailContent');
+    
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    document.body.style.paddingRight = '0px';
+
+    content.innerHTML = `
+        <div class="text-center py-12">
+            <div class="inline-block">
+                <i class="fas fa-spinner fa-spin text-3xl text-[#D4AF37]"></i>
+            </div>
+            <p class="mt-3 text-[#8a8a82]">Loading story...</p>
+        </div>
+    `;
+
+    fetch(`/research/${id}/detail`)
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const item = data.data;
+                const categoryIcons = {
+                    'Vision': 'fa-eye',
+                    'Research Papers': 'fa-book',
+                    'Media': 'fa-video'
+                };
+                const categoryColors = {
+                    'Vision': 'bg-amber-50 text-amber-700 border-amber-200',
+                    'Research Papers': 'bg-blue-50 text-blue-700 border-blue-200',
+                    'Media': 'bg-purple-50 text-purple-700 border-purple-200'
+                };
+                const categoryEmojis = {
+                    'Vision': '🌟',
+                    'Research Papers': '📚',
+                    'Media': '🎬'
+                };
+
+                const escapeHtml = (str) => {
+                    if (!str) return '';
+                    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                };
+
+                content.innerHTML = `
+                    <div class="flex items-center gap-3 mb-4 flex-wrap">
+                        <span class="px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 border
+                            ${categoryColors[item.category] || 'bg-gray-50 text-gray-700 border-gray-200'}">
+                            <span>${categoryEmojis[item.category] || '📄'}</span>
+                            ${escapeHtml(item.category)}
+                        </span>
+                        ${item.is_featured ? '<span class="px-3 py-1.5 bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-semibold rounded-full flex items-center gap-1 border border-[#D4AF37]/20"><i class="fas fa-star text-[10px]"></i> Featured</span>' : ''}
+                        ${item.created_at ? `<span class="text-xs text-[#8a8a82] flex items-center gap-1"><i class="far fa-calendar-alt"></i> ${new Date(item.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>` : ''}
+                    </div>
+
+                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#1e1e1a] mb-4 leading-tight">${escapeHtml(item.title)}</h2>
+
+                    ${item.image_url ? `
+                        <div class="mb-6 rounded-2xl overflow-hidden shadow-md">
+                            <img src="${item.image_url}" alt="${escapeHtml(item.title)}" class="w-full max-h-96 object-cover">
+                        </div>
+                    ` : ''}
+
+                    ${item.video_url || item.video_file ? `
+                        <div class="mb-6 rounded-2xl overflow-hidden bg-black shadow-md">
+                            ${item.video_file ? 
+                                `<video controls class="w-full h-full"><source src="${item.video_file}" type="video/mp4">Your browser does not support the video tag.</video>` :
+                                item.video_embed_url ? 
+                                `<iframe src="${item.video_embed_url}" class="w-full h-full aspect-video" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>` :
+                                `<div class="w-full h-full aspect-video flex items-center justify-center text-white"><p>No video available</p></div>`
+                            }
+                        </div>
+                    ` : ''}
+
+                    <div class="mb-6">
+                        <h4 class="text-sm font-semibold text-[#8a8a82] uppercase tracking-wider mb-2 flex items-center gap-2">
+                            <span class="w-6 h-0.5 bg-[#D4AF37]"></span>
+                            About
+                        </h4>
+                        <p class="text-[#3a3a34] leading-relaxed text-base">${escapeHtml(item.description)}</p>
+                    </div>
+
+                    ${item.content ? `
+                        <div class="mb-6">
+                            <h4 class="text-sm font-semibold text-[#8a8a82] uppercase tracking-wider mb-2 flex items-center gap-2">
+                                <span class="w-6 h-0.5 bg-[#D4AF37]"></span>
+                                Full Story
+                            </h4>
+                            <div class="text-[#3a3a34] leading-relaxed whitespace-pre-wrap prose prose-sm max-w-none">${escapeHtml(item.content)}</div>
+                        </div>
+                    ` : ''}
+
+                    ${item.link_url ? `
+                        <div class="mt-6 pt-4 border-t border-gray-100">
+                            <a href="${item.link_url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] hover:text-[#c4a030] transition font-medium">
+                                <i class="fas fa-external-link-alt"></i>
+                                Visit Link
+                            </a>
+                        </div>
+                    ` : ''}
+                `;
+            } else {
+                content.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-5xl mb-4">😕</div>
+                        <p class="text-[#5a5a52]">${data.message || 'Failed to load research details'}</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            content.innerHTML = `
+                <div class="text-center py-12">
+                    <div class="text-5xl mb-4">😕</div>
+                    <p class="text-[#5a5a52]">Oops! Something went wrong.</p>
+                    <p class="text-sm text-[#8a8a82] mt-1">Please try again later.</p>
+                </div>
+            `;
+        });
+}
+
+function closeResearchDetail() {
+    const modal = document.getElementById('researchModal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+function playVideo(element, researchId) {
+    const modal = document.getElementById('videoModal');
+    const container = document.getElementById('videoContainer');
+    
+    container.innerHTML = `
+        <div class="w-full h-full flex items-center justify-center text-white">
+            <div class="text-center">
+                <i class="fas fa-spinner fa-spin text-4xl text-[#D4AF37]"></i>
+                <p class="mt-2 text-gray-400 text-sm">Loading video...</p>
+            </div>
+        </div>
+    `;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    fetch(`/research/${researchId}/video`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.video_file) {
+                container.innerHTML = `
+                    <video controls autoplay class="w-full h-full">
+                        <source src="${data.video_file}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                `;
+            } else if (data.video_embed_url) {
+                container.innerHTML = `
+                    <iframe src="${data.video_embed_url}" class="w-full h-full" allowfullscreen></iframe>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="w-full h-full flex items-center justify-center text-white">
+                        <div class="text-center">
+                            <p>No video available</p>
+                        </div>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading video:', error);
+            container.innerHTML = `
+                <div class="w-full h-full flex items-center justify-center text-white">
+                    <p>Error loading video. Please try again.</p>
+                </div>
+            `;
+        });
+}
+
+function closeVideoModal() {
+    const modal = document.getElementById('videoModal');
+    const container = document.getElementById('videoContainer');
+    modal.classList.add('hidden');
+    container.innerHTML = '';
+    document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeResearchDetail();
+        closeVideoModal();
+    }
+});
+</script>
+
+<style>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+#videoModal {
+    animation: fadeIn 0.25s ease;
+}
+
+#researchModal {
+    animation: fadeIn 0.3s ease;
+}
+
+#researchModal .relative {
+    animation: scaleIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+#researchDetailContent::-webkit-scrollbar {
+    width: 6px;
+}
+
+#researchDetailContent::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+#researchDetailContent::-webkit-scrollbar-thumb {
+    background: #D4AF37;
+    border-radius: 10px;
+}
+
+#researchDetailContent::-webkit-scrollbar-thumb:hover {
+    background: #c4a030;
+}
+
+/* Prose styling for content */
+.prose {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #3a3a34;
+}
+
+.prose p {
+    margin-bottom: 1rem;
+}
+
+/* Hover effects */
+.group:hover .group-hover\:scale-105 {
+    transform: scale(1.05);
+}
+
+/* Smooth transitions */
+.transition-all {
+    transition-duration: 300ms;
+}
+</style>
 
     <!-- FEATURED BLOGS SECTION -->
     <section id="featured-blogs" class="py-24 bg-[#fff6e0] scroll-mt-20">

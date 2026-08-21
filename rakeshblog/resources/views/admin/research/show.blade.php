@@ -110,12 +110,34 @@
                             <div class="rounded-lg overflow-hidden border border-white/10 bg-[#0b0e12]">
                                 @if($research->video_file)
                                     <video controls class="w-full max-h-64">
-                                        <source src="{{ $research->video_file }}" type="video/mp4">
+                                        <source src="{{ asset($research->video_file) }}" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
                                 @elseif($research->video_url)
                                     <div class="aspect-video">
-                                        <iframe src="{{ $research->video_embed_url }}" class="w-full h-full" allowfullscreen></iframe>
+                                        @php
+                                            $embedUrl = $research->video_embed_url;
+                                        @endphp
+                                        @if($embedUrl)
+                                            <iframe src="{{ $embedUrl }}" class="w-full h-full" allowfullscreen></iframe>
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center text-gray-400 bg-[#0b0e12]">
+                                                <div class="text-center">
+                                                    <i class="fas fa-video text-4xl mb-2 opacity-20"></i>
+                                                    <p>Video URL not supported</p>
+                                                    <a href="{{ $research->video_url }}" target="_blank" class="text-[#D4AF37] text-sm hover:underline">
+                                                        Open video in new tab
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
+                                @else
+                                    <div class="w-full h-48 flex items-center justify-center text-gray-400 bg-[#0b0e12]">
+                                        <div class="text-center">
+                                            <i class="fas fa-video text-4xl mb-2 opacity-20"></i>
+                                            <p>No video available</p>
+                                        </div>
                                     </div>
                                 @endif
                             </div>
@@ -131,6 +153,12 @@
                             </a>
                         </div>
                     @endif
+                </div>
+            @else
+                <hr class="border-white/10 my-6">
+                <div class="text-center text-gray-400 py-4">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    No media or links available for this item.
                 </div>
             @endif
 
@@ -178,6 +206,7 @@
 /* Video player styling */
 video {
     background: #0b0e12;
+    max-width: 100%;
 }
 
 video:focus {

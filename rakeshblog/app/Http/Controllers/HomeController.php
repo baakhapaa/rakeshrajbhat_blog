@@ -56,7 +56,7 @@ class HomeController extends Controller
             $projects = collect();
         }
 
-        // Get research items grouped by category
+        // Get all research items grouped by category (for other sections)
         try {
             $research = Research::where('is_active', true)
                 ->orderBy('order')
@@ -74,6 +74,25 @@ class HomeController extends Controller
             $research = collect();
         }
 
+        // Get FEATURED research items (ONLY featured items, one per category)
+        try {
+            $featuredResearch = Research::where('is_featured', true)
+                ->where('is_active', true)
+                ->orderBy('order')
+                ->get()
+                ->groupBy(function ($item) {
+                    // Map category to slug
+                    $categoryMap = [
+                        'Vision' => 'vision',
+                        'Research Papers' => 'research',
+                        'Media' => 'media'
+                    ];
+                    return $categoryMap[$item->category] ?? 'other';
+                });
+        } catch (\Exception $e) {
+            $featuredResearch = collect();
+        }
+
         // Get total counts for hero section
         try {
             $totalBlogs = Blog::where('is_published', true)->count();
@@ -87,6 +106,7 @@ class HomeController extends Controller
             $totalFeaturedBlogs = 0;
         }
 
+        // Return view with all variables
         return view('home', compact(
             'stats', 
             'homeBlogs', 
@@ -95,7 +115,8 @@ class HomeController extends Controller
             'totalProjects',
             'totalFeaturedBlogs',
             'featuredBlogs',
-            'research'
+            'research',
+            'featuredResearch' // This is the key addition
         ));
     }
 

@@ -7,6 +7,7 @@ use App\Models\Research;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class ResearchController extends Controller
 {
@@ -79,7 +80,14 @@ class ResearchController extends Controller
             $validated['video_file'] = '/storage/' . $videoPath;
         }
 
-        $validated['slug'] = Str::slug($request->title);
+        // Generate unique slug
+        $slug = Str::slug($request->title);
+        $existing = Research::where('slug', $slug)->first();
+        if ($existing) {
+            $slug = $slug . '-' . time();
+        }
+        
+        $validated['slug'] = $slug;
         $validated['is_active'] = $request->has('is_active');
         $validated['is_featured'] = $request->has('is_featured');
 
@@ -138,7 +146,14 @@ class ResearchController extends Controller
             $validated['video_file'] = '/storage/' . $videoPath;
         }
 
-        $validated['slug'] = Str::slug($request->title);
+        // Generate unique slug
+        $slug = Str::slug($request->title);
+        $existing = Research::where('slug', $slug)->where('id', '!=', $research->id)->first();
+        if ($existing) {
+            $slug = $slug . '-' . time();
+        }
+        
+        $validated['slug'] = $slug;
         $validated['is_active'] = $request->has('is_active');
         $validated['is_featured'] = $request->has('is_featured');
 
@@ -178,6 +193,7 @@ class ResearchController extends Controller
                 'is_active' => $research->is_active
             ]);
         } catch (\Exception $e) {
+            Log::error('Toggle Status Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -206,6 +222,7 @@ class ResearchController extends Controller
                 'message' => 'Featured status toggled successfully'
             ]);
         } catch (\Exception $e) {
+            Log::error('Toggle Featured Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage()
@@ -215,36 +232,165 @@ class ResearchController extends Controller
 
     public function reorder(Request $request)
     {
-        $validated = $request->validate([
-            'items' => 'required|array',
-            'items.*' => 'integer|exists:research,id'
-        ]);
+        try {
+            $validated = $request->validate([
+                'items' => 'required|array',
+                'items.*' => 'integer|exists:research,id'
+            ]);
 
-        foreach ($validated['items'] as $index => $id) {
-            Research::where('id', $id)->update(['order' => $index]);
+            foreach ($validated['items'] as $index => $id) {
+                Research::where('id', $id)->update(['order' => $index]);
+            }
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            Log::error('Reorder Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        return response()->json(['success' => true]);
     }
 
-    public function getVideoData(Research $research)
+    /**
+     * Get video data for the modal player
+     * This handles both uploaded videos and external URLs (YouTube, Vimeo)
+     */
+    public function getVideoData($id)
     {
-        return response()->json([
-            'video_file' => $research->video_file,
-            'video_embed_url' => $research->video_embed_url,
-            'video_thumbnail' => $research->video_thumbnail,
-        ]);
+        try {
+            $research = Research::findOrFail($id);
+            
+            // Check if there's any video data
+            if (!$research->video_url && !$research->video_file) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No video available for this item'
+                ], 404);
+            }
+
+            // Get video embed URL
+            $embedUrl = null;
+            if ($research->video_url) {
+                // YouTube
+                if (strpos($research->video_url, 'youtube.com') !== false || strpos($research->video_url, 'youtu.be') !== false) {
+                    // Handle shorts URLs
+                    if (strpos($research->video_url, '/shorts/') !== false) {
+                        preg_match('/shorts\/([^"&?\/\s]{11})/', $research->video_url, $matches);
+                        $videoId = $matches[1] ?? null;
+                    } else {
+                        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $research->video_url, $matches);
+                        $videoId = $matches[1] ?? null;
+                    }
+                    if ($videoId) {
+                        $embedUrl = 'https://www.youtube.com/embed/' . $videoId;
+                    }
+                }
+                // Vimeo
+                elseif (strpos($research->video_url, 'vimeo.com') !== false) {
+                    preg_match('/vimeo\.com\/(\d+)/', $research->video_url, $matches);
+                    if (isset($matches[1])) {
+                        $embedUrl = 'https://player.vimeo.com/video/' . $matches[1];
+                    }
+                }
+                // Direct video URL (if it's a direct link to a video file)
+                else {
+                    $embedUrl = $research->video_url;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'video_file' => $research->video_file,
+                'video_embed_url' => $embedUrl,
+                'video_thumbnail' => $research->video_thumbnail,
+                'title' => $research->title
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Get Video Data Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
-    // Featured page for frontend
+    /**
+     * Featured page for frontend - shows all featured research items
+     */
     public function featured()
     {
-        $featuredResearch = Research::where('is_featured', true)
-            ->where('is_active', true)
+        try {
+        // Get ALL active research items, not just featured
+        $featuredResearch = Research::where('is_active', true)
             ->orderBy('category')
+            ->orderBy('order')
             ->get()
             ->groupBy('category');
 
         return view('research.featured', compact('featuredResearch'));
+        } 
+        catch (\Exception $e) 
+        {
+        Log::error('Research Page Error: ' . $e->getMessage());
+        return view('research.featured', ['featuredResearch' => collect()]);
+        }
+    }
+
+    /**
+     * Get research detail for modal
+     */
+    public function getResearchDetail($id)
+    {
+        try {
+            $research = Research::findOrFail($id);
+            
+            // Get video embed URL
+            $embedUrl = null;
+            if ($research->video_url) {
+                if (strpos($research->video_url, 'youtube.com') !== false || strpos($research->video_url, 'youtu.be') !== false) {
+                    if (strpos($research->video_url, '/shorts/') !== false) {
+                        preg_match('/shorts\/([^"&?\/\s]{11})/', $research->video_url, $matches);
+                        $videoId = $matches[1] ?? null;
+                    } else {
+                        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $research->video_url, $matches);
+                        $videoId = $matches[1] ?? null;
+                    }
+                    if ($videoId) {
+                        $embedUrl = 'https://www.youtube.com/embed/' . $videoId;
+                    }
+                } elseif (strpos($research->video_url, 'vimeo.com') !== false) {
+                    preg_match('/vimeo\.com\/(\d+)/', $research->video_url, $matches);
+                    if (isset($matches[1])) {
+                        $embedUrl = 'https://player.vimeo.com/video/' . $matches[1];
+                    }
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => $research->id,
+                    'title' => $research->title,
+                    'category' => $research->category,
+                    'description' => $research->description,
+                    'content' => $research->content,
+                    'image_url' => $research->image_url,
+                    'video_url' => $research->video_url,
+                    'video_embed_url' => $embedUrl,
+                    'video_file' => $research->video_file,
+                    'link_url' => $research->link_url,
+                    'is_featured' => $research->is_featured,
+                    'created_at' => $research->created_at,
+                    'updated_at' => $research->updated_at,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Get Research Detail Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

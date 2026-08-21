@@ -56,14 +56,24 @@ class Research extends Model
         });
     }
 
-    // Get video embed URL for YouTube/Vimeo
+    /**
+     * Get video embed URL for YouTube/Vimeo
+     * Supports both standard URLs and Shorts URLs
+     */
     public function getVideoEmbedUrlAttribute()
     {
         if ($this->video_url) {
             // YouTube
             if (strpos($this->video_url, 'youtube.com') !== false || strpos($this->video_url, 'youtu.be') !== false) {
-                preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $this->video_url, $matches);
-                return isset($matches[1]) ? 'https://www.youtube.com/embed/' . $matches[1] : null;
+                // Handle shorts URLs
+                if (strpos($this->video_url, '/shorts/') !== false) {
+                    preg_match('/shorts\/([^"&?\/\s]{11})/', $this->video_url, $matches);
+                    $videoId = $matches[1] ?? null;
+                } else {
+                    preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $this->video_url, $matches);
+                    $videoId = $matches[1] ?? null;
+                }
+                return $videoId ? 'https://www.youtube.com/embed/' . $videoId : null;
             }
             // Vimeo
             if (strpos($this->video_url, 'vimeo.com') !== false) {
@@ -74,21 +84,32 @@ class Research extends Model
         return null;
     }
 
-    // Get video thumbnail
+    /**
+     * Get video thumbnail from YouTube or fallback to image
+     */
     public function getVideoThumbnailAttribute()
     {
         if ($this->video_url) {
             if (strpos($this->video_url, 'youtube.com') !== false || strpos($this->video_url, 'youtu.be') !== false) {
-                preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $this->video_url, $matches);
-                if (isset($matches[1])) {
-                    return 'https://img.youtube.com/vi/' . $matches[1] . '/mqdefault.jpg';
+                // Handle shorts URLs
+                if (strpos($this->video_url, '/shorts/') !== false) {
+                    preg_match('/shorts\/([^"&?\/\s]{11})/', $this->video_url, $matches);
+                    $videoId = $matches[1] ?? null;
+                } else {
+                    preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $this->video_url, $matches);
+                    $videoId = $matches[1] ?? null;
+                }
+                if ($videoId) {
+                    return 'https://img.youtube.com/vi/' . $videoId . '/mqdefault.jpg';
                 }
             }
         }
         return $this->image_url ?? null;
     }
 
-    // Get default icon based on category
+    /**
+     * Get default icon based on category
+     */
     public function getCategoryIconAttribute()
     {
         $icons = [

@@ -98,9 +98,8 @@
         <!-- ========================================== -->
         <div x-data="{ 
             open: false, 
-            selected: '{{ old('type', 'municipality') }}',
+            selected: '{{ old('type', 'education') }}',
             options: [
-                { id: 'municipality', label: 'Municipality', icon: 'fa-city', desc: 'Community programs & bootcamps' },
                 { id: 'education', label: 'Education', icon: 'fa-school', desc: 'Schools & future-skills programs' },
                 { id: 'investor', label: 'Investor', icon: 'fa-handshake', desc: 'Investment & strategic partnerships' },
                 { id: 'partner', label: 'Partner', icon: 'fa-building', desc: 'Organizations & business collaborations' },
@@ -147,96 +146,6 @@
             <!-- ========================================== -->
             <div class="bg-white rounded-2xl shadow-xl p-8 md:p-10 hover:shadow-2xl transition-shadow duration-300">
                 
-                <!-- 1. MUNICIPALITY FORM -->
-                <div x-show="selected === 'municipality'" x-transition>
-                    <div class="text-center mb-8">
-                        <h3 class="text-2xl font-serif font-bold text-[#1e1e1a]">Municipality Partnership</h3>
-                        <p class="text-[#4a4a42] mt-2 text-sm">Let's bring meaningful opportunities to your community. Whether it's a digital skills bootcamp or an AI workshop, let's design something around your needs.</p>
-                    </div>
-                    <form action="{{ route('work-with-me.send') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        @csrf 
-                        <input type="hidden" name="type" value="municipality">
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-city text-[#D4AF37] mr-1"></i> Municipality / Organization *</label>
-                            <input type="text" name="org_name" required value="{{ old('org_name') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a] placeholder-gray-400" placeholder="e.g. Kathmandu Metropolis">
-                            @error('org_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-user text-[#D4AF37] mr-1"></i> Contact Person *</label>
-                            <input type="text" name="name" required value="{{ old('name') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a] placeholder-gray-400" placeholder="Full Name">
-                            @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-envelope text-[#D4AF37] mr-1"></i> Email *</label>
-                            <input type="email" name="email" required value="{{ old('email') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a] placeholder-gray-400" placeholder="you@example.com">
-                            @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-phone text-[#D4AF37] mr-1"></i> Phone</label>
-                            <input type="tel" name="phone" value="{{ old('phone') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a] placeholder-gray-400" placeholder="+977 98XXXXXXXX">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-map-pin text-[#D4AF37] mr-1"></i> District *</label>
-                            <input type="text" name="district" required value="{{ old('district') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a] placeholder-gray-400" placeholder="e.g. Kathmandu">
-                            @error('district') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-users text-[#D4AF37] mr-1"></i> Expected Participants</label>
-                            <input type="number" name="participants" value="{{ old('participants') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a]" placeholder="e.g. 50">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-calendar-alt text-[#D4AF37] mr-1"></i> Preferred Date</label>
-                            <input type="date" name="preferred_date" value="{{ old('preferred_date') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a]">
-                        </div>
-                        
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-list text-[#D4AF37] mr-1"></i> What are you interested in? *</label>
-                            <select name="interest" required class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a]">
-                                <option value="">Select an option</option>
-                                <option value="Digital Skills Bootcamp" {{ old('interest') == 'Digital Skills Bootcamp' ? 'selected' : '' }}>Digital Skills Bootcamp</option>
-                                <option value="AI Workshop" {{ old('interest') == 'AI Workshop' ? 'selected' : '' }}>AI Workshop</option>
-                                <option value="Youth Leadership Program" {{ old('interest') == 'Youth Leadership Program' ? 'selected' : '' }}>Youth Leadership Program</option>
-                                <option value="Custom Initiative" {{ old('interest') == 'Custom Initiative' ? 'selected' : '' }}>Custom Initiative</option>
-                            </select>
-                            @error('interest') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        </div>
-
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-user-graduate text-[#D4AF37] mr-1"></i> Who is the program for?</label>
-                            <div class="flex flex-wrap gap-4 pt-1">
-                                <label class="flex items-center gap-2 cursor-pointer text-[#1e1e1a]">
-                                    <input type="checkbox" name="audience[]" value="Students" class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]" {{ in_array('Students', old('audience', [])) ? 'checked' : '' }}> 
-                                    <span class="text-sm">Students</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer text-[#1e1e1a]">
-                                    <input type="checkbox" name="audience[]" value="Youth" class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]" {{ in_array('Youth', old('audience', [])) ? 'checked' : '' }}> 
-                                    <span class="text-sm">Youth</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer text-[#1e1e1a]">
-                                    <input type="checkbox" name="audience[]" value="Teachers" class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]" {{ in_array('Teachers', old('audience', [])) ? 'checked' : '' }}> 
-                                    <span class="text-sm">Teachers</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer text-[#1e1e1a]">
-                                    <input type="checkbox" name="audience[]" value="Entrepreneurs" class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]" {{ in_array('Entrepreneurs', old('audience', [])) ? 'checked' : '' }}> 
-                                    <span class="text-sm">Entrepreneurs</span>
-                                </label>
-                            </div>
-                        </div>
-                        
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-comment-dots text-[#D4AF37] mr-1"></i> Tell me about your requirements</label>
-                            <textarea name="requirements" rows="3" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a] resize-none" placeholder="Any specific topics or venue details?">{{ old('requirements') }}</textarea>
-                        </div>
-                        
-                        <div class="md:col-span-2 pt-2">
-                            <button type="submit" class="w-full bg-[#D4AF37] text-[#0b0e12] px-6 py-4 rounded-xl font-bold hover:brightness-110 transition-all shadow-lg flex items-center justify-center gap-3">
-                                <span>Send Bootcamp Request</span> 
-                                <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform"></i>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
                 <!-- 2. EDUCATION FORM -->
                 <div x-show="selected === 'education'" x-transition x-cloak>
                     <div class="text-center mb-8">

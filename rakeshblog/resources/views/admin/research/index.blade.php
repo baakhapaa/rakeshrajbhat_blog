@@ -57,16 +57,16 @@
             <div class="min-w-[180px]">
                 <select name="category" class="w-full px-4 py-2.5 bg-[#0b0e12] border border-white/10 rounded-xl text-gray-200 focus:border-[#D4AF37] focus:outline-none transition-all duration-300 cursor-pointer appearance-none">
                     <option value="">All Categories</option>
-                    <option value="Vision" {{ request('category') == 'Vision' ? 'selected' : '' }}>👁️ Vision</option>
-                    <option value="Research Papers" {{ request('category') == 'Research Papers' ? 'selected' : '' }}>📚 Research Papers</option>
-                    <option value="Media" {{ request('category') == 'Media' ? 'selected' : '' }}>🎬 Media</option>
+                    <option value="Vision" {{ request('category') == 'Vision' ? 'selected' : '' }}>Vision</option>
+                    <option value="Research Papers" {{ request('category') == 'Research Papers' ? 'selected' : '' }}>Research Papers</option>
+                    <option value="Media" {{ request('category') == 'Media' ? 'selected' : '' }}>Media</option>
                 </select>
             </div>
             <div class="min-w-[150px]">
                 <select name="status" class="w-full px-4 py-2.5 bg-[#0b0e12] border border-white/10 rounded-xl text-gray-200 focus:border-[#D4AF37] focus:outline-none transition-all duration-300 cursor-pointer appearance-none">
                     <option value="">All Status</option>
-                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>✅ Active</option>
-                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>❌ Inactive</option>
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}> Active</option>
+                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}> Inactive</option>
                 </select>
             </div>
             <button type="submit" class="px-5 py-2.5 bg-[#D4AF37] text-[#0b0e12] rounded-xl hover:bg-[#c4a030] transition-all duration-300 flex items-center gap-2 font-medium hover:shadow-lg hover:shadow-[#D4AF37]/25 hover:-translate-y-0.5">
