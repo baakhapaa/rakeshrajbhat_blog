@@ -431,4 +431,35 @@ document.addEventListener('DOMContentLoaded', function() {
             behavior: 'smooth'
         });
     });
+    function toggleFeatured(id) {
+    // Add loading state
+    const button = event.currentTarget;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<span class="px-2 py-1 rounded-full text-xs font-semibold inline-flex items-center gap-1 bg-gray-500/20 text-gray-400 border border-gray-500/30"><i class="fas fa-spinner fa-spin"></i> Loading...</span>';
+    button.disabled = true;
+
+    fetch(`/admin/research/${id}/toggle-featured`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Failed to toggle featured status: ' + (data.message || 'Unknown error'));
+            button.innerHTML = originalText;
+            button.disabled = false;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while toggling featured status. Please check the console for details.');
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
 });

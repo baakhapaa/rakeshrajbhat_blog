@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Stat;
 use App\Models\Blog;
 use App\Models\Project;
+use App\Models\Research;
 
 class HomeController extends Controller
 {
@@ -21,11 +22,11 @@ class HomeController extends Controller
         // Get FEATURED blogs for homepage (from admin panel)
         try {
             $featuredBlogs = Blog::where('is_published', true)
-                ->where('is_featured', true)  // Only get featured blogs
+                ->where('is_featured', true)
                 ->whereNotNull('published_at')
                 ->where('published_at', '<=', now())
                 ->orderBy('published_at', 'desc')
-                ->limit(3) // Show up to 3 featured blogs
+                ->limit(3)
                 ->get();
         } catch (\Exception $e) {
             $featuredBlogs = collect();
@@ -55,7 +56,25 @@ class HomeController extends Controller
             $projects = collect();
         }
 
-        // Get total counts for hero section (optional)
+        // Get research items grouped by category
+        try {
+            $research = Research::where('is_active', true)
+                ->orderBy('order')
+                ->get()
+                ->groupBy(function ($item) {
+                    // Map category to slug
+                    $categoryMap = [
+                        'Vision' => 'vision',
+                        'Research Papers' => 'research',
+                        'Media' => 'media'
+                    ];
+                    return $categoryMap[$item->category] ?? 'other';
+                });
+        } catch (\Exception $e) {
+            $research = collect();
+        }
+
+        // Get total counts for hero section
         try {
             $totalBlogs = Blog::where('is_published', true)->count();
             $totalProjects = Project::where('is_active', true)->count();
@@ -75,7 +94,8 @@ class HomeController extends Controller
             'totalBlogs', 
             'totalProjects',
             'totalFeaturedBlogs',
-            'featuredBlogs'  // Pass separately for the featured section
+            'featuredBlogs',
+            'research'
         ));
     }
 

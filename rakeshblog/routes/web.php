@@ -18,7 +18,9 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\ResearchController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\BootcampController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,6 +62,12 @@ Route::get('/api/projects/{slug}', [HomeController::class, 'getProject'])->name(
 Route::get('/api/featured-blogs', [HomeController::class, 'getFeaturedBlogs'])->name('api.featured-blogs');
 Route::get('/api/latest-blogs', [HomeController::class, 'getLatestBlogs'])->name('api.latest-blogs');
 
+// ==========================================
+// RESEARCH API ROUTES
+// ==========================================
+Route::get('/research/{id}/video', [ResearchController::class, 'getVideoData'])->name('research.video');
+Route::get('/research/featured', [ResearchController::class, 'featured'])->name('research.featured');
+
 // Authentication Routes (Public)
 Route::controller(AuthController::class)->group(function () {
     Route::get('/login', 'showLogin')->name('login');
@@ -83,11 +91,8 @@ Route::post('/contact', [ContactController::class, 'send'])->name('contact.send'
 // ==========================================
 // BOOTCAMP ROUTES 
 // ==========================================
-Route::get('/bootcamp', function () {
-    return view('partials.bootcamp');
-})->name('bootcamp');
-
-Route::post('/bootcamp', [ContactController::class, 'sendBootcamp'])->name('bootcamp.submit');
+Route::get('/bootcamp', [BootcampController::class, 'index'])->name('bootcamp');
+Route::post('/bootcamp', [BootcampController::class, 'submit'])->name('bootcamp.submit');
 
 // ==========================================
 // WORK WITH ME ROUTE
@@ -162,6 +167,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('stats', StatController::class);       
         Route::resource('team-members', TeamMemberController::class);
         Route::resource('blogs', AdminBlogController::class);
+        
+        // ==========================================
+        // RESEARCH ROUTES
+        // ==========================================
+        Route::resource('research', ResearchController::class);
+        Route::post('/research/{id}/toggle-status', [ResearchController::class, 'toggleStatus'])->name('research.toggle-status');
+        Route::post('/research/{id}/toggle-featured', [ResearchController::class, 'toggleFeatured'])->name('research.toggle-featured');
+        Route::post('/research/reorder', [ResearchController::class, 'reorder'])->name('research.reorder');
         
         // ==========================================
         // USER MANAGEMENT ROUTES

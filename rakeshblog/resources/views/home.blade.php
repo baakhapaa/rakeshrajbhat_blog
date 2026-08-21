@@ -62,7 +62,6 @@
                     </blockquote>
                 </div>
                 <div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-                    <!-- Mission items -->
                     <div class="flex gap-4">
                         <div class="text-[#D4AF37] shrink-0">
                             <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></svg>
@@ -133,11 +132,15 @@
             </div>
         </div>
 
-        <!-- Infinite Carousel -->
+        <!-- Infinite Carousel Outer Container -->
         <div class="carousel-container relative w-full py-16">
+            <!-- Scrolling Track -->
             <div class="carousel-track flex items-center gap-8 w-max">
+                
+                {{-- FIRST SET --}}
                 @forelse($projects ?? [] as $project)
                     <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
+                        <!-- Normal Card Content -->
                         <div class="project-default w-full flex flex-col items-center">
                             <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
                                 @if($project->image)
@@ -148,10 +151,12 @@
                                     </div>
                                 @endif
                             </div>
-                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg">{{ $project->name }}</h4>
-                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2">{{ $project->short_description ?? 'Hover to learn more' }}</p>
-                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1">Learn More →</span>
+                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
+                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
+                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
                         </div>
+
+                        <!-- Popup Content -->
                         <div class="tooltip-popup">
                             <div class="project-popup-content flex flex-col justify-between h-full">
                                 <div>
@@ -162,9 +167,13 @@
                                             <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
                                         @endif
                                     </div>
-                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2">{{ $project->name }}</h5>
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">{{ $project->description ?? $project->long_description ?? $project->short_description }}</p>
+                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
+                                    
+                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1"> 
+                                        {{ $project->description ?? $project->long_description ?? $project->short_description }}
+                                    </p>
                                 </div>
+
                                 @if($project->url)
                                     <div class="pt-4 mt-2 border-t border-gray-100">
                                         <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
@@ -179,8 +188,10 @@
                     <p class="text-gray-500">No projects available yet.</p>
                 @endforelse
 
+                {{-- SECOND SET (DUPLICATED FOR SEAMLESS INFINITE LOOP) --}}
                 @foreach($projects ?? [] as $project)
                     <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
+                        <!-- Normal Card Content -->
                         <div class="project-default w-full flex flex-col items-center">
                             <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
                                 @if($project->image)
@@ -191,10 +202,12 @@
                                     </div>
                                 @endif
                             </div>
-                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg">{{ $project->name }}</h4>
-                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2">{{ $project->short_description ?? 'Hover to learn more' }}</p>
-                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1">Learn More →</span>
+                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
+                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
+                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
                         </div>
+
+                        <!-- Popup Content -->
                         <div class="tooltip-popup">
                             <div class="project-popup-content flex flex-col justify-between h-full">
                                 <div>
@@ -205,9 +218,13 @@
                                             <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
                                         @endif
                                     </div>
-                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2">{{ $project->name }}</h5>
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">{{ $project->description ?? $project->long_description ?? $project->short_description }}</p>
+                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
+                                    
+                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1"> 
+                                        {{ $project->description ?? $project->long_description ?? $project->short_description }}
+                                    </p>
                                 </div>
+
                                 @if($project->url)
                                     <div class="pt-4 mt-2 border-t border-gray-100">
                                         <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
@@ -296,131 +313,206 @@
 
     <!-- Research Section -->
     <section id="research" class="py-24 bg-[#f2efe8] text-[#1e1e1a] scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-6">
-        <!-- Section Title -->
-        <div class="text-center mb-16">
-            <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">Knowledge & Insights</p>
-            <h2 class="text-4xl md:text-5xl font-serif font-bold">Research & Resources</h2>
-            <p class="text-[#3a3a34] mt-3 max-w-2xl mx-auto">Exploring ideas, frameworks, and stories that shape Nepal's future.</p>
-        </div>
+        <div class="max-w-7xl mx-auto px-6">
+            <!-- Section Title -->
+            <div class="text-center mb-16">
+                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">Knowledge & Insights</p>
+                <h2 class="text-4xl md:text-5xl font-serif font-bold">Research & Resources</h2>
+                <p class="text-[#3a3a34] mt-3 max-w-2xl mx-auto">Exploring ideas, frameworks, and stories that shape Nepal's future.</p>
+            </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            <div class="space-y-6">
-                <div class="flex items-center gap-3">
-                    <div class="text-[#D4AF37]"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg></div>
-                        <p class="text-xs font-bold tracking-widest uppercase">Vision for Nepal</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                @php
+                    $categories = [
+                        'vision' => ['label' => 'Vision for Nepal', 'button_text' => 'Explore the Vision'],
+                        'research' => ['label' => 'Research & Papers', 'button_text' => 'Explore Research'],
+                        'media' => ['label' => 'Media & Stories', 'button_text' => 'Watch & Listen']
+                    ];
+                @endphp
+
+                @foreach($categories as $key => $category)
+                    <div class="space-y-6">
+                        <div class="flex items-center gap-3">
+                            <div class="text-[#D4AF37]">
+                                @if(isset($research[$key]) && $research[$key]->isNotEmpty())
+                                    {!! $research[$key]->first()->category_icon !!}
+                                @else
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+                                    </svg>
+                                @endif
+                            </div>
+                            <p class="text-xs font-bold tracking-widest uppercase">{{ $category['label'] }}</p>
+                        </div>
+
+                        @if(isset($research[$key]) && $research[$key]->isNotEmpty())
+                            @foreach($research[$key] as $item)
+                                <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
+                                    <div class="aspect-video bg-gray-200 relative overflow-hidden">
+                                        @if($item->video_url || $item->video_file)
+                                            <!-- Video Play Button Overlay -->
+                                            <div class="absolute inset-0 bg-black/30 flex items-center justify-center cursor-pointer" onclick="playVideo(this, '{{ $item->id }}')">
+                                                <div class="w-16 h-16 bg-[#D4AF37] rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform">
+                                                    <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path d="M8 5v14l11-7z"/>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            @if($item->video_file)
+                                                <video class="w-full h-full object-cover" preload="metadata">
+                                                    <source src="{{ $item->video_file }}#t=0.1" type="video/mp4">
+                                                </video>
+                                            @elseif($item->video_url)
+                                                <img src="{{ $item->video_thumbnail ?: $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover">
+                                            @endif
+                                        @elseif($item->image_url)
+                                            <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#D4AF37]/10 to-[#D4AF37]/5">
+                                                <span class="text-4xl text-[#D4AF37] opacity-30">📚</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="p-6">
+                                        <h3 class="text-lg font-bold text-[#1e1e1a] mb-2">{{ $item->title }}</h3>
+                                        <p class="text-sm text-[#3a3a34] leading-relaxed line-clamp-3">{{ $item->description }}</p>
+                                        @if($item->content)
+                                            <div class="text-sm text-[#3a3a34] leading-relaxed mt-2 line-clamp-2">
+                                                {{ Str::limit($item->content, 150) }}
+                                            </div>
+                                        @endif
+                                        <div class="mt-4 flex flex-wrap items-center gap-3">
+                                            @if($item->link_url)
+                                                <a href="{{ $item->link_url }}" target="_blank" rel="noopener noreferrer" 
+                                                class="text-[#D4AF37] text-xs font-bold border-b border-[#D4AF37] pb-1 hover:text-[#c4a030] transition-colors">
+                                                    {{ $category['button_text'] }} →
+                                                </a>
+                                            @endif
+                                            @if($item->video_url || $item->video_file)
+                                                <button onclick="playVideo(this, '{{ $item->id }}')" class="text-[#D4AF37] text-xs font-bold border-b border-[#D4AF37] pb-1 hover:text-[#c4a030] transition-colors">
+                                                    Watch Video →
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="bg-white rounded-xl p-8 text-center shadow-md">
+                                <div class="aspect-video bg-gray-200 rounded-xl overflow-hidden mb-6">
+                                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#D4AF37]/10 to-[#D4AF37]/5">
+                                        <span class="text-4xl text-[#D4AF37] opacity-30">📚</span>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-[#3a3a34]">Content coming soon...</p>
+                            </div>
+                        @endif
                     </div>
-                    <div class="aspect-video bg-gray-200 rounded-xl overflow-hidden mb-6 shadow-md"><img alt="Nepal Vision" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlyyrzK21rvtEsvMYuuY-wKX-UQY-HEfD-0pwe9MHDQsCkJ4_Jq8tuhmoU6SeZrwMSyRCbpYz-ZKTh6Bam2NxyGOTXGoDvIhcYsg6T6mJ0DAslMKcFWbC1C4l0xLp2ZEjUKPauoLSTCjcc-xj8aCZUvTGkUQ9eBQgJ5fDQKrW--vlUtMdgoaY7Zw84B5KKavpyIYaIV5o-Ole5FPBNo4yR3CqtpyxNlQBxTY8tufpYJC6wLyTj6iVY"/></div>
-                    <div><p class="text-sm text-[#3a3a34] leading-relaxed">My vision for a developed, prosperous and self-reliant Nepal through education, tourism, technology, youth and local economy.</p><a class="inline-block mt-4 text-xs font-bold border-b border-[#D4AF37] pb-1 text-[#D4AF37]" href="#">Explore the Vision →</a></div>
-                </div>
-                <div class="space-y-6">
-                    <div class="flex items-center gap-3">
-                        <div class="text-[#D4AF37]"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg></div>
-                        <p class="text-xs font-bold tracking-widest uppercase">Research &amp; Papers</p>
-                    </div>
-                    <div class="aspect-video bg-gray-200 rounded-xl overflow-hidden mb-6 shadow-md"><img alt="Research" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBufk59CauXHtXWCa8q_54EQ0irh6vBL23a9el9MZKt_1qKHgT4tWVdfINxY7hL1lQVGXrtL6k6tw8GBdbgZBYb9Gu0OdPAPAVKeCt-XaGpOcaOZFkb69Bd6m1SC35wNTPVp3AsMU2wke69WQGa9-H0_jG4kg5cfI7o8Y23EzVEhk8VhIBQkfANISHkrP08vIc9qjD1N56XS3-ecMyHa8BiExlL3cbAqaEKZs2grie11iEPdqfYjtqr"/></div>
-                    <div><p class="text-sm text-[#3a3a34] leading-relaxed">Research papers, proposed frameworks, doctrines and whitepapers on education, tourism, technology and development.</p><a class="inline-block mt-4 text-xs font-bold border-b border-[#D4AF37] pb-1 text-[#D4AF37]" href="#">Explore Research →</a></div>
-                </div>
-                <div class="space-y-6">
-                    <div class="flex items-center gap-3">
-                        <div class="text-[#D4AF37]"><svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 00-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg></div>
-                        <p class="text-xs font-bold tracking-widest uppercase">Media &amp; Stories</p>
-                    </div>
-                    <div class="aspect-video bg-gray-200 rounded-xl overflow-hidden mb-6 shadow-md"><img alt="Media" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr6S8tuEdXCRKMfmXm1Vdk8bwDeh5w3OP0ecYQyeweclZ7Tt8ox9nb25CCDsARSHOWp4A74B_C31LtqTay7Mi1NrFVIfsqyZeiZTLtkDPZ8ENa4vkdlS3lf_ia6HhsyPUTNnioKNEBNGUQILue25msAiYzo0vbFw7XEtpMZFngDRUVU8UJ0v52kuaH8g6hoj32s71pZ62XzoEtZJYJ6Qe-2cG2zg6lSczg7VWSHJ5_9a3I2jFzE7Iy"/></div>
-                    <div><p class="text-sm text-[#3a3a34] leading-relaxed">Videos, interviews, bootcamp highlights, podcasts and stories from the ground.</p><a class="inline-block mt-4 text-xs font-bold border-b border-[#D4AF37] pb-1 text-[#D4AF37]" href="#">Watch &amp; Listen →</a></div>
-                </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4" onclick="closeVideoModal(event)">
+        <div class="relative max-w-4xl w-full bg-black rounded-xl overflow-hidden" onclick="event.stopPropagation()">
+            <button onclick="closeVideoModal()" class="absolute top-4 right-4 text-white hover:text-[#D4AF37] z-10 bg-black/50 rounded-full p-2 transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <div id="videoContainer" class="aspect-video">
+                <!-- Video will be loaded here -->
             </div>
         </div>
     </div>
-</section>
 
-    <!-- FEATURED BLOGS SECTION - MOVED BELOW RESEARCH -->
-        <section id="featured-blogs" class="py-24 bg-[#fff6e0] scroll-mt-20">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
-                    <div>
-                        <h2 class="text-4xl font-serif font-bold text-[#1e1e1a]">Featured Blogs</h2>
-                        <p class="text-[#3a3a34] mt-2 max-w-lg">Explore insights, stories, and ideas from my journey.</p>
-                    </div>
+    <!-- FEATURED BLOGS SECTION -->
+    <section id="featured-blogs" class="py-24 bg-[#fff6e0] scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+                <div>
+                    <h2 class="text-4xl font-serif font-bold text-[#1e1e1a]">Featured Blogs</h2>
+                    <p class="text-[#3a3a34] mt-2 max-w-lg">Explore insights, stories, and ideas from my journey.</p>
                 </div>
+            </div>
 
-                @if(isset($featuredBlogs) && $featuredBlogs->count() > 0)
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        @foreach($featuredBlogs as $blog)
-                            <a href="{{ route('blog.show', $blog->slug) }}" 
-                            class="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                                <div class="relative overflow-hidden h-52">
-                                    @if($blog->featured_image_url)
-                                        <img src="{{ $blog->featured_image_url }}" 
-                                            alt="{{ $blog->title }}" 
-                                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                    @else
-                                        <div class="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center">
-                                            <svg class="w-16 h-16 text-[#D4AF37]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6.253v13m0-13C6.5 6.253 2 10.998 2 17s4.5 10.747 10 10.747c5.5 0 10-4.998 10-10.747S17.5 6.253 12 6.253z"/>
-                                            </svg>
-                                        </div>
-                                    @endif
-                                    <div class="absolute top-3 right-3">
-                                        <span class="px-3 py-1 bg-[#D4AF37] text-[#0b0e12] text-xs font-bold rounded-full">
-                                            Featured
-                                        </span>
-                                    </div>
-                                    @if($blog->category)
-                                        <div class="absolute bottom-3 left-3">
-                                            <span class="px-3 py-1 bg-black/60 text-white text-xs font-medium rounded-full backdrop-blur-sm">
-                                                {{ $blog->category }}
-                                            </span>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="p-6">
-                                    <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                                        <span>{{ $blog->published_at ? $blog->published_at->format('M d, Y') : $blog->created_at->format('M d, Y') }}</span>
-                                        <span>•</span>
-                                        <span class="flex items-center gap-1">
-                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6l5.25 3.15L17 12.23l-4-2.37V7z"/>
-                                            </svg>
-                                            {{ $blog->reading_time ?? '5 min read' }}
-                                        </span>
-                                    </div>
-                                    <h3 class="text-xl font-bold text-[#1e1e1a] mb-2 group-hover:text-[#D4AF37] transition-colors line-clamp-2">
-                                        {{ $blog->title }}
-                                    </h3>
-                                    <p class="text-gray-600 text-sm line-clamp-2">
-                                        {{ $blog->excerpt ?? Str::limit(strip_tags($blog->content ?? ''), 120) }}
-                                    </p>
-                                    <div class="mt-4 flex items-center gap-2 text-sm text-[#D4AF37] font-medium">
-                                        Read More 
-                                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            @if(isset($featuredBlogs) && $featuredBlogs->count() > 0)
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    @foreach($featuredBlogs as $blog)
+                        <a href="{{ route('blog.show', $blog->slug) }}" 
+                        class="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                            <div class="relative overflow-hidden h-52">
+                                @if($blog->featured_image_url)
+                                    <img src="{{ $blog->featured_image_url }}" 
+                                        alt="{{ $blog->title }}" 
+                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                @else
+                                    <div class="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center">
+                                        <svg class="w-16 h-16 text-[#D4AF37]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6.253v13m0-13C6.5 6.253 2 10.998 2 17s4.5 10.747 10 10.747c5.5 0 10-4.998 10-10.747S17.5 6.253 12 6.253z"/>
                                         </svg>
                                     </div>
+                                @endif
+                                <div class="absolute top-3 right-3">
+                                    <span class="px-3 py-1 bg-[#D4AF37] text-[#0b0e12] text-xs font-bold rounded-full">
+                                        Featured
+                                    </span>
                                 </div>
-                            </a>
-                        @endforeach
-                    </div>
-
-                    <!-- View All Blogs Button -->
-                    <div class="text-center mt-12">
-                        <a href="{{ route('blog') }}" 
-                        class="inline-flex items-center gap-2 px-8 py-3 bg-[#D4AF37] text-[#0b0e12] font-bold rounded-lg hover:bg-[#c4a030] transition-all shadow-lg shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/40 hover:-translate-y-0.5">
-                            View All Blogs
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                            </svg>
+                                @if($blog->category)
+                                    <div class="absolute bottom-3 left-3">
+                                        <span class="px-3 py-1 bg-black/60 text-white text-xs font-medium rounded-full backdrop-blur-sm">
+                                            {{ $blog->category }}
+                                        </span>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                                    <span>{{ $blog->published_at ? $blog->published_at->format('M d, Y') : $blog->created_at->format('M d, Y') }}</span>
+                                    <span>•</span>
+                                    <span class="flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6l5.25 3.15L17 12.23l-4-2.37V7z"/>
+                                        </svg>
+                                        {{ $blog->reading_time ?? '5 min read' }}
+                                    </span>
+                                </div>
+                                <h3 class="text-xl font-bold text-[#1e1e1a] mb-2 group-hover:text-[#D4AF37] transition-colors line-clamp-2">
+                                    {{ $blog->title }}
+                                </h3>
+                                <p class="text-gray-600 text-sm line-clamp-2">
+                                    {{ $blog->excerpt ?? Str::limit(strip_tags($blog->content ?? ''), 120) }}
+                                </p>
+                                <div class="mt-4 flex items-center gap-2 text-sm text-[#D4AF37] font-medium">
+                                    Read More 
+                                    <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </div>
+                            </div>
                         </a>
-                    </div>
-                @else
-                    <div class="text-center py-12 bg-white/50 rounded-xl">
-                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6.253v13m0-13C6.5 6.253 2 10.998 2 17s4.5 10.747 10 10.747c5.5 0 10-4.998 10-10.747S17.5 6.253 12 6.253z"/>
+                    @endforeach
+                </div>
+
+                <div class="text-center mt-12">
+                    <a href="{{ route('blog') }}" 
+                    class="inline-flex items-center gap-2 px-8 py-3 bg-[#D4AF37] text-[#0b0e12] font-bold rounded-lg hover:bg-[#c4a030] transition-all shadow-lg shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/40 hover:-translate-y-0.5">
+                        View All Blogs
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                         </svg>
-                        <p class="text-gray-500">No featured blogs yet. Check back soon!</p>
-                    </div>
-                @endif
-            </div>
+                    </a>
+                </div>
+            @else
+                <div class="text-center py-12 bg-white/50 rounded-xl">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 6.253v13m0-13C6.5 6.253 2 10.998 2 17s4.5 10.747 10 10.747c5.5 0 10-4.998 10-10.747S17.5 6.253 12 6.253z"/>
+                    </svg>
+                    <p class="text-gray-500">No featured blogs yet. Check back soon!</p>
+                </div>
+            @endif
+        </div>
     </section>
 @endsection
 
@@ -538,9 +630,124 @@
     overflow: hidden;
 }
 
+.line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Video Modal Styles */
+#videoModal {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#videoModal .relative {
+    animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .carousel-track {
         animation: none;
     }
+    #videoModal {
+        animation: none;
+    }
+    #videoModal .relative {
+        animation: none;
+    }
 }
 </style>
+
+<script>
+function playVideo(element, researchId) {
+    const modal = document.getElementById('videoModal');
+    const container = document.getElementById('videoContainer');
+    
+    // Get video data from server
+    fetch(`/research/${researchId}/video`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.video_file) {
+                // Play uploaded video
+                container.innerHTML = `
+                    <video controls autoplay class="w-full h-full">
+                        <source src="${data.video_file}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                `;
+            } else if (data.video_embed_url) {
+                // Play embedded video
+                container.innerHTML = `
+                    <iframe src="${data.video_embed_url}" class="w-full h-full" allowfullscreen></iframe>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="w-full h-full flex items-center justify-center text-white">
+                        <p>No video available</p>
+                    </div>
+                `;
+            }
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        })
+        .catch(error => {
+            console.error('Error loading video:', error);
+            container.innerHTML = `
+                <div class="w-full h-full flex items-center justify-center text-white">
+                    <p>Error loading video. Please try again.</p>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        });
+}
+
+function closeVideoModal(event) {
+    if (event && event.target !== event.currentTarget) return;
+    const modal = document.getElementById('videoModal');
+    const container = document.getElementById('videoContainer');
+    modal.classList.add('hidden');
+    container.innerHTML = '';
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal with ESC key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeVideoModal({ target: document.getElementById('videoModal') });
+    }
+});
+
+// Counter animation for stats
+document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.counter');
+    const speed = 200;
+
+    counters.forEach(counter => {
+        const updateCounter = () => {
+            const target = parseInt(counter.getAttribute('data-target'));
+            const current = parseInt(counter.innerText);
+            const increment = Math.ceil(target / speed);
+            
+            if (current < target) {
+                counter.innerText = Math.min(current + increment, target);
+                setTimeout(updateCounter, 1);
+            } else {
+                counter.innerText = target;
+            }
+        };
+        
+        updateCounter();
+    });
+});
+</script>

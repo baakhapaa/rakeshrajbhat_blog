@@ -92,8 +92,7 @@
         </span>
     </a>
 
-  {{-- Activity Logs --}}
-
+    {{-- Activity Logs --}}
         <a href="{{ route('admin.activity.logs') }}"
             class="block px-4 py-3 rounded-lg transition-all duration-200
             {{ Route::currentRouteName() === 'admin.activity.logs' ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
@@ -103,8 +102,16 @@
             </span>
         </a>
 
+    {{-- Research Section --}}
+        <a href="{{ route('admin.research.index') }}"
+            class="block px-4 py-3 rounded-lg transition-all duration-200
+            {{ Str::startsWith(Route::currentRouteName(), 'admin.research') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+            <span class="flex items-center">
+                <i class="fas fa-flask w-5 h-5 mr-3"></i>
+                Research
+            </span>
+        </a>
         {{-- Projects --}}
-        
         <a href="{{ route('admin.projects.index') }}"
             class="block px-4 py-3 rounded-lg transition-all duration-200
             {{ Str::startsWith(Route::currentRouteName(), 'admin.projects') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
