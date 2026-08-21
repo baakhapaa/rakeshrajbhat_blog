@@ -166,9 +166,10 @@ class ResearchController extends Controller
             ->with('success', 'Research item deleted successfully.');
     }
 
-    public function toggleStatus(Research $research)
+    public function toggleStatus($id)
     {
         try {
+            $research = Research::findOrFail($id);
             $research->is_active = !$research->is_active;
             $research->save();
 
@@ -184,9 +185,11 @@ class ResearchController extends Controller
         }
     }
 
-    public function toggleFeatured(Research $research)
+    public function toggleFeatured($id)
     {
         try {
+            $research = Research::findOrFail($id);
+            
             // If setting to featured, un-feature all others in same category
             if (!$research->is_featured) {
                 Research::where('category', $research->category)

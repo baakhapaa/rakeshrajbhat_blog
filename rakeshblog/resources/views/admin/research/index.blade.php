@@ -265,7 +265,7 @@
 </div>
 
 <script>
-function toggleStatus(id) {
+    function toggleStatus(id) {
     const button = document.querySelector(`[onclick*="toggleStatus(${id})"]`);
     if (button) {
         const span = button.querySelector('span');
@@ -274,14 +274,23 @@ function toggleStatus(id) {
         button.disabled = true;
     }
 
+    const token = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+    
     fetch(`/admin/research/${id}/toggle-status`, {
-        method: 'POST',
+        method: 'PUT',  // Changed to PUT
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+            'X-CSRF-TOKEN': token,
             'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
     })
-    .then(response => response.json())
+    .then(async response => {
+        if (!response.ok) {
+            const text = await response.text();
+            throw new Error(`HTTP ${response.status}: ${text}`);
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             location.reload();
@@ -317,16 +326,20 @@ function toggleFeatured(id) {
         button.disabled = true;
     }
 
+    const token = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
     const url = `/admin/research/${id}/toggle-featured`;
-    console.log('Sending request to:', url);
+    console.log('Sending POST request to:', url);
 
     fetch(url, {
-        method: 'POST',
+        method: 'POST',  // Use POST
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}',
+            'X-CSRF-TOKEN': token,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
+        body: JSON.stringify({
+            _method: 'POST'  // Override method
+        })
     })
     .then(async response => {
         console.log('Response status:', response.status);
@@ -360,6 +373,7 @@ function toggleFeatured(id) {
         }
     });
 }
+
 </script>
 
 <style>
