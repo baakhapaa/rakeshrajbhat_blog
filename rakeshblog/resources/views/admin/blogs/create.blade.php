@@ -56,11 +56,10 @@
                 @enderror
             </div>
 
-            <!-- Content -->
+            <!-- Content with CKEditor -->
             <div class="mb-4">
                 <label for="content" class="block text-gray-300 text-sm font-medium mb-2">Content *</label>
-                <textarea id="content" name="content" rows="10" required
-                    class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">{{ old('content') }}</textarea>
+                <x-ckeditor id="content" name="content" value="{{ old('content') }}" height="600" />
                 @error('content')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror
@@ -150,6 +149,17 @@
                     <span class="text-sm font-medium">Publish immediately</span>
                 </label>
                 <p class="text-xs text-white/30 mt-1">If unchecked, the blog will be saved as a draft.</p>
+            </div>
+
+            <!-- Featured -->
+            <div class="mb-6">
+                <label class="flex items-center text-white/70 cursor-pointer">
+                    <input type="hidden" name="is_featured" value="0">
+                    <input type="checkbox" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}
+                        class="mr-2 rounded border-white/20 bg-white/5 text-[#D4AF37] focus:ring-[#D4AF37] w-4 h-4">
+                    <span class="text-sm font-medium">⭐ Mark as Featured</span>
+                </label>
+                <p class="text-xs text-white/30 mt-1">Featured blogs appear on the homepage.</p>
             </div>
 
             <!-- ========================================== -->
@@ -306,7 +316,7 @@
     }
 
     // ==========================================
-    // IMAGE UPLOAD FUNCTIONS
+    // IMAGE UPLOAD FUNCTIONS - FIXED
     // ==========================================
     function previewImage(event) {
         const file = event.target.files[0];
@@ -338,6 +348,11 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
                          document.querySelector('input[name="_token"]')?.value;
 
+        if (!csrfToken) {
+            showToast('CSRF token not found. Please refresh the page.', 'error');
+            return;
+        }
+
         fetch('{{ route("admin.upload-image") }}', {
             method: 'POST',
             headers: {
@@ -346,7 +361,14 @@
             },
             body: formData
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(text);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 document.getElementById('featured_image_url').value = data.path;
@@ -367,6 +389,14 @@
             showToast('Please enter a valid image URL.', 'error');
             return;
         }
+
+        try {
+            new URL(url);
+        } catch {
+            showToast('Please enter a valid URL (e.g., https://example.com/image.jpg)', 'error');
+            return;
+        }
+
         document.getElementById('featured_image_url').value = url;
         const preview = document.getElementById('urlPreview');
         const container = document.getElementById('urlPreviewContainer');
@@ -504,6 +534,21 @@
     }
 
     // ==========================================
+    // AUTO-SWITCH TO URL TAB IF THERE'S AN OLD IMAGE
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', function() {
+        @if(old('featured_image'))
+            document.getElementById('featured_image_url').value = '{{ old('featured_image') }}';
+            const preview = document.getElementById('urlPreview');
+            const container = document.getElementById('urlPreviewContainer');
+            preview.src = '{{ old('featured_image') }}';
+            container.classList.remove('hidden');
+            document.getElementById('image_url_input').value = '{{ old('featured_image') }}';
+            switchTab('url');
+        @endif
+    });
+
+    // ==========================================
     // ANIMATION STYLE
     // ==========================================
     const style = document.createElement('style');
@@ -541,6 +586,31 @@
     }
     .question-item:hover {
         border-color: rgba(212, 175, 55, 0.3);
+    }
+    
+    /* CKEditor dark theme fixes */
+    .ck-editor__editable {
+        background: #1a1f26 !important;
+        color: #e5e7eb !important;
+        min-height: 300px !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    .ck.ck-editor__main > .ck-editor__editable:not(.ck-focused) {
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    .ck.ck-editor__main > .ck-editor__editable.ck-focused {
+        border-color: #D4AF37 !important;
+        box-shadow: 0 0 0 1px #D4AF37 !important;
+    }
+    .ck.ck-toolbar {
+        background: #0f1419 !important;
+        border-color: rgba(255, 255, 255, 0.1) !important;
+    }
+    .ck.ck-toolbar .ck-button {
+        color: #e5e7eb !important;
+    }
+    .ck.ck-toolbar .ck-button:hover {
+        background: rgba(212, 175, 55, 0.1) !important;
     }
 </style>
 @endsection

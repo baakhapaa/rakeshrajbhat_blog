@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Quiz;
-use App\Models\QuizQuestion; // Changed from Question to QuizQuestion
+use App\Models\QuizQuestion;
 use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -61,7 +61,8 @@ class BlogController extends Controller
             'excerpt' => 'nullable|string',
             'category' => 'nullable|string|max:100',
             'tags' => 'nullable|string',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'featured_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120',
+            'featured_image' => 'nullable|string|max:500', // URL or path as string
             'is_published' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'published_at' => 'nullable|date',
@@ -108,10 +109,17 @@ class BlogController extends Controller
             $tags = array_map('trim', explode(',', $request->tags));
         }
 
+        // Handle featured image - PRIORITIZE file upload over URL
         $featuredImage = null;
-        if ($request->hasFile('featured_image')) {
-            $path = $request->file('featured_image')->store('blogs', 'public');
+        
+        // Check if a file was uploaded (this takes priority)
+        if ($request->hasFile('featured_image_file') && $request->file('featured_image_file')->isValid()) {
+            $path = $request->file('featured_image_file')->store('blogs', 'public');
             $featuredImage = '/storage/' . $path;
+        } 
+        // If no file, check if URL was provided
+        elseif ($request->filled('featured_image')) {
+            $featuredImage = $request->featured_image;
         }
 
         // Generate a unique slug
@@ -180,7 +188,8 @@ class BlogController extends Controller
             'excerpt' => 'nullable|string',
             'category' => 'nullable|string|max:100',
             'tags' => 'nullable|string',
-            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'featured_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:5120', // File upload
+            'featured_image' => 'nullable|string|max:500', // URL or path as string - FIXED
             'is_published' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'published_at' => 'nullable|date',
@@ -190,7 +199,7 @@ class BlogController extends Controller
             'quiz_is_active' => 'nullable|boolean',
             'remove_quiz' => 'nullable|boolean',
             'questions' => 'nullable|array',
-            'questions.*.id' => 'nullable|exists:quiz_questions,id', // Changed from questions to quiz_questions
+            'questions.*.id' => 'nullable|exists:quiz_questions,id',
             'questions.*.question' => 'nullable|string',
             'questions.*.option_1' => 'nullable|string',
             'questions.*.option_2' => 'nullable|string',
@@ -229,8 +238,11 @@ class BlogController extends Controller
             $tags = array_map('trim', explode(',', $request->tags));
         }
 
+        // Handle featured image - PRIORITIZE file upload over URL
         $featuredImage = $blog->featured_image;
-        if ($request->hasFile('featured_image')) {
+        
+        // Check if a file was uploaded (this takes priority)
+        if ($request->hasFile('featured_image_file') && $request->file('featured_image_file')->isValid()) {
             // Delete old image
             if ($blog->featured_image) {
                 $oldPath = str_replace('/storage/', '', $blog->featured_image);
@@ -238,8 +250,12 @@ class BlogController extends Controller
                     Storage::disk('public')->delete($oldPath);
                 }
             }
-            $path = $request->file('featured_image')->store('blogs', 'public');
+            $path = $request->file('featured_image_file')->store('blogs', 'public');
             $featuredImage = '/storage/' . $path;
+        } 
+        // If no file, check if URL was provided
+        elseif ($request->filled('featured_image')) {
+            $featuredImage = $request->featured_image;
         }
 
         // Generate a unique slug (except for the current blog)
@@ -358,7 +374,7 @@ class BlogController extends Controller
                     continue;
                 }
 
-                QuizQuestion::create([ // Changed from Question to QuizQuestion
+                QuizQuestion::create([
                     'quiz_id' => $quiz->id,
                     'question' => $questionData['question'],
                     'option_1' => $questionData['option_1'],
@@ -442,7 +458,7 @@ class BlogController extends Controller
 
                 // Check if updating existing question
                 if (isset($questionData['id']) && $questionData['id']) {
-                    $question = QuizQuestion::find($questionData['id']); // Changed from Question to QuizQuestion
+                    $question = QuizQuestion::find($questionData['id']);
                     if ($question && $question->quiz_id == $quiz->id) {
                         $question->update($questionFields);
                         $updatedQuestionIds[] = $question->id;
@@ -451,14 +467,14 @@ class BlogController extends Controller
                 }
 
                 // Create new question
-                $newQuestion = QuizQuestion::create(array_merge($questionFields, ['quiz_id' => $quiz->id])); // Changed from Question to QuizQuestion
+                $newQuestion = QuizQuestion::create(array_merge($questionFields, ['quiz_id' => $quiz->id]));
                 $updatedQuestionIds[] = $newQuestion->id;
             }
 
             // Delete questions that were removed
             $questionsToDelete = array_diff($existingQuestionIds, $updatedQuestionIds);
             if (!empty($questionsToDelete)) {
-                QuizQuestion::whereIn('id', $questionsToDelete)->delete(); // Changed from Question to QuizQuestion
+                QuizQuestion::whereIn('id', $questionsToDelete)->delete();
             }
         }
     }
