@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\BootcampRequest;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BootcampRequestMail;
+use Illuminate\Support\Facades\Log;
 
 class BootcampController extends Controller
 {
@@ -49,6 +50,9 @@ class BootcampController extends Controller
             'requirements' => $validated['requirements'] ?? 'No requirements provided',
         ];
 
+        // Log the email data for debugging
+        Log::info('Bootcamp Email Data: ' . json_encode($emailData));
+
         // Store in database
         try {
             $bootcampRequest = BootcampRequest::create([
@@ -64,19 +68,26 @@ class BootcampController extends Controller
                 'status' => 'pending'
             ]);
             
-            // Add the ID to email data if needed
             $emailData['id'] = $bootcampRequest->id;
+            Log::info('✅ Bootcamp request saved with ID: ' . $bootcampRequest->id);
             
         } catch (\Exception $e) {
-            \Log::info('Bootcamp request (without model): ' . json_encode($validated));
+            Log::error('❌ Failed to save bootcamp request: ' . $e->getMessage());
         }
 
         // Send email notification
         try {
-            Mail::to(config('mail.admin_email', 'admin@rakeshrajbhat.com.np'))
-                ->send(new BootcampRequestMail($emailData));
+            $adminEmail = config('mail.admin_email', 'admin@rakeshrajbhat.com.np');
+            Log::info('📧 Sending email to: ' . $adminEmail);
+            
+            // Send email using the Mail class
+            Mail::to($adminEmail)->send(new BootcampRequestMail($emailData));
+            
+            Log::info('✅ Email sent successfully!');
+            
         } catch (\Exception $e) {
-            \Log::error('Failed to send bootcamp request email: ' . $e->getMessage());
+            Log::error('❌ Failed to send bootcamp request email: ' . $e->getMessage());
+            Log::error('❌ Error details: ' . $e->getTraceAsString());
         }
 
         // Return with success message

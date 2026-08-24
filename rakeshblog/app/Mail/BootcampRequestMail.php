@@ -26,6 +26,9 @@ class BootcampRequestMail extends Mailable
      */
     public function __construct($data)
     {
+        // Debug: Log the data received
+        \Log::info('BootcampRequestMail constructor called with data: ' . json_encode($data));
+        
         $this->org_name = $data['org_name'] ?? 'N/A';
         $this->district = $data['district'] ?? 'N/A';
         $this->contact_person = $data['contact_person'] ?? 'N/A';
@@ -43,7 +46,22 @@ class BootcampRequestMail extends Mailable
      */
     public function build()
     {
+        // Debug: Log that the build method is called
+        \Log::info('Building email for: ' . $this->org_name);
+        
         return $this->subject('New Bootcamp Request - ' . $this->org_name)
-                    ->view('emails.bootcamp-request');
+                    ->view('emails.bootcamp-request')
+                    ->with([
+                        'org_name' => $this->org_name,
+                        'district' => $this->district,
+                        'contact_person' => $this->contact_person,
+                        'contact_email' => $this->contact_email,
+                        'contact_phone' => $this->contact_phone,
+                        'participants' => $this->participants,
+                        'preferred_date' => $this->preferred_date,
+                        'audience' => $this->audience,
+                        'requirements' => $this->requirements,
+                        'id' => $this->id,
+                    ]);
     }
 }
