@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Quiz;
-use App\Models\Question;
+use App\Models\QuizQuestion; // Changed from Question to QuizQuestion
 use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -61,7 +61,7 @@ class BlogController extends Controller
             'excerpt' => 'nullable|string',
             'category' => 'nullable|string|max:100',
             'tags' => 'nullable|string',
-            'featured_image' => 'nullable|string|max:500',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'is_published' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'published_at' => 'nullable|date',
@@ -108,11 +108,11 @@ class BlogController extends Controller
             $tags = array_map('trim', explode(',', $request->tags));
         }
 
-         $featuredImage = null;
-            if ($request->hasFile('featured_image')) {
-                $path = $request->file('featured_image')->store('blogs', 'public');
-                $featuredImage = $path;
-            }
+        $featuredImage = null;
+        if ($request->hasFile('featured_image')) {
+            $path = $request->file('featured_image')->store('blogs', 'public');
+            $featuredImage = '/storage/' . $path;
+        }
 
         // Generate a unique slug
         $slug = Str::slug($validated['title']);
@@ -140,7 +140,6 @@ class BlogController extends Controller
             'is_featured' => $isFeatured,
             'published_at' => $publishedAt,
             'author' => auth()->guard('admin')->user()->name ?? 'Admin',
-            // 'user_id' => auth()->id(),
         ]);
 
         // Handle multi-question quiz
@@ -181,7 +180,7 @@ class BlogController extends Controller
             'excerpt' => 'nullable|string',
             'category' => 'nullable|string|max:100',
             'tags' => 'nullable|string',
-            'featured_image' => 'nullable|string|max:500',
+            'featured_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'is_published' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'published_at' => 'nullable|date',
@@ -191,7 +190,7 @@ class BlogController extends Controller
             'quiz_is_active' => 'nullable|boolean',
             'remove_quiz' => 'nullable|boolean',
             'questions' => 'nullable|array',
-            'questions.*.id' => 'nullable|exists:questions,id',
+            'questions.*.id' => 'nullable|exists:quiz_questions,id', // Changed from questions to quiz_questions
             'questions.*.question' => 'nullable|string',
             'questions.*.option_1' => 'nullable|string',
             'questions.*.option_2' => 'nullable|string',
@@ -230,7 +229,18 @@ class BlogController extends Controller
             $tags = array_map('trim', explode(',', $request->tags));
         }
 
-        $featuredImage = $request->featured_image ?? null;
+        $featuredImage = $blog->featured_image;
+        if ($request->hasFile('featured_image')) {
+            // Delete old image
+            if ($blog->featured_image) {
+                $oldPath = str_replace('/storage/', '', $blog->featured_image);
+                if (Storage::disk('public')->exists($oldPath)) {
+                    Storage::disk('public')->delete($oldPath);
+                }
+            }
+            $path = $request->file('featured_image')->store('blogs', 'public');
+            $featuredImage = '/storage/' . $path;
+        }
 
         // Generate a unique slug (except for the current blog)
         $slug = Str::slug($validated['title']);
@@ -245,14 +255,6 @@ class BlogController extends Controller
         $isPublished = $request->has('is_published') && $request->is_published == 1;
         $isFeatured = $request->has('is_featured') && $request->is_featured == 1;
         $publishedAt = $isPublished ? now() : null;
-
-        // Delete old image if new one is uploaded
-        if ($featuredImage && $blog->featured_image && $featuredImage !== $blog->featured_image) {
-            $oldPath = str_replace('/storage/', '', $blog->featured_image);
-            if (Storage::disk('public')->exists($oldPath)) {
-                Storage::disk('public')->delete($oldPath);
-            }
-        }
 
         $blog->update([
             'title' => $validated['title'],
@@ -356,7 +358,7 @@ class BlogController extends Controller
                     continue;
                 }
 
-                $question = Question::create([
+                QuizQuestion::create([ // Changed from Question to QuizQuestion
                     'quiz_id' => $quiz->id,
                     'question' => $questionData['question'],
                     'option_1' => $questionData['option_1'],
@@ -440,7 +442,7 @@ class BlogController extends Controller
 
                 // Check if updating existing question
                 if (isset($questionData['id']) && $questionData['id']) {
-                    $question = Question::find($questionData['id']);
+                    $question = QuizQuestion::find($questionData['id']); // Changed from Question to QuizQuestion
                     if ($question && $question->quiz_id == $quiz->id) {
                         $question->update($questionFields);
                         $updatedQuestionIds[] = $question->id;
@@ -449,14 +451,14 @@ class BlogController extends Controller
                 }
 
                 // Create new question
-                $newQuestion = Question::create(array_merge($questionFields, ['quiz_id' => $quiz->id]));
+                $newQuestion = QuizQuestion::create(array_merge($questionFields, ['quiz_id' => $quiz->id])); // Changed from Question to QuizQuestion
                 $updatedQuestionIds[] = $newQuestion->id;
             }
 
             // Delete questions that were removed
             $questionsToDelete = array_diff($existingQuestionIds, $updatedQuestionIds);
             if (!empty($questionsToDelete)) {
-                Question::whereIn('id', $questionsToDelete)->delete();
+                QuizQuestion::whereIn('id', $questionsToDelete)->delete(); // Changed from Question to QuizQuestion
             }
         }
     }

@@ -29,7 +29,7 @@
             <div class="mb-4">
                 <label for="title" class="block text-gray-300 text-sm font-medium mb-2">Title *</label>
                 <input type="text" id="title" name="title" value="{{ old('title') }}" required
-                    class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                    class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
                 @error('title')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror
@@ -39,7 +39,7 @@
             <div class="mb-4">
                 <label for="category" class="block text-gray-300 text-sm font-medium mb-2">Category</label>
                 <input type="text" id="category" name="category" value="{{ old('category') }}"
-                    class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition"
+                    class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition"
                     placeholder="e.g., Technology, Education, Tourism">
                 @error('category')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -50,7 +50,7 @@
             <div class="mb-4">
                 <label for="excerpt" class="block text-gray-300 text-sm font-medium mb-2">Excerpt (Short Description)</label>
                 <textarea id="excerpt" name="excerpt" rows="3"
-                    class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">{{ old('excerpt') }}</textarea>
+                    class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">{{ old('excerpt') }}</textarea>
                 @error('excerpt')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror
@@ -60,7 +60,7 @@
             <div class="mb-4">
                 <label for="content" class="block text-gray-300 text-sm font-medium mb-2">Content *</label>
                 <textarea id="content" name="content" rows="10" required
-                    class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">{{ old('content') }}</textarea>
+                    class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">{{ old('content') }}</textarea>
                 @error('content')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror
@@ -68,7 +68,7 @@
 
             <!-- Featured Image Upload -->
             <div class="mb-4">
-                <label class="block text-gray-300 text-sm font-medium mb-2">Featured Image</label>
+                <label for="featured_image" class="block text-gray-300 text-sm font-medium mb-2">Featured Image</label>
                 
                 <div class="flex gap-2 mb-4 border-b border-white/10">
                     <button type="button" onclick="switchTab('upload')" id="tabUpload" class="px-4 py-2 text-sm font-medium text-[#D4AF37] border-b-2 border-[#D4AF37] transition">
@@ -79,6 +79,7 @@
                     </button>
                 </div>
 
+                <!-- Tab 1: Upload from PC -->
                 <div id="uploadTab" class="upload-tab">
                     <div id="imagePreviewContainer" class="hidden mb-3">
                         <div class="relative inline-block">
@@ -102,10 +103,11 @@
                     <p class="text-xs text-white/30 mt-2">Accepted formats: JPG, PNG, GIF, WebP (Max 5MB)</p>
                 </div>
 
+                <!-- Tab 2: Enter Image URL -->
                 <div id="urlTab" class="url-tab hidden">
                     <div class="flex items-center gap-4">
                         <input type="text" id="image_url_input" placeholder="https://example.com/image.jpg"
-                            class="flex-1 px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                            class="flex-1 px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
                         <button type="button" onclick="setImageUrl()"
                             class="px-4 py-2 bg-[#D4AF37] text-[#0b0e12] rounded-lg font-semibold hover:bg-[#c4a030] transition">
                             Set URL
@@ -133,96 +135,140 @@
             <div class="mb-4">
                 <label for="tags" class="block text-gray-300 text-sm font-medium mb-2">Tags (comma separated)</label>
                 <input type="text" id="tags" name="tags" value="{{ old('tags') }}"
-                    class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition" placeholder="education, technology, future">
+                    class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition" placeholder="education, technology, future">
                 @error('tags')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Publish & Featured -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
-                    <label class="flex items-center text-white/70 cursor-pointer">
-                        <input type="hidden" name="is_published" value="0">
-                        <input type="checkbox" name="is_published" value="1" {{ old('is_published') ? 'checked' : '' }}
-                            class="mr-2 rounded border-white/20 bg-white/5 text-[#D4AF37] focus:ring-[#D4AF37] w-4 h-4">
-                        <span class="text-sm font-medium">Publish immediately</span>
-                    </label>
-                    <p class="text-xs text-white/30 mt-1">If unchecked, the blog will be saved as a draft.</p>
-                </div>
-                <div>
-                    <label class="flex items-center text-white/70 cursor-pointer">
-                        <input type="hidden" name="is_featured" value="0">
-                        <input type="checkbox" name="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}
-                            class="mr-2 rounded border-white/20 bg-white/5 text-[#D4AF37] focus:ring-[#D4AF37] w-4 h-4">
-                        <span class="text-sm font-medium">⭐ Mark as Featured</span>
-                    </label>
-                    <p class="text-xs text-white/30 mt-1">Featured blogs appear on the homepage.</p>
-                </div>
+            <!-- Publish -->
+            <div class="mb-6">
+                <label class="flex items-center text-white/70 cursor-pointer">
+                    <input type="hidden" name="is_published" value="0">
+                    <input type="checkbox" name="is_published" value="1" {{ old('is_published') ? 'checked' : '' }}
+                        class="mr-2 rounded border-white/20 bg-white/5 text-[#D4AF37] focus:ring-[#D4AF37] w-4 h-4">
+                    <span class="text-sm font-medium">Publish immediately</span>
+                </label>
+                <p class="text-xs text-white/30 mt-1">If unchecked, the blog will be saved as a draft.</p>
             </div>
 
             <!-- ========================================== -->
             <!-- QUIZ SECTION -->
             <!-- ========================================== -->
             <div class="mt-8 pt-6 border-t border-white/10">
-                <h3 class="text-xl font-semibold text-white mb-4">📝 Quiz Settings (Optional)</h3>
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold text-white">📝 Quiz Settings</h3>
+                    <span class="text-xs text-white/40">Quiz is saved together with the blog</span>
+                </div>
                 <p class="text-white/40 text-sm mb-4">Add questions to create a quiz. Users earn points for correct answers. (<span class="text-[#D4AF37]">0 - 20000 points per question</span>)</p>
                 
                 <!-- Quiz Header -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label for="quiz_title" class="block text-gray-300 text-sm font-medium mb-2">Quiz Title</label>
+                        <label for="quiz_title" class="block text-gray-300 text-sm font-medium mb-2">Quiz Title *</label>
                         <input type="text" id="quiz_title" name="quiz_title" value="{{ old('quiz_title') }}"
-                            class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition"
+                            class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition"
                             placeholder="e.g., Test Your Knowledge">
+                        <p class="text-xs text-white/30 mt-1">Required to create a quiz</p>
                     </div>
                     <div>
                         <label for="quiz_passing_score" class="block text-gray-300 text-sm font-medium mb-2">Passing Score (%)</label>
                         <input type="number" id="quiz_passing_score" name="quiz_passing_score" value="{{ old('quiz_passing_score', 60) }}" min="0" max="100"
-                            class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 focus:border-[#D4AF37] focus:outline-none transition">
+                            class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 focus:border-[#D4AF37] focus:outline-none transition">
                     </div>
                 </div>
 
-                <!-- Quiz Active -->
+                <!-- Quiz Questions -->
                 <div class="mb-4">
+                    <label class="block text-gray-300 text-sm font-medium mb-2">Questions</label>
+                    
+                    <div id="questionsContainer" class="space-y-3">
+                        @if(old('questions'))
+                            @foreach(old('questions') as $index => $question)
+                                <div class="bg-[#1a1f26] rounded-lg p-4 border border-white/10 question-item" data-index="{{ $index }}">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <h4 class="text-white font-medium">Question <span class="question-number">{{ $index + 1 }}</span></h4>
+                                        <button type="button" onclick="removeQuestion(this)" class="text-red-400 hover:text-red-300 text-sm">
+                                            ✕ Remove
+                                        </button>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-3">
+                                        <input type="text" name="questions[{{ $index }}][question]" value="{{ $question['question'] ?? '' }}" placeholder="Enter your question"
+                                            class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <input type="text" name="questions[{{ $index }}][option_1]" value="{{ $question['option_1'] ?? '' }}" placeholder="Option A"
+                                                class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                                            <input type="text" name="questions[{{ $index }}][option_2]" value="{{ $question['option_2'] ?? '' }}" placeholder="Option B"
+                                                class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                                            <input type="text" name="questions[{{ $index }}][option_3]" value="{{ $question['option_3'] ?? '' }}" placeholder="Option C"
+                                                class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                                            <input type="text" name="questions[{{ $index }}][option_4]" value="{{ $question['option_4'] ?? '' }}" placeholder="Option D"
+                                                class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="text-white/60 text-sm">Correct Answer</label>
+                                                <select name="questions[{{ $index }}][correct_answer]"
+                                                    class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 focus:border-[#D4AF37] focus:outline-none transition">
+                                                    <option value="">Select</option>
+                                                    <option value="1" {{ (isset($question['correct_answer']) && $question['correct_answer'] == 1) ? 'selected' : '' }}>A</option>
+                                                    <option value="2" {{ (isset($question['correct_answer']) && $question['correct_answer'] == 2) ? 'selected' : '' }}>B</option>
+                                                    <option value="3" {{ (isset($question['correct_answer']) && $question['correct_answer'] == 3) ? 'selected' : '' }}>C</option>
+                                                    <option value="4" {{ (isset($question['correct_answer']) && $question['correct_answer'] == 4) ? 'selected' : '' }}>D</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <label class="text-white/60 text-sm">Points</label>
+                                                <input type="number" name="questions[{{ $index }}][points]" value="{{ $question['points'] ?? 10 }}" min="0" max="20000"
+                                                    class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 focus:border-[#D4AF37] focus:outline-none transition">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @endif
+                        
+                        <div class="text-center text-white/40 py-4" id="noQuestionsMsg" {{ old('questions') ? 'style="display:none"' : '' }}>
+                            <p>No questions added yet. Click "Add Question" below.</p>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="addQuestion()" 
+                            class="mt-3 px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition text-sm">
+                        + Add Question
+                    </button>
+                </div>
+
+                <!-- Quiz Description -->
+                <div class="mb-4">
+                    <label for="quiz_description" class="block text-gray-300 text-sm font-medium mb-2">Quiz Description (Optional)</label>
+                    <textarea id="quiz_description" name="quiz_description" rows="2"
+                        class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition"
+                        placeholder="Brief description of the quiz...">{{ old('quiz_description') }}</textarea>
+                </div>
+
+                <!-- Quiz Status -->
+                <div>
                     <label class="flex items-center text-white/70 cursor-pointer">
                         <input type="hidden" name="quiz_is_active" value="0">
-                        <input type="checkbox" name="quiz_is_active" value="1" {{ old('quiz_is_active') ? 'checked' : '' }}
+                        <input type="checkbox" name="quiz_is_active" value="1" {{ old('quiz_is_active', true) ? 'checked' : '' }}
                             class="mr-2 rounded border-white/20 bg-white/5 text-[#D4AF37] focus:ring-[#D4AF37] w-4 h-4">
                         <span class="text-sm font-medium">Activate Quiz</span>
                     </label>
-                    <p class="text-xs text-white/30 mt-1">If unchecked, the quiz will be hidden from users.</p>
+                    <p class="text-xs text-white/30 mt-1">If inactive, the quiz won't be visible to users</p>
                 </div>
-
-                <!-- Quiz Questions Container -->
-                <div id="questionsContainer" class="space-y-3">
-                    <div class="text-center text-white/40 py-4" id="noQuestionsMsg">
-                        <p>No questions added yet. Click "Add Question" below.</p>
-                    </div>
-                </div>
-
-                <!-- Add Question Button -->
-                <button type="button" onclick="addQuestion()" 
-                        class="mt-3 px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition text-sm">
-                    + Add Question
-                </button>
-
-                <!-- Quiz Description -->
-                <div class="mt-4">
-                    <label for="quiz_description" class="block text-gray-300 text-sm font-medium mb-2">Quiz Description (Optional)</label>
-                    <textarea id="quiz_description" name="quiz_description" rows="2"
-                        class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition"
-                        placeholder="Brief description of the quiz...">{{ old('quiz_description') }}</textarea>
+                
+                <div class="mt-4 p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
+                    <p class="text-xs text-blue-400">
+                        💡 <strong>Tip:</strong> Make sure the "Quiz Title" field is filled to save your quiz.
+                        Quiz will be automatically created with your blog.
+                    </p>
                 </div>
             </div>
 
-            <!-- Submit Buttons -->
-            <div class="flex gap-4 mt-8 pt-6 border-t border-white/10">
-                <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition-all" id="submitBtn">
+            <div class="flex gap-4 mt-8">
+                <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition-all">
                     Create Blog
-                </button>
-                <button type="button" onclick="submitAsDraft()" class="border border-white/20 text-white/70 px-6 py-2 rounded-lg font-semibold hover:bg-white/5 transition-all">
-                    Save as Draft
                 </button>
                 <a href="{{ route('admin.blogs.index') }}" class="border border-white/20 text-white/70 px-6 py-2 rounded-lg font-semibold hover:bg-white/5 transition-all">
                     Cancel
@@ -292,11 +338,6 @@
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
                          document.querySelector('input[name="_token"]')?.value;
 
-        if (!csrfToken) {
-            showToast('CSRF token not found. Please refresh the page.', 'error');
-            return;
-        }
-
         fetch('{{ route("admin.upload-image") }}', {
             method: 'POST',
             headers: {
@@ -305,14 +346,7 @@
             },
             body: formData
         })
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(text);
-                });
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
                 document.getElementById('featured_image_url').value = data.path;
@@ -327,23 +361,12 @@
         });
     }
 
-    // ==========================================
-    // ENTER IMAGE URL
-    // ==========================================
     function setImageUrl() {
         const url = document.getElementById('image_url_input').value.trim();
         if (!url) {
             showToast('Please enter a valid image URL.', 'error');
             return;
         }
-
-        try {
-            new URL(url);
-        } catch {
-            showToast('Please enter a valid URL (e.g., https://example.com/image.jpg)', 'error');
-            return;
-        }
-
         document.getElementById('featured_image_url').value = url;
         const preview = document.getElementById('urlPreview');
         const container = document.getElementById('urlPreviewContainer');
@@ -391,60 +414,60 @@
     // ==========================================
     // QUIZ FUNCTIONS
     // ==========================================
-    let questionCount = 0;
+    let questionCount = {{ old('questions') ? count(old('questions')) : 0 }};
 
     function addQuestion() {
         const container = document.getElementById('questionsContainer');
         const noMsg = document.getElementById('noQuestionsMsg');
         
         if (noMsg) {
-            noMsg.remove();
+            noMsg.style.display = 'none';
         }
 
-        const questionIndex = questionCount;
-        const html = `
-            <div class="bg-white/5 rounded-lg p-4 border border-white/10 question-item" id="question_${questionIndex}">
+        const questionHtml = `
+            <div class="bg-[#1a1f26] rounded-lg p-4 border border-white/10 question-item">
                 <div class="flex justify-between items-start mb-3">
-                    <h4 class="text-white font-medium">Question <span class="question-number">${questionIndex + 1}</span></h4>
+                    <h4 class="text-white font-medium">Question <span class="question-number">${questionCount + 1}</span></h4>
                     <button type="button" onclick="removeQuestion(this)" class="text-red-400 hover:text-red-300 text-sm">
                         ✕ Remove
                     </button>
                 </div>
                 <div class="grid grid-cols-1 gap-3">
-                    <input type="text" name="questions[${questionIndex}][question]" placeholder="Enter your question"
-                        class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                    <input type="text" name="questions[${questionCount}][question]" placeholder="Enter your question"
+                        class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
                     <div class="grid grid-cols-2 gap-3">
-                        <input type="text" name="questions[${questionIndex}][option_1]" placeholder="Option A"
-                            class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
-                        <input type="text" name="questions[${questionIndex}][option_2]" placeholder="Option B"
-                            class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
-                        <input type="text" name="questions[${questionIndex}][option_3]" placeholder="Option C (optional)"
-                            class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
-                        <input type="text" name="questions[${questionIndex}][option_4]" placeholder="Option D (optional)"
-                            class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                        <input type="text" name="questions[${questionCount}][option_1]" placeholder="Option A"
+                            class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                        <input type="text" name="questions[${questionCount}][option_2]" placeholder="Option B"
+                            class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                        <input type="text" name="questions[${questionCount}][option_3]" placeholder="Option C"
+                            class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
+                        <input type="text" name="questions[${questionCount}][option_4]" placeholder="Option D"
+                            class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="text-white/60 text-sm">Correct Answer</label>
-                            <select name="questions[${questionIndex}][correct_answer]"
-                                class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 focus:border-[#D4AF37] focus:outline-none transition">
+                            <select name="questions[${questionCount}][correct_answer]"
+                                class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 focus:border-[#D4AF37] focus:outline-none transition">
                                 <option value="">Select</option>
-                                <option value="1">Option A</option>
-                                <option value="2">Option B</option>
-                                <option value="3">Option C</option>
-                                <option value="4">Option D</option>
+                                <option value="1">A</option>
+                                <option value="2">B</option>
+                                <option value="3">C</option>
+                                <option value="4">D</option>
                             </select>
                         </div>
                         <div>
                             <label class="text-white/60 text-sm">Points</label>
-                            <input type="number" name="questions[${questionIndex}][points]" value="10" min="0" max="20000"
-                                class="w-full px-4 py-2 bg-[#0b0e12] border border-white/10 rounded-lg text-gray-200 focus:border-[#D4AF37] focus:outline-none transition">
+                            <input type="number" name="questions[${questionCount}][points]" value="10" min="0" max="20000"
+                                class="w-full px-4 py-2 bg-[#1a1f26] border border-white/10 rounded-lg text-gray-200 focus:border-[#D4AF37] focus:outline-none transition">
                         </div>
                     </div>
                 </div>
             </div>
         `;
-        container.insertAdjacentHTML('beforeend', html);
+
+        container.insertAdjacentHTML('beforeend', questionHtml);
         questionCount++;
     }
 
@@ -471,43 +494,14 @@
             });
             
             if (remainingQuestions.length === 0) {
-                const noMsg = document.createElement('div');
-                noMsg.id = 'noQuestionsMsg';
-                noMsg.className = 'text-center text-white/40 py-4';
-                noMsg.innerHTML = '<p>No questions added yet. Click "Add Question" below.</p>';
-                container.appendChild(noMsg);
+                const noMsg = document.getElementById('noQuestionsMsg');
+                if (noMsg) {
+                    noMsg.style.display = 'block';
+                }
                 questionCount = 0;
             }
         }
     }
-
-    // ==========================================
-    // SUBMIT FUNCTIONS
-    // ==========================================
-    function submitAsDraft() {
-        const form = document.getElementById('blogForm');
-        const publishedInput = document.querySelector('input[name="is_published"]');
-        if (publishedInput) {
-            publishedInput.checked = false;
-            publishedInput.value = '0';
-        }
-        form.submit();
-    }
-
-    // ==========================================
-    // AUTO-SWITCH TO URL TAB IF THERE'S AN OLD IMAGE
-    // ==========================================
-    document.addEventListener('DOMContentLoaded', function() {
-        @if(old('featured_image'))
-            document.getElementById('featured_image_url').value = '{{ old('featured_image') }}';
-            const preview = document.getElementById('urlPreview');
-            const container = document.getElementById('urlPreviewContainer');
-            preview.src = '{{ old('featured_image') }}';
-            container.classList.remove('hidden');
-            document.getElementById('image_url_input').value = '{{ old('featured_image') }}';
-            switchTab('url');
-        @endif
-    });
 
     // ==========================================
     // ANIMATION STYLE
