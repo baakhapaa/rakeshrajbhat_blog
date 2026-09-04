@@ -2,6 +2,9 @@
 
 @section('title', 'Register · Rakesh Rajbhat')
 
+@section('title', 'Create an Account | Rakesh Rajbhat')
+@section('robots', 'noindex,nofollow')
+
 @section('content')
 <section class="min-h-screen pt-32 pb-20 bg-[#f2f2f2] flex items-center">
     <div class="max-w-md mx-auto w-full px-6">

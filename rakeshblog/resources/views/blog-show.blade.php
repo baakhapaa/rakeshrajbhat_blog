@@ -2,6 +2,16 @@
 
 @section('title', $blog->title . ' · Rakesh Rajbhat')
 
+@section('title', $blog->title . ' | Rakesh Rajbhat')
+@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($blog->excerpt), 155))
+@section('og_type', 'article')
+@section('share_image', $blog->featured_image_url ?: asset('images/rakeshrajbhat.jpg'))
+@section('share_image_alt', $blog->title)
+
+@push('structured_data')
+<script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'BlogPosting', 'headline' => $blog->title, 'description' => \Illuminate\Support\Str::limit(strip_tags($blog->excerpt), 155), 'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => route('blog.show', $blog->slug)], 'image' => $blog->featured_image_url ?: asset('images/rakeshrajbhat.jpg'), 'datePublished' => optional($blog->published_at)->toAtomString(), 'dateModified' => optional($blog->updated_at)->toAtomString(), 'author' => ['@type' => 'Person', 'name' => $blog->author ?: 'Rakesh Rajbhat'], 'publisher' => ['@type' => 'Person', 'name' => 'Rakesh Rajbhat']], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+@endpush
+
 @section('content')
 <section class="min-h-screen pt-32 pb-20 bg-[#f2f2f2] text-[#1e1e1a]">
     <div class="max-w-4xl mx-auto px-6">

@@ -2,6 +2,9 @@
 
 @section('title', 'Blog · Rakesh Rajbhat')
 
+@section('title', 'Blog & Insights | Rakesh Rajbhat')
+@section('meta_description', 'Articles and field reflections from Rakesh Rajbhat on AI, education, entrepreneurship, tourism, Palungtar and Nepal’s future.')
+
 @section('content')
 <section class="min-h-screen pt-32 pb-20 bg-[#f2f2f2] text-[#1e1e1a]">
     <div class="max-w-7xl mx-auto px-6">

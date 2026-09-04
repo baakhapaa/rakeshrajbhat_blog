@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ResearchController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BootcampController;
+use App\Models\Blog;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,21 @@ use App\Http\Controllers\BootcampController;
 
 // Home & Blog
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::view('/privacy', 'legal.privacy')->name('privacy');
+Route::view('/terms', 'legal.terms')->name('terms');
+Route::get('/sitemap.xml', function () {
+    $staticUrls = collect([
+        ['loc' => route('home'), 'lastmod' => now()->toDateString(), 'changefreq' => 'weekly', 'priority' => '1.0'],
+        ['loc' => route('blog'), 'lastmod' => now()->toDateString(), 'changefreq' => 'weekly', 'priority' => '0.8'],
+        ['loc' => route('contact'), 'lastmod' => now()->toDateString(), 'changefreq' => 'monthly', 'priority' => '0.6'],
+        ['loc' => route('bootcamp'), 'lastmod' => now()->toDateString(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+        ['loc' => route('work-with-me'), 'lastmod' => now()->toDateString(), 'changefreq' => 'monthly', 'priority' => '0.7'],
+        ['loc' => route('privacy'), 'lastmod' => now()->toDateString(), 'changefreq' => 'yearly', 'priority' => '0.3'],
+        ['loc' => route('terms'), 'lastmod' => now()->toDateString(), 'changefreq' => 'yearly', 'priority' => '0.3'],
+    ]);
+    $blogUrls = Blog::published()->orderByDesc('updated_at')->get()->map(fn (Blog $blog) => ['loc' => route('blog.show', $blog->slug), 'lastmod' => $blog->updated_at->toDateString(), 'changefreq' => 'monthly', 'priority' => '0.7']);
+    return response()->view('sitemap', ['urls' => $staticUrls->concat($blogUrls)], 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
+})->name('sitemap');
 Route::get('/blog', [FrontendBlogController::class, 'index'])->name('blog');
 Route::get('/blog/{slug}', [FrontendBlogController::class, 'show'])->name('blog.show');
 

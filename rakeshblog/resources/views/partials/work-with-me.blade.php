@@ -2,6 +2,9 @@
 
 @section('title', 'Work With Me · Rakesh Rajbhat')
 
+@section('title', 'Work With Rakesh Rajbhat | Partnerships & Programs')
+@section('meta_description', 'Explore education programs, technology partnerships, investment opportunities and community initiatives with Rakesh Rajbhat and his team.')
+
 @section('content')
 <section class="py-24 bg-[#fff6e0] text-[#1e1e1a] scroll-mt-20 relative">
     <div class="max-w-7xl mx-auto px-6 relative z-10">

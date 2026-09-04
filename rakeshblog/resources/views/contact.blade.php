@@ -2,6 +2,9 @@
 
 @section('title', 'Contact Us · Rakesh Rajbhat')
 
+@section('title', 'Contact Rakesh Rajbhat')
+@section('meta_description', 'Contact Rakesh Rajbhat and his team about partnerships, municipal programs, education, technology, tourism or media inquiries.')
+
 @section('content')
 <section class="min-h-screen pt-32 pb-20 bg-[#f8f6f0] text-[#1e1e1a]">
     <div class="max-w-5xl mx-auto px-6">
@@ -102,6 +105,9 @@
                             </div>
                         </div>
 
+                        <p class="text-xs text-gray-500 leading-relaxed">
+                            By submitting this form, you agree that we may use your information to respond to your inquiry. Read our <a href="{{ route('privacy') }}" class="text-[#735A12] underline hover:text-[#4e3d0c]">Privacy Policy</a>.
+                        </p>
                         <button type="submit" class="w-full bg-gradient-to-r from-[#D4AF37] to-[#c4a030] text-[#0b0e12] px-6 py-4 rounded-xl font-semibold hover:from-[#c4a030] hover:to-[#b8922a] transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group">
                             <span>Send Message</span>
                             <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform"></i>

@@ -90,6 +90,12 @@
                    class="hover:text-[#D4AF37] transition-colors hover:scale-110 duration-300 inline-block">
                     Contact
                 </a>
+                <a href="{{ route('privacy') }}" class="hover:text-[#D4AF37] transition-colors hover:scale-110 duration-300 inline-block">
+                    Privacy
+                </a>
+                <a href="{{ route('terms') }}" class="hover:text-[#D4AF37] transition-colors hover:scale-110 duration-300 inline-block">
+                    Terms
+                </a>
             </div>
         </div>
     </div>

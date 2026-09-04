@@ -2,6 +2,9 @@
 
 @section('title', 'Rakesh Rajbhat · Portfolio')
 
+@section('title', 'Rakesh Rajbhat | Technology Entrepreneur & Youth Development Builder')
+@section('meta_description', 'Official website of Rakesh Rajbhat, founder of Baakhapaa and builder of Skill Sikka, Hillychilly, Future Builders and AI & ICT programs in Nepal.')
+
 @section('content')
     <!-- Hero Section -->
     <section id="home" class="relative min-h-screen pt-20 flex items-center overflow-hidden">
@@ -123,7 +126,7 @@
 
     <!-- Projects Section -->
     <section id="projects" class="py-28 bg-[#fff6e0] scroll-mt-20 overflow-visible">
-        <div class="max-w-8xl mx-auto px-6 mb-10">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 mb-8">
             <div class="flex justify-between items-end">
                 <div>
                     <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">What I'm Building</p>

@@ -2,6 +2,9 @@
 
 @section('title', 'Book a Bootcamp · Rakesh Rajbhat')
 
+@section('title', 'AI & ICT Bootcamps for Municipalities | Rakesh Rajbhat')
+@section('meta_description', 'Bring a practical AI, ICT and cybersecurity bootcamp to your municipality or school, with project-based learning and documented outcomes.')
+
 @section('content')
 <!-- Book a Bootcamp Section -->
 <section id="bootcamp" class="py-24 bg-[#fff6e0] text-[#1e1e1a] scroll-mt-20 relative">
@@ -163,6 +166,9 @@
 
                     <!-- Submit Button -->
                     <div class="md:col-span-2 pt-2">
+                        <p class="md:col-span-2 text-xs text-[#4a4a42] leading-relaxed">
+                            By submitting this request, you agree that we may use your information to respond to your inquiry. Read our <a href="{{ route('privacy') }}" class="text-[#735A12] underline hover:text-[#4e3d0c]">Privacy Policy</a>.
+                        </p>
                         <button type="submit" class="w-full bg-[#D4AF37] text-[#0b0e12] px-6 py-4 rounded-xl font-bold hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20 hover:shadow-xl flex items-center justify-center gap-3 group">
                             <span>Send Bootcamp Request</span>
                             <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform"></i>
