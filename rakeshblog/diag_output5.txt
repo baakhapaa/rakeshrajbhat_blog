@@ -1,0 +1,11 @@
+﻿=== GIT STATUS ===
+?? rakeshblog/diag_output.txt
+?? rakeshblog/diag_output2.txt
+?? rakeshblog/diag_output3.txt
+?? rakeshblog/diag_output4.txt
+=== GIT LOG composer.json ===
+68696d1 Fix Spaces adapter and restore user profile menu
+3f3a9ef Initial Laravel project setup
+=== Is composer.lock committed matching? ===
+=== DEPLOY FILES ===
+EXISTS: README.md

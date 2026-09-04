@@ -245,8 +245,8 @@ class BlogController extends Controller
         if ($request->hasFile('featured_image_file') && $request->file('featured_image_file')->isValid()) {
             // Delete old image
             if ($blog->featured_image) {
-                $oldPath = str_replace('/storage/', '', $blog->featured_image);
-                if (Storage::disk('media')->exists($oldPath)) {
+                $oldPath = $this->extractMediaPath($blog->featured_image);
+                if ($oldPath && Storage::disk('media')->exists($oldPath)) {
                     Storage::disk('media')->delete($oldPath);
                 }
             }
@@ -320,8 +320,8 @@ class BlogController extends Controller
         
         // Delete featured image if exists
         if ($blog->featured_image) {
-            $path = str_replace('/storage/', '', $blog->featured_image);
-            if (Storage::disk('media')->exists($path)) {
+            $path = $this->extractMediaPath($blog->featured_image);
+            if ($path && Storage::disk('media')->exists($path)) {
                 Storage::disk('media')->delete($path);
             }
         }
@@ -546,5 +546,38 @@ class BlogController extends Controller
         return redirect()->back()->with('success', 
             $blog->is_featured ? 'Blog marked as featured!' : 'Blog removed from featured!'
         );
+    }
+
+    /**
+     * Extract relative storage path from a featured image value.
+     * Handles full URLs (http/https), /storage/ prefixed paths, and bare paths.
+     */
+    private function extractMediaPath(?string $value): ?string
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        // Full URL: take path portion after /storage/
+        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
+            $path = parse_url($value, PHP_URL_PATH) ?? '';
+            $storagePos = strpos($path, '/storage/');
+            if ($storagePos !== false) {
+                return ltrim(substr($path, $storagePos + strlen('/storage/')), '/');
+            }
+            return null;
+        }
+
+        // /storage/foo/bar.png
+        if (str_starts_with($value, '/storage/')) {
+            return ltrim(substr($value, strlen('/storage/')), '/');
+        }
+
+        // storage/foo/bar.png
+        if (str_starts_with($value, 'storage/')) {
+            return ltrim(substr($value, strlen('storage/')), '/');
+        }
+
+        return ltrim($value, '/');
     }
 }

@@ -1,0 +1,16 @@
+﻿DIR CONTENTS:
+\vendor\league\flysystem-aws-s3-v3\AwsS3V3Adapter.php
+\vendor\league\flysystem-aws-s3-v3\composer.json
+\vendor\league\flysystem-aws-s3-v3\LICENSE
+\vendor\league\flysystem-aws-s3-v3\PortableVisibilityConverter.php
+\vendor\league\flysystem-aws-s3-v3\VisibilityConverter.php
+---
+ALL league dirs:
+commonmark
+config
+flysystem
+flysystem-aws-s3-v3
+flysystem-local
+mime-type-detection
+uri
+uri-interfaces
