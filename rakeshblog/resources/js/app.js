@@ -12,6 +12,53 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const header = document.querySelector('header');
     const navLinks = document.querySelectorAll('.nav-link');
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileNavigation = document.getElementById('mobileNavigation');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    const mobileMenuOpenIcon = document.getElementById('mobileMenuOpenIcon');
+    const mobileMenuCloseIcon = document.getElementById('mobileMenuCloseIcon');
+
+    if (mobileMenuToggle && mobileNavigation) {
+        let menuOpen = false;
+        const firstMobileLink = mobileNavLinks[0];
+        const setMobileMenu = (open) => {
+            menuOpen = open;
+            mobileNavigation.classList.toggle('hidden', !open);
+            mobileMenuToggle.setAttribute('aria-expanded', String(open));
+            mobileMenuToggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+            mobileMenuOpenIcon?.classList.toggle('hidden', open);
+            mobileMenuCloseIcon?.classList.toggle('hidden', !open);
+            document.body.classList.toggle('overflow-hidden', open);
+            if (open) {
+                firstMobileLink?.focus();
+            }
+        };
+
+        mobileMenuToggle.addEventListener('click', () => setMobileMenu(!menuOpen));
+        mobileNavLinks.forEach(link => link.addEventListener('click', () => setMobileMenu(false)));
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && menuOpen) {
+                setMobileMenu(false);
+                mobileMenuToggle.focus();
+            }
+
+            if (event.key === 'Tab' && menuOpen && mobileNavLinks.length > 0) {
+                const first = mobileNavLinks[0];
+                const last = mobileNavLinks[mobileNavLinks.length - 1];
+
+                if (event.shiftKey && document.activeElement === first) {
+                    event.preventDefault();
+                    mobileMenuToggle.focus();
+                } else if (!event.shiftKey && document.activeElement === mobileMenuToggle) {
+                    event.preventDefault();
+                    first.focus();
+                } else if (!event.shiftKey && document.activeElement === last) {
+                    event.preventDefault();
+                    mobileMenuToggle.focus();
+                }
+            }
+        });
+    }
     
     const isHomePage = ['/', '/home', ''].includes(window.location.pathname);
 

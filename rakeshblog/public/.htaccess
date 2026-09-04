@@ -5,6 +5,12 @@
 
     RewriteEngine On
 
+    # Canonicalize production traffic to the HTTPS apex domain.
+    RewriteCond %{HTTP_HOST} ^www\.rakeshrajbhat\.com$ [NC,OR]
+    RewriteCond %{HTTPS} !=on
+    RewriteCond %{HTTP_HOST} ^(www\.)?rakeshrajbhat\.com$ [NC]
+    RewriteRule ^ https://rakeshrajbhat.com%{REQUEST_URI} [R=301,L,NE]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

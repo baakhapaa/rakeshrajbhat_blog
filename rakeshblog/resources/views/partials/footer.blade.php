@@ -69,11 +69,46 @@
                 </a>
             </div>
         </div>
+        <section class="mt-16 border-t border-white/10 pt-12" aria-labelledby="newsletter-heading">
+            <div class="mx-auto max-w-5xl rounded-2xl border border-[#3a414b] bg-[#151a20] p-6 sm:p-8 lg:p-10">
+                <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(420px,1.15fr)] lg:items-center">
+                    <div>
+                        <p class="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-[#D4AF37]">Stay Connected</p>
+                        <h2 id="newsletter-heading" class="text-2xl font-serif font-bold text-white">Connect With Me</h2>
+                        <p class="mt-2 text-sm leading-relaxed text-gray-400">Get occasional updates on new ideas, projects and opportunities.</p>
+                    </div>
+
+                    <form action="{{ route('newsletter.subscribe') }}" method="POST">
+                        @csrf
+                        <div class="flex flex-col gap-3 sm:flex-row">
+                            <label for="newsletter-email" class="sr-only">Email address</label>
+                            <input id="newsletter-email" name="email" type="email" required autocomplete="email"
+                                value="{{ old('email') }}" placeholder="you@example.com"
+                                class="min-w-0 flex-1 rounded-lg border border-[#3a414b] bg-[#0c1016] px-4 py-3 text-white placeholder-gray-500 focus:border-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]">
+                            <button type="submit" class="rounded-lg bg-[#D4AF37] px-6 py-3 font-bold text-[#0b0e12] hover:bg-[#c4a030]">Subscribe</button>
+                        </div>
+                        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="absolute -left-[9999px]">
+                        <label class="mt-4 flex items-start gap-2 text-xs normal-case tracking-normal text-gray-400">
+                            <input type="checkbox" name="consent" value="1" required class="mt-0.5 accent-[#D4AF37]">
+                            <span>I agree to receive newsletter emails. Read the <a href="{{ route('privacy') }}" class="text-[#D4AF37] underline">Privacy Policy</a>.</span>
+                        </label>
+                        @error('email') <p class="mt-2 text-xs normal-case tracking-normal text-red-300">{{ $message }}</p> @enderror
+                        @error('consent') <p class="mt-2 text-xs normal-case tracking-normal text-red-300">{{ $message }}</p> @enderror
+                    </form>
+                </div>
+                @if(session('newsletter_success'))
+                    <p class="mt-6 rounded-lg bg-green-900/30 px-4 py-3 text-sm text-green-300" role="status">{{ session('newsletter_success') }}</p>
+                @endif
+                @if(session('newsletter_error'))
+                    <p class="mt-6 rounded-lg bg-red-900/30 px-4 py-3 text-sm text-red-300" role="alert">{{ session('newsletter_error') }}</p>
+                @endif
+            </div>
+        </section>
         
         <!-- Footer Bottom -->
         <div class="mt-24 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold tracking-widest text-gray-500 uppercase">
             <p>© {{ date('Y') }} RAKESH RAJBHAT. ALL RIGHTS RESERVED.</p>
-            <div class="flex gap-6 mt-4 md:mt-0 items-center">
+            <div class="mt-5 flex max-w-full flex-wrap justify-center gap-x-5 gap-y-3 md:mt-0 md:justify-end">
                 <a href="https://www.linkedin.com/in/raacb/" target="_blank" rel="noopener noreferrer" 
                    class="hover:text-[#D4AF37] transition-colors hover:scale-110 duration-300 inline-block">
                     LinkedIn
@@ -98,5 +133,7 @@
                 </a>
             </div>
         </div>
+
+    
     </div>
 </footer>

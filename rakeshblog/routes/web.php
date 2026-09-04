@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ResearchController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BootcampController;
+use App\Http\Controllers\NewsletterController;
 use App\Models\Blog;
 
 /*
@@ -116,6 +117,11 @@ Route::post('/bootcamp', [BootcampController::class, 'submit'])->name('bootcamp.
 // ==========================================
 Route::view('/work-with-me', 'partials.work-with-me')->name('work-with-me');
 Route::post('/work-with-me/send', [ContactController::class, 'sendWorkWithMe'])->name('work-with-me.send');
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
+    ->middleware('throttle:6,1')
+    ->name('newsletter.subscribe');
+Route::get('/newsletter/confirm/{token}', [NewsletterController::class, 'confirm'])
+    ->name('newsletter.confirm');
 
 // ==========================================
 // PROTECTED ROUTES (Requires Authentication)
