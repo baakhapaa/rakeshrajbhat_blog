@@ -190,7 +190,9 @@ class User extends Authenticatable
                 return $this->profile_photo_path;
             }
 
-            return Storage::disk('media')->url($this->profile_photo_path);
+            $disk = config('filesystems.disks.media.driver') ? 'media' : 'public';
+
+            return Storage::disk($disk)->url($this->profile_photo_path);
         }
         return null;
     }

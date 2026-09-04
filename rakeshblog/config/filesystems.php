@@ -48,7 +48,8 @@ return [
         ],
 
         'media' => [
-            'driver' => env('MEDIA_DISK_DRIVER', 'local'),
+            // Empty environment values must not override the local fallback.
+            'driver' => env('MEDIA_DISK_DRIVER') ?: 'local',
             'root' => storage_path('app/public'),
             'url' => env('DO_SPACES_CDN_URL') ?: rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',

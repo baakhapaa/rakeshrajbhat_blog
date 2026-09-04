@@ -338,6 +338,21 @@ document.addEventListener('DOMContentLoaded', function () {
     /**
      * Closes dropdown menus when clicking outside
      */
+    document.querySelectorAll('.user-menu-toggle').forEach(function (toggle) {
+        toggle.addEventListener('click', function () {
+            const dropdown = toggle.closest('.group')?.querySelector('.user-menu-dropdown');
+            if (!dropdown) return;
+
+            const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', String(!isOpen));
+            dropdown.setAttribute('aria-hidden', String(isOpen));
+            dropdown.classList.toggle('opacity-100', !isOpen);
+            dropdown.classList.toggle('visible', !isOpen);
+            dropdown.classList.toggle('opacity-0', isOpen);
+            dropdown.classList.toggle('invisible', isOpen);
+        });
+    });
+
     document.addEventListener('click', function (e) {
         const userMenu = document.querySelector('.group');
         if (!userMenu) return;
@@ -347,6 +362,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (dropdown) {
                 dropdown.classList.remove('opacity-100', 'visible');
                 dropdown.classList.add('opacity-0', 'invisible');
+                const toggle = userMenu.querySelector('.user-menu-toggle');
+                toggle?.setAttribute('aria-expanded', 'false');
+                dropdown.setAttribute('aria-hidden', 'true');
             }
         }
     });

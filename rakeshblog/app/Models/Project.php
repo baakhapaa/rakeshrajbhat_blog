@@ -77,7 +77,9 @@ class Project extends Model
                 return $this->image;
             }
 
-            return Storage::disk('media')->url($this->image);
+            $disk = config('filesystems.disks.media.driver') ? 'media' : 'public';
+
+            return Storage::disk($disk)->url($this->image);
         }
         return null;
     }
