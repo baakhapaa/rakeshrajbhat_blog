@@ -127,27 +127,23 @@
                         </h3>
                         
                         <div class="space-y-5">
-                            <div class="flex items-start gap-4 group hover:translate-x-1 transition-transform">
+                            <div class="flex items-start gap-4">
                                 <div class="w-12 h-12 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#D4AF37]/20 transition">
                                     <i class="fas fa-envelope text-[#D4AF37] text-lg"></i>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Email</p>
-                                    <a href="mailto:admin@rakeshrajbhat.com" class="text-gray-700 hover:text-[#D4AF37] transition font-medium">
-                                        admin@rakeshrajbhat.com
-                                    </a>
+                                    <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Best way to reach us</p>
+                                    <p class="text-gray-700 font-medium">Use the contact form</p>
                                 </div>
                             </div>
 
-                            <div class="flex items-start gap-4 group hover:translate-x-1 transition-transform">
+                            <div class="flex items-start gap-4">
                                 <div class="w-12 h-12 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#D4AF37]/20 transition">
                                     <i class="fas fa-phone text-[#D4AF37] text-lg"></i>
                                 </div>
                                 <div>
                                     <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Phone</p>
-                                    <a href="tel:+9771234567890" class="text-gray-700 hover:text-[#D4AF37] transition font-medium">
-                                        +977 123-456-7890
-                                    </a>
+                                    <p class="text-gray-700 font-medium">Available after an inquiry is reviewed</p>
                                 </div>
                             </div>
 
