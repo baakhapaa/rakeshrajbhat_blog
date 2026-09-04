@@ -1,5 +1,14 @@
 <?php
 
+$mediaDriver = env('MEDIA_DISK_DRIVER') ?: 'local';
+$spacesRegion = env('DO_SPACES_REGION', 'nyc3');
+$spacesEndpoint = env('DO_SPACES_ENDPOINT');
+
+// Spaces writes must use the regional API endpoint, not the CDN hostname.
+if ($spacesEndpoint && str_contains($spacesEndpoint, '.cdn.digitaloceanspaces.com')) {
+    $spacesEndpoint = 'https://'.$spacesRegion.'.digitaloceanspaces.com';
+}
+
 return [
 
     /*
@@ -49,15 +58,17 @@ return [
 
         'media' => [
             // Empty environment values must not override the local fallback.
-            'driver' => env('MEDIA_DISK_DRIVER') ?: 'local',
-            'root' => storage_path('app/public'),
+            'driver' => $mediaDriver,
+            'root' => $mediaDriver === 's3'
+                ? (env('DO_SPACES_ROOT') ?: '')
+                : storage_path('app/public'),
             'url' => env('DO_SPACES_CDN_URL') ?: rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
             'key' => env('DO_SPACES_KEY'),
             'secret' => env('DO_SPACES_SECRET'),
-            'region' => env('DO_SPACES_REGION', 'nyc3'),
+            'region' => $spacesRegion,
             'bucket' => env('DO_SPACES_BUCKET'),
-            'endpoint' => env('DO_SPACES_ENDPOINT'),
+            'endpoint' => $spacesEndpoint ?: 'https://'.$spacesRegion.'.digitaloceanspaces.com',
             'use_path_style_endpoint' => false,
             'throw' => true,
             'report' => true,

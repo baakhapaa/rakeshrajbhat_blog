@@ -1,6 +1,6 @@
 <header class="fixed top-0 left-0 right-0 z-50 bg-[#0b0e12]/95 backdrop-blur-md border-b border-white/5">
-    <div class="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between">
-        <a href="{{ route('home') }}" class="text-2xl font-serif font-bold italic tracking-tight text-white inline-flex items-center gap-3">
+    <div class="max-w-7xl mx-auto h-20 px-4 lg:px-6 flex items-center gap-4">
+        <a href="{{ route('home') }}" class="shrink-0 text-2xl font-serif font-bold italic tracking-tight text-white inline-flex items-center gap-3">
             @if($siteSettings['site_logo'] ?? null)
                 <img src="{{ $siteSettings['site_logo'] }}" alt="{{ $siteSettings['site_name'] }}" class="h-10 w-auto max-w-[180px] object-contain">
             @else
@@ -8,7 +8,7 @@
             @endif
         </a>
 
-        <nav class="hidden lg:flex items-center text-sm font-medium tracking-wide text-gray-300 [&>a]:mr-8 [&>a:last-child]:mr-0" aria-label="Primary navigation">
+        <nav class="hidden lg:flex flex-1 justify-center items-center gap-4 xl:gap-7 whitespace-nowrap text-xs xl:text-sm font-medium tracking-wide text-gray-300" aria-label="Primary navigation">
             <a href="{{ route('home') }}#home" class="nav-link hover:text-[#D4AF37] transition-colors">Home</a>
             <a href="{{ route('home') }}#about" class="nav-link hover:text-[#D4AF37] transition-colors">Mission</a>
             <a href="{{ route('home') }}#projects" class="nav-link hover:text-[#D4AF37] transition-colors">Initiatives</a>
@@ -17,7 +17,7 @@
             <a href="{{ route('home') }}#featured-blogs" class="nav-link hover:text-[#D4AF37] transition-colors">Blog</a>
         </nav>
 
-        <div class="flex items-center gap-3">
+        <div class="shrink-0 flex items-center gap-3">
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
                     <div class="relative hidden sm:block group">
