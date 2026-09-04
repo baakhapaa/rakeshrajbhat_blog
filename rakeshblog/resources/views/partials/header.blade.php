@@ -21,15 +21,21 @@
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
                     <div class="relative hidden sm:block group">
+                        @php($currentUser = Auth::user())
                         <button type="button" class="user-menu-toggle inline-flex items-center gap-2 text-white/80 hover:text-[#D4AF37] text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37] rounded-md px-2 py-2" aria-haspopup="true" aria-expanded="false">
-                            <span>{{ Auth::user()->name }}</span>
+                            @if($currentUser->profile_photo_url)
+                                <img src="{{ $currentUser->profile_photo_url }}" alt="" class="h-9 w-9 rounded-full object-cover border border-[#D4AF37]/70">
+                            @else
+                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#D4AF37] text-[#0b0e12] text-xs font-bold" aria-hidden="true">{{ $currentUser->initials }}</span>
+                            @endif
                             <svg class="w-4 h-4 transition-transform group-focus-within:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/></svg>
                         </button>
-                        <div class="user-menu-dropdown absolute right-0 top-full mt-2 w-44 rounded-lg border border-white/10 bg-[#151a20] p-2 shadow-xl opacity-0 invisible transition group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible" aria-hidden="true">
-                            <a href="{{ route('profile') }}" class="block rounded-md px-3 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-[#D4AF37]">Profile</a>
+                        <div class="user-menu-dropdown absolute right-0 top-full mt-2 w-44 rounded-lg border border-gray-200 bg-white p-2 shadow-xl opacity-0 invisible transition group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible" aria-hidden="true">
+                            <a href="{{ route('profile') }}" class="block rounded-md px-3 py-2 text-sm text-gray-900 hover:bg-gray-100">Profile</a>
+                            <a href="{{ route('settings') }}" class="block rounded-md px-3 py-2 text-sm text-gray-900 hover:bg-gray-100">Settings</a>
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="w-full text-left rounded-md px-3 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-[#D4AF37]">Logout</button>
+                                <button type="submit" class="w-full text-left rounded-md px-3 py-2 text-sm text-gray-900 hover:bg-gray-100">Logout</button>
                             </form>
                         </div>
                     </div>
@@ -58,6 +64,7 @@
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
                     <a href="{{ route('profile') }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Profile</a>
+                    <a href="{{ route('settings') }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Settings</a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button type="submit" class="mobile-nav-link w-full text-left rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Logout</button>
