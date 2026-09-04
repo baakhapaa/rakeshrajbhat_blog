@@ -133,7 +133,7 @@
                                 </div>
                                 <div>
                                     <p class="text-xs text-gray-400 font-semibold uppercase tracking-wider">Best way to reach us</p>
-                                    <p class="text-gray-700 font-medium">Use the contact form</p>
+                                    <p class="text-gray-700 font-medium">contact@rakeshrajbhat.com</p>
                                 </div>
                             </div>
 
