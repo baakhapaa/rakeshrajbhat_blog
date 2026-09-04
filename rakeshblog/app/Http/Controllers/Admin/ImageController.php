@@ -21,13 +21,13 @@ class ImageController extends Controller
 
             $image = $request->file('image');
             $filename = Str::random(40) . '.' . $image->getClientOriginalExtension();
-            $path = $image->storeAs('blog-images', $filename, 'public');
+            $path = $image->storeAs('blog-images', $filename, 'media');
 
             Log::info('Image uploaded successfully: ' . $path);
 
             return response()->json([
                 'success' => true,
-                'path' => Storage::url($path),
+                'path' => Storage::disk('media')->url($path),
                 'filename' => $filename,
                 'message' => 'Image uploaded successfully'
             ]);
@@ -56,9 +56,9 @@ class ImageController extends Controller
                 'path' => 'required|string',
             ]);
 
-            $path = str_replace('/storage/', '', $request->path);
-            if (Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
+            $path = $this->storagePath($request->path);
+            if (Storage::disk('media')->exists($path)) {
+                Storage::disk('media')->delete($path);
                 Log::info('Image deleted successfully: ' . $path);
                 return response()->json([
                     'success' => true,
@@ -76,6 +76,13 @@ class ImageController extends Controller
                 'success' => false,
                 'message' => 'Failed to delete image: ' . $e->getMessage()
             ], 500);
+        }
+
+        private function storagePath(string $value): string
+        {
+            $path = parse_url($value, PHP_URL_PATH) ?: $value;
+
+            return ltrim(preg_replace('/^\/?storage\//', '', $path), '/');
         }
     }
 }

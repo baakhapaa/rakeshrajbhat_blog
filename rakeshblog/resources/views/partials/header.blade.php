@@ -1,7 +1,11 @@
 <header class="fixed top-0 left-0 right-0 z-50 bg-[#0b0e12]/95 backdrop-blur-md border-b border-white/5">
     <div class="max-w-7xl mx-auto h-20 px-6 flex items-center justify-between">
-        <a href="{{ route('home') }}" class="text-2xl font-serif font-bold italic tracking-tight text-white">
-            <span class="text-[#D4AF37]">Rakesh Rajbhat</span>
+        <a href="{{ route('home') }}" class="text-2xl font-serif font-bold italic tracking-tight text-white inline-flex items-center gap-3">
+            @if($siteSettings['site_logo'] ?? null)
+                <img src="{{ $siteSettings['site_logo'] }}" alt="{{ $siteSettings['site_name'] }}" class="h-10 w-auto max-w-[180px] object-contain">
+            @else
+                <span class="text-[#D4AF37]">{{ $siteSettings['site_name'] ?? 'Rakesh Rajbhat' }}</span>
+            @endif
         </a>
 
         <nav class="hidden lg:flex items-center gap-7 text-sm font-medium tracking-wide text-gray-300" aria-label="Primary navigation">

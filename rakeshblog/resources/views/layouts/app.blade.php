@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @php
-        $siteName = 'Rakesh Rajbhat';
+        $siteSettings = \App\Models\Setting::getSiteSettings();
+        $siteName = $siteSettings['site_name'];
         $siteUrl = rtrim(config('app.url'), '/');
         $canonicalUrl = $siteUrl . '/' . ltrim(request()->path() === '/' ? '' : request()->path(), '/');
         $pageTitle = trim($__env->yieldContent('title', 'Rakesh Rajbhat | Technology Entrepreneur & Youth Development Builder'));
@@ -17,7 +18,7 @@
     <meta name="robots" content="{{ $robots }}">
     <meta name="theme-color" content="#0b0e12">
     <link rel="canonical" href="{{ $canonicalUrl }}">
-    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="icon" href="{{ $siteSettings['site_favicon'] ?: asset('favicon.ico') }}" sizes="any">
     <meta property="og:site_name" content="{{ $siteName }}">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:title" content="{{ $pageTitle }}">

@@ -40,7 +40,7 @@
                     
                     @if($project->image)
                         <div class="mb-3">
-                            <img src="{{ asset('storage/' . $project->image) }}" alt="{{ $project->name }}" 
+                            <img src="{{ $project->image_url }}" alt="{{ $project->name }}" 
                                  class="w-32 h-32 object-cover rounded-lg border border-white/10">
                             <p class="text-xs text-gray-400 mt-1">Current image</p>
                         </div>
@@ -150,7 +150,7 @@
         @if($project->image)
             const preview = document.getElementById('imagePreview');
             const placeholder = document.getElementById('uploadPlaceholder');
-            preview.src = "{{ asset('storage/' . $project->image) }}";
+            preview.src = "{{ $project->image_url }}";
             preview.classList.remove('hidden');
             placeholder.classList.add('hidden');
         @endif

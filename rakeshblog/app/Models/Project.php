@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class Project extends Model
 {
@@ -72,7 +73,11 @@ class Project extends Model
     public function getImageUrlAttribute()
     {
         if ($this->image) {
-            return asset('storage/' . $this->image);
+            if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://')) {
+                return $this->image;
+            }
+
+            return Storage::disk('media')->url($this->image);
         }
         return null;
     }

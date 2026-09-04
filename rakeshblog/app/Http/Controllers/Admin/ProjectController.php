@@ -39,7 +39,7 @@ class ProjectController extends Controller
         // Handle image upload
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('projects', 'public');
+            $imagePath = $request->file('image')->store('projects', 'media');
         }
 
         // Generate unique slug
@@ -97,9 +97,9 @@ class ProjectController extends Controller
         if ($request->hasFile('image')) {
             // Delete old image
             if ($project->image) {
-                Storage::disk('public')->delete($project->image);
+                Storage::disk('media')->delete($project->image);
             }
-            $imagePath = $request->file('image')->store('projects', 'public');
+            $imagePath = $request->file('image')->store('projects', 'media');
             $project->image = $imagePath;
         }
 
@@ -136,7 +136,7 @@ class ProjectController extends Controller
         $name = $project->name;
 
         if ($project->image) {
-            Storage::disk('public')->delete($project->image);
+            Storage::disk('media')->delete($project->image);
         }
 
         $project->delete();

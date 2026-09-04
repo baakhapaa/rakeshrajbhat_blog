@@ -152,10 +152,6 @@
     <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
         <h2 class="text-xl font-semibold text-white mb-6">General Settings</h2>
 
-        @php
-            $settings = \App\Http\Controllers\Admin\SettingsController::getSettings();
-        @endphp
-
         <form action="{{ route('admin.settings.update-general') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')

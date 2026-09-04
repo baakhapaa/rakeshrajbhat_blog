@@ -223,16 +223,16 @@ class Blog extends Model
 
         // 2. If it starts with /storage/, remove the leading slash
         if (str_starts_with($path, '/storage/')) {
-            return asset($path);
+            return Storage::disk('media')->url(ltrim(substr($path, strlen('/storage/')), '/'));
         }
 
         // 3. If it starts with storage/ (without slash)
         if (str_starts_with($path, 'storage/')) {
-            return asset($path);
+            return Storage::disk('media')->url(ltrim(substr($path, strlen('storage/')), '/'));
         }
 
         // 4. Default: assume it's a storage path
-        return asset('storage/' . $path);
+        return Storage::disk('media')->url($path);
     }
 
     /**

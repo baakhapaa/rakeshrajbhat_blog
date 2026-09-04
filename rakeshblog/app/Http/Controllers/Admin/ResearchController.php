@@ -70,14 +70,14 @@ class ResearchController extends Controller
 
         // Handle image upload
         if ($request->hasFile('image_url')) {
-            $imagePath = $request->file('image_url')->store('research/images', 'public');
-            $validated['image_url'] = '/storage/' . $imagePath;
+            $imagePath = $request->file('image_url')->store('research/images', 'media');
+            $validated['image_url'] = Storage::disk('media')->url($imagePath);
         }
 
         // Handle video file upload
         if ($request->hasFile('video_file')) {
-            $videoPath = $request->file('video_file')->store('research/videos', 'public');
-            $validated['video_file'] = '/storage/' . $videoPath;
+            $videoPath = $request->file('video_file')->store('research/videos', 'media');
+            $validated['video_file'] = Storage::disk('media')->url($videoPath);
         }
 
         // Generate unique slug
@@ -128,22 +128,20 @@ class ResearchController extends Controller
         if ($request->hasFile('image_url')) {
             // Delete old image
             if ($research->image_url) {
-                $oldPath = str_replace('/storage/', '', $research->image_url);
-                Storage::disk('public')->delete($oldPath);
+                Storage::disk('media')->delete($this->storagePath($research->image_url));
             }
-            $imagePath = $request->file('image_url')->store('research/images', 'public');
-            $validated['image_url'] = '/storage/' . $imagePath;
+            $imagePath = $request->file('image_url')->store('research/images', 'media');
+            $validated['image_url'] = Storage::disk('media')->url($imagePath);
         }
 
         // Handle video file upload
         if ($request->hasFile('video_file')) {
             // Delete old video
             if ($research->video_file) {
-                $oldPath = str_replace('/storage/', '', $research->video_file);
-                Storage::disk('public')->delete($oldPath);
+                Storage::disk('media')->delete($this->storagePath($research->video_file));
             }
-            $videoPath = $request->file('video_file')->store('research/videos', 'public');
-            $validated['video_file'] = '/storage/' . $videoPath;
+            $videoPath = $request->file('video_file')->store('research/videos', 'media');
+            $validated['video_file'] = Storage::disk('media')->url($videoPath);
         }
 
         // Generate unique slug
@@ -167,18 +165,23 @@ class ResearchController extends Controller
     {
         // Delete associated files
         if ($research->image_url) {
-            $path = str_replace('/storage/', '', $research->image_url);
-            Storage::disk('public')->delete($path);
+            Storage::disk('media')->delete($this->storagePath($research->image_url));
         }
         if ($research->video_file) {
-            $path = str_replace('/storage/', '', $research->video_file);
-            Storage::disk('public')->delete($path);
+            Storage::disk('media')->delete($this->storagePath($research->video_file));
         }
 
         $research->delete();
 
         return redirect()->route('admin.research.index')
             ->with('success', 'Research item deleted successfully.');
+    }
+
+    private function storagePath(string $value): string
+    {
+        $path = parse_url($value, PHP_URL_PATH) ?: $value;
+
+        return ltrim(preg_replace('/^\/?storage\//', '', $path), '/');
     }
 
     public function toggleStatus($id)

@@ -114,8 +114,8 @@ class BlogController extends Controller
         
         // Check if a file was uploaded (this takes priority)
         if ($request->hasFile('featured_image_file') && $request->file('featured_image_file')->isValid()) {
-            $path = $request->file('featured_image_file')->store('blogs', 'public');
-            $featuredImage = '/storage/' . $path;
+            $path = $request->file('featured_image_file')->store('blogs', 'media');
+            $featuredImage = Storage::disk('media')->url($path);
         } 
         // If no file, check if URL was provided
         elseif ($request->filled('featured_image')) {
@@ -246,12 +246,12 @@ class BlogController extends Controller
             // Delete old image
             if ($blog->featured_image) {
                 $oldPath = str_replace('/storage/', '', $blog->featured_image);
-                if (Storage::disk('public')->exists($oldPath)) {
-                    Storage::disk('public')->delete($oldPath);
+                if (Storage::disk('media')->exists($oldPath)) {
+                    Storage::disk('media')->delete($oldPath);
                 }
             }
-            $path = $request->file('featured_image_file')->store('blogs', 'public');
-            $featuredImage = '/storage/' . $path;
+            $path = $request->file('featured_image_file')->store('blogs', 'media');
+            $featuredImage = Storage::disk('media')->url($path);
         } 
         // If no file, check if URL was provided
         elseif ($request->filled('featured_image')) {
@@ -321,8 +321,8 @@ class BlogController extends Controller
         // Delete featured image if exists
         if ($blog->featured_image) {
             $path = str_replace('/storage/', '', $blog->featured_image);
-            if (Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->delete($path);
+            if (Storage::disk('media')->exists($path)) {
+                Storage::disk('media')->delete($path);
             }
         }
         
