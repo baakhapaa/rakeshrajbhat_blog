@@ -6,11 +6,11 @@
 
         <nav class="hidden lg:flex items-center gap-7 text-sm font-medium tracking-wide text-gray-300" aria-label="Primary navigation">
             <a href="{{ route('home') }}#home" class="nav-link hover:text-[#D4AF37] transition-colors">Home</a>
+            <a href="{{ route('home') }}#about" class="nav-link hover:text-[#D4AF37] transition-colors">Mission</a>
             <a href="{{ route('home') }}#projects" class="nav-link hover:text-[#D4AF37] transition-colors">Initiatives</a>
-            <a href="{{ route('home') }}#research" class="nav-link hover:text-[#D4AF37] transition-colors">Ideas &amp; Research</a>
             <a href="{{ route('home') }}#impact" class="nav-link hover:text-[#D4AF37] transition-colors">Impact</a>
+            <a href="{{ route('home') }}#research" class="nav-link hover:text-[#D4AF37] transition-colors">Ideas &amp; Research</a>
             <a href="{{ route('home') }}#featured-blogs" class="nav-link hover:text-[#D4AF37] transition-colors">Blog</a>
-            <a href="{{ route('work-with-me') }}" class="nav-link hover:text-[#D4AF37] transition-colors">Work With Me</a>
         </nav>
 
         <div class="flex items-center gap-3">
