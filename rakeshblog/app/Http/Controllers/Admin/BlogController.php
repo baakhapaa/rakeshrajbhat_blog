@@ -245,10 +245,7 @@ class BlogController extends Controller
         if ($request->hasFile('featured_image_file') && $request->file('featured_image_file')->isValid()) {
             // Delete old image
             if ($blog->featured_image) {
-                $oldPath = $this->extractMediaPath($blog->featured_image);
-                if ($oldPath && Storage::disk('media')->exists($oldPath)) {
-                    Storage::disk('media')->delete($oldPath);
-                }
+                $this->deleteFeaturedImage($blog->featured_image);
             }
             $path = $request->file('featured_image_file')->store('blogs', 'media');
             $featuredImage = Storage::disk('media')->url($path);
@@ -320,10 +317,7 @@ class BlogController extends Controller
         
         // Delete featured image if exists
         if ($blog->featured_image) {
-            $path = $this->extractMediaPath($blog->featured_image);
-            if ($path && Storage::disk('media')->exists($path)) {
-                Storage::disk('media')->delete($path);
-            }
+            $this->deleteFeaturedImage($blog->featured_image);
         }
         
         // Delete associated quiz and questions
@@ -579,5 +573,38 @@ class BlogController extends Controller
         }
 
         return ltrim($value, '/');
+    }
+
+    /**
+     * Try to delete a previously-stored featured image safely across disks.
+     * Never throws - failures are silently ignored.
+     */
+    private function deleteFeaturedImage(?string $value): void
+    {
+        $relativePath = $this->extractMediaPath($value);
+        if (!$relativePath) {
+            return;
+        }
+
+        $candidatePaths = array_unique(array_filter([
+            $relativePath,
+            // legacy fallbacks for older uploads that may live in different folders
+            preg_replace('#^blogs/#', 'blog-images/', $relativePath),
+            preg_replace('#^blog-images/#', 'blogs/', $relativePath),
+        ]));
+
+        foreach (['media', 'public'] as $disk) {
+            foreach ($candidatePaths as $path) {
+                try {
+                    if (Storage::disk($disk)->exists($path)) {
+                        Storage::disk($disk)->delete($path);
+                        return;
+                    }
+                } catch (\Throwable $e) {
+                    // ignore and try next candidate
+                    continue;
+                }
+            }
+        }
     }
 }

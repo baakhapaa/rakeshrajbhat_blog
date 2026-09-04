@@ -77,12 +77,12 @@ class ImageController extends Controller
                 'message' => 'Failed to delete image: ' . $e->getMessage()
             ], 500);
         }
+    }
 
-        private function storagePath(string $value): string
-        {
-            $path = parse_url($value, PHP_URL_PATH) ?: $value;
+    private function storagePath(string $value): string
+    {
+        $path = parse_url($value, PHP_URL_PATH) ?: $value;
 
-            return ltrim(preg_replace('/^\/?storage\//', '', $path), '/');
-        }
+        return ltrim(preg_replace('/^\/?storage\//', '', $path), '/');
     }
 }
