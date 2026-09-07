@@ -8,7 +8,7 @@
             @endif
         </a>
 
-        <nav class="hidden lg:flex flex-1 justify-center items-center gap-6 xl:gap-10 whitespace-nowrap text-xs xl:text-sm font-medium tracking-wide text-gray-300" aria-label="Primary navigation">
+        <nav class="hidden lg:flex flex-1 justify-center items-center gap-6 xl:gap-10 whitespace-nowrap text-sm l:text-base font-medium tracking-wide text-gray-300" aria-label="Primary navigation">
             <a href="{{ route('home') }}#home" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Home</a>
             <a href="{{ route('home') }}#about" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Mission</a>
             <a href="{{ route('home') }}#projects" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Initiatives</a>
