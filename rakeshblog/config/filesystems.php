@@ -4,9 +4,13 @@ $mediaDriver = env('MEDIA_DISK_DRIVER') ?: 'local';
 $spacesRegion = env('DO_SPACES_REGION', 'nyc3');
 $spacesEndpoint = env('DO_SPACES_ENDPOINT');
 
-// Spaces writes must use the regional API endpoint, not the CDN hostname.
-if ($spacesEndpoint && str_contains($spacesEndpoint, '.cdn.digitaloceanspaces.com')) {
-    $spacesEndpoint = 'https://'.$spacesRegion.'.digitaloceanspaces.com';
+// Spaces writes must use the regional API endpoint, not a bucket or CDN hostname.
+if ($spacesEndpoint) {
+    $spacesEndpointHost = parse_url($spacesEndpoint, PHP_URL_HOST);
+
+    if ($spacesEndpointHost && str_ends_with($spacesEndpointHost, '.digitaloceanspaces.com')) {
+        $spacesEndpoint = 'https://'.$spacesRegion.'.digitaloceanspaces.com';
+    }
 }
 
 return [
