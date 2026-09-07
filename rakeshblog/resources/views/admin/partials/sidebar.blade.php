@@ -2,7 +2,7 @@
 <div class="px-6 py-4 border-b border-white/5">
     <a href="{{ route('admin.dashboard') }}" class="block">
         <h1 class="text-2xl font-serif font-bold italic text-white">
-        ER <span class="text-[#D4AF37]">Rakesh Rajbhat</span>
+        <span class="text-[#D4AF37]">Rakesh Rajbhat</span>
         </h1>
         <p class="text-gray-400 text-xs mt-1">Admin Panel</p>
     </a>
