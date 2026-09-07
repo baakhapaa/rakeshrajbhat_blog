@@ -2,7 +2,9 @@
 
 $mediaDriver = env('MEDIA_DISK_DRIVER') ?: 'local';
 $spacesRegion = env('DO_SPACES_REGION', 'nyc3');
+$spacesBucket = env('DO_SPACES_BUCKET');
 $spacesEndpoint = env('DO_SPACES_ENDPOINT');
+$spacesCdnUrl = env('DO_SPACES_CDN_URL');
 
 // Spaces writes must use the regional API endpoint, not a bucket or CDN hostname.
 if ($spacesEndpoint) {
@@ -10,6 +12,15 @@ if ($spacesEndpoint) {
 
     if ($spacesEndpointHost && str_ends_with($spacesEndpointHost, '.digitaloceanspaces.com')) {
         $spacesEndpoint = 'https://'.$spacesRegion.'.digitaloceanspaces.com';
+    }
+}
+
+// Public Spaces URLs require the bucket in the hostname.
+if ($spacesCdnUrl && $spacesBucket && $mediaDriver === 's3') {
+    $spacesCdnHost = parse_url($spacesCdnUrl, PHP_URL_HOST);
+
+    if ($spacesCdnHost && str_ends_with($spacesCdnHost, '.cdn.digitaloceanspaces.com')) {
+        $spacesCdnUrl = 'https://'.$spacesBucket.'.'.$spacesRegion.'.cdn.digitaloceanspaces.com';
     }
 }
 
@@ -66,12 +77,12 @@ return [
             // S3-compatible disks must store object keys relative to the bucket.
             // A server filesystem path here becomes part of every remote key.
             'root' => $mediaDriver === 's3' ? '' : storage_path('app/public'),
-            'url' => env('DO_SPACES_CDN_URL') ?: rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'url' => $spacesCdnUrl ?: rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
             'key' => env('DO_SPACES_KEY'),
             'secret' => env('DO_SPACES_SECRET'),
             'region' => $spacesRegion,
-            'bucket' => env('DO_SPACES_BUCKET'),
+            'bucket' => $spacesBucket,
             'endpoint' => $spacesEndpoint ?: 'https://'.$spacesRegion.'.digitaloceanspaces.com',
             'use_path_style_endpoint' => false,
             'throw' => true,

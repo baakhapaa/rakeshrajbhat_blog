@@ -89,7 +89,7 @@
                     @if($blog->featured_image)
                         <div id="imagePreviewContainer" class="mb-3">
                             <div class="relative inline-block">
-                                <img id="imagePreview" src="{{ $blog->featured_image }}" alt="Featured Image" class="w-48 h-32 object-cover rounded-lg border border-white/10">
+                                <img id="imagePreview" src="{{ $blog->featured_image_url }}" alt="Featured Image" class="w-48 h-32 object-cover rounded-lg border border-white/10">
                                 <button type="button" onclick="removeImage()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -137,7 +137,7 @@
                     @if($blog->featured_image)
                         <div id="urlPreviewContainer" class="mt-3">
                             <div class="relative inline-block">
-                                <img id="urlPreview" src="{{ $blog->featured_image }}" alt="Featured Image" class="w-48 h-32 object-cover rounded-lg border border-white/10">
+                                <img id="urlPreview" src="{{ $blog->featured_image_url }}" alt="Featured Image" class="w-48 h-32 object-cover rounded-lg border border-white/10">
                                 <button type="button" onclick="removeUrlImage()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -618,12 +618,12 @@
     document.addEventListener('DOMContentLoaded', function() {
         @if($blog->featured_image)
             switchTab('url');
-            document.getElementById('image_url_input').value = '{{ $blog->featured_image }}';
-            document.getElementById('featured_image_url').value = '{{ $blog->featured_image }}';
+            document.getElementById('image_url_input').value = '{{ $blog->featured_image_url }}';
+            document.getElementById('featured_image_url').value = '{{ $blog->featured_image_url }}';
             const preview = document.getElementById('urlPreview');
             const container = document.getElementById('urlPreviewContainer');
             if (preview && container) {
-                preview.src = '{{ $blog->featured_image }}';
+                preview.src = '{{ $blog->featured_image_url }}';
                 container.classList.remove('hidden');
             }
         @endif

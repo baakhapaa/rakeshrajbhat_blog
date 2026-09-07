@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class Blog extends Model
 {
@@ -218,6 +219,14 @@ class Blog extends Model
 
         // 1. If it's already a full URL (starts with http:// or https://)
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            $host = parse_url($path, PHP_URL_HOST);
+
+            // Rebuild old Spaces URLs through the current disk configuration.
+            if ($host && str_ends_with($host, '.digitaloceanspaces.com')) {
+                $mediaPath = MediaStorage::path($path);
+                return $mediaPath ? $this->mediaUrl($mediaPath) : $path;
+            }
+
             return $path;
         }
 

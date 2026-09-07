@@ -39,7 +39,7 @@
 
         <!-- Featured Image -->
         @if($blog->featured_image)
-            <img src="{{ $blog->featured_image }}" alt="{{ $blog->title }}" class="w-full rounded-xl mb-8">
+            <img src="{{ $blog->featured_image_url }}" alt="{{ $blog->title }}" class="w-full rounded-xl mb-8">
         @endif
 
         <!-- Blog Content -->
