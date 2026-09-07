@@ -10,6 +10,7 @@ use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Support\MediaStorage;
 
 class BlogController extends Controller
 {
@@ -548,31 +549,7 @@ class BlogController extends Controller
      */
     private function extractMediaPath(?string $value): ?string
     {
-        if (empty($value)) {
-            return null;
-        }
-
-        // Full URL: take path portion after /storage/
-        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
-            $path = parse_url($value, PHP_URL_PATH) ?? '';
-            $storagePos = strpos($path, '/storage/');
-            if ($storagePos !== false) {
-                return ltrim(substr($path, $storagePos + strlen('/storage/')), '/');
-            }
-            return null;
-        }
-
-        // /storage/foo/bar.png
-        if (str_starts_with($value, '/storage/')) {
-            return ltrim(substr($value, strlen('/storage/')), '/');
-        }
-
-        // storage/foo/bar.png
-        if (str_starts_with($value, 'storage/')) {
-            return ltrim(substr($value, strlen('storage/')), '/');
-        }
-
-        return ltrim($value, '/');
+        return MediaStorage::path($value);
     }
 
     /**

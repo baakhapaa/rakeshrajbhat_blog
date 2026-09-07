@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Helpers\ActivityLogger;
+use App\Support\MediaStorage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -97,7 +98,7 @@ class ProjectController extends Controller
         if ($request->hasFile('image')) {
             // Delete old image
             if ($project->image) {
-                Storage::disk('media')->delete($project->image);
+                MediaStorage::delete($project->image);
             }
             $imagePath = $request->file('image')->store('projects', 'media');
             $project->image = $imagePath;
@@ -136,7 +137,7 @@ class ProjectController extends Controller
         $name = $project->name;
 
         if ($project->image) {
-            Storage::disk('media')->delete($project->image);
+            MediaStorage::delete($project->image);
         }
 
         $project->delete();

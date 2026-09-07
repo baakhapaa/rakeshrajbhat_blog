@@ -59,9 +59,9 @@ return [
         'media' => [
             // Empty environment values must not override the local fallback.
             'driver' => $mediaDriver,
-            'root' => $mediaDriver === 's3'
-                ? (env('DO_SPACES_ROOT') ?: '')
-                : storage_path('app/public'),
+            // S3-compatible disks must store object keys relative to the bucket.
+            // A server filesystem path here becomes part of every remote key.
+            'root' => $mediaDriver === 's3' ? '' : storage_path('app/public'),
             'url' => env('DO_SPACES_CDN_URL') ?: rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
             'key' => env('DO_SPACES_KEY'),

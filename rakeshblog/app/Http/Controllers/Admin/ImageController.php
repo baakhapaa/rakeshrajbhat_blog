@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use App\Support\MediaStorage;
 
 class ImageController extends Controller
 {
@@ -56,20 +57,18 @@ class ImageController extends Controller
                 'path' => 'required|string',
             ]);
 
-            $path = $this->storagePath($request->path);
-            if (Storage::disk('media')->exists($path)) {
-                Storage::disk('media')->delete($path);
-                Log::info('Image deleted successfully: ' . $path);
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Image deleted successfully',
-                ]);
+            $path = MediaStorage::path($request->path);
+            if (!$path) {
+                return response()->json(['success' => false, 'message' => 'Invalid image path'], 422);
             }
 
+            MediaStorage::delete($path);
+            Log::info('Image deletion requested: ' . $path);
+
             return response()->json([
-                'success' => false,
-                'message' => 'Image not found',
-            ], 404);
+                'success' => true,
+                'message' => 'Image deletion completed',
+            ]);
         } catch (\Exception $e) {
             Log::error('Image delete error: ' . $e->getMessage());
             return response()->json([
@@ -81,8 +80,6 @@ class ImageController extends Controller
 
     private function storagePath(string $value): string
     {
-        $path = parse_url($value, PHP_URL_PATH) ?: $value;
-
-        return ltrim(preg_replace('/^\/?storage\//', '', $path), '/');
+        return MediaStorage::path($value) ?? '';
     }
 }

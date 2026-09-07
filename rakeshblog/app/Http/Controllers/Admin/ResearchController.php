@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use App\Support\MediaStorage;
 
 class ResearchController extends Controller
 {
@@ -128,7 +129,7 @@ class ResearchController extends Controller
         if ($request->hasFile('image_url')) {
             // Delete old image
             if ($research->image_url) {
-                Storage::disk('media')->delete($this->storagePath($research->image_url));
+                MediaStorage::delete($research->image_url);
             }
             $imagePath = $request->file('image_url')->store('research/images', 'media');
             $validated['image_url'] = Storage::disk('media')->url($imagePath);
@@ -138,7 +139,7 @@ class ResearchController extends Controller
         if ($request->hasFile('video_file')) {
             // Delete old video
             if ($research->video_file) {
-                Storage::disk('media')->delete($this->storagePath($research->video_file));
+                MediaStorage::delete($research->video_file);
             }
             $videoPath = $request->file('video_file')->store('research/videos', 'media');
             $validated['video_file'] = Storage::disk('media')->url($videoPath);
@@ -165,10 +166,10 @@ class ResearchController extends Controller
     {
         // Delete associated files
         if ($research->image_url) {
-            Storage::disk('media')->delete($this->storagePath($research->image_url));
+            MediaStorage::delete($research->image_url);
         }
         if ($research->video_file) {
-            Storage::disk('media')->delete($this->storagePath($research->video_file));
+            MediaStorage::delete($research->video_file);
         }
 
         $research->delete();
@@ -179,9 +180,7 @@ class ResearchController extends Controller
 
     private function storagePath(string $value): string
     {
-        $path = parse_url($value, PHP_URL_PATH) ?: $value;
-
-        return ltrim(preg_replace('/^\/?storage\//', '', $path), '/');
+        return MediaStorage::path($value) ?? '';
     }
 
     public function toggleStatus($id)

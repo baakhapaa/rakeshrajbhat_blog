@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Admin;
 use App\Models\Setting;
+use App\Support\MediaStorage;
 
 class SettingsController extends Controller
 {
@@ -33,10 +34,7 @@ class SettingsController extends Controller
         if ($request->hasFile('profile_pic')) {
             // Delete old profile picture
             if ($admin->profile_pic) {
-                $oldPath = str_replace('/storage/', '', $admin->profile_pic);
-                if (Storage::disk('media')->exists($oldPath)) {
-                    Storage::disk('media')->delete($oldPath);
-                }
+                MediaStorage::delete($admin->profile_pic);
             }
 
             $image = $request->file('profile_pic');
@@ -109,11 +107,6 @@ class SettingsController extends Controller
             return;
         }
 
-        $path = ltrim(parse_url($url, PHP_URL_PATH) ?: '', '/');
-        $path = preg_replace('/^storage\//', '', $path);
-
-        if ($path && Storage::disk('media')->exists($path)) {
-            Storage::disk('media')->delete($path);
-        }
+        MediaStorage::delete($url);
     }
 }
