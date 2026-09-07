@@ -114,7 +114,7 @@
             </div>
 
             <!-- Right: Newsletter -->
-            <section class="w-full rounded-xl border border-[#3a414b] bg-[#151a20] p-3 md:p-4" aria-labelledby="newsletter-heading">
+            <section class="w-full rounded-xl border border-[#3a414b] bg-[#151a20] p-3 md:p-4" aria-labelledby="newsletter-heading" data-newsletter-card>
                 <div class="flex flex-col gap-3">
                     <div class="text-center md:text-left">
                         <h2 id="newsletter-heading" class="text-sm md:text-base font-bold text-white">
@@ -136,8 +136,8 @@
                             </button>
                         </div>
                         <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="absolute -left-[9999px]">
-                        <label class="mt-2 flex items-start gap-2 text-[10px] md:text-[11px] text-gray-400">
-                            <input type="checkbox" name="consent" value="1" required class="mt-0.5 accent-[#D4AF37] shrink-0">
+                        <label for="newsletter-consent" class="mt-2 flex items-start gap-2 text-[10px] md:text-[11px] text-gray-400">
+                            <input id="newsletter-consent" type="checkbox" name="consent" value="1" required class="mt-0.5 accent-[#D4AF37] shrink-0">
                             <span>I agree to receive emails. <a href="{{ route('privacy') }}" class="text-[#D4AF37] underline">Privacy Policy</a>.</span>
                         </label>
                         @error('email') <p class="mt-1 text-[11px] text-red-300">{{ $message }}</p> @enderror

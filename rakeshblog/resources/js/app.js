@@ -305,6 +305,21 @@ document.addEventListener('DOMContentLoaded', function () {
     // UI UTILITIES
     // ==========================================
 
+    // Keep the newsletter card convenient to click without hijacking its controls.
+    const newsletterCard = document.querySelector('[data-newsletter-card]');
+    const newsletterConsent = document.getElementById('newsletter-consent');
+
+    if (newsletterCard && newsletterConsent) {
+        newsletterCard.addEventListener('click', function (event) {
+            if (event.target.closest('a, button, input, label, select, textarea')) {
+                return;
+            }
+
+            newsletterConsent.checked = !newsletterConsent.checked;
+            newsletterConsent.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    }
+
     /**
      * Toggles password field visibility between text and password types
      * 
