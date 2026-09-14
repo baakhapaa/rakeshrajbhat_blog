@@ -26,10 +26,17 @@
     <meta property="og:url" content="{{ $canonicalUrl }}">
     <meta property="og:image" content="{{ $shareImage }}">
     <meta property="og:image:alt" content="@yield('share_image_alt', 'Rakesh Rajbhat')">
+    <meta property="og:image:secure_url" content="{{ $shareImage }}">
+    @hasSection('article_published_time')<meta property="article:published_time" content="@yield('article_published_time')">@endif
+    @hasSection('article_modified_time')<meta property="article:modified_time" content="@yield('article_modified_time')">@endif
+    @hasSection('article_author')<meta property="article:author" content="@yield('article_author')">@endif
+    @hasSection('article_section')<meta property="article:section" content="@yield('article_section')">@endif
+    @hasSection('article_tags')<meta property="article:tag" content="@yield('article_tags')">@endif
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $pageTitle }}">
     <meta name="twitter:description" content="{{ $pageDescription }}">
     <meta name="twitter:image" content="{{ $shareImage }}">
+    <meta name="twitter:image:alt" content="@yield('share_image_alt', 'Rakesh Rajbhat')">
     <script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'Person', 'name' => 'Rakesh Rajbhat', 'url' => $siteUrl . '/', 'jobTitle' => 'Technology Entrepreneur and Youth Development Builder', 'description' => 'Nepali technology entrepreneur, civil engineer and youth-development builder.', 'image' => asset('images/rakeshrajbhat.jpg')], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
     @stack('structured_data')
     @stack('styles')

@@ -17,7 +17,7 @@
             <a href="{{ route('home') }}#featured-blogs" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Blog</a>
         </nav>
 
-        <div class="shrink-0 flex items-center gap-3">
+        <div class="ml-auto shrink-0 flex items-center gap-3">
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
                     <div class="relative hidden sm:block group">

@@ -7,6 +7,11 @@
 @section('og_type', 'article')
 @section('share_image', $blog->featured_image_url ?: asset('images/rakeshrajbhat.jpg'))
 @section('share_image_alt', $blog->title)
+@section('article_published_time', optional($blog->published_at ?: $blog->created_at)->toAtomString())
+@section('article_modified_time', optional($blog->updated_at)->toAtomString())
+@section('article_author', $blog->author ?: 'Rakesh Rajbhat')
+@section('article_section', $blog->category ?: 'General')
+@section('article_tags', is_array($blog->tags) ? implode(', ', $blog->tags) : '')
 
 @push('structured_data')
 <script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'BlogPosting', 'headline' => $blog->title, 'description' => \Illuminate\Support\Str::limit(strip_tags($blog->excerpt), 155), 'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => route('blog.show', $blog->slug)], 'image' => $blog->featured_image_url ?: asset('images/rakeshrajbhat.jpg'), 'datePublished' => optional($blog->published_at)->toAtomString(), 'dateModified' => optional($blog->updated_at)->toAtomString(), 'author' => ['@type' => 'Person', 'name' => $blog->author ?: 'Rakesh Rajbhat'], 'publisher' => ['@type' => 'Person', 'name' => 'Rakesh Rajbhat']], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
@@ -39,7 +44,7 @@
 
         <!-- Featured Image -->
         @if($blog->featured_image)
-            <img src="{{ $blog->featured_image_url }}" alt="{{ $blog->title }}" class="w-full rounded-xl mb-8">
+            <img src="{{ $blog->featured_image_url }}" alt="{{ $blog->title }}" class="w-full rounded-xl mb-8" decoding="async">
         @endif
 
         <!-- Blog Content -->

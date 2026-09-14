@@ -59,7 +59,7 @@
                                 @if($blog->featured_image)
                                     <img src="{{ $blog->featured_image_url }}" 
                                          alt="{{ $blog->title }}" 
-                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center">
                                         <svg class="w-16 h-16 text-[#D4AF37]/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
