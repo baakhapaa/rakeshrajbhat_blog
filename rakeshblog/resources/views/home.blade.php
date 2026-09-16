@@ -900,10 +900,27 @@ document.addEventListener('keydown', function(e) {
 .carousel-track {
     animation: infiniteScroll 30s linear infinite;
     will-change: transform;
+    touch-action: pan-y;
+    user-select: none;
 }
 
 .carousel-track:hover {
     animation-play-state: paused;
+}
+
+/* Pointer dragging is enabled by the scoped script below. */
+.carousel-track.carousel-drag-ready {
+    animation: none;
+    cursor: grab;
+}
+
+.carousel-track.carousel-drag-ready.is-dragging {
+    cursor: grabbing;
+    transition: none !important;
+}
+
+.carousel-track.carousel-drag-ready.is-settling {
+    transition: transform 180ms ease-out;
 }
 
 @keyframes infiniteScroll {
@@ -1120,5 +1137,112 @@ document.addEventListener('DOMContentLoaded', function() {
         
         updateCounter();
     });
+});
+</script>
+
+<script>
+/* Projects-only pointer carousel: supports mouse dragging and touch swipes. */
+document.addEventListener('DOMContentLoaded', function () {
+    const carousel = document.querySelector('#projects .carousel-container');
+    const track = carousel?.querySelector('.carousel-track');
+
+    if (!carousel || !track || track.children.length < 2) return;
+
+    track.classList.add('carousel-drag-ready');
+
+    let halfWidth = 0;
+    let position = 0;
+    let lastFrame = 0;
+    let pointerId = null;
+    let startX = 0;
+    let startPosition = 0;
+    let dragged = false;
+    let suppressClick = false;
+    const autoSpeed = 30; // pixels per second, matching the existing 30s carousel rhythm
+
+    const measure = () => {
+        halfWidth = track.scrollWidth / 2;
+        position = halfWidth ? ((position % halfWidth) + halfWidth) % halfWidth : 0;
+    };
+
+    const render = () => {
+        track.style.transform = `translate3d(${-position}px, 0, 0)`;
+    };
+
+    const animate = (timestamp) => {
+        if (!lastFrame) lastFrame = timestamp;
+        const elapsed = Math.min(timestamp - lastFrame, 50);
+        lastFrame = timestamp;
+
+        if (pointerId === null && halfWidth) {
+            position = (position + (elapsed / 1000) * autoSpeed) % halfWidth;
+            render();
+        }
+
+        requestAnimationFrame(animate);
+    };
+
+    const finishDrag = () => {
+        if (pointerId === null) return;
+
+        const activePointerId = pointerId;
+        pointerId = null;
+        track.releasePointerCapture?.(activePointerId);
+        track.classList.remove('is-dragging');
+
+        if (dragged) {
+            suppressClick = true;
+            track.classList.add('is-settling');
+            window.setTimeout(() => track.classList.remove('is-settling'), 190);
+            window.setTimeout(() => { suppressClick = false; }, 0);
+        }
+
+        lastFrame = performance.now();
+    };
+
+    track.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+
+        measure();
+        pointerId = event.pointerId;
+        startX = event.clientX;
+        startPosition = position;
+        dragged = false;
+        track.classList.add('is-dragging');
+        track.setPointerCapture?.(pointerId);
+    });
+
+    track.addEventListener('pointermove', (event) => {
+        if (event.pointerId !== pointerId) return;
+
+        const delta = event.clientX - startX;
+        if (Math.abs(delta) > 5) dragged = true;
+        if (!dragged) return;
+
+        position = startPosition - delta;
+        if (halfWidth) position = ((position % halfWidth) + halfWidth) % halfWidth;
+        render();
+        event.preventDefault();
+    });
+
+    track.addEventListener('pointerup', finishDrag);
+    track.addEventListener('pointercancel', finishDrag);
+    track.addEventListener('lostpointercapture', finishDrag);
+
+    track.addEventListener('click', (event) => {
+        if (suppressClick) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, true);
+
+    window.addEventListener('resize', () => {
+        measure();
+        render();
+    });
+
+    measure();
+    render();
+    requestAnimationFrame(animate);
 });
 </script>

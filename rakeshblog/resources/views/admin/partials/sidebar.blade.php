@@ -24,7 +24,7 @@
     </a>
 
     {{-- Stats --}}
-    {{-- <a href="{{ route('admin.stats.index') }}"
+    <a href="{{ route('admin.stats.index') }}"
         class="block px-4 py-3 rounded-lg transition-all duration-200
         {{ Str::startsWith(Route::currentRouteName(), 'admin.stats') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
         <span class="flex items-center">
@@ -35,7 +35,7 @@
             </svg>
             Stats
         </span>
-    </a> --}}
+    </a>
 
     {{-- Team Members --}}
     {{-- <a href="{{ route('admin.team-members.index') }}"
