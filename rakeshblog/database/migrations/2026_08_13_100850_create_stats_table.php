@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('stats', function (Blueprint $table) {
             $table->id();
-            $table->string('icon')->nullable(); // Font Awesome or SVG icon class
+            $table->string('icon')->nullable();
             $table->string('number');
             $table->string('label');
             $table->string('sub_label')->nullable();
