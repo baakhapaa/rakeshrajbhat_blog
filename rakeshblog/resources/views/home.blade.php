@@ -191,7 +191,8 @@
                     <p class="text-gray-500">No projects available yet.</p>
                 @endforelse
 
-                {{-- SECOND SET (DUPLICATED FOR SEAMLESS INFINITE LOOP) --}}
+                {{-- Only one project set is rendered so the homepage DOM remains unique. --}}
+                @if(false)
                 @foreach($projects ?? [] as $project)
                     <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
                         <!-- Normal Card Content -->
@@ -239,6 +240,7 @@
                         </div>
                     </div>
                 @endforeach
+                @endif
             </div>
         </div>
     </section>
@@ -866,7 +868,7 @@ document.addEventListener('keydown', function(e) {
 }
 
 .carousel-track {
-    animation: infiniteScroll 30s linear infinite;
+    animation: none;
     will-change: transform;
     touch-action: pan-y;
     user-select: none;
@@ -1118,7 +1120,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     track.classList.add('carousel-drag-ready');
 
-    let halfWidth = 0;
+    let maxPosition = 0;
     let position = 0;
     let lastFrame = 0;
     let pointerId = null;
@@ -1126,11 +1128,12 @@ document.addEventListener('DOMContentLoaded', function () {
     let startPosition = 0;
     let dragged = false;
     let suppressClick = false;
+    let direction = 1;
     const autoSpeed = 30; // pixels per second, matching the existing 30s carousel rhythm
 
     const measure = () => {
-        halfWidth = track.scrollWidth / 2;
-        position = halfWidth ? ((position % halfWidth) + halfWidth) % halfWidth : 0;
+        maxPosition = Math.max(0, track.scrollWidth - carousel.clientWidth);
+        position = Math.min(Math.max(position, 0), maxPosition);
     };
 
     const render = () => {
@@ -1142,8 +1145,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const elapsed = Math.min(timestamp - lastFrame, 50);
         lastFrame = timestamp;
 
-        if (pointerId === null && halfWidth) {
-            position = (position + (elapsed / 1000) * autoSpeed) % halfWidth;
+        if (pointerId === null && maxPosition) {
+            position += direction * (elapsed / 1000) * autoSpeed;
+            if (position >= maxPosition) {
+                position = maxPosition;
+                direction = -1;
+            } else if (position <= 0) {
+                position = 0;
+                direction = 1;
+            }
             render();
         }
 
@@ -1187,8 +1197,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (Math.abs(delta) > 5) dragged = true;
         if (!dragged) return;
 
-        position = startPosition - delta;
-        if (halfWidth) position = ((position % halfWidth) + halfWidth) % halfWidth;
+        position = Math.min(Math.max(startPosition - delta, 0), maxPosition);
         render();
         event.preventDefault();
     });
