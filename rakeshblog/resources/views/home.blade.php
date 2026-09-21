@@ -1104,7 +1104,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 counter.innerText = target;
             }
         };
-        
+
+        // Keep the real value in server-rendered HTML, then animate in the browser.
+        counter.innerText = '0';
         updateCounter();
     });
 });
