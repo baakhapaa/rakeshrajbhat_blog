@@ -267,7 +267,9 @@
                             </svg>
                         @endif
                         <div class="text-4xl font-serif font-bold text-white mb-1">
-                            <span class="counter" data-target="{{ $numericValue }}">0</span>@if($numberSuffix) <span class="text-4xl text-white">{{ $numberSuffix }}</span>@endif
+                            <span class="counter" data-target="{{ $numericValue }}">
+                                    {{ $numericValue }}
+                    </span>@if($numberSuffix) <span class="text-4xl text-white">{{ $numberSuffix }}</span>@endif
                         </div>
                         <div class="text-[10px] tracking-widest text-gray-400 uppercase leading-tight">
                             {{ $stat->label }}@if($stat->sub_label)<br/>{{ $stat->sub_label }}@endif
