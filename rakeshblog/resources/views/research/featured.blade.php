@@ -307,6 +307,14 @@ function openResearchDetail(id) {
                     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 };
 
+                const formatResearchContent = (value) => {
+                    if (!value) return '';
+                    if (!/<\/?[a-z][\s\S]*>/i.test(value)) {
+                        return `<div class="text-[#3a3a34] leading-relaxed whitespace-pre-wrap">${escapeHtml(value)}</div>`;
+                    }
+                    return `<div class="text-[#3a3a34] leading-relaxed [&_h2]:mb-2 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mb-2 [&_h3]:text-xl [&_h3]:font-bold [&_p]:mb-3 [&_strong]:font-bold [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5">${value}</div>`;
+                };
+
                 content.innerHTML = `
                     <div class="flex flex-wrap items-center gap-2 mb-4">
                         <span class="px-3 py-1.5 rounded-full text-xs font-medium inline-flex items-center gap-1.5 border
@@ -351,7 +359,7 @@ function openResearchDetail(id) {
                                 <span class="w-8 h-0.5 bg-[#D4AF37]"></span>
                                 Full Story
                             </h4>
-                            <div class="text-[#3a3a34] leading-relaxed whitespace-pre-wrap prose prose-sm max-w-none">${escapeHtml(item.content)}</div>
+                            ${formatResearchContent(item.content)}
                         </div>
                     ` : ''}
 

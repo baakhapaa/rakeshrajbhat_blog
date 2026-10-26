@@ -89,9 +89,8 @@
                 <label for="content" class="block text-sm font-medium text-gray-300 mb-2">
                     <i class="fas fa-file-alt text-[#D4AF37] mr-1"></i> Detailed Content
                 </label>
-                <textarea id="content" name="content" rows="5"
-                    class="w-full px-4 py-2.5 bg-[#0b0e12] border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition resize-none">{{ old('content', $research->content) }}</textarea>
-                <p class="text-xs text-gray-500 mt-1">Optional detailed content for the research item</p>
+                <x-ckeditor id="content" name="content" value="{{ old('content', $research->content) }}" height="420" />
+                <p class="text-xs text-gray-500 mt-1">Optional. Use headings and bold for the full story.</p>
                 @error('content')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror

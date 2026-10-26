@@ -88,7 +88,11 @@
             @if($research->content)
                 <div class="mt-6">
                     <h3 class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Detailed Content</h3>
-                    <div class="text-gray-300 leading-relaxed whitespace-pre-wrap">{{ $research->content }}</div>
+                    @if($research->content !== strip_tags($research->content))
+                        <div class="research-rich max-w-none text-gray-300 leading-relaxed [&_h2]:mb-2 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mb-2 [&_h3]:text-xl [&_h3]:font-bold [&_p]:mb-3 [&_strong]:font-bold [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5">{!! $research->content !!}</div>
+                    @else
+                        <div class="text-gray-300 leading-relaxed whitespace-pre-wrap">{{ $research->content }}</div>
+                    @endif
                 </div>
             @endif
 
