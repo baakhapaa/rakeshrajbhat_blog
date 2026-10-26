@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use App\Support\MediaStorage;
+use App\Support\NewsletterNotifier;
 
 class ResearchController extends Controller
 {
@@ -92,7 +93,11 @@ class ResearchController extends Controller
         $validated['is_active'] = $request->has('is_active');
         $validated['is_featured'] = $request->has('is_featured');
 
-        Research::create($validated);
+        $research = Research::create($validated);
+
+        if ($research->is_active) {
+            NewsletterNotifier::notify($research->title, $research->description, route('home') . '#research');
+        }
 
         return redirect()->route('admin.research.index')
             ->with('success', 'Research item created successfully.');
@@ -156,7 +161,12 @@ class ResearchController extends Controller
         $validated['is_active'] = $request->has('is_active');
         $validated['is_featured'] = $request->has('is_featured');
 
+        $wasActive = (bool) $research->is_active;
         $research->update($validated);
+
+        if ($research->is_active && ! $wasActive) {
+            NewsletterNotifier::notify($research->title, $research->description, route('home') . '#research');
+        }
 
         return redirect()->route('admin.research.index')
             ->with('success', 'Research item updated successfully.');
@@ -189,6 +199,10 @@ class ResearchController extends Controller
             $research = Research::findOrFail($id);
             $research->is_active = !$research->is_active;
             $research->save();
+
+            if ($research->is_active) {
+                NewsletterNotifier::notify($research->title, $research->description, route('home') . '#research');
+            }
 
             return response()->json([
                 'success' => true,

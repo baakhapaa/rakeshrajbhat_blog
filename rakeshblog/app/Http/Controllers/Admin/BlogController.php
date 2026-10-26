@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Support\MediaStorage;
+use App\Support\NewsletterNotifier;
 
 class BlogController extends Controller
 {
@@ -154,6 +155,10 @@ class BlogController extends Controller
         // Handle multi-question quiz
         $this->handleQuizCreation($request, $blog);
 
+        if ($blog->is_published) {
+            NewsletterNotifier::notify($blog->title, $blog->excerpt, route('blog.show', $blog->slug));
+        }
+
         // Log blog creation
         ActivityLogger::log('blog_created', 'Created new blog "' . $blog->title . '"', [
             'blog_id' => $blog->id,
@@ -266,6 +271,7 @@ class BlogController extends Controller
             $counter++;
         }
 
+        $wasPublished = (bool) $blog->is_published;
         $isPublished = $request->has('is_published') && $request->is_published == 1;
         $isFeatured = $request->has('is_featured') && $request->is_featured == 1;
         $publishedAt = $isPublished ? now() : null;
@@ -282,6 +288,10 @@ class BlogController extends Controller
             'is_featured' => $isFeatured,
             'published_at' => $publishedAt,
         ]);
+
+        if ($blog->is_published && ! $wasPublished) {
+            NewsletterNotifier::notify($blog->title, $blog->excerpt, route('blog.show', $blog->slug));
+        }
 
         // Handle quiz removal
         if ($request->has('remove_quiz') && $request->remove_quiz == 1) {
@@ -495,6 +505,10 @@ class BlogController extends Controller
         $blog->is_published = !$blog->is_published;
         $blog->published_at = $blog->is_published ? now() : null;
         $blog->save();
+
+        if ($blog->is_published) {
+            NewsletterNotifier::notify($blog->title, $blog->excerpt, route('blog.show', $blog->slug));
+        }
 
         ActivityLogger::log('blog_publish_toggled', 'Changed blog "' . $blog->title . '" publish status from ' . ($oldStatus ? 'Published' : 'Draft') . ' to ' . ($blog->is_published ? 'Published' : 'Draft'), [
             'blog_id' => $blog->id,

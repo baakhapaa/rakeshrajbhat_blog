@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Helpers\ActivityLogger;
 use App\Support\MediaStorage;
+use App\Support\NewsletterNotifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -66,6 +67,14 @@ class ProjectController extends Controller
             'order' => $validated['order'] ?? 0,
         ]);
 
+        if ($project->is_active) {
+            NewsletterNotifier::notify(
+                $project->name,
+                $project->short_description ?: $project->description,
+                route('home') . '#projects'
+            );
+        }
+
         ActivityLogger::log('project_created', 'Created project "' . $project->name . '"');
 
         return redirect()->route('admin.projects.index')
@@ -114,6 +123,8 @@ class ProjectController extends Controller
             $counter++;
         }
 
+        $wasActive = (bool) $project->is_active;
+
         $project->name = $validated['name'];
         $project->slug = $slug;
         $project->short_description = $validated['short_description'] ?? null;
@@ -124,6 +135,14 @@ class ProjectController extends Controller
         $project->is_active = $request->has('is_active');
         $project->order = $validated['order'] ?? 0;
         $project->save();
+
+        if ($project->is_active && ! $wasActive) {
+            NewsletterNotifier::notify(
+                $project->name,
+                $project->short_description ?: $project->description,
+                route('home') . '#projects'
+            );
+        }
 
         ActivityLogger::log('project_updated', 'Updated project "' . $project->name . '"');
 
@@ -163,6 +182,14 @@ class ProjectController extends Controller
         $project = Project::findOrFail($id);
         $project->is_active = !$project->is_active;
         $project->save();
+
+        if ($project->is_active) {
+            NewsletterNotifier::notify(
+                $project->name,
+                $project->short_description ?: $project->description,
+                route('home') . '#projects'
+            );
+        }
 
         ActivityLogger::log('project_status_toggled', 'Changed project "' . $project->name . '" status to ' . ($project->is_active ? 'Active' : 'Inactive'));
 

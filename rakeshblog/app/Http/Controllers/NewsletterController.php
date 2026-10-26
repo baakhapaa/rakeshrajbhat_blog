@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\NewsletterSubscriber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class NewsletterController extends Controller
@@ -32,12 +33,15 @@ class NewsletterController extends Controller
             'consented_at' => now(),
         ])->save();
 
-        Mail::raw(
-            "Please confirm your newsletter subscription by visiting: " . route('newsletter.confirm', ['token' => $token]),
-            function ($mail) use ($email) {
-                $mail->to($email)->subject('Confirm your Rakesh Rajbhat newsletter subscription');
-            }
-        );
+        $confirmUrl = route('newsletter.confirm', ['token' => $token]);
+        $unsubscribeUrl = URL::signedRoute('newsletter.unsubscribe', ['subscriber' => $subscriber->id]);
+
+        Mail::send('emails.newsletter-confirm', [
+            'confirmUrl' => $confirmUrl,
+            'unsubscribeUrl' => $unsubscribeUrl,
+        ], function ($mail) use ($email) {
+            $mail->to($email)->subject('Confirm your Rakesh Rajbhat newsletter subscription');
+        });
 
         return back()->with('newsletter_success', 'Please check your email to confirm your subscription.');
     }
@@ -51,5 +55,14 @@ class NewsletterController extends Controller
         ])->save();
 
         return redirect()->route('home')->with('newsletter_success', 'Your newsletter subscription is confirmed.');
+    }
+
+    public function unsubscribe(NewsletterSubscriber $subscriber)
+    {
+        $subscriber->forceFill([
+            'confirmed_at' => null,
+        ])->save();
+
+        return redirect()->route('home')->with('newsletter_success', 'You have been unsubscribed from the newsletter.');
     }
 }
