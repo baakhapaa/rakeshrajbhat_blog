@@ -1,123 +1,63 @@
-@extends('layouts.app')
+@php
+    $workTypes = ['education', 'investor', 'partner', 'builder'];
+    $workSelected = old('type', session('work_type', 'education'));
+    if (! in_array($workSelected, $workTypes, true)) {
+        $workSelected = 'education';
+    }
+@endphp
+<div
+    x-data="{
+        open: {{ session('work_modal') ? 'true' : 'false' }},
+        menuOpen: false,
+        selected: '{{ $workSelected }}',
+        options: [
+            { id: 'education', label: 'Education', icon: 'fa-school', desc: 'Schools & future-skills programs' },
+            { id: 'investor', label: 'Investor', icon: 'fa-handshake', desc: 'Investment & strategic partnerships' },
+            { id: 'partner', label: 'Partner', icon: 'fa-building', desc: 'Organizations & business collaborations' },
+            { id: 'builder', label: 'Future Builder', icon: 'fa-rocket', desc: 'Volunteer & contribute to projects' }
+        ]
+    }"
+    x-on:open-work.window="selected = options.some(option => option.id === $event.detail.type) ? $event.detail.type : 'education'; menuOpen = false; open = true"
+    x-effect="document.body.classList.toggle('overflow-hidden', open)"
+    x-cloak
+>
+    <div
+        x-show="open"
+        x-transition.opacity
+        class="fixed inset-0 z-[80] overflow-y-auto bg-[#1e1e1a]/55 px-4 py-6 sm:py-10"
+        @click.self="open = false"
+        @keydown.escape.window="open = false"
+        role="presentation"
+    >
+        <div class="relative mx-auto w-full max-w-4xl rounded-2xl bg-[#fff6e0] p-5 text-[#1e1e1a] shadow-2xl sm:p-8 md:p-10" role="dialog" aria-modal="true" aria-labelledby="work-together-title">
+            <button type="button" @click="open = false" class="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full text-[#3a3a34] hover:bg-black/5" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
 
-@section('title', 'Work With Me · Rakesh Rajbhat')
-
-@section('title', 'Work With Rakesh Rajbhat | Partnerships & Programs')
-@section('meta_description', 'Explore education programs, technology partnerships, investment opportunities and community initiatives with Rakesh Rajbhat and his team.')
-
-@section('content')
-<section class="py-24 bg-[#fff6e0] text-[#1e1e1a] scroll-mt-20 relative">
-    <div class="max-w-7xl mx-auto px-6 relative z-10">
-        
-        <!-- ========================================== -->
-        <!-- FLASH MESSAGES                             -->
-        <!-- ========================================== -->
-        @if(session('success'))
-        <div class="max-w-4xl mx-auto mb-8">
-            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-xl shadow-md" role="alert">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    <div>
-                        <p class="font-bold">Success!</p>
-                        <p>{{ session('success') }}</p>
-                    </div>
+            @if(session('work_success'))
+                <div class="mb-6 rounded-xl border-l-4 border-green-500 bg-green-100 p-4 text-green-700" role="status">
+                    <p class="font-bold">Success!</p>
+                    <p>{{ session('work_success') }}</p>
                 </div>
-            </div>
-        </div>
-        @endif
+            @endif
 
-        @if(session('error'))
-        <div class="max-w-4xl mx-auto mb-8">
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-xl shadow-md" role="alert">
-                <div class="flex items-start gap-3">
-                    <i class="fas fa-exclamation-circle text-red-500 text-xl mt-1"></i>
-                    <div>
-                        <p class="font-bold">Error!</p>
-                        <p>{{ session('error') }}</p>
-                    </div>
+            @if(session('work_modal') && $errors->work->any())
+                <div class="mb-6 rounded-xl border-l-4 border-red-500 bg-red-100 p-4 text-red-700" role="alert">
+                    <p class="font-bold">Please fix the following errors:</p>
+                    <ul class="list-inside list-disc text-sm">
+                        @foreach($errors->work->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
-            </div>
-        </div>
-        @endif
+            @endif
 
-        @if($errors->any())
-        <div class="max-w-4xl mx-auto mb-8">
-            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-xl shadow-md" role="alert">
-                <div class="flex items-start gap-3">
-                    <i class="fas fa-exclamation-circle text-red-500 text-xl mt-1"></i>
-                    <div>
-                        <p class="font-bold">Please fix the following errors:</p>
-                        <ul class="list-disc list-inside text-sm">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endif
-
-        <!-- ========================================== -->
-        <!-- 1. HERO SECTION                             -->
-        <!-- ========================================== -->
-        <div class="text-center max-w-4xl mx-auto mb-16">
-            <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">Let's Build Something Meaningful</p>
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6 text-balance text-[#1e1e1a]">
-                Work With Me
-            </h1>
-            <p class="text-[#3a3a34] text-lg max-w-2xl mx-auto leading-relaxed">
-                Whether you're a municipality, school, organization, investor, or individual — let's explore how we can work together to create real-world impact.
-            </p>
-            <div class="mt-8">
-                <a href="#opportunity" class="inline-block bg-[#D4AF37] text-[#0b0e12] px-10 py-4 rounded-xl font-bold text-sm tracking-wide hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20">
-                    Start a Conversation <i class="fas fa-arrow-down ml-2"></i>
-                </a>
-            </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- 2. THE OPPORTUNITY                          -->
-        <!-- ========================================== -->
-        <div id="opportunity" class="bg-white rounded-2xl shadow-xl p-10 md:p-12 text-center max-w-3xl mx-auto mb-20">
-            <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-3 uppercase">The Opportunity</p>
-            <h2 class="text-3xl font-serif font-bold mb-4">Great Things Start With A Conversation</h2>
-            <p class="text-[#3a3a34] text-md max-w-2xl mx-auto leading-relaxed mb-6">
-                I work with people and organizations who want to turn ideas, skills, and opportunities into meaningful projects.
-            </p>
-            <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-[#D4AF37]">
-                <span><i class="fas fa-microchip mr-1"></i> Technology</span> • 
-                <span><i class="fas fa-graduation-cap mr-1"></i> Education</span> • 
-                <span><i class="fas fa-users mr-1"></i> Community</span>
-                <span class="hidden sm:inline">•</span> 
-                <span><i class="fas fa-lightbulb mr-1"></i> Innovation</span> • 
-                <span><i class="fas fa-umbrella-beach mr-1"></i> Tourism</span> • 
-                <span><i class="fas fa-chart-line mr-1"></i> Future Skills</span>
-            </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- 3. CUSTOM DROPDOWN & FORM SWITCHER         -->
-        <!-- ========================================== -->
-        <div x-data="{ 
-            open: false, 
-            selected: '{{ old('type', 'education') }}',
-            options: [
-                { id: 'education', label: 'Education', icon: 'fa-school', desc: 'Schools & future-skills programs' },
-                { id: 'investor', label: 'Investor', icon: 'fa-handshake', desc: 'Investment & strategic partnerships' },
-                { id: 'partner', label: 'Partner', icon: 'fa-building', desc: 'Organizations & business collaborations' },
-                { id: 'builder', label: 'Future Builder', icon: 'fa-rocket', desc: 'Volunteer & contribute to projects' }
-            ]
-        }" class="max-w-4xl mx-auto">
-
-            <!-- Custom Dropdown Trigger -->
-            <div class="text-center mb-10">
-                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">Select Your Path</p>
-                <h2 class="text-3xl font-serif font-bold mb-4">How Can We Work Together?</h2>
+            <div class="px-8 text-center">
+                <h2 id="work-together-title" class="mb-4 font-serif text-3xl font-bold">How Can We Work Together?</h2>
                 
                 <div class="relative inline-block w-full max-w-md text-left mt-4">
                     <div>
-                        <button type="button" @click="open = !open" class="inline-flex justify-between w-full rounded-xl border border-gray-300 bg-white px-6 py-4 text-sm font-medium text-[#1e1e1a] hover:border-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all shadow-sm">
+                        <button type="button" @click="menuOpen = !menuOpen" class="inline-flex justify-between w-full rounded-xl border border-gray-300 bg-white px-6 py-4 text-sm font-medium text-[#1e1e1a] hover:border-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all shadow-sm">
                             <span class="flex items-center gap-2" x-html="'<i class=\'fas ' + options.find(opt => opt.id === selected).icon + '\'></i> ' + options.find(opt => opt.id === selected).label"></span>
                             <svg class="-mr-1 ml-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -126,10 +66,10 @@
                     </div>
 
                     <!-- Custom Dropdown Menu -->
-                    <div x-show="open" @click.away="open = false" class="absolute z-50 mt-2 w-full rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none origin-top-right transition ease-out duration-100" style="display: none;">
+                    <div x-show="menuOpen" @click.away="menuOpen = false" class="absolute z-50 mt-2 w-full rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none origin-top-right transition ease-out duration-100" style="display: none;">
                         <div class="py-1">
                             <template x-for="option in options" :key="option.id">
-                                <div @click="selected = option.id; open = false" class="cursor-pointer px-6 py-4 hover:bg-[#D4AF37]/10 transition-colors flex items-start gap-4 group">
+                                <div @click="selected = option.id; menuOpen = false" class="cursor-pointer px-6 py-4 hover:bg-[#D4AF37]/10 transition-colors flex items-start gap-4 group">
                                     <div class="text-xl text-[#D4AF37] shrink-0 pt-1">
                                         <i :class="'fas ' + option.icon"></i>
                                     </div>
@@ -147,7 +87,7 @@
             <!-- ========================================== -->
             <!-- DYNAMIC FORMS                              -->
             <!-- ========================================== -->
-            <div class="bg-white rounded-2xl shadow-xl p-8 md:p-10 hover:shadow-2xl transition-shadow duration-300">
+            <div class="mt-8 bg-white rounded-2xl shadow-xl p-8 md:p-10">
                 
                 <!-- 2. EDUCATION FORM -->
                 <div x-show="selected === 'education'" x-transition x-cloak>
@@ -161,17 +101,17 @@
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-school text-[#D4AF37] mr-1"></i> School / Organization *</label>
                             <input type="text" name="org_name" required value="{{ old('org_name') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a] placeholder-gray-400" placeholder="e.g. Rato Bangala School">
-                            @error('org_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('org_name', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-user text-[#D4AF37] mr-1"></i> Contact Person *</label>
                             <input type="text" name="name" required value="{{ old('name') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a] placeholder-gray-400" placeholder="Full Name">
-                            @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('name', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-envelope text-[#D4AF37] mr-1"></i> Email *</label>
                             <input type="email" name="email" required value="{{ old('email') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition text-[#1e1e1a] placeholder-gray-400" placeholder="you@example.com">
-                            @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('email', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-phone text-[#D4AF37] mr-1"></i> Phone</label>
@@ -187,7 +127,7 @@
                                 <option value="Entrepreneurship Program" {{ old('interest') == 'Entrepreneurship Program' ? 'selected' : '' }}>Entrepreneurship Program</option>
                                 <option value="Teacher Training" {{ old('interest') == 'Teacher Training' ? 'selected' : '' }}>Teacher Training</option>
                             </select>
-                            @error('interest') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('interest', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
@@ -200,7 +140,7 @@
                                 <option value="Young Professionals" {{ old('target_audience') == 'Young Professionals' ? 'selected' : '' }}>Young Professionals</option>
                                 <option value="Other" {{ old('target_audience') == 'Other' ? 'selected' : '' }}>Other</option>
                             </select>
-                            @error('target_audience') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('target_audience', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-layer-group text-[#D4AF37] mr-1"></i> Age / Grade</label>
@@ -241,7 +181,7 @@
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-user text-[#D4AF37] mr-1"></i> Your Name *</label>
                             <input type="text" name="name" required value="{{ old('name') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition" placeholder="Full Name">
-                            @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('name', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-building text-[#D4AF37] mr-1"></i> Organization</label>
@@ -250,7 +190,7 @@
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-envelope text-[#D4AF37] mr-1"></i> Email *</label>
                             <input type="email" name="email" required value="{{ old('email') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition" placeholder="you@example.com">
-                            @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('email', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-phone text-[#D4AF37] mr-1"></i> Phone</label>
@@ -286,7 +226,7 @@
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-globe text-[#D4AF37] mr-1"></i> Website / LinkedIn</label>
                             <input type="text" name="website" value="{{ old('website') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition" placeholder="https://...">
-                            @error('website') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('website', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div class="md:col-span-2 pt-2">
                             <button type="submit" class="w-full bg-[#D4AF37] text-[#0b0e12] px-6 py-4 rounded-xl font-bold hover:brightness-110 transition-all shadow-lg flex items-center justify-center gap-3">
@@ -309,17 +249,17 @@
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-building text-[#D4AF37] mr-1"></i> Organization Name *</label>
                             <input type="text" name="org_name" required value="{{ old('org_name') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition" placeholder="Your Organization">
-                            @error('org_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('org_name', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-user text-[#D4AF37] mr-1"></i> Your Name *</label>
                             <input type="text" name="name" required value="{{ old('name') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition" placeholder="Full Name">
-                            @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('name', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-envelope text-[#D4AF37] mr-1"></i> Email *</label>
                             <input type="email" name="email" required value="{{ old('email') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition" placeholder="you@example.com">
-                            @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('email', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-phone text-[#D4AF37] mr-1"></i> Phone</label>
@@ -328,7 +268,7 @@
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-globe text-[#D4AF37] mr-1"></i> Website</label>
                             <input type="text" name="website" value="{{ old('website') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition" placeholder="https://...">
-                            @error('website') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('website', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-list text-[#D4AF37] mr-1"></i> What are you looking for?</label>
@@ -376,12 +316,12 @@
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-user text-[#D4AF37] mr-1"></i> Full Name *</label>
                             <input type="text" name="name" required value="{{ old('name') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition" placeholder="Your Name">
-                            @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('name', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-envelope text-[#D4AF37] mr-1"></i> Email *</label>
                             <input type="email" name="email" required value="{{ old('email') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition" placeholder="you@example.com">
-                            @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('email', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-phone text-[#D4AF37] mr-1"></i> Phone</label>
@@ -398,7 +338,7 @@
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-link text-[#D4AF37] mr-1"></i> Portfolio / GitHub / LinkedIn</label>
                             <input type="text" name="portfolio" value="{{ old('portfolio') }}" class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] transition" placeholder="https://...">
-                            @error('portfolio') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            @error('portfolio', 'work') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-[#3a3a34] mb-2"><i class="fas fa-comment-dots text-[#D4AF37] mr-1"></i> Why do you want to contribute?</label>
@@ -414,51 +354,18 @@
                 </div>
             </div>
         </div>
-
-        <!-- ========================================== -->
-        <!-- 4. WHAT HAPPENS NEXT                       -->
-        <!-- ========================================== -->
-        <div class="max-w-4xl mx-auto mt-20">
-            <div class="text-center mb-12">
-                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">The Journey</p>
-                <h2 class="text-3xl font-serif font-bold text-[#1e1e1a]">What Happens Next?</h2>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white rounded-xl shadow-xl p-8 text-center border border-[#D4AF37]/15 hover:border-[#D4AF37] transition-all hover:-translate-y-1">
-                    <div class="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-2xl font-bold text-[#D4AF37] mx-auto mb-4">01</div>
-                    <h3 class="font-bold text-lg mb-2">You Reach Out</h3>
-                    <p class="text-sm text-[#3a3a34]">Tell me what you're looking for through the form.</p>
-                </div>
-                <div class="bg-white rounded-xl shadow-xl p-8 text-center border border-[#D4AF37]/15 hover:border-[#D4AF37] transition-all hover:-translate-y-1">
-                    <div class="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-2xl font-bold text-[#D4AF37] mx-auto mb-4">02</div>
-                    <h3 class="font-bold text-lg mb-2">We Connect</h3>
-                    <p class="text-sm text-[#3a3a34]">We'll discuss your idea, needs, and goals together.</p>
-                </div>
-                <div class="bg-white rounded-xl shadow-xl p-8 text-center border border-[#D4AF37]/15 hover:border-[#D4AF37] transition-all hover:-translate-y-1">
-                    <div class="w-16 h-16 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-2xl font-bold text-[#D4AF37] mx-auto mb-4">03</div>
-                    <h3 class="font-bold text-lg mb-2">We Build</h3>
-                    <p class="text-sm text-[#3a3a34]">We explore the right way to work together and make it happen.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- 5. NOT SURE?                                -->
-        <!-- ========================================== -->
-        <div class="text-center max-w-2xl mx-auto mt-20 p-10 bg-[#D4AF37]/5 rounded-2xl border border-[#D4AF37]/20">
-            <p class="font-bold text-xl font-serif text-[#1e1e1a]">Have a different idea?</p>
-            <p class="text-[#3a3a34] mt-2">Not sure which option fits you? That's completely fine.</p>
-            <a href="{{ route('contact') }}" class="inline-block mt-4 bg-[#D4AF37] text-[#0b0e12] px-8 py-3 rounded-xl font-bold hover:brightness-110 transition-all shadow-lg">
-                Just Send A Message <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-        </div>
-
     </div>
-</section>
-
-<!-- Alpine.js and x-cloak styles -->
+</div>
 <style>
     [x-cloak] { display: none !important; }
 </style>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-@endsection
+<script>
+    document.addEventListener('click', function (event) {
+        const trigger = event.target.closest('[data-open-work]');
+        if (!trigger) return;
+        window.dispatchEvent(new CustomEvent('open-work', {
+            detail: { type: trigger.getAttribute('data-open-work') || 'education' }
+        }));
+    });
+</script>

@@ -49,7 +49,7 @@
                     <a href="{{ route('register') }}" class="hidden sm:inline border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold tracking-widest">SIGN UP</a>
                 @endauth
             @else
-                <a href="{{ route('work-with-me') }}" class="hidden sm:inline border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold tracking-widest hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all">WORK WITH ME</a>
+                <button type="button" data-open-work="education" class="hidden sm:inline-flex border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold tracking-widest hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all">WORK WITH ME</button>
             @endif
             <button type="button" id="mobileMenuToggle" class="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileNavigation">
                 <svg id="mobileMenuOpenIcon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -65,7 +65,7 @@
             <a href="{{ route('home') }}#research" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Ideas &amp; Research</a>
             <a href="{{ route('home') }}#impact" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Impact</a>
             <a href="{{ route('home') }}#featured-blogs" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Blog</a>
-            <a href="{{ route('work-with-me') }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Work With Me</a>
+            <button type="button" data-open-work="education" class="mobile-nav-link w-full rounded-md px-3 py-3 text-left text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Work With Me</button>
             <div class="notranslate mt-2 flex items-center gap-2 px-3 py-3 text-xs font-semibold tracking-[0.16em]" translate="no">
                 <button type="button" data-set-lang="en" class="lang-option text-[#D4AF37]">EN</button>
                 <span class="text-white/30">|</span>

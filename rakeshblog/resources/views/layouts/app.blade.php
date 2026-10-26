@@ -50,6 +50,7 @@
     @include('partials.header')
     <main>@yield('content')</main>
     @include('partials.footer')
+    @include('partials.work-with-me')
     <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" id="backToTopBtn" class="go-top-btn" title="Back to top" aria-label="Back to top"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button>
     <div id="google_translate_element" class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true"></div>
     @stack('scripts')

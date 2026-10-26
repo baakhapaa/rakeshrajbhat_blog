@@ -44,7 +44,6 @@ Route::get('/sitemap.xml', function () {
         ['loc' => route('blog'), 'lastmod' => now()->toDateString(), 'changefreq' => 'weekly', 'priority' => '0.8'],
         ['loc' => route('contact'), 'lastmod' => now()->toDateString(), 'changefreq' => 'monthly', 'priority' => '0.6'],
         ['loc' => route('bootcamp'), 'lastmod' => now()->toDateString(), 'changefreq' => 'monthly', 'priority' => '0.7'],
-        ['loc' => route('work-with-me'), 'lastmod' => now()->toDateString(), 'changefreq' => 'monthly', 'priority' => '0.7'],
         ['loc' => route('privacy'), 'lastmod' => now()->toDateString(), 'changefreq' => 'yearly', 'priority' => '0.3'],
         ['loc' => route('terms'), 'lastmod' => now()->toDateString(), 'changefreq' => 'yearly', 'priority' => '0.3'],
     ]);
@@ -115,7 +114,7 @@ Route::post('/bootcamp', [BootcampController::class, 'submit'])->name('bootcamp.
 // ==========================================
 // WORK WITH ME ROUTE
 // ==========================================
-Route::view('/work-with-me', 'partials.work-with-me')->name('work-with-me');
+Route::redirect('/work-with-me', '/');
 Route::post('/work-with-me/send', [ContactController::class, 'sendWorkWithMe'])->name('work-with-me.send');
 Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
     ->middleware('throttle:6,1')

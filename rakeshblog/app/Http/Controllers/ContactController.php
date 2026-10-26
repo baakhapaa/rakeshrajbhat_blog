@@ -111,8 +111,10 @@ class ContactController extends Controller
 
         if ($validator->fails()) {
             return redirect()->back()
-                ->withErrors($validator)
-                ->withInput();
+                ->withErrors($validator, 'work')
+                ->withInput()
+                ->with('work_modal', true)
+                ->with('work_type', $type);
         }
 
         // 2. Gather dynamic data based on type
@@ -127,7 +129,10 @@ class ContactController extends Controller
         });
 
         // 4. Redirect back with success
-        return redirect()->route('work-with-me')->with('success', 'Your message has been sent! I\'ll get back to you within 24 hours.');
+        return redirect()->back()
+            ->with('work_modal', true)
+            ->with('work_type', $type)
+            ->with('work_success', 'Your message has been sent! I\'ll get back to you within 24 hours.');
     }
 
     /**

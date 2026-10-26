@@ -38,21 +38,21 @@
                 <p class="text-sm font-bold text-[#1e1e1a] group-hover:text-[#735A12]">HillyChilly</p>
             </a>
 
-            <a href="{{ route('work-with-me') }}" class="group bg-white rounded-2xl p-5 text-center shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100/50 hover:border-[#D4AF37]/20">
+            <button type="button" data-open-work="investor" class="group w-full bg-white rounded-2xl p-5 text-center shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100/50 hover:border-[#D4AF37]/20">
                 <div class="w-10 h-10 mx-auto mb-4 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 transition-transform">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 </div>
                 <p class="text-[10px] font-bold uppercase tracking-widest text-[#8a8a82] mb-1">Investors</p>
                 <p class="text-sm font-bold text-[#1e1e1a] group-hover:text-[#735A12]">Meet</p>
-            </a>
+            </button>
 
-            <a href="{{ route('work-with-me') }}" class="group col-span-2 md:col-span-1 bg-white rounded-2xl p-5 text-center shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100/50 hover:border-[#D4AF37]/20">
+            <button type="button" data-open-work="builder" class="group col-span-2 md:col-span-1 w-full bg-white rounded-2xl p-5 text-center shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100/50 hover:border-[#D4AF37]/20">
                 <div class="w-10 h-10 mx-auto mb-4 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 transition-transform">
                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A10.003 10.003 0 0012 20c4.478 0 8.268-2.943 9.542-7-1.274-4.057-5.064-7-9.542-7-4.477 0-8.268 2.943-9.542 7"/></svg>
                 </div>
                 <p class="text-[10px] font-bold uppercase tracking-widest text-[#8a8a82] mb-1">Volunteers</p>
                 <p class="text-sm font-bold text-[#1e1e1a] group-hover:text-[#735A12]">Join Future</p>
-            </a>
+            </button>
         </div>
     </div>
 </section>
