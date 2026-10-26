@@ -73,6 +73,25 @@
                 </p>
             </div>
 
+            <div class="mx-auto grid w-full max-w-xs grid-cols-2 gap-x-10 text-left lg:mx-0 lg:w-64 lg:max-w-none lg:shrink-0">
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Socials</h3>
+                    <div class="mt-3 flex flex-col items-start gap-2">
+                        <a href="https://www.linkedin.com/in/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">LinkedIn</a>
+                        <a href="https://www.facebook.com/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Facebook</a>
+                        <a href="https://www.instagram.com/raa_case7/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Instagram</a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Pages</h3>
+                    <div class="mt-3 flex flex-col items-start gap-2">
+                        <a href="{{ route('contact') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Contact</a>
+                        <a href="{{ route('privacy') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Privacy</a>
+                        <a href="{{ route('terms') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Terms</a>
+                    </div>
+                </div>
+            </div>
+
             <section class="w-full rounded-xl border border-[#3a414b] bg-[#151a20] p-4 lg:w-[26rem] lg:shrink-0" aria-labelledby="newsletter-heading" data-newsletter-card>
                 <div class="flex flex-col gap-3">
                     <div class="text-center">
@@ -106,18 +125,6 @@
                     @endif
                 </div>
             </section>
-
-            <div class="text-center lg:shrink-0">
-                <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Connect</h3>
-                <div class="mt-3 flex flex-row flex-wrap items-center justify-center gap-x-3 gap-y-2 lg:mt-4 lg:grid lg:w-[18rem] lg:grid-cols-3 lg:justify-items-start lg:gap-x-6 lg:gap-y-3">
-                    <a href="https://www.linkedin.com/in/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">LinkedIn</a>
-                    <a href="https://www.facebook.com/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Facebook</a>
-                    <a href="https://www.instagram.com/raa_case7/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Instagram</a>
-                    <a href="{{ route('contact') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Contact</a>
-                    <a href="{{ route('privacy') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Privacy</a>
-                    <a href="{{ route('terms') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Terms</a>
-                </div>
-            </div>
         </div>
     </div>
 </footer>
