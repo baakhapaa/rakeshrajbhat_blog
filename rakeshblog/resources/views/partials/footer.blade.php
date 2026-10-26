@@ -59,8 +59,8 @@
 
 <footer class="py-12 md:py-16 bg-[#0c1016] text-white/90">
     <div class="max-w-7xl mx-auto px-4 md:px-6">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16 items-start">
-            <div class="text-center lg:text-left">
+        <div class="flex flex-col items-stretch gap-10 lg:flex-row lg:items-start lg:justify-between lg:gap-12">
+            <div class="text-center lg:max-w-sm lg:text-left">
                 <p class="font-serif italic text-3xl text-[#D4AF37] notranslate" translate="no">Rakesh Rajbhat</p>
                 <p class="mt-4 text-sm text-gray-300 leading-relaxed">
                     For the root. For the youth. For the nation.
@@ -73,7 +73,7 @@
                 </p>
             </div>
 
-            <section class="w-full rounded-xl border border-[#3a414b] bg-[#151a20] p-4" aria-labelledby="newsletter-heading" data-newsletter-card>
+            <section class="w-full rounded-xl border border-[#3a414b] bg-[#151a20] p-4 lg:w-[26rem] lg:shrink-0" aria-labelledby="newsletter-heading" data-newsletter-card>
                 <div class="flex flex-col gap-3">
                     <div class="text-center">
                         <h2 id="newsletter-heading" class="text-base font-bold text-white">Stay Connected With Me</h2>
@@ -107,12 +107,12 @@
                 </div>
             </section>
 
-            <div class="text-center lg:text-left">
+            <div class="text-center lg:shrink-0">
                 <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Connect</h3>
-                <div class="mt-4 flex flex-col items-center lg:items-start gap-2">
+                <div class="mt-3 flex flex-row flex-wrap items-center justify-center gap-x-3 gap-y-2 lg:mt-4 lg:grid lg:w-[18rem] lg:grid-cols-3 lg:justify-items-start lg:gap-x-6 lg:gap-y-3">
                     <a href="https://www.linkedin.com/in/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">LinkedIn</a>
-                    <a href="https://www.instagram.com/raa_case7/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Instagram</a>
                     <a href="https://www.facebook.com/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Facebook</a>
+                    <a href="https://www.instagram.com/raa_case7/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Instagram</a>
                     <a href="{{ route('contact') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Contact</a>
                     <a href="{{ route('privacy') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Privacy</a>
                     <a href="{{ route('terms') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Terms</a>
