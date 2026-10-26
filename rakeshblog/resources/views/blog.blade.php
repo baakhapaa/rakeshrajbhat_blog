@@ -87,7 +87,7 @@
                             
                             <div class="p-6">
                                 <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                                    <span><i class="far fa-calendar-alt mr-1"></i>{{ $blog->published_at ? $blog->published_at->format('M d, Y') : $blog->created_at->format('M d, Y') }}</span>
+                                    <span><i class="far fa-calendar-alt mr-1"></i>{{ $blog->short_date }}</span>
                                     <span>•</span>
                                     <span class="flex items-center gap-1">
                                         <i class="far fa-clock mr-1"></i>{{ $blog->reading_time ?? '5 min read' }}

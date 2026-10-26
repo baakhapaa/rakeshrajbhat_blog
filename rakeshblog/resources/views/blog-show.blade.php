@@ -14,7 +14,7 @@
 @section('article_tags', is_array($blog->tags) ? implode(', ', $blog->tags) : '')
 
 @push('structured_data')
-<script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'BlogPosting', 'headline' => $blog->title, 'description' => \Illuminate\Support\Str::limit(strip_tags($blog->excerpt), 155), 'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => route('blog.show', $blog->slug)], 'image' => $blog->featured_image_url ?: asset('images/rakeshrajbhat.jpg'), 'datePublished' => optional($blog->published_at)->toAtomString(), 'dateModified' => optional($blog->updated_at)->toAtomString(), 'author' => ['@type' => 'Person', 'name' => $blog->author ?: 'Rakesh Rajbhat'], 'publisher' => ['@type' => 'Person', 'name' => 'Rakesh Rajbhat']], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+<script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'BlogPosting', 'headline' => $blog->title, 'description' => \Illuminate\Support\Str::limit(strip_tags($blog->excerpt), 155), 'mainEntityOfPage' => ['@type' => 'WebPage', '@id' => route('blog.show', $blog->slug)], 'image' => $blog->featured_image_url ?: asset('images/rakeshrajbhat.jpg'), 'datePublished' => optional($blog->published_at ?: $blog->created_at)->toAtomString(), 'dateModified' => optional($blog->updated_at)->toAtomString(), 'author' => ['@type' => 'Person', 'name' => $blog->author ?: 'Rakesh Rajbhat'], 'publisher' => ['@type' => 'Person', 'name' => 'Rakesh Rajbhat']], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
 @endpush
 
 @section('content')
@@ -30,7 +30,7 @@
         <div class="mb-8">
             <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">{{ $blog->title }}</h1>
             <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                <span><i class="far fa-calendar-alt mr-1"></i>{{ $blog->created_at->format('F d, Y') }}</span>
+                <span><i class="far fa-calendar-alt mr-1"></i>{{ $blog->short_date }}</span>
                 <span>•</span>
                 <span class="text-[#D4AF37] font-semibold"><i class="fas fa-tag mr-1"></i>{{ $blog->category ?? 'General' }}</span>
                 <span>•</span>

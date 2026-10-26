@@ -810,7 +810,7 @@ document.addEventListener('keydown', function(e) {
                             </div>
                             <div class="p-6">
                                 <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                                    <span>{{ $blog->published_at ? $blog->published_at->format('M d, Y') : $blog->created_at->format('M d, Y') }}</span>
+                                    <span>{{ $blog->short_date }}</span>
                                     <span>•</span>
                                     <span class="flex items-center gap-1">
                                         <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
