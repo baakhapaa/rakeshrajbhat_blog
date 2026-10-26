@@ -18,6 +18,11 @@
         </nav>
 
         <div class="ml-auto shrink-0 flex items-center gap-3">
+            <div id="langSwitch" class="notranslate relative flex items-center text-[11px] font-semibold tracking-[0.16em]" translate="no">
+                <button type="button" data-set-lang="en" class="lang-option rounded-sm px-1.5 py-1 text-[#D4AF37]" aria-pressed="true">EN</button>
+                <span class="text-white/30" aria-hidden="true">|</span>
+                <button type="button" data-set-lang="ne" class="lang-option rounded-sm px-1.5 py-1 text-white/55 hover:text-[#D4AF37]" aria-pressed="false">NP</button>
+            </div>
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
                     <div class="relative hidden sm:block group">
@@ -61,6 +66,11 @@
             <a href="{{ route('home') }}#impact" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Impact</a>
             <a href="{{ route('home') }}#featured-blogs" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Blog</a>
             <a href="{{ route('work-with-me') }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Work With Me</a>
+            <div class="notranslate mt-2 flex items-center gap-2 px-3 py-3 text-xs font-semibold tracking-[0.16em]" translate="no">
+                <button type="button" data-set-lang="en" class="lang-option text-[#D4AF37]">EN</button>
+                <span class="text-white/30">|</span>
+                <button type="button" data-set-lang="ne" class="lang-option text-white/55">NP</button>
+            </div>
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
                     <a href="{{ route('profile') }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Profile</a>

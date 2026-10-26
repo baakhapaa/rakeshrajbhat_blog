@@ -43,7 +43,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-[#101417] text-[#0f1419] antialiased font-sans">
@@ -51,6 +51,73 @@
     <main>@yield('content')</main>
     @include('partials.footer')
     <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" id="backToTopBtn" class="go-top-btn" title="Back to top" aria-label="Back to top"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg></button>
+    <div id="google_translate_element" class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true"></div>
     @stack('scripts')
+    <script>
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'ne,en',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+
+        function currentSiteLang() {
+            const match = document.cookie.match(/(?:^|; )googtrans=\/en\/(\w+)/);
+            return match && match[1] === 'ne' ? 'ne' : 'en';
+        }
+
+        function markSiteLang(lang) {
+            document.querySelectorAll('.lang-option').forEach(function (button) {
+                const active = button.getAttribute('data-set-lang') === lang;
+                button.setAttribute('aria-pressed', active ? 'true' : 'false');
+                button.classList.toggle('text-[#D4AF37]', active);
+                button.classList.toggle('text-white/55', !active);
+            });
+        }
+
+        function applySiteLanguage(lang) {
+            const started = Date.now();
+            const timer = setInterval(function () {
+                const combo = document.querySelector('.goog-te-combo');
+                if (!combo) {
+                    if (Date.now() - started > 8000) clearInterval(timer);
+                    return;
+                }
+                clearInterval(timer);
+                combo.value = lang;
+                combo.dispatchEvent(new Event('change', { bubbles: true }));
+            }, 200);
+        }
+
+        function setSiteLanguage(lang) {
+            const host = window.location.hostname;
+            const clear = 'googtrans=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+            document.cookie = clear;
+            document.cookie = clear + ';domain=' + host;
+            if (lang === 'ne') {
+                document.cookie = 'googtrans=/en/ne;path=/';
+                document.cookie = 'googtrans=/en/ne;path=/;domain=' + host;
+                markSiteLang('ne');
+                applySiteLanguage('ne');
+                return;
+            }
+            window.location.reload();
+        }
+
+        document.addEventListener('click', function (event) {
+            const button = event.target.closest('[data-set-lang]');
+            if (!button) return;
+            const lang = button.getAttribute('data-set-lang');
+            if (lang !== currentSiteLang()) setSiteLanguage(lang);
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const lang = currentSiteLang();
+            markSiteLang(lang);
+            if (lang === 'ne') applySiteLanguage('ne');
+        });
+    </script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

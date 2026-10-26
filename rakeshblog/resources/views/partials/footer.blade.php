@@ -61,10 +61,15 @@
     <div class="max-w-7xl mx-auto px-4 md:px-6">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-8 items-start">
             <div class="text-center lg:text-left">
-                <p class="font-serif italic text-3xl text-[#D4AF37]">Rakesh Rajbhat</p>
-                <p class="mt-3 text-[11px] font-semibold tracking-[0.12em] text-gray-500 leading-relaxed">
-                    © {{ date('Y') }} RAKESH RAJBHAT.<br>
-                    ALL RIGHTS RESERVED.
+                <p class="font-serif italic text-3xl text-[#D4AF37] notranslate" translate="no">Rakesh Rajbhat</p>
+                <p class="mt-4 text-sm text-gray-300 leading-relaxed max-w-sm mx-auto lg:mx-0">
+                    For the root. For the youth. For the nation.
+                </p>
+                <p class="mt-3 text-sm text-gray-400 leading-relaxed max-w-sm mx-auto lg:mx-0">
+                    Founder of Baakhapaa, Skill Sikka, HillyChilly and Future Builders. Transforming education, tourism, technology, and local economies in Nepal.
+                </p>
+                <p class="mt-6 text-[11px] font-semibold tracking-[0.12em] text-gray-500">
+                    © {{ date('Y') }} RAKESH RAJBHAT. ALL RIGHTS RESERVED.
                 </p>
             </div>
 
@@ -103,14 +108,14 @@
             </section>
 
             <div class="text-center lg:text-right">
-                <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Connect</h3>
-                <div class="grid grid-cols-2 gap-x-8 gap-y-2 max-w-[200px] mx-auto lg:ml-auto lg:mr-0">
-                    <a href="https://www.linkedin.com/in/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors py-1">LinkedIn</a>
-                    <a href="{{ route('contact') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors py-1">Contact</a>
-                    <a href="https://www.instagram.com/raa_case7/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors py-1">Instagram</a>
-                    <a href="{{ route('privacy') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors py-1">Privacy</a>
-                    <a href="https://www.facebook.com/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors py-1">Facebook</a>
-                    <a href="{{ route('terms') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors py-1">Terms</a>
+                <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Connect</h3>
+                <div class="mt-4 flex flex-col items-center lg:items-end gap-2">
+                    <a href="https://www.linkedin.com/in/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">LinkedIn</a>
+                    <a href="https://www.instagram.com/raa_case7/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Instagram</a>
+                    <a href="https://www.facebook.com/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Facebook</a>
+                    <a href="{{ route('contact') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Contact</a>
+                    <a href="{{ route('privacy') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Privacy</a>
+                    <a href="{{ route('terms') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Terms</a>
                 </div>
             </div>
         </div>
