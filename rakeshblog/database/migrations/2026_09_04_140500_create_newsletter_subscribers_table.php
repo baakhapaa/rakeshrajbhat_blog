@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('confirmation_token', 64)->nullable()->unique();
             $table->timestamp('confirmed_at')->nullable();
-            $table->timestamp('consented_at');
+            $table->timestamp('consented_at')->useCurrent();
             $table->timestamps();
         });
     }
