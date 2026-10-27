@@ -3,6 +3,12 @@
 @section('title', 'Settings · Admin')
 
 @section('content')
+@php
+    $settingsTab = request('tab', 'profile');
+    if (! in_array($settingsTab, ['profile', 'password', 'general', 'navbar'], true)) {
+        $settingsTab = 'profile';
+    }
+@endphp
 <div class="max-w-4xl mx-auto">
     <h1 class="text-3xl font-serif font-bold text-white mb-6">Settings</h1>
 
@@ -24,19 +30,22 @@
 
     <!-- Tabs -->
     <div class="flex gap-2 mb-6 border-b border-white/10">
-        <button type="button" onclick="switchTab('profile')" id="tabProfile" class="px-4 py-2 text-sm font-medium text-[#D4AF37] border-b-2 border-[#D4AF37] transition">
+        <button type="button" onclick="switchTab('profile')" id="tabProfile" class="px-4 py-2 text-sm font-medium transition border-b-2 {{ $settingsTab === 'profile' ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 hover:text-white border-transparent' }}">
             Profile
         </button>
-        <button type="button" onclick="switchTab('password')" id="tabPassword" class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition border-b-2 border-transparent">
+        <button type="button" onclick="switchTab('password')" id="tabPassword" class="px-4 py-2 text-sm font-medium transition border-b-2 {{ $settingsTab === 'password' ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 hover:text-white border-transparent' }}">
             Password
         </button>
-        <button type="button" onclick="switchTab('general')" id="tabGeneral" class="px-4 py-2 text-sm font-medium text-white/60 hover:text-white transition border-b-2 border-transparent">
+        <button type="button" onclick="switchTab('general')" id="tabGeneral" class="px-4 py-2 text-sm font-medium transition border-b-2 {{ $settingsTab === 'general' ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 hover:text-white border-transparent' }}">
             General
+        </button>
+        <button type="button" onclick="switchTab('navbar')" id="tabNavbar" class="px-4 py-2 text-sm font-medium transition border-b-2 {{ $settingsTab === 'navbar' ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 hover:text-white border-transparent' }}">
+            Navbar
         </button>
     </div>
 
     <!-- Tab 1: Profile Settings -->
-    <div id="profileTab" class="profile-tab">
+    <div id="profileTab" class="profile-tab {{ $settingsTab === 'profile' ? '' : 'hidden' }}">
         <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
             <h2 class="text-xl font-semibold text-white mb-6">Profile Settings</h2>
             
@@ -107,7 +116,7 @@
     </div>
 
     <!-- Tab 2: Password Settings -->
-    <div id="passwordTab" class="password-tab hidden">
+    <div id="passwordTab" class="password-tab {{ $settingsTab === 'password' ? '' : 'hidden' }}">
         <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
             <h2 class="text-xl font-semibold text-white mb-6">Change Password</h2>
 
@@ -148,7 +157,7 @@
     </div>
 
     <!-- Tab 3: General Settings -->
-<div id="generalTab" class="general-tab hidden">
+<div id="generalTab" class="general-tab {{ $settingsTab === 'general' ? '' : 'hidden' }}">
     <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
         <h2 class="text-xl font-semibold text-white mb-6">General Settings</h2>
 
@@ -221,35 +230,64 @@
     </div>
 </div>
 
+<div id="navbarTab" class="navbar-tab {{ $settingsTab === 'navbar' ? '' : 'hidden' }}">
+    <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
+        <h2 class="text-xl font-semibold text-white mb-2">Navbar</h2>
+        <p class="text-sm text-white/50 mb-6">Change the public menu label and link. Use a section like <span class="text-[#D4AF37]">#projects</span>, a page like <span class="text-[#D4AF37]">/contact</span>, or a full https link.</p>
+
+        @error('nav_label')
+            <p class="mb-4 text-sm text-red-400">{{ $message }}</p>
+        @enderror
+
+        <form action="{{ route('admin.settings.update-navigation') }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div id="navRows" class="space-y-3">
+                @foreach($navItems as $item)
+                    <div class="nav-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-center">
+                        <input type="text" name="nav_label[]" value="{{ $item['label'] }}" maxlength="40" placeholder="Label" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                        <input type="text" name="nav_url[]" value="{{ $item['url'] }}" maxlength="255" placeholder="#section or /page" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                        <button type="button" class="remove-nav-row px-3 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+                    </div>
+                @endforeach
+            </div>
+
+            <div class="mt-4 flex flex-wrap gap-3">
+                <button type="button" id="addNavRow" class="px-4 py-2 rounded-lg border border-white/10 text-white/80 hover:text-white">Add item</button>
+                <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition-all">Save Navbar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<template id="navRowTemplate">
+    <div class="nav-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-center">
+        <input type="text" name="nav_label[]" value="" maxlength="40" placeholder="Label" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+        <input type="text" name="nav_url[]" value="" maxlength="255" placeholder="#section or /page" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+        <button type="button" class="remove-nav-row px-3 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+    </div>
+</template>
+
 <script>
     function switchTab(tab) {
-        const profileTab = document.getElementById('profileTab');
-        const passwordTab = document.getElementById('passwordTab');
-        const generalTab = document.getElementById('generalTab');
-        const tabProfile = document.getElementById('tabProfile');
-        const tabPassword = document.getElementById('tabPassword');
-        const tabGeneral = document.getElementById('tabGeneral');
-        
-        profileTab.classList.add('hidden');
-        passwordTab.classList.add('hidden');
-        generalTab.classList.add('hidden');
-        
-        tabProfile.classList.remove('border-[#D4AF37]', 'text-[#D4AF37]');
-        tabPassword.classList.remove('border-[#D4AF37]', 'text-[#D4AF37]');
-        tabGeneral.classList.remove('border-[#D4AF37]', 'text-[#D4AF37]');
-        tabProfile.classList.add('border-transparent', 'text-white/60');
-        tabPassword.classList.add('border-transparent', 'text-white/60');
-        tabGeneral.classList.add('border-transparent', 'text-white/60');
-        
-        if (tab === 'profile') {
-            profileTab.classList.remove('hidden');
-            tabProfile.classList.add('border-[#D4AF37]', 'text-[#D4AF37]');
-        } else if (tab === 'password') {
-            passwordTab.classList.remove('hidden');
-            tabPassword.classList.add('border-[#D4AF37]', 'text-[#D4AF37]');
-        } else if (tab === 'general') {
-            generalTab.classList.remove('hidden');
-            tabGeneral.classList.add('border-[#D4AF37]', 'text-[#D4AF37]');
+        const panels = {
+            profile: [document.getElementById('profileTab'), document.getElementById('tabProfile')],
+            password: [document.getElementById('passwordTab'), document.getElementById('tabPassword')],
+            general: [document.getElementById('generalTab'), document.getElementById('tabGeneral')],
+            navbar: [document.getElementById('navbarTab'), document.getElementById('tabNavbar')],
+        };
+
+        Object.values(panels).forEach(function (pair) {
+            pair[0].classList.add('hidden');
+            pair[1].classList.remove('border-[#D4AF37]', 'text-[#D4AF37]');
+            pair[1].classList.add('border-transparent', 'text-white/60');
+        });
+
+        if (panels[tab]) {
+            panels[tab][0].classList.remove('hidden');
+            panels[tab][1].classList.add('border-[#D4AF37]', 'text-[#D4AF37]');
+            panels[tab][1].classList.remove('border-transparent', 'text-white/60');
         }
     }
 
@@ -274,14 +312,35 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        const hash = window.location.hash;
-        if (hash === '#password') {
-            switchTab('password');
-        } else if (hash === '#general') {
-            switchTab('general');
+        const requested = new URLSearchParams(window.location.search).get('tab') || window.location.hash.replace('#', '');
+        if (requested === 'password' || requested === 'general' || requested === 'navbar') {
+            switchTab(requested);
         } else {
             switchTab('profile');
         }
+
+        const navRows = document.getElementById('navRows');
+        const navTemplate = document.getElementById('navRowTemplate');
+
+        function bindNavRow(row) {
+            row.querySelector('.remove-nav-row').addEventListener('click', function () {
+                if (navRows.querySelectorAll('.nav-row').length === 1) {
+                    return;
+                }
+                row.remove();
+            });
+        }
+
+        navRows.querySelectorAll('.nav-row').forEach(bindNavRow);
+
+        document.getElementById('addNavRow').addEventListener('click', function () {
+            if (navRows.querySelectorAll('.nav-row').length >= 8) {
+                return;
+            }
+            const row = navTemplate.content.firstElementChild.cloneNode(true);
+            navRows.appendChild(row);
+            bindNavRow(row);
+        });
     });
 </script>
 @endsection

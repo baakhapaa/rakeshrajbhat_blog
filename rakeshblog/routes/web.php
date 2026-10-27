@@ -262,5 +262,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.update-profile');
         Route::put('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');
         Route::put('/settings/general', [SettingsController::class, 'updateGeneral'])->name('settings.update-general');
+        Route::put('/settings/navigation', [SettingsController::class, 'updateNavigation'])->name('settings.update-navigation');
     });
 });

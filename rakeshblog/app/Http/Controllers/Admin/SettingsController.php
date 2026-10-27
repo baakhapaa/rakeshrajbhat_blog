@@ -17,8 +17,21 @@ class SettingsController extends Controller
     {
         $admin = Auth::guard('admin')->user();
         $settings = Setting::getSiteSettings();
+        $navIcons = Setting::navIconOptions();
+        $navItems = $settings['nav_items'];
 
-        return view('admin.settings.index', compact('admin', 'settings'));
+        if (is_array(old('nav_label'))) {
+            $navItems = [];
+            foreach (old('nav_label') as $index => $label) {
+                $navItems[] = [
+                    'label' => $label,
+                    'url' => old('nav_url.'.$index),
+                    'icon' => old('nav_icon.'.$index),
+                ];
+            }
+        }
+
+        return view('admin.settings.index', compact('admin', 'settings', 'navIcons', 'navItems'));
     }
 
     public function updateProfile(Request $request)
@@ -99,6 +112,52 @@ class SettingsController extends Controller
         Setting::setValue('site_description', $validated['site_description'] ?: 'Official website of Rakesh Rajbhat - Founder, Builder, Future Maker');
 
         return redirect()->route('admin.settings')->with('success', 'General settings updated successfully!');
+    }
+
+    public function updateNavigation(Request $request)
+    {
+        $validated = $request->validate([
+            'nav_label' => 'required|array|min:1|max:8',
+            'nav_label.*' => 'nullable|string|max:40',
+            'nav_url' => 'required|array|max:8',
+            'nav_url.*' => 'nullable|string|max:255',
+            'nav_icon' => 'nullable|array|max:8',
+            'nav_icon.*' => 'nullable|string|max:60',
+        ]);
+
+        $items = [];
+
+        foreach ($validated['nav_label'] as $index => $label) {
+            $label = trim(strip_tags((string) $label));
+            $url = trim((string) ($validated['nav_url'][$index] ?? ''));
+
+            if ($label === '' && $url === '') {
+                continue;
+            }
+
+            if ($label === '' || $url === '' || ! Setting::navUrlIsSafe($url)) {
+                return redirect()
+                    ->route('admin.settings', ['tab' => 'navbar'])
+                    ->withErrors(['nav_label' => 'Each menu item needs a label and a safe link (#section, /page, or https://).'])
+                    ->withInput();
+            }
+
+            $items[] = [
+                'label' => $label,
+                'url' => $url,
+            ];
+        }
+
+        if ($items === []) {
+            return redirect()
+                ->route('admin.settings', ['tab' => 'navbar'])
+                ->withErrors(['nav_label' => 'Add at least one menu item.'])
+                ->withInput();
+        }
+
+        Setting::setValue('nav_items', json_encode($items, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        return redirect()->route('admin.settings', ['tab' => 'navbar'])->with('success', 'Navigation updated successfully!');
     }
 
     private function deleteStoredAsset(?string $url): void
