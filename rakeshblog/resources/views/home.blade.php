@@ -867,6 +867,52 @@ document.addEventListener('keydown', function(e) {
         </div>
     </section>
 
+    <section id="gallery" class="gallery-section py-24 scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="gallery-head">
+                <div>
+                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-3 uppercase">Gallery</p>
+                    <h2 class="gallery-title font-serif font-bold text-[#1e1e1a] leading-tight">Moments along the way.</h2>
+                </div>
+                <p class="gallery-intro text-[#5a5a52] leading-relaxed">
+                    Photographs from community visits, learning programmes, project activities and conversations.
+                </p>
+            </div>
+
+            @if($galleryCollections->isNotEmpty())
+                <div class="gallery-scroller" tabindex="0" aria-label="Photo collections">
+                    @foreach($galleryCollections as $collection)
+                        @php
+                            $lead = $collection->images->first();
+                            $rest = $collection->images->slice(1);
+                        @endphp
+                        <article class="gallery-card {{ $rest->isEmpty() ? 'gallery-card-single' : '' }}">
+                            <div class="gallery-card-lead">
+                                <img src="{{ $lead->url }}" alt="{{ $collection->title }}" draggable="false">
+                                <span class="gallery-card-count">{{ $collection->images->count() }} {{ \Illuminate\Support\Str::plural('photograph', $collection->images->count()) }}</span>
+                                <div class="gallery-card-lead-copy">
+                                    <h3>{{ $collection->title }}</h3>
+                                </div>
+                            </div>
+                            @if($rest->isNotEmpty())
+                                <div class="gallery-card-side">
+                                    @foreach($rest as $image)
+                                        <div class="gallery-card-thumb">
+                                            <img src="{{ $image->url }}" alt="" draggable="false">
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
+                <p class="mt-4 text-xs text-[#8a8a82]">Drag or scroll sideways to move through the collections.</p>
+            @else
+                <p class="text-sm text-[#8a8a82]">Photographs will appear here as collections are added.</p>
+            @endif
+        </div>
+    </section>
+
     <section class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a]">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
@@ -961,6 +1007,175 @@ document.addEventListener('keydown', function(e) {
 
 .carousel-track.carousel-drag-ready.is-settling {
     transition: transform 180ms ease-out;
+}
+
+.gallery-section {
+    background: #f7f4ee;
+    color: #1e1e1a;
+}
+
+.gallery-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.gallery-head > div {
+    flex: 1 0 auto;
+}
+
+.gallery-title {
+    font-size: clamp(2rem, 3.1vw, 3.15rem);
+}
+
+.gallery-intro {
+    flex: 0 1 280px;
+    max-width: 280px;
+    text-align: right;
+}
+
+@media (max-width: 760px) {
+    .gallery-head {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .gallery-intro {
+        flex-basis: auto;
+        max-width: 28rem;
+        text-align: left;
+    }
+}
+
+.gallery-scroller {
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    padding-bottom: 1.35rem;
+    cursor: grab;
+    user-select: none;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+}
+
+.gallery-scroller.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+}
+
+.gallery-card {
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+    display: flex;
+    width: min(82vw, 460px);
+    height: 320px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(30, 30, 26, 0.08);
+    box-shadow: 0 1px 2px rgba(30, 30, 26, 0.06);
+    background: #e7e1d6;
+}
+
+.gallery-card-single .gallery-card-lead {
+    width: 100%;
+}
+
+.gallery-card-lead {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.gallery-card-lead img,
+.gallery-card-thumb img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.gallery-card-lead::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(30, 30, 26, 0.58), rgba(30, 30, 26, 0.05) 46%, transparent);
+}
+
+.gallery-card-count,
+.gallery-card-lead-copy {
+    position: absolute;
+    z-index: 1;
+}
+
+.gallery-card-count {
+    top: 1rem;
+    left: 1rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.86);
+    color: #735A12;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.gallery-card-lead-copy {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1.25rem;
+}
+
+.gallery-card-lead-copy h3 {
+    color: #fff;
+    font-family: "Playfair Display", serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.gallery-card-side {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 124px;
+    width: 124px;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.gallery-card-side::-webkit-scrollbar {
+    display: none;
+}
+
+.gallery-card-thumb {
+    position: relative;
+    flex: 1 0 72px;
+    min-height: 72px;
+    border-left: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.gallery-card-thumb + .gallery-card-thumb {
+    border-top: 1px solid rgba(255, 255, 255, 0.7);
+}
+
+.gallery-scroller::-webkit-scrollbar {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .gallery-card {
+        height: 280px;
+    }
+
+    .gallery-card-side {
+        flex-basis: 104px;
+        width: 104px;
+    }
 }
 
 @keyframes infiniteScroll {
@@ -1330,5 +1545,65 @@ document.addEventListener('DOMContentLoaded', function () {
     measure();
     render();
     requestAnimationFrame(animate);
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const scroller = document.querySelector('#gallery .gallery-scroller');
+    if (!scroller) return;
+
+    let pointerId = null;
+    let startX = 0;
+    let startScroll = 0;
+    let dragged = false;
+
+    const canScroll = () => scroller.scrollWidth > scroller.clientWidth + 4;
+
+    scroller.addEventListener('pointerdown', function (event) {
+        if (event.pointerType !== 'mouse' || event.button !== 0) return;
+        pointerId = event.pointerId;
+        startX = event.clientX;
+        startScroll = scroller.scrollLeft;
+        dragged = false;
+        scroller.classList.add('is-dragging');
+        try { scroller.setPointerCapture(pointerId); } catch (error) {}
+    });
+
+    scroller.addEventListener('pointermove', function (event) {
+        if (event.pointerId !== pointerId) return;
+        const delta = event.clientX - startX;
+        if (Math.abs(delta) > 4) dragged = true;
+        if (!dragged) return;
+        scroller.scrollLeft = startScroll - delta;
+        event.preventDefault();
+    });
+
+    const finishDrag = function (event) {
+        if (pointerId === null) return;
+        if (event && event.pointerId !== undefined && event.pointerId !== pointerId) return;
+        const activePointerId = pointerId;
+        pointerId = null;
+        scroller.classList.remove('is-dragging');
+        try { scroller.releasePointerCapture(activePointerId); } catch (error) {}
+    };
+
+    scroller.addEventListener('pointerup', finishDrag);
+    scroller.addEventListener('pointercancel', finishDrag);
+    scroller.addEventListener('lostpointercapture', finishDrag);
+
+    scroller.addEventListener('click', function (event) {
+        if (!dragged) return;
+        event.preventDefault();
+        event.stopPropagation();
+        dragged = false;
+    }, true);
+
+    scroller.addEventListener('wheel', function (event) {
+        if (!canScroll()) return;
+        if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+        scroller.scrollLeft += event.deltaY;
+        event.preventDefault();
+    }, { passive: false });
 });
 </script>

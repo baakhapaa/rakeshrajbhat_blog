@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\ResearchController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BootcampController;
@@ -253,6 +254,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // ==========================================
         Route::put('/projects/section', [ProjectController::class, 'updateSection'])->name('projects.update-section');
         Route::resource('projects', ProjectController::class);
+
+        Route::delete('/gallery-images/{image}', [GalleryController::class, 'destroyImage'])->name('gallery.images.destroy');
+        Route::post('/gallery/{gallery}/toggle-status', [GalleryController::class, 'toggleStatus'])->name('gallery.toggle-status');
+        Route::resource('gallery', GalleryController::class)->except(['show']);
         Route::post('/projects/{id}/toggle-status', [ProjectController::class, 'toggleStatus'])->name('projects.toggle-status');
         Route::post('/projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
         

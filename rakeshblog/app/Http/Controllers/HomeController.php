@@ -7,6 +7,7 @@ use App\Models\Stat;
 use App\Models\Blog;
 use App\Models\Project;
 use App\Models\Research;
+use App\Models\GalleryCollection;
 
 class HomeController extends Controller
 {
@@ -106,6 +107,17 @@ class HomeController extends Controller
             $totalFeaturedBlogs = 0;
         }
 
+        try {
+            $galleryCollections = GalleryCollection::active()
+                ->ordered()
+                ->with('images')
+                ->get()
+                ->filter(fn ($collection) => $collection->images->isNotEmpty())
+                ->values();
+        } catch (\Exception $e) {
+            $galleryCollections = collect();
+        }
+
         // Return view with all variables
         return view('home', compact(
             'stats', 
@@ -116,7 +128,8 @@ class HomeController extends Controller
             'totalFeaturedBlogs',
             'featuredBlogs',
             'research',
-            'featuredResearch' // This is the key addition
+            'featuredResearch',
+            'galleryCollections'
         ));
     }
 

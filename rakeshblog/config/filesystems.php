@@ -89,6 +89,21 @@ return [
             'report' => true,
         ],
 
+        // Gallery photographs only. Object keys are gallery/{file} on this Space.
+        'gallery' => [
+            'driver' => 's3',
+            'key' => env('DO_SPACES_KEY'),
+            'secret' => env('DO_SPACES_SECRET'),
+            'region' => env('DO_SPACES_REGION', 'blr1'),
+            'bucket' => env('DO_SPACES_BUCKET', 'rakeshrajbhat-blog'),
+            'endpoint' => 'https://'.env('DO_SPACES_REGION', 'blr1').'.digitaloceanspaces.com',
+            'url' => env('DO_SPACES_CDN_URL', 'https://rakeshrajbhat-blog.blr1.digitaloceanspaces.com'),
+            'visibility' => 'public',
+            'use_path_style_endpoint' => false,
+            'throw' => true,
+            'report' => true,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
