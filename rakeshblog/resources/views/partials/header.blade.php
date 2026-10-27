@@ -1,3 +1,8 @@
+@php
+    $workNavItem = collect($siteSettings['nav_items'] ?? [])->first(function ($item) {
+        return \App\Models\Setting::navOpensWorkWithMe($item['url'] ?? '');
+    });
+@endphp
 <header class="fixed top-0 left-0 right-0 z-50 bg-[#0b0e12]/95 backdrop-blur-md border-b border-white/5">
     <div class="max-w-7xl mx-auto h-20 px-4 lg:px-6 flex items-center gap-4">
         <a href="{{ route('home') }}" class="shrink-0 text-2xl font-serif font-bold italic tracking-tight text-white inline-flex items-center gap-3">
@@ -9,12 +14,10 @@
         </a>
 
         <nav class="hidden min-w-0 lg:flex flex-1 justify-center items-center gap-4 xl:gap-8 whitespace-nowrap text-sm font-medium tracking-wide text-gray-300" aria-label="Primary navigation">
-            <a href="{{ route('home') }}#home" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Home</a>
-            <a href="{{ route('home') }}#about" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Mission</a>
-            <a href="{{ route('home') }}#projects" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Initiatives</a>
-            <a href="{{ route('home') }}#impact" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Impact</a>
-            <a href="{{ route('home') }}#research" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Ideas &amp; Research</a>
-            <a href="{{ route('home') }}#featured-blogs" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Blog</a>
+            @foreach($siteSettings['nav_items'] ?? [] as $item)
+                @continue(\App\Models\Setting::navOpensWorkWithMe($item['url']))
+                <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="nav-link hover:text-[#D4AF37] transition-colors px-1">{{ $item['label'] }}</a>
+            @endforeach
         </nav>
 
         <div class="ml-auto shrink-0 flex items-center gap-3">
@@ -48,8 +51,8 @@
                     <a href="{{ route('login') }}" class="hidden sm:inline text-white/70 hover:text-[#D4AF37] text-sm">Login</a>
                     <a href="{{ route('register') }}" class="hidden sm:inline border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold tracking-widest">SIGN UP</a>
                 @endauth
-            @else
-                <button type="button" data-open-work="education" class="notranslate inline-flex shrink-0 border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold tracking-widest hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all" translate="no">WORK WITH ME</button>
+            @elseif($workNavItem)
+                <button type="button" data-open-work="education" class="notranslate inline-flex shrink-0 border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold uppercase tracking-widest hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all" translate="no">{{ $workNavItem['label'] }}</button>
             @endif
             <button type="button" id="mobileMenuToggle" class="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileNavigation">
                 <svg id="mobileMenuOpenIcon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -60,12 +63,10 @@
 
     <nav id="mobileNavigation" class="hidden lg:hidden border-t border-white/10 bg-[#0b0e12] px-6 py-5" aria-label="Mobile navigation">
         <div class="flex flex-col gap-1">
-            <a href="{{ route('home') }}#home" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Home</a>
-            <a href="{{ route('home') }}#projects" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Initiatives</a>
-            <a href="{{ route('home') }}#research" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Ideas &amp; Research</a>
-            <a href="{{ route('home') }}#impact" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Impact</a>
-            <a href="{{ route('home') }}#featured-blogs" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Blog</a>
-            <button type="button" data-open-work="education" class="mobile-nav-link w-full rounded-md px-3 py-3 text-left text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Work With Me</button>
+            @foreach($siteSettings['nav_items'] ?? [] as $item)
+                @continue(\App\Models\Setting::navOpensWorkWithMe($item['url']))
+                <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">{{ $item['label'] }}</a>
+            @endforeach
             <div class="notranslate mt-2 flex items-center gap-2 px-3 py-3 text-xs font-semibold tracking-[0.16em] text-white" translate="no">
                 <button type="button" data-set-lang="en" class="lang-option text-[#D4AF37]" style="color:#D4AF37">EN</button>
                 <span style="color:#ffffff">|</span>

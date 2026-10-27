@@ -252,6 +252,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // ==========================================
         // PROJECTS ROUTES
         // ==========================================
+        Route::put('/projects/section', [ProjectController::class, 'updateSection'])->name('projects.update-section');
         Route::resource('projects', ProjectController::class);
         Route::post('/projects/{id}/toggle-status', [ProjectController::class, 'toggleStatus'])->name('projects.toggle-status');
         Route::post('/projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
@@ -269,5 +270,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/settings/profile', [SettingsController::class, 'updateProfile'])->name('settings.update-profile');
         Route::put('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');
         Route::put('/settings/general', [SettingsController::class, 'updateGeneral'])->name('settings.update-general');
+        Route::put('/settings/navigation', [SettingsController::class, 'updateNavigation'])->name('settings.update-navigation');
     });
 });

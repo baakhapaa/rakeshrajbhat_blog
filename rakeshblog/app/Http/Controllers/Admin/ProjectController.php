@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Setting;
 use App\Helpers\ActivityLogger;
 use App\Support\MediaStorage;
 use App\Support\NewsletterNotifier;
@@ -16,7 +17,22 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::orderBy('order')->get();
-        return view('admin.projects.index', compact('projects'));
+        $projectsSection = Setting::getProjectsSection();
+
+        return view('admin.projects.index', compact('projects', 'projectsSection'));
+    }
+
+    public function updateSection(Request $request)
+    {
+        $validated = $request->validate([
+            'projects_section_label' => 'required|string|max:80',
+            'projects_section_title' => 'required|string|max:120',
+        ]);
+
+        Setting::setValue('projects_section_label', trim(strip_tags($validated['projects_section_label'])));
+        Setting::setValue('projects_section_title', trim(strip_tags($validated['projects_section_title'])));
+
+        return redirect()->route('admin.projects.index')->with('success', 'Projects section heading updated.');
     }
 
     public function create()

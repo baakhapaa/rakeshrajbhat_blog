@@ -133,8 +133,11 @@
         <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 mb-8">
             <div class="flex justify-between items-end">
                 <div>
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">What I'm Building</p>
-                    <h2 class="text-4xl font-serif font-bold text-[#1e1e1a]">Projects &amp; Initiatives</h2>
+                    @php
+                        $projectsSection = \App\Models\Setting::getProjectsSection();
+                    @endphp
+                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">{{ $projectsSection['label'] }}</p>
+                    <h2 class="text-4xl font-serif font-bold text-[#1e1e1a]">{{ $projectsSection['title'] }}</h2>
                 </div>
             </div>
         </div>
