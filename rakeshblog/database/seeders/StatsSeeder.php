@@ -55,7 +55,10 @@ class StatsSeeder extends Seeder
         ];
 
         foreach ($stats as $stat) {
-            Stat::create($stat);
+            Stat::firstOrCreate(
+                ['label' => $stat['label'], 'order' => $stat['order']],
+                $stat,
+            );
         }
     }
 }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             // Latest login/register IP
-            $table->ipAddress('ip_address');
+            $table->ipAddress('ip_address')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
