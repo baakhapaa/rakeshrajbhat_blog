@@ -7,11 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Models\GalleryCollection;
 use App\Models\GalleryImage;
 use App\Support\GalleryImageCompressor;
+use App\Support\MediaStorage;
 use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class GalleryController extends Controller
 {
@@ -40,6 +40,8 @@ class GalleryController extends Controller
             'is_active' => 'nullable|boolean',
             'images' => 'nullable|array|max:1000',
             'images.*' => 'image|mimes:jpeg,jpg,png,webp,gif|max:32768',
+            'image_positions' => 'nullable|array',
+            'image_positions.*' => 'string|max:32',
         ]);
 
         $paths = $this->storeImages($request);
@@ -55,7 +57,8 @@ class GalleryController extends Controller
             'is_active' => $request->boolean('is_active'),
         ]);
 
-        $this->attachImages($collection, $paths);
+        $created = $this->attachImages($collection, $paths);
+        $this->syncImageOrder($collection, $request, $created);
 
         ActivityLogger::log('gallery_collection_created', 'Created gallery collection "'.$collection->title.'"');
 
@@ -80,6 +83,8 @@ class GalleryController extends Controller
             'images.*' => 'image|mimes:jpeg,jpg,png,webp,gif|max:32768',
             'remove_images' => 'nullable|array',
             'remove_images.*' => 'integer',
+            'image_positions' => 'nullable|array',
+            'image_positions.*' => 'string|max:32',
         ]);
 
         $paths = $this->storeImages($request);
@@ -100,7 +105,8 @@ class GalleryController extends Controller
             $gallery->images()->whereIn('id', $removeIds)->get()->each->delete();
         }
 
-        $this->attachImages($gallery, $paths);
+        $created = $this->attachImages($gallery, $paths);
+        $this->syncImageOrder($gallery, $request, $created);
 
         ActivityLogger::log('gallery_collection_updated', 'Updated gallery collection "'.$gallery->title.'"');
 
@@ -151,10 +157,6 @@ class GalleryController extends Controller
      */
     private function storeImages(Request $request): array|string
     {
-        if (! config('filesystems.disks.gallery.key') || ! config('filesystems.disks.gallery.secret')) {
-            return 'DigitalOcean Spaces credentials are missing. Add DO_SPACES_KEY and DO_SPACES_SECRET in the .env file, then try the upload again.';
-        }
-
         $paths = [];
 
         foreach ($request->file('images', []) as $file) {
@@ -162,20 +164,15 @@ class GalleryController extends Controller
 
             try {
                 if (! GalleryImageCompressor::exceedsLimit($file)) {
-                    $paths[] = $file->storePublicly('gallery', 'gallery');
+                    $paths[] = $file->store('gallery', 'media');
                     continue;
                 }
 
                 $temporary = GalleryImageCompressor::compress($file);
-                $stored = Storage::disk('gallery')->putFileAs(
-                    'gallery',
-                    new File($temporary),
-                    (string) Str::uuid().'.jpg',
-                    'public'
-                );
+                $stored = Storage::disk('media')->putFile('gallery', new File($temporary));
 
                 if ($stored === false) {
-                    throw new \RuntimeException('Could not upload the compressed photograph to DigitalOcean Spaces.');
+                    throw new \RuntimeException('Could not store the compressed photograph.');
                 }
 
                 $paths[] = $stored;
@@ -184,12 +181,12 @@ class GalleryController extends Controller
 
                 return $exception->getMessage();
             } catch (\Throwable $exception) {
-                Log::error('Gallery upload to DigitalOcean Spaces failed.', [
+                Log::error('Gallery upload failed.', [
                     'error' => $exception->getMessage(),
                 ]);
                 $this->deleteStoredPaths($paths);
 
-                return 'Could not upload the photographs to DigitalOcean Spaces. Check the Spaces key and secret, then try again.';
+                return 'Could not upload the photographs. Please try again.';
             } finally {
                 if (is_string($temporary) && is_file($temporary)) {
                     @unlink($temporary);
@@ -206,30 +203,70 @@ class GalleryController extends Controller
     private function deleteStoredPaths(array $paths): void
     {
         foreach ($paths as $path) {
-            try {
-                Storage::disk('gallery')->delete($path);
-            } catch (\Throwable $exception) {
-                Log::warning('Unable to remove a partial gallery upload.', [
-                    'path' => $path,
-                    'error' => $exception->getMessage(),
-                ]);
-            }
+            MediaStorage::delete($path);
         }
     }
 
     /**
      * @param  array<int, string>  $paths
+     * @return array<int, GalleryImage>
      */
-    private function attachImages(GalleryCollection $collection, array $paths): void
+    private function attachImages(GalleryCollection $collection, array $paths): array
     {
         $order = (int) $collection->images()->max('order');
+        $created = [];
 
         foreach ($paths as $path) {
             $order++;
-            $collection->images()->create([
+            $created[] = $collection->images()->create([
                 'path' => $path,
                 'order' => $order,
             ]);
+        }
+
+        return $created;
+    }
+
+    /**
+     * The first photograph is the large image. The next three are the smaller ones.
+     *
+     * @param  array<int, GalleryImage>  $created
+     */
+    private function syncImageOrder(GalleryCollection $collection, Request $request, array $created): void
+    {
+        $positions = $request->input('image_positions', []);
+        if (! is_array($positions) || $positions === []) {
+            return;
+        }
+
+        $ids = $collection->images()->pluck('id')->map(fn ($id) => (int) $id)->all();
+        $orderedIds = [];
+
+        foreach ($positions as $token) {
+            if (! is_string($token)) {
+                continue;
+            }
+
+            $id = null;
+            if (str_starts_with($token, 'existing:')) {
+                $id = (int) substr($token, 9);
+            } elseif (str_starts_with($token, 'new:') && isset($created[(int) substr($token, 4)])) {
+                $id = $created[(int) substr($token, 4)]->id;
+            }
+
+            if ($id && in_array($id, $ids, true) && ! in_array($id, $orderedIds, true)) {
+                $orderedIds[] = $id;
+            }
+        }
+
+        foreach ($ids as $id) {
+            if (! in_array($id, $orderedIds, true)) {
+                $orderedIds[] = $id;
+            }
+        }
+
+        foreach ($orderedIds as $index => $id) {
+            GalleryImage::where('id', $id)->update(['order' => $index + 1]);
         }
     }
 }

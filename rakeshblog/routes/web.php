@@ -38,6 +38,7 @@ use App\Models\Blog;
 
 // Home & Blog
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/gallery/{gallery}', [HomeController::class, 'gallery'])->name('gallery.show');
 Route::view('/privacy', 'legal.privacy')->name('privacy');
 Route::view('/terms', 'legal.terms')->name('terms');
 Route::get('/sitemap.xml', function () {

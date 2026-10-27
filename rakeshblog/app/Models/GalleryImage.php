@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Support\MediaStorage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class GalleryImage extends Model
@@ -38,25 +38,29 @@ class GalleryImage extends Model
         }
 
         if (str_starts_with($this->path, 'http://') || str_starts_with($this->path, 'https://')) {
-            return $this->path;
+            $host = parse_url($this->path, PHP_URL_HOST);
+
+            if (! $host || ! str_ends_with($host, '.digitaloceanspaces.com')) {
+                return $this->path;
+            }
+
+            $mediaPath = MediaStorage::path($this->path);
+
+            return $mediaPath ? $this->mediaUrl($mediaPath) : $this->path;
         }
 
-        return Storage::disk('gallery')->url($this->path);
+        return $this->mediaUrl($this->path);
     }
 
     public function deleteStoredFile(): void
     {
-        if (! $this->path || str_starts_with($this->path, 'http://') || str_starts_with($this->path, 'https://')) {
-            return;
-        }
+        MediaStorage::delete($this->path);
+    }
 
-        try {
-            Storage::disk('gallery')->delete($this->path);
-        } catch (\Throwable $exception) {
-            Log::warning('Unable to delete gallery image from Spaces.', [
-                'path' => $this->path,
-                'error' => $exception->getMessage(),
-            ]);
-        }
+    private function mediaUrl(string $path): string
+    {
+        $disk = config('filesystems.disks.media.driver') ? 'media' : 'public';
+
+        return Storage::disk($disk)->url($path);
     }
 }

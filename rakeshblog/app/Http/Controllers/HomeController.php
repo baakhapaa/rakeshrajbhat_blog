@@ -145,6 +145,21 @@ class HomeController extends Controller
         ));
     }
 
+    public function gallery(GalleryCollection $gallery)
+    {
+        if (! $gallery->is_active) {
+            abort(404);
+        }
+
+        $gallery->load('images');
+
+        if ($gallery->images->isEmpty()) {
+            abort(404);
+        }
+
+        return view('gallery.show', ['collection' => $gallery]);
+    }
+
     /**
      * Get projects as JSON (for AJAX requests)
      */

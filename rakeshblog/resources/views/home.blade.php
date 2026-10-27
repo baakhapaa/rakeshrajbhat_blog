@@ -14,14 +14,14 @@
     <section id="home" class="relative min-h-screen pt-20 flex items-center overflow-hidden">
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
-            <img 
+            <img
                 src="{{ $homeContent['background_image'] ?: asset('images/rakeshrajbhat.jpg') }}"
                 alt="{{ $homeContent['name'] }}"
                 class="w-full h-full object-cover opacity-50 saturate-[1.1]"
             >
             <div class="absolute inset-0 bg-gradient-to-r from-[#0b0e12] via-[#0b0e12]/70 to-transparent"></div>
         </div>
-        
+
         <!-- Content -->
         <div class="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
@@ -86,7 +86,7 @@
             </div>
         </div>
     </section>
-    
+
     <!-- About/Mission Section -->
     <section id="about" class="py-24 bg-[#f2f2f2] text-[#1e1e1a] scroll-mt-20">
         <div class="max-w-7xl mx-auto px-6">
@@ -179,7 +179,7 @@
         <div class="carousel-container relative w-full py-16">
             <!-- Scrolling Track -->
             <div class="carousel-track flex items-center gap-8 w-max">
-                
+
                 {{-- FIRST SET --}}
                 @forelse($projects ?? [] as $project)
                     <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
@@ -189,8 +189,8 @@
                                 @if($project->image)
                                     <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;"> 
-                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span> 
+                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
+                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
                                     </div>
                                 @endif
                             </div>
@@ -211,8 +211,8 @@
                                         @endif
                                     </div>
                                     <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
-                                    
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1"> 
+
+                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
                                         {{ $project->description ?? $project->long_description ?? $project->short_description }}
                                     </p>
                                 </div>
@@ -241,8 +241,8 @@
                                 @if($project->image)
                                     <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;"> 
-                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span> 
+                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
+                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
                                     </div>
                                 @endif
                             </div>
@@ -263,8 +263,8 @@
                                         @endif
                                     </div>
                                     <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
-                                    
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1"> 
+
+                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
                                         {{ $project->description ?? $project->long_description ?? $project->short_description }}
                                     </p>
                                 </div>
@@ -450,10 +450,10 @@
                 @endforelse
             </div>
         </div>
-        
+
         <!-- View All Button -->
         <div class="text-center mt-16">
-            <a href="{{ route('research.featured') }}" 
+            <a href="{{ route('research.featured') }}"
                 class="inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#c4a030] text-[#0b0e12] font-medium rounded-2xl hover:shadow-xl hover:shadow-[#D4AF37]/25 transition-all duration-300 hover:-translate-y-0.5 group">
                     <span>Explore All Research</span>
                     <span class="group-hover:translate-x-1 transition-transform">→</span>
@@ -488,7 +488,7 @@
 
 <!-- Research Detail Modal -->
 <div id="researchModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="min-h-screen px-4 py-8 flex items-center justify-center">   
+    <div class="min-h-screen px-4 py-8 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResearchDetail()"></div>
         <div class="relative bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
             <!-- Close Button -->
@@ -526,7 +526,7 @@
 function openResearchDetail(id) {
     const modal = document.getElementById('researchModal');
     const content = document.getElementById('researchDetailContent');
-    
+
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     document.body.style.paddingRight = '0px';
@@ -598,9 +598,9 @@ function openResearchDetail(id) {
 
                     ${item.video_url || item.video_file ? `
                         <div class="mb-6 rounded-2xl overflow-hidden bg-black shadow-md">
-                            ${item.video_file ? 
+                            ${item.video_file ?
                                 `<video controls class="w-full h-full"><source src="${item.video_file}" type="video/mp4">Your browser does not support the video tag.</video>` :
-                                item.video_embed_url ? 
+                                item.video_embed_url ?
                                 `<iframe src="${item.video_embed_url}" class="w-full h-full aspect-video" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>` :
                                 `<div class="w-full h-full aspect-video flex items-center justify-center text-white"><p>No video available</p></div>`
                             }
@@ -664,7 +664,7 @@ function closeResearchDetail() {
 function playVideo(element, researchId) {
     const modal = document.getElementById('videoModal');
     const container = document.getElementById('videoContainer');
-    
+
     container.innerHTML = `
         <div class="w-full h-full flex items-center justify-center text-white">
             <div class="text-center">
@@ -816,12 +816,12 @@ document.addEventListener('keydown', function(e) {
             @if(isset($featuredBlogs) && $featuredBlogs->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($featuredBlogs as $blog)
-                        <a href="{{ route('blog.show', $blog->slug) }}" 
+                        <a href="{{ route('blog.show', $blog->slug) }}"
                         class="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <div class="relative overflow-hidden h-52">
                                 @if($blog->featured_image_url)
-                                    <img src="{{ $blog->featured_image_url }}" 
-                                        alt="{{ $blog->title }}" 
+                                    <img src="{{ $blog->featured_image_url }}"
+                                        alt="{{ $blog->title }}"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center">
@@ -861,7 +861,7 @@ document.addEventListener('keydown', function(e) {
                                     {{ $blog->excerpt ?? Str::limit(strip_tags($blog->content ?? ''), 120) }}
                                 </p>
                                 <div class="mt-4 flex items-center gap-2 text-sm text-[#D4AF37] font-medium">
-                                    Read More 
+                                    Read More
                                     <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
@@ -872,7 +872,7 @@ document.addEventListener('keydown', function(e) {
                 </div>
 
                 <div class="text-center mt-12">
-                    <a href="{{ route('blog') }}" 
+                    <a href="{{ route('blog') }}"
                     class="inline-flex items-center gap-2 px-8 py-3 bg-[#D4AF37] text-[#0b0e12] font-bold rounded-lg hover:bg-[#c4a030] transition-all shadow-lg shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/40 hover:-translate-y-0.5">
                         View All Blogs
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -908,30 +908,32 @@ document.addEventListener('keydown', function(e) {
                 <div class="gallery-scroller" tabindex="0" aria-label="Photo collections">
                     @foreach($galleryCollections as $collection)
                         @php
-                            $lead = $collection->images->first();
-                            $rest = $collection->images->slice(1);
+                            $previewImages = $collection->images->take(4);
+                            $lead = $previewImages->first();
+                            $sideImages = $previewImages->slice(1, 3);
                         @endphp
-                        <article class="gallery-card {{ $rest->isEmpty() ? 'gallery-card-single' : '' }}">
+                        <a href="{{ route('gallery.show', $collection) }}" class="gallery-card {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
                             <div class="gallery-card-lead">
                                 <img src="{{ $lead->url }}" alt="{{ $collection->title }}" draggable="false">
                                 <span class="gallery-card-count">{{ $collection->images->count() }} {{ \Illuminate\Support\Str::plural('photograph', $collection->images->count()) }}</span>
                                 <div class="gallery-card-lead-copy">
+                                    <span class="gallery-card-date">{{ $collection->created_at->format('M Y') }}</span>
                                     <h3>{{ $collection->title }}</h3>
                                 </div>
                             </div>
-                            @if($rest->isNotEmpty())
+                            @if($sideImages->isNotEmpty())
                                 <div class="gallery-card-side">
-                                    @foreach($rest as $image)
+                                    @foreach($sideImages as $image)
                                         <div class="gallery-card-thumb">
                                             <img src="{{ $image->url }}" alt="" draggable="false">
                                         </div>
                                     @endforeach
                                 </div>
                             @endif
-                        </article>
+                        </a>
                     @endforeach
                 </div>
-                <p class="mt-4 text-xs text-[#8a8a82]">Drag or scroll sideways to move through the collections.</p>
+                <p class="mt-4 text-xs text-[#8a8a82]">Drag or scroll sideways to move through the collections. Select a collection to see every photograph.</p>
             @else
                 <p class="text-sm text-[#8a8a82]">Photographs will appear here as collections are added.</p>
             @endif
@@ -1101,6 +1103,13 @@ document.addEventListener('keydown', function(e) {
     border: 1px solid rgba(30, 30, 26, 0.08);
     box-shadow: 0 1px 2px rgba(30, 30, 26, 0.06);
     background: #e7e1d6;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.gallery-card:hover {
+    box-shadow: 0 10px 24px rgba(30, 30, 26, 0.12);
 }
 
 .gallery-card-single .gallery-card-lead {
@@ -1156,6 +1165,14 @@ document.addEventListener('keydown', function(e) {
     padding: 1.25rem;
 }
 
+.gallery-card-date {
+    margin: 0 0 0.3rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
 .gallery-card-lead-copy h3 {
     color: #fff;
     font-family: "Playfair Display", serif;
@@ -1169,18 +1186,13 @@ document.addEventListener('keydown', function(e) {
     flex-direction: column;
     flex: 0 0 124px;
     width: 124px;
-    overflow-y: auto;
-    scrollbar-width: none;
-}
-
-.gallery-card-side::-webkit-scrollbar {
-    display: none;
+    overflow: hidden;
 }
 
 .gallery-card-thumb {
     position: relative;
-    flex: 1 0 72px;
-    min-height: 72px;
+    flex: 1 1 0;
+    min-height: 0;
     border-left: 1px solid rgba(255, 255, 255, 0.7);
 }
 
@@ -1365,7 +1377,7 @@ document.addEventListener('keydown', function(e) {
 function playVideo(element, researchId) {
     const modal = document.getElementById('videoModal');
     const container = document.getElementById('videoContainer');
-    
+
     // Get video data from server
     fetch(`/research/${researchId}/video`)
         .then(response => response.json())
@@ -1430,7 +1442,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const target = parseInt(counter.getAttribute('data-target'));
             const current = parseInt(counter.innerText);
             const increment = Math.ceil(target / speed);
-            
+
             if (current < target) {
                 counter.innerText = Math.min(current + increment, target);
                 setTimeout(updateCounter, 1);
@@ -1591,15 +1603,17 @@ document.addEventListener('DOMContentLoaded', function () {
         startX = event.clientX;
         startScroll = scroller.scrollLeft;
         dragged = false;
-        scroller.classList.add('is-dragging');
-        try { scroller.setPointerCapture(pointerId); } catch (error) {}
     });
 
     scroller.addEventListener('pointermove', function (event) {
         if (event.pointerId !== pointerId) return;
         const delta = event.clientX - startX;
-        if (Math.abs(delta) > 4) dragged = true;
-        if (!dragged) return;
+        if (!dragged && Math.abs(delta) <= 8) return;
+        if (!dragged) {
+            dragged = true;
+            scroller.classList.add('is-dragging');
+            try { scroller.setPointerCapture(pointerId); } catch (error) {}
+        }
         scroller.scrollLeft = startScroll - delta;
         event.preventDefault();
     });
