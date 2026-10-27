@@ -8,7 +8,7 @@
             @endif
         </a>
 
-        <nav class="hidden lg:flex flex-1 justify-center items-center gap-6 xl:gap-10 whitespace-nowrap text-sm l:text-base font-medium tracking-wide text-gray-300" aria-label="Primary navigation">
+        <nav class="hidden min-w-0 lg:flex flex-1 justify-center items-center gap-4 xl:gap-8 whitespace-nowrap text-sm font-medium tracking-wide text-gray-300" aria-label="Primary navigation">
             <a href="{{ route('home') }}#home" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Home</a>
             <a href="{{ route('home') }}#about" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Mission</a>
             <a href="{{ route('home') }}#projects" class="nav-link hover:text-[#D4AF37] transition-colors px-1">Initiatives</a>
@@ -18,10 +18,10 @@
         </nav>
 
         <div class="ml-auto shrink-0 flex items-center gap-3">
-            <div id="langSwitch" class="notranslate relative flex items-center text-[11px] font-semibold tracking-[0.16em]" translate="no">
-                <button type="button" data-set-lang="en" class="lang-option rounded-sm px-1.5 py-1 text-[#D4AF37]" aria-pressed="true">EN</button>
-                <span class="text-white/30" aria-hidden="true">|</span>
-                <button type="button" data-set-lang="ne" class="lang-option rounded-sm px-1.5 py-1 text-white/55 hover:text-[#D4AF37]" aria-pressed="false">NP</button>
+            <div id="langSwitch" class="notranslate relative flex shrink-0 items-center gap-1 text-[11px] font-semibold tracking-[0.16em] text-white" translate="no">
+                <button type="button" data-set-lang="en" class="lang-option rounded-sm px-1.5 py-1 text-[#D4AF37]" style="color:#D4AF37" aria-pressed="true">EN</button>
+                <span style="color:#ffffff" aria-hidden="true">|</span>
+                <button type="button" data-set-lang="ne" class="lang-option rounded-sm px-1.5 py-1 text-white" style="color:#e5e7eb" aria-pressed="false">NP</button>
             </div>
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
@@ -49,7 +49,7 @@
                     <a href="{{ route('register') }}" class="hidden sm:inline border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold tracking-widest">SIGN UP</a>
                 @endauth
             @else
-                <button type="button" data-open-work="education" class="hidden sm:inline-flex border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold tracking-widest hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all">WORK WITH ME</button>
+                <button type="button" data-open-work="education" class="notranslate inline-flex shrink-0 border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold tracking-widest hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all" translate="no">WORK WITH ME</button>
             @endif
             <button type="button" id="mobileMenuToggle" class="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileNavigation">
                 <svg id="mobileMenuOpenIcon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
@@ -66,10 +66,10 @@
             <a href="{{ route('home') }}#impact" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Impact</a>
             <a href="{{ route('home') }}#featured-blogs" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Blog</a>
             <button type="button" data-open-work="education" class="mobile-nav-link w-full rounded-md px-3 py-3 text-left text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Work With Me</button>
-            <div class="notranslate mt-2 flex items-center gap-2 px-3 py-3 text-xs font-semibold tracking-[0.16em]" translate="no">
-                <button type="button" data-set-lang="en" class="lang-option text-[#D4AF37]">EN</button>
-                <span class="text-white/30">|</span>
-                <button type="button" data-set-lang="ne" class="lang-option text-white/55">NP</button>
+            <div class="notranslate mt-2 flex items-center gap-2 px-3 py-3 text-xs font-semibold tracking-[0.16em] text-white" translate="no">
+                <button type="button" data-set-lang="en" class="lang-option text-[#D4AF37]" style="color:#D4AF37">EN</button>
+                <span style="color:#ffffff">|</span>
+                <button type="button" data-set-lang="ne" class="lang-option text-white" style="color:#e5e7eb">NP</button>
             </div>
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth

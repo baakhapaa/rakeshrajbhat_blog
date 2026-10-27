@@ -72,8 +72,7 @@
             document.querySelectorAll('.lang-option').forEach(function (button) {
                 const active = button.getAttribute('data-set-lang') === lang;
                 button.setAttribute('aria-pressed', active ? 'true' : 'false');
-                button.classList.toggle('text-[#D4AF37]', active);
-                button.classList.toggle('text-white/55', !active);
+                button.style.color = active ? '#D4AF37' : '#e5e7eb';
             });
         }
 
