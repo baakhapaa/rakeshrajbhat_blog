@@ -13,8 +13,9 @@ class HomeContentController extends Controller
     public function editHome()
     {
         $home = Setting::getHomeContent();
+        $about = Setting::getAboutContent();
 
-        return view('admin.home.edit', compact('home'));
+        return view('admin.home.edit', compact('home', 'about'));
     }
 
     public function updateHome(Request $request)
@@ -80,7 +81,53 @@ class HomeContentController extends Controller
             'background_image' => $image,
         ]));
 
-        return redirect()->route('admin.home-content.edit')->with('success', 'Home content updated successfully!');
+        return redirect()->route('admin.home-content.edit', ['tab' => 'hero'])->with('success', 'Hero content updated successfully!');
+    }
+
+    public function updateAbout(Request $request)
+    {
+        $validated = $request->validate([
+            'about_label' => 'required|string|max:80',
+            'about_heading_line_1' => 'required|string|max:80',
+            'about_heading_line_2' => 'required|string|max:80',
+            'about_paragraph_1' => 'required|string|max:1000',
+            'about_paragraph_2' => 'required|string|max:1500',
+            'about_fact_title' => 'required|array|min:1|max:12',
+            'about_fact_title.*' => 'required|string|max:80',
+            'about_fact_caption' => 'required|array|min:1|max:12',
+            'about_fact_caption.*' => 'required|string|max:80',
+        ], [
+            'about_fact_title.required' => 'Add at least one detail.',
+            'about_fact_title.max' => 'You can add up to 12 details.',
+            'about_fact_title.*.required' => 'Each detail needs a title.',
+            'about_fact_caption.*.required' => 'Each detail needs a caption.',
+        ]);
+
+        if (count($validated['about_fact_title']) !== count($validated['about_fact_caption'])) {
+            return back()->withErrors([
+                'about_fact_title' => 'Each detail needs a title and a caption.',
+            ])->withInput();
+        }
+
+        $facts = [];
+
+        foreach ($validated['about_fact_title'] as $index => $title) {
+            $facts[] = [
+                'title' => trim($title),
+                'caption' => trim((string) ($validated['about_fact_caption'][$index] ?? '')),
+            ];
+        }
+
+        Setting::setValue('about_content', Setting::encodeJson([
+            'label' => $validated['about_label'],
+            'heading_line_1' => $validated['about_heading_line_1'],
+            'heading_line_2' => $validated['about_heading_line_2'],
+            'paragraph_1' => $validated['about_paragraph_1'],
+            'paragraph_2' => $validated['about_paragraph_2'],
+            'facts' => $facts,
+        ]));
+
+        return redirect()->route('admin.home-content.edit', ['tab' => 'about'])->with('success', 'About me updated successfully!');
     }
 
     private function deleteStoredAsset(?string $url): void

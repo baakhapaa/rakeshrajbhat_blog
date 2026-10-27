@@ -3,9 +3,15 @@
 @section('title', 'Home · Admin')
 
 @section('content')
-<div class="max-w-4xl mx-auto">
+@php
+    $homeTab = old('_tab', request('tab', 'hero'));
+    if (! in_array($homeTab, ['hero', 'about'], true)) {
+        $homeTab = 'hero';
+    }
+@endphp
+<div class="max-w-4xl mx-auto" id="homeEditor" data-home-tab="{{ $homeTab }}">
     <h1 class="text-3xl font-serif font-bold text-white mb-2">Home</h1>
-    <p class="text-white/50 text-sm mb-6">Edit the hero text, buttons, name, and background on the homepage.</p>
+    <p class="text-white/50 text-sm mb-6">Edit each homepage section from its own tab. New sections can be added here later.</p>
 
     @if(session('success'))
         <div class="bg-green-500/20 border border-green-500/30 text-green-400 px-4 py-3 rounded-lg mb-6">
@@ -23,9 +29,19 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.home-content.update') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+    <div class="flex flex-wrap gap-2 mb-6 border-b border-white/10">
+        <button type="button" onclick="switchHomeTab('hero')" id="tabHero" class="px-4 py-2 text-sm font-medium transition border-b-2 {{ $homeTab === 'hero' ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 hover:text-white border-transparent' }}">
+            Hero
+        </button>
+        <button type="button" onclick="switchHomeTab('about')" id="tabAbout" class="px-4 py-2 text-sm font-medium transition border-b-2 {{ $homeTab === 'about' ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 hover:text-white border-transparent' }}">
+            About me
+        </button>
+    </div>
+
+    <form action="{{ route('admin.home-content.update') }}" method="POST" enctype="multipart/form-data" id="heroTab" class="space-y-6 {{ $homeTab === 'hero' ? '' : 'hidden' }}">
         @csrf
         @method('PUT')
+        <input type="hidden" name="_tab" value="hero">
 
         <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
             <h2 class="text-xl font-semibold text-white mb-6">Hero text</h2>
@@ -165,8 +181,172 @@
         </div>
 
         <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition-all">
-            Save home content
+            Save hero
+        </button>
+    </form>
+
+    <form action="{{ route('admin.home-content.update-about') }}" method="POST" id="aboutTab" class="space-y-6 {{ $homeTab === 'about' ? '' : 'hidden' }}">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="_tab" value="about">
+
+        <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
+            <h2 class="text-xl font-semibold text-white mb-6">About me</h2>
+
+            <div class="mb-4">
+                <label for="about_label" class="block text-white/70 text-sm font-medium mb-2">Eyebrow</label>
+                <input type="text" id="about_label" name="about_label" value="{{ old('about_label', $about['label']) }}"
+                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
+                @error('about_label')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="about_heading_line_1" class="block text-white/70 text-sm font-medium mb-2">Heading line 1</label>
+                    <input type="text" id="about_heading_line_1" name="about_heading_line_1" value="{{ old('about_heading_line_1', $about['heading_line_1']) }}"
+                        class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
+                    @error('about_heading_line_1')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label for="about_heading_line_2" class="block text-white/70 text-sm font-medium mb-2">Heading line 2</label>
+                    <input type="text" id="about_heading_line_2" name="about_heading_line_2" value="{{ old('about_heading_line_2', $about['heading_line_2']) }}"
+                        class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
+                    @error('about_heading_line_2')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="about_paragraph_1" class="block text-white/70 text-sm font-medium mb-2">First paragraph</label>
+                <textarea id="about_paragraph_1" name="about_paragraph_1" rows="3"
+                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">{{ old('about_paragraph_1', $about['paragraph_1']) }}</textarea>
+                @error('about_paragraph_1')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="about_paragraph_2" class="block text-white/70 text-sm font-medium mb-2">Second paragraph</label>
+                <textarea id="about_paragraph_2" name="about_paragraph_2" rows="5"
+                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">{{ old('about_paragraph_2', $about['paragraph_2']) }}</textarea>
+                @error('about_paragraph_2')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        @php
+            $aboutFacts = $about['facts'];
+            $oldFactTitles = old('about_fact_title');
+            if (is_array($oldFactTitles)) {
+                $oldFactCaptions = old('about_fact_caption', []);
+                $aboutFacts = [];
+                foreach ($oldFactTitles as $index => $title) {
+                    $aboutFacts[] = [
+                        'title' => $title,
+                        'caption' => $oldFactCaptions[$index] ?? '',
+                    ];
+                }
+            }
+        @endphp
+        <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
+            <h2 class="text-xl font-semibold text-white mb-2">Details</h2>
+            <p class="text-sm text-white/40 mb-6">Add as many as you need, up to 12. Each one shows as a title with a short caption.</p>
+
+            <div id="aboutFactRows" class="space-y-3">
+                @foreach($aboutFacts as $fact)
+                    <div class="about-fact-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-center">
+                        <input type="text" name="about_fact_title[]" value="{{ $fact['title'] }}" maxlength="80" placeholder="Title" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                        <input type="text" name="about_fact_caption[]" value="{{ $fact['caption'] }}" maxlength="80" placeholder="Caption" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                        <button type="button" class="remove-about-fact px-3 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+                    </div>
+                @endforeach
+            </div>
+
+            @error('about_fact_title')
+                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
+            @enderror
+            @error('about_fact_title.*')
+                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
+            @enderror
+            @error('about_fact_caption.*')
+                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
+            @enderror
+
+            <button type="button" id="addAboutFact" class="mt-4 px-4 py-2 rounded-lg border border-white/10 text-white/80 hover:text-white">Add detail</button>
+        </div>
+
+        <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition-all">
+            Save about me
         </button>
     </form>
 </div>
+
+<template id="aboutFactTemplate">
+    <div class="about-fact-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-center">
+        <input type="text" name="about_fact_title[]" value="" maxlength="80" placeholder="Title" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+        <input type="text" name="about_fact_caption[]" value="" maxlength="80" placeholder="Caption" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+        <button type="button" class="remove-about-fact px-3 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+    </div>
+</template>
+
+<script>
+    function switchHomeTab(tab) {
+        const panels = {
+            hero: [document.getElementById('heroTab'), document.getElementById('tabHero')],
+            about: [document.getElementById('aboutTab'), document.getElementById('tabAbout')],
+        };
+
+        Object.values(panels).forEach(function (pair) {
+            pair[0].classList.add('hidden');
+            pair[1].classList.remove('border-[#D4AF37]', 'text-[#D4AF37]');
+            pair[1].classList.add('border-transparent', 'text-white/60');
+        });
+
+        if (!panels[tab]) {
+            tab = 'hero';
+        }
+
+        panels[tab][0].classList.remove('hidden');
+        panels[tab][1].classList.add('border-[#D4AF37]', 'text-[#D4AF37]');
+        panels[tab][1].classList.remove('border-transparent', 'text-white/60');
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', tab);
+        history.replaceState({}, '', url);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const editor = document.getElementById('homeEditor');
+        switchHomeTab(editor ? editor.dataset.homeTab : 'hero');
+
+        const factRows = document.getElementById('aboutFactRows');
+        const factTemplate = document.getElementById('aboutFactTemplate');
+
+        function bindFactRow(row) {
+            row.querySelector('.remove-about-fact').addEventListener('click', function () {
+                if (factRows.querySelectorAll('.about-fact-row').length === 1) {
+                    return;
+                }
+                row.remove();
+            });
+        }
+
+        factRows.querySelectorAll('.about-fact-row').forEach(bindFactRow);
+
+        document.getElementById('addAboutFact').addEventListener('click', function () {
+            if (factRows.querySelectorAll('.about-fact-row').length >= 12) {
+                return;
+            }
+            const row = factTemplate.content.firstElementChild.cloneNode(true);
+            factRows.appendChild(row);
+            bindFactRow(row);
+        });
+    });
+</script>
 @endsection
