@@ -6,12 +6,16 @@
 @section('meta_description', 'Official website of Rakesh Rajbhat, founder of Baakhapaa and builder of Skill Sikka, Hillychilly, Future Builders and AI & ICT programs in Nepal.')
 
 @section('content')
+    @php
+        $homeContent = $homeContent ?? \App\Models\Setting::getHomeContent();
+    @endphp
     <!-- Hero Section -->
     <section id="home" class="relative min-h-screen pt-20 flex items-center overflow-hidden">
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
             <img 
-                src="{{ asset('images/rakeshrajbhat.jpg') }}"
+                src="{{ $homeContent['background_image'] ?: asset('images/rakeshrajbhat.jpg') }}"
+                alt="{{ $homeContent['name'] }}"
                 class="w-full h-full object-cover opacity-50 saturate-[1.1]"
             >
             <div class="absolute inset-0 bg-gradient-to-r from-[#0b0e12] via-[#0b0e12]/70 to-transparent"></div>
@@ -21,30 +25,30 @@
         <div class="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
                 <div>
-                    <p class="text-[#D4AF37] tracking-[0.25em] text-xs font-bold mb-4 uppercase">Founder · Builder · Future Maker</p>
+                    <p class="text-[#D4AF37] tracking-[0.25em] text-xs font-bold mb-4 uppercase">{{ $homeContent['eyebrow'] }}</p>
                     <h1 class="text-5xl lg:text-7xl font-serif leading-[1.1] mb-8 text-balance text-white">
-                        Building Opportunities <br/>
-                        <span class="italic">for Youth, Communities,</span><br/>
-                        and Future Generations.
+                        {{ $homeContent['headline_line_1'] }} <br/>
+                        <span class="italic">{{ $homeContent['headline_line_2'] }}</span><br/>
+                        {{ $homeContent['headline_line_3'] }}
                     </h1>
                     <p class="text-gray-300 text-lg max-w-lg mb-10 leading-relaxed">
-                        Founder of Baakhapaa, Skill Sikka, HillyChilly and Future Builders. Transforming education, tourism, technology, and local economies in Nepal.
+                        {{ $homeContent['intro'] }}
                     </p>
                     <div class="flex flex-wrap items-center gap-6">
-                        <a href="#projects" class="bg-[#D4AF37] text-[#0b0e12] px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20">
-                            Explore My Projects
+                        <a href="{{ \App\Models\Setting::linkHref($homeContent['primary_button_url']) }}" @if(str_starts_with($homeContent['primary_button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="bg-[#D4AF37] text-[#0b0e12] px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20">
+                            {{ $homeContent['primary_button_label'] }}
                         </a>
                         <button type="button" data-open-work="education" class="notranslate inline-flex border border-[#D4AF37] text-[#D4AF37] px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all" translate="no">
                             Work With Me
                         </button>
-                        <a href="#about" class="text-[#D4AF37] text-sm font-bold flex items-center gap-2 group">
-                            Read My Vision <span class="group-hover:translate-x-1 transition-transform">→</span>
+                        <a href="{{ \App\Models\Setting::linkHref($homeContent['text_link_url']) }}" @if(str_starts_with($homeContent['text_link_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="text-[#D4AF37] text-sm font-bold flex items-center gap-2 group">
+                            {{ $homeContent['text_link_label'] }} <span class="group-hover:translate-x-1 transition-transform">→</span>
                         </a>
                     </div>
                 </div>
                 <div class="lg:text-right pb-4">
-                    <div class="font-serif italic text-5xl lg:text-7xl mb-2 drop-shadow-lg text-[#D4AF37]">Rakesh Rajbhat</div>
-                    <p class="text-xs tracking-[0.35em] font-medium text-white/70 uppercase">For the root. For the youth. For the nation.</p>
+                    <div class="font-serif italic text-5xl lg:text-7xl mb-2 drop-shadow-lg text-[#D4AF37]">{{ $homeContent['name'] }}</div>
+                    <p class="text-xs tracking-[0.35em] font-medium text-white/70 uppercase">{{ $homeContent['tagline'] }}</p>
                 </div>
             </div>
         </div>
