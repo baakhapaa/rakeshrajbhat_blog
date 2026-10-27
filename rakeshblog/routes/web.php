@@ -258,6 +258,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/projects/section', [ProjectController::class, 'updateSection'])->name('projects.update-section');
         Route::resource('projects', ProjectController::class);
 
+        Route::put('/gallery/section', [GalleryController::class, 'updateSection'])->name('gallery.update-section');
         Route::delete('/gallery-images/{image}', [GalleryController::class, 'destroyImage'])->name('gallery.images.destroy');
         Route::post('/gallery/{gallery}/toggle-status', [GalleryController::class, 'toggleStatus'])->name('gallery.toggle-status');
         Route::resource('gallery', GalleryController::class)->except(['show']);
