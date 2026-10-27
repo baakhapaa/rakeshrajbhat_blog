@@ -8,6 +8,7 @@
 @section('content')
     @php
         $homeContent = $homeContent ?? \App\Models\Setting::getHomeContent();
+        $aboutContent = \App\Models\Setting::getAboutContent();
     @endphp
     <!-- Hero Section -->
     <section id="home" class="relative min-h-screen pt-20 flex items-center overflow-hidden">
@@ -49,6 +50,38 @@
                 <div class="lg:text-right pb-4">
                     <div class="font-serif italic text-5xl lg:text-7xl mb-2 drop-shadow-lg text-[#D4AF37]">{{ $homeContent['name'] }}</div>
                     <p class="text-xs tracking-[0.35em] font-medium text-white/70 uppercase">{{ $homeContent['tagline'] }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Me -->
+    <section id="about-me" class="py-24 bg-white text-[#1e1e1a] scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+                <div class="lg:col-span-5">
+                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-5 uppercase">{{ $aboutContent['label'] }}</p>
+                    <h2 class="text-5xl lg:text-6xl font-serif font-bold leading-[1.05]">
+                        {{ $aboutContent['heading_line_1'] }}<br>{{ $aboutContent['heading_line_2'] }}
+                    </h2>
+                </div>
+                <div class="lg:col-span-7">
+                    <div class="max-w-lg lg:pt-2">
+                        <div class="space-y-6 text-[#3a3a34] leading-relaxed">
+                            <p>{{ $aboutContent['paragraph_1'] }}</p>
+                            <p>{{ $aboutContent['paragraph_2'] }}</p>
+                        </div>
+                        @if(!empty($aboutContent['facts']))
+                            <div class="mt-10 grid grid-cols-2 gap-x-8 gap-y-6">
+                                @foreach($aboutContent['facts'] as $fact)
+                                    <div>
+                                        <p class="font-bold text-[#1e1e1a]">{{ $fact['title'] }}</p>
+                                        <p class="text-sm text-[#6a6a62] mt-1">{{ $fact['caption'] }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>

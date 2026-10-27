@@ -84,6 +84,88 @@ class Setting extends Model
         return $content;
     }
 
+    public static function defaultAboutContent(): array
+    {
+        return [
+            'label' => '01 / About me',
+            'heading_line_1' => 'My journey',
+            'heading_line_2' => 'so far.',
+            'paragraph_1' => 'I studied civil engineering, worked in Texas and returned to Nepal to build projects in education, technology and tourism.',
+            'paragraph_2' => 'Through Baakhapaa, Skill Sikka, HillyChilly and Future Builders, I have been exploring ways to connect learning with practical opportunities. As I prepare for public service in Palungtar, I want to bring that experience into conversations about employment, education and the services people depend on every day.',
+            'facts' => [
+                ['title' => 'Civil engineering', 'caption' => 'Education'],
+                ['title' => 'Nepal & Texas', 'caption' => 'Experience'],
+            ],
+        ];
+    }
+
+    public static function getAboutContent(): array
+    {
+        $defaults = static::defaultAboutContent();
+        $decoded = static::decodeJson(static::getValue('about_content'));
+
+        if (! is_array($decoded)) {
+            return $defaults;
+        }
+
+        $content = $defaults;
+
+        foreach (['label', 'heading_line_1', 'heading_line_2', 'paragraph_1', 'paragraph_2'] as $key) {
+            if (isset($decoded[$key]) && is_string($decoded[$key]) && trim($decoded[$key]) !== '') {
+                $content[$key] = $decoded[$key];
+            }
+        }
+
+        $facts = static::aboutFactsFrom($decoded);
+
+        if ($facts !== []) {
+            $content['facts'] = $facts;
+        }
+
+        return $content;
+    }
+
+    public static function aboutFactsFrom(array $decoded): array
+    {
+        $facts = [];
+        $rows = $decoded['facts'] ?? null;
+
+        if (! is_array($rows)) {
+            $rows = [];
+
+            foreach ([1, 2] as $index) {
+                $title = $decoded['fact_'.$index.'_title'] ?? null;
+                $caption = $decoded['fact_'.$index.'_caption'] ?? null;
+
+                if ($title === null && $caption === null) {
+                    continue;
+                }
+
+                $rows[] = ['title' => $title, 'caption' => $caption];
+            }
+        }
+
+        foreach ($rows as $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+
+            $title = trim(strip_tags((string) ($row['title'] ?? '')));
+            $caption = trim(strip_tags((string) ($row['caption'] ?? '')));
+
+            if ($title === '' && $caption === '') {
+                continue;
+            }
+
+            $facts[] = [
+                'title' => $title,
+                'caption' => $caption,
+            ];
+        }
+
+        return array_slice($facts, 0, 12);
+    }
+
     public static function encodeJson(array $value): string
     {
         return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '[]';
