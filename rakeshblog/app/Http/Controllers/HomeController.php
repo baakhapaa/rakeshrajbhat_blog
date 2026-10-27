@@ -75,21 +75,32 @@ class HomeController extends Controller
             $research = collect();
         }
 
-        // Get FEATURED research items (ONLY featured items, one per category)
+        $groupResearch = function ($items) {
+            return $items->groupBy(function ($item) {
+                $categoryMap = [
+                    'Vision' => 'vision',
+                    'Research Papers' => 'research',
+                    'Media' => 'media',
+                ];
+
+                return $categoryMap[$item->category] ?? 'other';
+            });
+        };
+
+        // All view: the featured item in each category.
         try {
-            $featuredResearch = Research::where('is_featured', true)
-                ->where('is_active', true)
-                ->orderBy('order')
-                ->get()
-                ->groupBy(function ($item) {
-                    // Map category to slug
-                    $categoryMap = [
-                        'Vision' => 'vision',
-                        'Research Papers' => 'research',
-                        'Media' => 'media'
-                    ];
-                    return $categoryMap[$item->category] ?? 'other';
-                });
+            $spotlightResearch = $groupResearch(
+                Research::where('is_featured', true)->where('is_active', true)->latest()->get()
+            )->map(fn ($items) => $items->take(1));
+        } catch (\Exception $e) {
+            $spotlightResearch = collect();
+        }
+
+        // Category filters: up to 3 items marked Add to Home.
+        try {
+            $featuredResearch = $groupResearch(
+                Research::where('show_on_home', true)->where('is_active', true)->latest()->get()
+            )->map(fn ($items) => $items->take(3));
         } catch (\Exception $e) {
             $featuredResearch = collect();
         }
@@ -120,16 +131,17 @@ class HomeController extends Controller
 
         // Return view with all variables
         return view('home', compact(
-            'stats', 
-            'homeBlogs', 
-            'projects', 
-            'totalBlogs', 
+            'stats',
+            'homeBlogs',
+            'projects',
+            'totalBlogs',
             'totalProjects',
             'totalFeaturedBlogs',
             'featuredBlogs',
             'research',
             'featuredResearch',
-            'galleryCollections'
+            'galleryCollections',
+            'spotlightResearch'
         ));
     }
 
@@ -142,7 +154,7 @@ class HomeController extends Controller
             $projects = Project::where('is_active', true)
                 ->orderBy('order', 'asc')
                 ->get(['id', 'name', 'slug', 'icon', 'short_description', 'description', 'url', 'image', 'color']);
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $projects
@@ -164,7 +176,7 @@ class HomeController extends Controller
             $project = Project::where('slug', $slug)
                 ->where('is_active', true)
                 ->firstOrFail();
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $project

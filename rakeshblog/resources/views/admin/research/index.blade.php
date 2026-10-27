@@ -43,6 +43,32 @@
         </div>
     @endif
 
+    <div class="bg-[#1a1f26] rounded-2xl border border-white/5 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-white mb-1">Studies heading</h2>
+        <p class="text-sm text-gray-400 mb-5">This is the title and short paragraph at the top of the research section on the homepage.</p>
+        <form action="{{ route('admin.research.update-section') }}" method="POST" class="grid grid-cols-1 gap-4">
+            @csrf
+            @method('PUT')
+            <div>
+                <label for="research_section_title" class="block text-sm text-white/70 mb-2">Title</label>
+                <input id="research_section_title" type="text" name="research_section_title" value="{{ old('research_section_title', $researchSection['title']) }}" maxlength="160" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                @error('research_section_title')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label for="research_section_paragraph" class="block text-sm text-white/70 mb-2">Short paragraph</label>
+                <textarea id="research_section_paragraph" name="research_section_paragraph" rows="3" maxlength="400" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">{{ old('research_section_paragraph', $researchSection['paragraph']) }}</textarea>
+                @error('research_section_paragraph')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition">Save heading</button>
+            </div>
+        </form>
+    </div>
+
     <!-- Filters -->
     <div class="bg-[#1a1f26] rounded-2xl border border-white/5 p-5 mb-6 backdrop-blur-sm">
         <form method="GET" action="{{ route('admin.research.index') }}" class="flex flex-wrap gap-4">
@@ -163,15 +189,7 @@
                         <th class="text-left py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Media</th>
                         <th class="text-left py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
                         <th class="text-left py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Featured</th>
-                        <th class="text-left py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                            <a href="{{ route('admin.research.index', array_merge(request()->all(), ['sort' => 'order', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" 
-                               class="flex items-center gap-1 hover:text-white transition-all duration-200 group">
-                                Order
-                                @if(request('sort') == 'order')
-                                    <i class="fas fa-chevron-{{ request('direction') == 'asc' ? 'up' : 'down' }} text-xs text-[#D4AF37]"></i>
-                                @endif
-                            </a>
-                        </th>
+                        <th class="text-left py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Add to Home</th>
                         <th class="text-left py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                             <a href="{{ route('admin.research.index', array_merge(request()->all(), ['sort' => 'created_at', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" 
                                class="flex items-center gap-1 hover:text-white transition-all duration-200 group">
@@ -254,7 +272,7 @@
                                 </button>
                             </td>
                             <td class="py-4 px-4">
-                                <button onclick="toggleFeatured({{ $item->id }})" class="featured-toggle">
+                                <button onclick="toggleFeatured({{ $item->id }})" class="featured-toggle" title="Featured item appears in the All view. One per category.">
                                     <span class="px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 transition-all duration-300 hover:scale-105
                                         {{ $item->is_featured ? 'bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 shadow-lg shadow-[#D4AF37]/10' : 'bg-gray-500/10 text-gray-400 border border-gray-500/20' }}">
                                         <i class="fas fa-star {{ $item->is_featured ? 'text-[#D4AF37]' : '' }} text-[10px]"></i>
@@ -262,11 +280,14 @@
                                     </span>
                                 </button>
                             </td>
-                            <td class="py-4 px-4 text-sm text-gray-400">
-                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-white/5 rounded-full text-xs">
-                                    <i class="fas fa-sort text-[10px] text-gray-500"></i>
-                                    {{ $item->order }}
-                                </span>
+                            <td class="py-4 px-4">
+                                <button onclick="toggleHome({{ $item->id }})" class="featured-toggle" title="Up to 3 items from this category show when that filter is selected">
+                                    <span class="px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 transition-all duration-300 hover:scale-105
+                                        {{ $item->show_on_home ? 'bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 shadow-lg shadow-[#D4AF37]/10' : 'bg-gray-500/10 text-gray-400 border border-gray-500/20' }}">
+                                        <i class="fas fa-house {{ $item->show_on_home ? 'text-[#D4AF37]' : '' }} text-[10px]"></i>
+                                        {{ $item->show_on_home ? 'On Home' : 'Add to Home' }}
+                                    </span>
+                                </button>
                             </td>
                             <td class="py-4 px-4 text-sm text-gray-400">
                                 <span title="{{ $item->created_at->format('M d, Y h:i A') }}" class="inline-flex items-center gap-1">
@@ -404,33 +425,59 @@ function toggleFeatured(id) {
         body: JSON.stringify({ _method: 'POST' })
     })
     .then(async response => {
-        console.log('Response status:', response.status);
-        if (!response.ok) {
-            const text = await response.text();
-            console.error('Error response:', text);
-            throw new Error(`HTTP ${response.status}: ${text}`);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || 'Could not update homepage.');
         }
-        return response.json();
+        return data;
     })
-    .then(data => {
-        console.log('Response data:', data);
-        if (data.success) {
-            location.reload();
-        } else {
-            alert('Failed to toggle featured status: ' + (data.message || 'Unknown error'));
-            if (button) {
-                const span = button.querySelector('span');
-                span.innerHTML = originalHtml;
-                button.disabled = false;
-            }
-        }
+    .then(() => {
+        location.reload();
     })
     .catch(error => {
         console.error('Error details:', error);
-        alert('An error occurred while toggling featured status.\n\nCheck the console for details (F12).');
+        alert(error.message || 'Could not update homepage.');
         if (button) {
             const span = button.querySelector('span');
             span.innerHTML = originalHtml;
+            button.disabled = false;
+        }
+    });
+}
+
+function toggleHome(id) {
+    const button = document.querySelector(`[onclick*="toggleHome(${id})"]`);
+    let originalHtml = '';
+    if (button) {
+        const span = button.querySelector('span');
+        originalHtml = span.innerHTML;
+        span.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        button.disabled = true;
+    }
+
+    const token = document.querySelector('meta[name="csrf-token"]')?.content || '{{ csrf_token() }}';
+
+    fetch(`/admin/research/${id}/toggle-home`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': token,
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({})
+    })
+    .then(async response => {
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) {
+            throw new Error(data.message || 'Could not update homepage.');
+        }
+        return data;
+    })
+    .then(() => location.reload())
+    .catch(error => {
+        alert(error.message || 'Could not update homepage.');
+        if (button) {
+            button.querySelector('span').innerHTML = originalHtml;
             button.disabled = false;
         }
     });

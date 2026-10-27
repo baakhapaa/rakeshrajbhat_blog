@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Request;
 
 class ActivityLogger
 {
@@ -26,7 +25,6 @@ class ActivityLogger
         } elseif ($admin) {
             $userName = $admin->name;
             $userEmail = $admin->email;
-            $userId = $admin->id;
         } else {
             $userName = 'System / Admin';
         }

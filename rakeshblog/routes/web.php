@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\StatController;
 use App\Http\Controllers\Admin\ImageController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\HomeContentController;
 use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\ProjectController;
@@ -199,7 +200,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // ==========================================
         Route::post('/research/{id}/toggle-status', [ResearchController::class, 'toggleStatus'])->name('research.toggle-status');
         Route::post('/research/{id}/toggle-featured', [ResearchController::class, 'toggleFeatured'])->name('research.toggle-featured');
+        Route::post('/research/{id}/toggle-home', [ResearchController::class, 'toggleHome'])->name('research.toggle-home');
         Route::post('/research/reorder', [ResearchController::class, 'reorder'])->name('research.reorder');
+        Route::put('/research/section', [ResearchController::class, 'updateSection'])->name('research.update-section');
         
         // Then the resource route
         Route::resource('research', ResearchController::class);
@@ -261,6 +264,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/projects/{id}/toggle-status', [ProjectController::class, 'toggleStatus'])->name('projects.toggle-status');
         Route::post('/projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
         
+        // ==========================================
+        // HOME CONTENT
+        // ==========================================
+        Route::get('/home-content', [HomeContentController::class, 'editHome'])->name('home-content.edit');
+        Route::put('/home-content', [HomeContentController::class, 'updateHome'])->name('home-content.update');
+        Route::put('/home-content/about', [HomeContentController::class, 'updateAbout'])->name('home-content.update-about');
+
         // ==========================================
         // SETTINGS ROUTES
         // ==========================================

@@ -19,6 +19,20 @@
         </span>
     </a>
 
+    {{-- Home content --}}
+    <a href="{{ route('admin.home-content.edit') }}"
+        class="block px-4 py-3 rounded-lg transition-all duration-200
+        {{ Str::startsWith(Route::currentRouteName(), 'admin.home-content') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+        <span class="flex items-center">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h4v-6h4v6h4a1 1 0 001-1V10">
+                </path>
+            </svg>
+            Home
+        </span>
+    </a>
+
     {{-- Stats --}}
     <a href="{{ route('admin.stats.index') }}"
         class="block px-4 py-3 rounded-lg transition-all duration-200
@@ -113,14 +127,14 @@
         </a>
 
     {{-- Navbar --}}
-    <a href="{{ route('admin.settings', ['tab' => 'navbar']) }}"
+    <!-- <a href="{{ route('admin.settings', ['tab' => 'navbar']) }}"
         class="block px-4 py-3 rounded-lg transition-all duration-200
         {{ Route::currentRouteName() === 'admin.settings' && request('tab') === 'navbar' ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
         <span class="flex items-center">
             <i class="fa-solid fa-bars inline-block w-5 text-center text-base mr-3" aria-hidden="true"></i>
             Navbar
         </span>
-    </a>
+    </a> -->
 
     {{-- Settings --}}
     <a href="{{ route('admin.settings') }}"

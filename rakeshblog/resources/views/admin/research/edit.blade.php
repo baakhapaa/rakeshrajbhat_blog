@@ -58,19 +58,6 @@
                 @enderror
             </div>
 
-            <!-- Order -->
-            <div>
-                <label for="order" class="block text-sm font-medium text-gray-300 mb-2">
-                    <i class="fas fa-sort text-[#D4AF37] mr-1"></i> Order
-                </label>
-                <input type="number" id="order" name="order" value="{{ old('order', $research->order) }}" min="0"
-                    class="w-full px-4 py-2.5 bg-[#0b0e12] border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:border-[#D4AF37] focus:outline-none transition">
-                <p class="text-xs text-gray-500 mt-1">Lower numbers appear first</p>
-                @error('order')
-                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
             <!-- Description -->
             <div class="md:col-span-2">
                 <label for="description" class="block text-sm font-medium text-gray-300 mb-2">
@@ -186,7 +173,17 @@
                 <span class="ml-2 text-sm text-gray-300">
                     <i class="fas fa-star text-[#D4AF37] mr-1"></i> Featured
                 </span>
-                <span class="ml-2 text-xs text-gray-500">(Only one featured per category)</span>
+                <span class="ml-2 text-xs text-gray-500">(Shows in the All view. One per category.)</span>
+            </label>
+        </div>
+        <div class="mt-4">
+            <label class="flex items-center cursor-pointer">
+                <input type="checkbox" name="show_on_home" value="1" {{ old('show_on_home', $research->show_on_home) ? 'checked' : '' }}
+                    class="w-4 h-4 rounded border-white/10 bg-[#0b0e12] text-[#D4AF37] focus:ring-[#D4AF37] focus:ring-offset-0 transition">
+                <span class="ml-2 text-sm text-gray-300">
+                    <i class="fas fa-house text-[#D4AF37] mr-1"></i> Add to Home
+                </span>
+                <span class="ml-2 text-xs text-gray-500">(Up to 3 per category when that filter is selected)</span>
             </label>
         </div>
 

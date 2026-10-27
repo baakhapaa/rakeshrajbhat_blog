@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @php
         $siteSettings = \App\Models\Setting::getSiteSettings();
+        $homeContent = \App\Models\Setting::getHomeContent();
         $siteName = $siteSettings['site_name'];
         $siteUrl = rtrim(config('app.url'), '/');
         $canonicalUrl = $siteUrl . '/' . ltrim(request()->path() === '/' ? '' : request()->path(), '/');

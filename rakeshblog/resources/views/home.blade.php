@@ -6,12 +6,17 @@
 @section('meta_description', 'Official website of Rakesh Rajbhat, founder of Baakhapaa and builder of Skill Sikka, Hillychilly, Future Builders and AI & ICT programs in Nepal.')
 
 @section('content')
+    @php
+        $homeContent = $homeContent ?? \App\Models\Setting::getHomeContent();
+        $aboutContent = \App\Models\Setting::getAboutContent();
+    @endphp
     <!-- Hero Section -->
     <section id="home" class="relative min-h-screen pt-20 flex items-center overflow-hidden">
         <!-- Background Image -->
         <div class="absolute inset-0 z-0">
             <img 
-                src="{{ asset('images/rakeshrajbhat.jpg') }}"
+                src="{{ $homeContent['background_image'] ?: asset('images/rakeshrajbhat.jpg') }}"
+                alt="{{ $homeContent['name'] }}"
                 class="w-full h-full object-cover opacity-50 saturate-[1.1]"
             >
             <div class="absolute inset-0 bg-gradient-to-r from-[#0b0e12] via-[#0b0e12]/70 to-transparent"></div>
@@ -21,30 +26,62 @@
         <div class="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
                 <div>
-                    <p class="text-[#D4AF37] tracking-[0.25em] text-xs font-bold mb-4 uppercase">Founder · Builder · Future Maker</p>
+                    <p class="text-[#D4AF37] tracking-[0.25em] text-xs font-bold mb-4 uppercase">{{ $homeContent['eyebrow'] }}</p>
                     <h1 class="text-5xl lg:text-7xl font-serif leading-[1.1] mb-8 text-balance text-white">
-                        Building Opportunities <br/>
-                        <span class="italic">for Youth, Communities,</span><br/>
-                        and Future Generations.
+                        {{ $homeContent['headline_line_1'] }} <br/>
+                        <span class="italic">{{ $homeContent['headline_line_2'] }}</span><br/>
+                        {{ $homeContent['headline_line_3'] }}
                     </h1>
                     <p class="text-gray-300 text-lg max-w-lg mb-10 leading-relaxed">
-                        Founder of Baakhapaa, Skill Sikka, HillyChilly and Future Builders. Transforming education, tourism, technology, and local economies in Nepal.
+                        {{ $homeContent['intro'] }}
                     </p>
                     <div class="flex flex-wrap items-center gap-6">
-                        <a href="#projects" class="bg-[#D4AF37] text-[#0b0e12] px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20">
-                            Explore My Projects
+                        <a href="{{ \App\Models\Setting::linkHref($homeContent['primary_button_url']) }}" @if(str_starts_with($homeContent['primary_button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="bg-[#D4AF37] text-[#0b0e12] px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20">
+                            {{ $homeContent['primary_button_label'] }}
                         </a>
                         <button type="button" data-open-work="education" class="notranslate inline-flex border border-[#D4AF37] text-[#D4AF37] px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all" translate="no">
                             Work With Me
                         </button>
-                        <a href="#about" class="text-[#D4AF37] text-sm font-bold flex items-center gap-2 group">
-                            Read My Vision <span class="group-hover:translate-x-1 transition-transform">→</span>
+                        <a href="{{ \App\Models\Setting::linkHref($homeContent['text_link_url']) }}" @if(str_starts_with($homeContent['text_link_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="text-[#D4AF37] text-sm font-bold flex items-center gap-2 group">
+                            {{ $homeContent['text_link_label'] }} <span class="group-hover:translate-x-1 transition-transform">→</span>
                         </a>
                     </div>
                 </div>
                 <div class="lg:text-right pb-4">
-                    <div class="font-serif italic text-5xl lg:text-7xl mb-2 drop-shadow-lg text-[#D4AF37]">Rakesh Rajbhat</div>
-                    <p class="text-xs tracking-[0.35em] font-medium text-white/70 uppercase">For the root. For the youth. For the nation.</p>
+                    <div class="font-serif italic text-5xl lg:text-7xl mb-2 drop-shadow-lg text-[#D4AF37]">{{ $homeContent['name'] }}</div>
+                    <p class="text-xs tracking-[0.35em] font-medium text-white/70 uppercase">{{ $homeContent['tagline'] }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Me -->
+    <section id="about-me" class="py-24 bg-white text-[#1e1e1a] scroll-mt-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+                <div class="lg:col-span-5">
+                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-5 uppercase">{{ $aboutContent['label'] }}</p>
+                    <h2 class="text-5xl lg:text-6xl font-serif font-bold leading-[1.05]">
+                        {{ $aboutContent['heading_line_1'] }}<br>{{ $aboutContent['heading_line_2'] }}
+                    </h2>
+                </div>
+                <div class="lg:col-span-7">
+                    <div class="max-w-lg lg:pt-2">
+                        <div class="space-y-6 text-[#3a3a34] leading-relaxed">
+                            <p>{{ $aboutContent['paragraph_1'] }}</p>
+                            <p>{{ $aboutContent['paragraph_2'] }}</p>
+                        </div>
+                        @if(!empty($aboutContent['facts']))
+                            <div class="mt-10 grid grid-cols-2 gap-x-8 gap-y-6">
+                                @foreach($aboutContent['facts'] as $fact)
+                                    <div>
+                                        <p class="font-bold text-[#1e1e1a]">{{ $fact['title'] }}</p>
+                                        <p class="text-sm text-[#6a6a62] mt-1">{{ $fact['caption'] }}</p>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -291,163 +328,127 @@
 <section id="research" class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a] scroll-mt-20">
     <div class="max-w-7xl mx-auto px-6">
         <!-- Section Title -->
-        <div class="text-center mb-16">
-            <div class="inline-flex items-center gap-2 bg-[#D4AF37]/10 px-4 py-2 rounded-full mb-4">
-                <span class="text-[#D4AF37]">✦</span>
-                <span class="text-xs font-semibold text-[#D4AF37] uppercase tracking-widest">Knowledge & Insights</span>
-            </div>
-            <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#1e1e1a] leading-tight">
-                Stories, Ideas &amp; <br class="hidden sm:block">
-                <span class="text-[#D4AF37]">Research</span> That Matters
-            </h2>
-            <p class="text-[#5a5a52] mt-4 max-w-2xl mx-auto text-lg leading-relaxed">
-                Exploring ideas, frameworks, and stories that shape Nepal's future — 
-                <span class="text-[#1e1e1a] font-medium">one insight at a time.</span>
-            </p>
+        @php
+            $researchSection = \App\Models\Setting::getResearchSection();
+        @endphp
+        <div class="text-center mb-10">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#1e1e1a] leading-tight">{{ $researchSection['title'] }}</h2>
+            <p class="text-[#5a5a52] mt-4 max-w-2xl mx-auto text-lg leading-relaxed">{{ $researchSection['paragraph'] }}</p>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            @php
-                $categories = [
-                    'vision' => [
-                        'label' => 'Vision for Nepal', 
-                        'button_text' => 'Explore the Vision', 
-                        'icon' => 'fa-eye',
-                        'color' => 'amber',
-                        'emoji' => '🌟',
-                        'description' => 'Big ideas for a better tomorrow'
-                    ],
-                    'research' => [
-                        'label' => 'Research & Papers', 
-                        'button_text' => 'Explore Research', 
-                        'icon' => 'fa-book',
-                        'color' => 'blue',
-                        'emoji' => '📚',
-                        'description' => 'Evidence-based insights'
-                    ],
-                    'media' => [
-                        'label' => 'Media & Stories', 
-                        'button_text' => 'Watch & Listen', 
-                        'icon' => 'fa-video',
-                        'color' => 'purple',
-                        'emoji' => '🎬',
-                        'description' => 'Inspiring stories from the field'
-                    ]
-                ];
-            @endphp
+        <div class="mb-12 flex flex-wrap items-center justify-center gap-3" id="researchFilters">
+            <button type="button" data-research-filter="all" class="research-pill inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-[#1e1e1a] shadow-sm transition" aria-pressed="true">
+                <i class="fa-solid fa-table-cells text-[#1e1e1a]" aria-hidden="true"></i>
+                All
+            </button>
+            <button type="button" data-research-filter="vision" class="research-pill inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#4a4a42] shadow-sm transition" aria-pressed="false">
+                <i class="fa-solid fa-eye text-[#D4AF37]" aria-hidden="true"></i>
+                Vision
+            </button>
+            <button type="button" data-research-filter="research" class="research-pill inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#4a4a42] shadow-sm transition" aria-pressed="false">
+                <i class="fa-solid fa-file-lines text-[#D4AF37]" aria-hidden="true"></i>
+                Research
+            </button>
+            <button type="button" data-research-filter="media" class="research-pill inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#4a4a42] shadow-sm transition" aria-pressed="false">
+                <i class="fa-solid fa-video text-[#D4AF37]" aria-hidden="true"></i>
+                Media
+            </button>
+            <button type="button" data-research-filter="blog" class="research-pill inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#4a4a42] shadow-sm transition" aria-pressed="false">
+                <i class="fa-solid fa-newspaper text-[#D4AF37]" aria-hidden="true"></i>
+                Blog
+            </button>
+        </div>
 
-            @foreach($categories as $key => $category)
+        @php
+            $categories = [
+                'vision' => [
+                    'label' => 'Vision for Nepal',
+                    'icon' => 'fa-eye',
+                    'emoji' => '🌟',
+                    'description' => 'Big ideas for a better tomorrow',
+                ],
+                'research' => [
+                    'label' => 'Research & Papers',
+                    'icon' => 'fa-book',
+                    'emoji' => '📚',
+                    'description' => 'Evidence-based insights',
+                ],
+                'media' => [
+                    'label' => 'Media & Stories',
+                    'icon' => 'fa-video',
+                    'emoji' => '🎬',
+                    'description' => 'Inspiring stories from the field',
+                ],
+                'blog' => [
+                    'label' => 'Blog',
+                    'icon' => 'fa-newspaper',
+                    'emoji' => '📰',
+                    'description' => 'Three featured stories',
+                ],
+            ];
+            $homeBlogs = isset($featuredBlogs) ? $featuredBlogs->take(3) : collect();
+            $spotlightResearch = $spotlightResearch ?? collect();
+        @endphp
+
+        <div data-research-panel="all" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            @foreach(['vision', 'research'] as $key)
+                @php $category = $categories[$key]; @endphp
                 <div class="space-y-5">
-                    <!-- Category Header -->
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
-                            <i class="fas {{ $category['icon'] }} text-sm"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold tracking-widest uppercase text-[#4a4a42]">
-                                {{ $category['label'] }}
-                            </p>
-                            <p class="text-[10px] text-[#8a8a82]">{{ $category['description'] }}</p>
-                        </div>
-                        @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
-                            <span class="ml-auto px-2.5 py-1 text-[9px] font-medium bg-gradient-to-r from-[#D4AF37]/20 to-[#D4AF37]/10 text-[#D4AF37] rounded-full flex items-center gap-1">
-                                <i class="fas fa-star text-[8px]"></i> Featured
-                            </span>
-                        @endif
-                    </div>
-
-                    @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
-                        @foreach($featuredResearch[$key] as $item)
-                            <div class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100/50 hover:border-[#D4AF37]/20">
-                                <!-- Image/Video Section -->
-                                <div class="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-50 overflow-hidden cursor-pointer" onclick="openResearchDetail({{ $item->id }})">
-                                    @if($item->video_url || $item->video_file)
-                                        <!-- Video Play Button -->
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center cursor-pointer z-10 group-hover:bg-black/40 transition-all duration-500" onclick="event.stopPropagation(); playVideo(this, '{{ $item->id }}')">
-                                            <div class="w-14 h-14 bg-[#D4AF37] rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-all duration-300">
-                                                <svg class="w-6 h-6 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                                                    <path d="M8 5v14l11-7z"/>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        @if($item->video_file)
-                                            <video class="w-full h-full object-cover" preload="metadata">
-                                                <source src="{{ $item->video_file }}#t=0.1" type="video/mp4">
-                                            </video>
-                                        @elseif($item->video_url)
-                                            <img src="{{ $item->video_thumbnail ?: $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                                        @endif
-                                    @elseif($item->image_url)
-                                        <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                                    @else
-                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#D4AF37]/5 to-[#D4AF37]/10">
-                                            <span class="text-5xl opacity-20">{{ $category['emoji'] }}</span>
-                                        </div>
-                                    @endif
-                                    
-                                    <!-- Featured Badge -->
-                                    <div class="absolute top-3 right-3 z-10">
-                                        <span class="px-2.5 py-1 bg-[#D4AF37] text-[#0b0e12] text-[10px] font-bold rounded-full flex items-center gap-1 shadow-lg shadow-[#D4AF37]/20">
-                                            <i class="fas fa-star text-[8px]"></i> Featured
-                                        </span>
-                                    </div>
-                                    
-                                    <!-- Category Badge -->
-                                    <div class="absolute bottom-3 left-3 z-10">
-                                        <span class="px-2.5 py-1 bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium rounded-full flex items-center gap-1 border border-white/10">
-                                            <i class="fas {{ $category['icon'] }} text-[8px]"></i>
-                                            {{ $category['label'] }}
-                                        </span>
-                                    </div>
-                                </div>
-                                
-                                <!-- Content -->
-                                <div class="p-5">
-                                    <h3 class="text-lg font-serif font-bold text-[#1e1e1a] mb-2 group-hover:text-[#D4AF37] transition-colors duration-300 line-clamp-2 cursor-pointer" onclick="openResearchDetail({{ $item->id }})">
-                                        {{ $item->title }}
-                                    </h3>
-                                    
-                                    <p class="text-sm text-[#5a5a52] leading-relaxed line-clamp-2">
-                                        {{ $item->description }}
-                                    </p>
-                                    
-                                    <div class="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
-                                        <button onclick="openResearchDetail({{ $item->id }})" 
-                                                class="text-[#D4AF37] text-sm font-medium hover:text-[#c4a030] transition flex items-center gap-2 group/btn">
-                                            <span>Read the story</span>
-                                            <span class="group-hover/btn:translate-x-1 transition-transform">→</span>
-                                        </button>
-                                        
-                                        <div class="flex items-center gap-2">
-                                            @if($item->link_url)
-                                                <a href="{{ $item->link_url }}" target="_blank" rel="noopener noreferrer" 
-                                                   class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#D4AF37]/10 flex items-center justify-center text-gray-400 hover:text-[#D4AF37] transition-colors duration-300">
-                                                    <i class="fas fa-external-link-alt text-xs"></i>
-                                                </a>
-                                            @endif
-                                            @if($item->video_url || $item->video_file)
-                                                <button onclick="event.stopPropagation(); playVideo(this, '{{ $item->id }}')" 
-                                                        class="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#D4AF37]/10 flex items-center justify-center text-gray-400 hover:text-[#D4AF37] transition-colors duration-300">
-                                                    <i class="fas fa-play text-xs"></i>
-                                                </button>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+                    @include('partials.home-study-heading', ['category' => $category])
+                    @if(isset($spotlightResearch[$key]) && $spotlightResearch[$key]->isNotEmpty())
+                        @include('partials.home-research-card', ['item' => $spotlightResearch[$key]->first(), 'category' => $category])
                     @else
-                        <!-- Empty State -->
-                        <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100/50 hover:shadow-md transition-all duration-300">
-                            <div class="aspect-video bg-gradient-to-br from-gray-100 to-gray-50 rounded-xl overflow-hidden mb-4 flex items-center justify-center">
-                                <span class="text-5xl opacity-20">{{ $category['emoji'] }}</span>
-                            </div>
-                            <p class="text-sm text-[#5a5a52] font-medium">No featured content yet</p>
-                            <p class="text-xs text-[#8a8a82] mt-1">Check back soon for updates</p>
+                        <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100/50">
+                            <p class="text-sm text-[#5a5a52] font-medium">No featured item yet</p>
                         </div>
                     @endif
                 </div>
             @endforeach
+            <div class="space-y-5">
+                @include('partials.home-study-heading', ['category' => $categories['blog']])
+                @if($homeBlogs->isNotEmpty())
+                    @include('partials.home-blog-card', ['blog' => $homeBlogs->first()])
+                @else
+                    <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100/50">
+                        <p class="text-sm text-[#5a5a52] font-medium">No featured blogs yet</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        @foreach(['vision', 'research', 'media'] as $key)
+            @php $category = $categories[$key]; @endphp
+            <div data-research-panel="{{ $key }}" class="hidden">
+                <div class="mb-5">
+                    @include('partials.home-study-heading', ['category' => $category])
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
+                        @foreach($featuredResearch[$key]->take(3) as $item)
+                            @include('partials.home-research-card', ['item' => $item, 'category' => $category])
+                        @endforeach
+                    @else
+                        <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100/50">
+                            <p class="text-sm text-[#5a5a52] font-medium">Nothing added to home yet</p>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @endforeach
+
+        <div data-research-panel="blog" class="hidden">
+            <div class="mb-5">
+                @include('partials.home-study-heading', ['category' => $categories['blog']])
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                @forelse($homeBlogs as $blog)
+                    @include('partials.home-blog-card', ['blog' => $blog])
+                @empty
+                    <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100/50">
+                        <p class="text-sm text-[#5a5a52] font-medium">No featured blogs yet</p>
+                    </div>
+                @endforelse
+            </div>
         </div>
         
         <!-- View All Button -->
@@ -460,6 +461,29 @@
             <p class="text-xs text-[#8a8a82] mt-3">Discover insights, stories, and ideas that inspire change</p>
         </div>
     </div>
+    <script>
+        document.querySelectorAll('[data-research-filter]').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const filter = button.getAttribute('data-research-filter');
+                document.querySelectorAll('[data-research-filter]').forEach(function (item) {
+                    const active = item === button;
+                    item.classList.toggle('bg-[#D4AF37]', active);
+                    item.classList.toggle('text-[#1e1e1a]', active);
+                    item.classList.toggle('bg-white', !active);
+                    item.classList.toggle('text-[#4a4a42]', !active);
+                    item.setAttribute('aria-pressed', active ? 'true' : 'false');
+                    const icon = item.querySelector('i');
+                    if (icon) {
+                        icon.classList.toggle('text-[#1e1e1a]', active);
+                        icon.classList.toggle('text-[#D4AF37]', !active);
+                    }
+                });
+                document.querySelectorAll('[data-research-panel]').forEach(function (panel) {
+                    panel.classList.toggle('hidden', panel.getAttribute('data-research-panel') !== filter);
+                });
+            });
+        });
+    </script>
 </section>
 
 <!-- Research Detail Modal -->
@@ -779,7 +803,7 @@ document.addEventListener('keydown', function(e) {
 }
 </style>
 
-    <!-- FEATURED BLOGS SECTION -->
+    {{-- FEATURED BLOGS SECTION
     <section id="featured-blogs" class="py-24 bg-[#fff6e0] scroll-mt-20">
         <div class="max-w-7xl mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
@@ -866,6 +890,7 @@ document.addEventListener('keydown', function(e) {
             @endif
         </div>
     </section>
+    --}}
 
     <section id="gallery" class="gallery-section py-24 scroll-mt-20">
         <div class="max-w-7xl mx-auto px-6">
