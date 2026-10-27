@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Admin;
 use App\Models\Setting;
 use App\Support\MediaStorage;
+use App\Support\SiteFavicon;
 
 class SettingsController extends Controller
 {
@@ -106,6 +107,16 @@ class SettingsController extends Controller
             $this->deleteStoredAsset(Setting::getValue('site_favicon'));
             $faviconPath = $request->file('site_favicon')->store('site-settings', 'media');
             Setting::setValue('site_favicon', Storage::disk('media')->url($faviconPath));
+            $localFile = null;
+            try {
+                $candidate = Storage::disk('media')->path($faviconPath);
+                if (is_file($candidate)) {
+                    $localFile = $candidate;
+                }
+            } catch (\Throwable $exception) {
+                $localFile = null;
+            }
+            SiteFavicon::publish($localFile);
         }
 
         Setting::setValue('site_name', $validated['site_name'] ?: 'Rakesh Rajbhat');

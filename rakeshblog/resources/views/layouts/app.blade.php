@@ -19,7 +19,7 @@
     <meta name="robots" content="{{ $robots }}">
     <meta name="theme-color" content="#0b0e12">
     <link rel="canonical" href="{{ $canonicalUrl }}">
-    <link rel="icon" href="{{ $siteSettings['site_favicon'] ?: asset('favicon.ico') }}" sizes="any">
+    @include('partials.favicon')
     <meta property="og:site_name" content="{{ $siteName }}">
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:title" content="{{ $pageTitle }}">
