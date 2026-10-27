@@ -172,7 +172,7 @@
                                     </div>
                                     <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
                                     
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-16 overflow-y-auto pr-1"> 
+                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1"> 
                                         {{ $project->description ?? $project->long_description ?? $project->short_description }}
                                     </p>
                                 </div>
@@ -224,7 +224,7 @@
                                     </div>
                                     <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
                                     
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-16 overflow-y-auto pr-1"> 
+                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1"> 
                                         {{ $project->description ?? $project->long_description ?? $project->short_description }}
                                     </p>
                                 </div>
@@ -994,13 +994,14 @@ document.addEventListener('keydown', function(e) {
 
 .tooltip-popup {
     position: absolute;
-    inset: 0;
-    width: auto;
-    min-height: 0;
-    padding: 16px;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    min-height: 380px;
+    padding: 24px;
     background: #ffffff;
     color: #1e1e1a;
-    border-radius: 16px;
+    border-radius: 20px;
     border: 1.5px solid rgba(212, 175, 55, 0.4);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     text-align: left;
@@ -1009,8 +1010,8 @@ document.addEventListener('keydown', function(e) {
     visibility: hidden;
     pointer-events: none;
     overflow: auto;
-    transform: none;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transform: translate(-50%, -50%) scale(0.85);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .tooltip-container:hover .tooltip-popup,
@@ -1018,7 +1019,7 @@ document.addEventListener('keydown', function(e) {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
-    transform: none;
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .tooltip-container.is-open .project-default {
@@ -1044,7 +1045,7 @@ document.addEventListener('keydown', function(e) {
 
 .popup-image {
     width: 100%;
-    height: 72px;
+    height: 140px;
     display: flex;
     align-items: center;
     justify-content: center;

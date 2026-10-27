@@ -1,0 +1,4 @@
+name = "rakeshrajbhat-blog"
+main = "worker/index.js"
+compatibility_date = "2026-10-27"
+workers_dev = true
