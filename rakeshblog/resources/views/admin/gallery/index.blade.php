@@ -24,6 +24,45 @@
         </div>
     @endif
 
+    <div class="bg-[#1a1f26] rounded-2xl border border-white/5 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-white mb-1">Gallery heading</h2>
+        <p class="text-sm text-gray-400 mb-5">This is the label, title, and short paragraph at the top of the gallery on the homepage.</p>
+        <form action="{{ route('admin.gallery.update-section') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-3">
+            @csrf
+            @method('PUT')
+            <div>
+                <label for="gallery_section_label" class="block text-sm text-white/70 mb-2">Label</label>
+                <input id="gallery_section_label" type="text" name="gallery_section_label" value="{{ old('gallery_section_label', $gallerySection['label']) }}" maxlength="40" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                @error('gallery_section_label')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label for="gallery_section_title" class="block text-sm text-white/70 mb-2">Title</label>
+                <input id="gallery_section_title" type="text" name="gallery_section_title" value="{{ old('gallery_section_title', $gallerySection['title']) }}" maxlength="120" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                @error('gallery_section_title')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label for="gallery_section_paragraph" class="block text-sm text-white/70 mb-2">Short paragraph</label>
+                <textarea id="gallery_section_paragraph" name="gallery_section_paragraph" rows="3" maxlength="400" required class="w-full h-24 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none resize-y">{{ old('gallery_section_paragraph', $gallerySection['paragraph']) }}</textarea>
+                @error('gallery_section_paragraph')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+                <button type="submit" class="mt-3 bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition">Save heading</button>
+            </div>
+            <div>
+                <label for="gallery_section_empty" class="block text-sm text-white/70 mb-2">Empty message</label>
+                <textarea id="gallery_section_empty" name="gallery_section_empty" rows="3" maxlength="200" required class="w-full h-24 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none resize-y">{{ old('gallery_section_empty', $gallerySection['empty']) }}</textarea>
+                <p class="text-xs text-gray-500 mt-1">Shown when there are no photo collections yet.</p>
+                @error('gallery_section_empty')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        </form>
+    </div>
+
     <div class="bg-[#1a1f26] rounded-xl border border-white/5 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">

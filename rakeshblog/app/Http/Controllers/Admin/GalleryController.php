@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ActivityLogger;
 use App\Http\Controllers\Controller;
 use App\Models\GalleryCollection;
+use App\Models\Setting;
 use App\Models\GalleryImage;
 use App\Support\GalleryImageCompressor;
 use App\Support\MediaStorage;
@@ -22,7 +23,26 @@ class GalleryController extends Controller
             ->ordered()
             ->get();
 
-        return view('admin.gallery.index', compact('collections'));
+        $gallerySection = Setting::getGallerySection();
+
+        return view('admin.gallery.index', compact('collections', 'gallerySection'));
+    }
+
+    public function updateSection(Request $request)
+    {
+        $validated = $request->validate([
+            'gallery_section_label' => 'required|string|max:40',
+            'gallery_section_title' => 'required|string|max:120',
+            'gallery_section_paragraph' => 'required|string|max:400',
+            'gallery_section_empty' => 'required|string|max:200',
+        ]);
+
+        Setting::setValue('gallery_section_label', trim(strip_tags($validated['gallery_section_label'])));
+        Setting::setValue('gallery_section_title', trim(strip_tags($validated['gallery_section_title'])));
+        Setting::setValue('gallery_section_paragraph', trim(strip_tags($validated['gallery_section_paragraph'])));
+        Setting::setValue('gallery_section_empty', trim(strip_tags($validated['gallery_section_empty'])));
+
+        return redirect()->route('admin.gallery.index')->with('success', 'Gallery heading updated.');
     }
 
     public function create()

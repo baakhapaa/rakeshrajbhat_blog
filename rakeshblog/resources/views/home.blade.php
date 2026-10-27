@@ -894,13 +894,16 @@ document.addEventListener('keydown', function(e) {
 
     <section id="gallery" class="gallery-section py-24 scroll-mt-20">
         <div class="max-w-7xl mx-auto px-6">
+            @php
+                $gallerySection = \App\Models\Setting::getGallerySection();
+            @endphp
             <div class="gallery-head">
                 <div>
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-3 uppercase">Gallery</p>
-                    <h2 class="gallery-title font-serif font-bold text-[#1e1e1a] leading-tight">Moments along the way.</h2>
+                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-3 uppercase">{{ $gallerySection['label'] }}</p>
+                    <h2 class="gallery-title font-serif font-bold text-[#1e1e1a] leading-tight">{{ $gallerySection['title'] }}</h2>
                 </div>
                 <p class="gallery-intro text-[#5a5a52] leading-relaxed">
-                    Photographs from community visits, learning programmes, project activities and conversations.
+                    {{ $gallerySection['paragraph'] }}
                 </p>
             </div>
 
@@ -935,7 +938,7 @@ document.addEventListener('keydown', function(e) {
                 </div>
                 <p class="mt-4 text-xs text-[#8a8a82]">Drag or scroll sideways to move through the collections. Select a collection to see every photograph.</p>
             @else
-                <p class="text-sm text-[#8a8a82]">Photographs will appear here as collections are added.</p>
+                <p class="text-sm text-[#8a8a82]">{{ $gallerySection['empty'] }}</p>
             @endif
         </div>
     </section>
