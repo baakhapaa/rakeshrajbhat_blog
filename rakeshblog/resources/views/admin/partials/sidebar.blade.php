@@ -98,7 +98,7 @@
             {{ Str::startsWith(Route::currentRouteName(), 'admin.projects') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
             <span class="flex items-center">
                 <i class="fa-solid fa-diagram-project inline-block w-5 text-center text-base mr-3" aria-hidden="true"></i>
-                Projects
+                Projects &amp; Initiatives
             </span>
         </a>
 

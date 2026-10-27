@@ -37,6 +37,18 @@ class Setting extends Model
             'site_logo' => static::getValue('site_logo'),
             'site_favicon' => static::getValue('site_favicon'),
             'nav_items' => static::getNavItems(),
+            'projects_section' => static::getProjectsSection(),
+        ];
+    }
+
+    public static function getProjectsSection(): array
+    {
+        $label = trim((string) static::getValue('projects_section_label', "What I'm Building"));
+        $title = trim((string) static::getValue('projects_section_title', 'Projects & Initiatives'));
+
+        return [
+            'label' => $label !== '' ? $label : "What I'm Building",
+            'title' => $title !== '' ? $title : 'Projects & Initiatives',
         ];
     }
 

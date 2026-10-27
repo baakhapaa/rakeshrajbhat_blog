@@ -24,6 +24,33 @@
         </div>
     @endif
 
+    <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-white mb-1">Projects &amp; Initiatives heading</h2>
+        <p class="text-sm text-gray-400 mb-5">This is the gold line and the title at the top of the projects section on the homepage.</p>
+
+        <form action="{{ route('admin.projects.update-section') }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            @csrf
+            @method('PUT')
+            <div>
+                <label for="projects_section_label" class="block text-sm text-white/70 mb-2">Short description</label>
+                <input id="projects_section_label" type="text" name="projects_section_label" value="{{ old('projects_section_label', $projectsSection['label']) }}" maxlength="80" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                @error('projects_section_label')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label for="projects_section_title" class="block text-sm text-white/70 mb-2">Title</label>
+                <input id="projects_section_title" type="text" name="projects_section_title" value="{{ old('projects_section_title', $projectsSection['title']) }}" maxlength="120" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                @error('projects_section_title')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            <div class="md:col-span-2">
+                <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition">Save heading</button>
+            </div>
+        </form>
+    </div>
+
     <div class="bg-[#1a1f26] rounded-xl border border-white/5 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full">

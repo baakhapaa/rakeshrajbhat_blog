@@ -251,6 +251,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // ==========================================
         // PROJECTS ROUTES
         // ==========================================
+        Route::put('/projects/section', [ProjectController::class, 'updateSection'])->name('projects.update-section');
         Route::resource('projects', ProjectController::class);
         Route::post('/projects/{id}/toggle-status', [ProjectController::class, 'toggleStatus'])->name('projects.toggle-status');
         Route::post('/projects/reorder', [ProjectController::class, 'reorder'])->name('projects.reorder');
