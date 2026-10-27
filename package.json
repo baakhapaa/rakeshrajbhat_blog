@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "node --eval \"process.exit(0)\""
+  },
+  "devDependencies": {
+    "wrangler": "^4.43.0"
+  }
+}
