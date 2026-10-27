@@ -70,7 +70,13 @@ class Setting extends Model
             ['label' => 'Impact', 'url' => '#impact', 'icon' => 'fa-solid fa-chart-line'],
             ['label' => 'Ideas & Research', 'url' => '#research', 'icon' => 'fa-solid fa-lightbulb'],
             ['label' => 'Blog', 'url' => '#featured-blogs', 'icon' => 'fa-solid fa-newspaper'],
+            ['label' => 'Work With Me', 'url' => '#work-with-me', 'icon' => 'fa-solid fa-handshake'],
         ];
+    }
+
+    public static function navOpensWorkWithMe(string $url): bool
+    {
+        return $url === '#work-with-me';
     }
 
     public static function getNavItems(): array

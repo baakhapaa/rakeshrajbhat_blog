@@ -233,7 +233,7 @@
 <div id="navbarTab" class="navbar-tab {{ $settingsTab === 'navbar' ? '' : 'hidden' }}">
     <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
         <h2 class="text-xl font-semibold text-white mb-2">Navbar</h2>
-        <p class="text-sm text-white/50 mb-6">Change the public menu label and link. Use a section like <span class="text-[#D4AF37]">#projects</span>, a page like <span class="text-[#D4AF37]">/contact</span>, or a full https link.</p>
+        <p class="text-sm text-white/50 mb-6">Change the public menu label and link. Use a section like <span class="text-[#D4AF37]">#projects</span>, a page like <span class="text-[#D4AF37]">/contact</span>, or a full https link. <span class="text-[#D4AF37]">#work-with-me</span> opens the Work With Me popup.</p>
 
         @error('nav_label')
             <p class="mb-4 text-sm text-red-400">{{ $message }}</p>
