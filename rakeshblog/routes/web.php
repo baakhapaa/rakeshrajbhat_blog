@@ -199,7 +199,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // ==========================================
         Route::post('/research/{id}/toggle-status', [ResearchController::class, 'toggleStatus'])->name('research.toggle-status');
         Route::post('/research/{id}/toggle-featured', [ResearchController::class, 'toggleFeatured'])->name('research.toggle-featured');
+        Route::post('/research/{id}/toggle-home', [ResearchController::class, 'toggleHome'])->name('research.toggle-home');
         Route::post('/research/reorder', [ResearchController::class, 'reorder'])->name('research.reorder');
+        Route::put('/research/section', [ResearchController::class, 'updateSection'])->name('research.update-section');
         
         // Then the resource route
         Route::resource('research', ResearchController::class);

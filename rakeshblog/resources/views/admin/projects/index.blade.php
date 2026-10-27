@@ -69,9 +69,13 @@
                             <td class="py-4 px-4 text-sm text-gray-400">{{ $project->order }}</td>
                             <td class="py-4 px-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37]">
-                                        {!! $project->icon_html !!}
-                                    </div>
+                                    @if($project->image)
+                                        <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-10 h-10 rounded-full object-cover border border-white/10 bg-white">
+                                    @else
+                                        <div class="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] text-sm font-bold">
+                                            {{ strtoupper(substr($project->name, 0, 1)) }}
+                                        </div>
+                                    @endif
                                     <span class="text-white font-medium">{{ $project->name }}</span>
                                 </div>
                             </td>

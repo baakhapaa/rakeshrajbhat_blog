@@ -24,6 +24,7 @@ class Research extends Model
         'link_url',
         'is_active',
         'is_featured',
+        'show_on_home',
         'order',
         'category_icon'
     ];
@@ -31,6 +32,7 @@ class Research extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
+        'show_on_home' => 'boolean',
         'order' => 'integer'
     ];
 
@@ -45,15 +47,23 @@ class Research extends Model
             }
         });
 
-        // Ensure only one featured per category
         static::saving(function ($research) {
             if ($research->is_featured) {
-                // Un-feature any other item in the same category
-                self::where('category', $research->category)
-                    ->where('id', '!=', $research->id)
+                static::query()
+                    ->where('category', $research->category)
+                    ->when($research->id, fn ($query) => $query->where('id', '!=', $research->id))
                     ->update(['is_featured' => false]);
             }
         });
+    }
+
+    public static function homeSlotsUsed(string $category, ?int $exceptId = null): int
+    {
+        return static::query()
+            ->where('category', $category)
+            ->where('show_on_home', true)
+            ->when($exceptId, fn ($query) => $query->where('id', '!=', $exceptId))
+            ->count();
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Research;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -38,14 +39,32 @@ class ResearchController extends Controller
         }
 
         // Sorting
-        $sort = $request->get('sort', 'order');
-        $direction = $request->get('direction', 'asc');
-        $query->orderBy($sort, $direction);
+        $sort = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
+        $allowedSorts = ['id', 'title', 'category', 'created_at', 'is_featured'];
+        if (! in_array($sort, $allowedSorts, true)) {
+            $sort = 'created_at';
+        }
+        $query->orderBy($sort, $direction === 'asc' ? 'asc' : 'desc');
 
         // Paginate results (10 per page)
         $researchItems = $query->paginate(10)->withQueryString();
+        $researchSection = Setting::getResearchSection();
 
-        return view('admin.research.index', compact('researchItems'));
+        return view('admin.research.index', compact('researchItems', 'researchSection'));
+    }
+
+    public function updateSection(Request $request)
+    {
+        $validated = $request->validate([
+            'research_section_title' => 'required|string|max:160',
+            'research_section_paragraph' => 'required|string|max:400',
+        ]);
+
+        Setting::setValue('research_section_title', trim(strip_tags($validated['research_section_title'])));
+        Setting::setValue('research_section_paragraph', trim(strip_tags($validated['research_section_paragraph'])));
+
+        return redirect()->route('admin.research.index')->with('success', 'Research section heading updated.');
     }
 
     public function create()
@@ -66,6 +85,7 @@ class ResearchController extends Controller
             'link_url' => 'nullable|url|max:255',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            'show_on_home' => 'boolean',
             'order' => 'integer|min:0',
             'category_icon' => 'nullable|string'
         ]);
@@ -92,6 +112,11 @@ class ResearchController extends Controller
         $validated['slug'] = $slug;
         $validated['is_active'] = $request->has('is_active');
         $validated['is_featured'] = $request->has('is_featured');
+        $validated['show_on_home'] = $request->has('show_on_home');
+
+        if ($redirect = $this->rejectExtraHomeSlot($request, $validated['category'])) {
+            return $redirect;
+        }
 
         $research = Research::create($validated);
 
@@ -126,6 +151,7 @@ class ResearchController extends Controller
             'link_url' => 'nullable|url|max:255',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            'show_on_home' => 'boolean',
             'order' => 'integer|min:0',
             'category_icon' => 'nullable|string'
         ]);
@@ -160,6 +186,11 @@ class ResearchController extends Controller
         $validated['slug'] = $slug;
         $validated['is_active'] = $request->has('is_active');
         $validated['is_featured'] = $request->has('is_featured');
+        $validated['show_on_home'] = $request->has('show_on_home');
+
+        if ($redirect = $this->rejectExtraHomeSlot($request, $validated['category'], $research->id)) {
+            return $redirect;
+        }
 
         $wasActive = (bool) $research->is_active;
         $research->update($validated);
@@ -221,21 +252,20 @@ class ResearchController extends Controller
     {
         try {
             $research = Research::findOrFail($id);
-            
-            // If setting to featured, un-feature all others in same category
-            if (!$research->is_featured) {
+
+            if (! $research->is_featured) {
                 Research::where('category', $research->category)
                     ->where('id', '!=', $research->id)
                     ->update(['is_featured' => false]);
             }
-            
-            $research->is_featured = !$research->is_featured;
+
+            $research->is_featured = ! $research->is_featured;
             $research->save();
 
             return response()->json([
                 'success' => true,
                 'is_featured' => $research->is_featured,
-                'message' => 'Featured status toggled successfully'
+                'message' => $research->is_featured ? 'Marked as featured.' : 'Removed from featured.',
             ]);
         } catch (\Exception $e) {
             Log::error('Toggle Featured Error: ' . $e->getMessage());
@@ -244,6 +274,48 @@ class ResearchController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function toggleHome($id)
+    {
+        try {
+            $research = Research::findOrFail($id);
+
+            if (! $research->show_on_home && Research::homeSlotsUsed($research->category, $research->id) >= 3) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This category already has 3 items on the homepage. Remove one before adding another.',
+                ], 422);
+            }
+
+            $research->show_on_home = ! $research->show_on_home;
+            $research->save();
+
+            return response()->json([
+                'success' => true,
+                'show_on_home' => $research->show_on_home,
+                'message' => $research->show_on_home ? 'Added to homepage.' : 'Removed from homepage.',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Toggle Home Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    private function rejectExtraHomeSlot(Request $request, string $category, ?int $exceptId = null)
+    {
+        if (! $request->has('show_on_home')) {
+            return null;
+        }
+
+        if (Research::homeSlotsUsed($category, $exceptId) >= 3) {
+            return back()->withInput()->with('error', 'This category already has 3 items on the homepage. Remove one before adding another.');
+        }
+
+        return null;
     }
 
     public function reorder(Request $request)

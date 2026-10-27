@@ -55,6 +55,9 @@
             <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-white/70 text-[#4a4a42] hover:bg-[#D4AF37] hover:text-[#0b0e12] hover:shadow-lg hover:shadow-[#D4AF37]/20" data-filter="Media">
                 <i class="fas fa-video mr-2"></i> Media
             </button>
+            <a href="{{ route('blog') }}" class="px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-white/70 text-[#4a4a42] hover:bg-[#D4AF37] hover:text-[#0b0e12] hover:shadow-lg hover:shadow-[#D4AF37]/20">
+                <i class="fas fa-newspaper mr-2"></i> Blog
+            </a>
         </div>
 
         <!-- Research Cards -->

@@ -152,6 +152,17 @@ class Setting extends Model
         ];
     }
 
+    public static function getResearchSection(): array
+    {
+        $title = trim((string) static::getValue('research_section_title', 'Stories, Ideas & Research That Matters'));
+        $paragraph = trim((string) static::getValue('research_section_paragraph', "Exploring ideas, frameworks, and stories that shape Nepal's future — one insight at a time."));
+
+        return [
+            'title' => $title !== '' ? $title : 'Stories, Ideas & Research That Matters',
+            'paragraph' => $paragraph !== '' ? $paragraph : "Exploring ideas, frameworks, and stories that shape Nepal's future — one insight at a time.",
+        ];
+    }
+
     public static function navIconOptions(): array
     {
         return [
