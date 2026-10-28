@@ -21,10 +21,10 @@ class HomeContentController extends Controller
     public function updateHome(Request $request)
     {
         $validated = $request->validate([
-            'eyebrow' => 'required|string|max:120',
-            'headline_line_1' => 'required|string|max:120',
-            'headline_line_2' => 'required|string|max:120',
-            'headline_line_3' => 'required|string|max:120',
+            'eyebrow' => 'nullable|string|max:120',
+            'headline_line_1' => 'nullable|string|max:120',
+            'headline_line_2' => 'nullable|string|max:120',
+            'headline_line_3' => 'nullable|string|max:120',
             'intro' => 'required|string|max:1000',
             'primary_button_label' => 'required|string|max:80',
             'primary_button_url' => 'required|string|max:500',
@@ -67,10 +67,10 @@ class HomeContentController extends Controller
         }
 
         Setting::setValue('home_content', Setting::encodeJson([
-            'eyebrow' => $validated['eyebrow'],
-            'headline_line_1' => $validated['headline_line_1'],
-            'headline_line_2' => $validated['headline_line_2'],
-            'headline_line_3' => $validated['headline_line_3'],
+            'eyebrow' => Setting::nullableHomeString($validated['eyebrow'] ?? null),
+            'headline_line_1' => Setting::nullableHomeString($validated['headline_line_1'] ?? null),
+            'headline_line_2' => Setting::nullableHomeString($validated['headline_line_2'] ?? null),
+            'headline_line_3' => Setting::nullableHomeString($validated['headline_line_3'] ?? null),
             'intro' => $validated['intro'],
             'primary_button_label' => $validated['primary_button_label'],
             'primary_button_url' => $primaryUrl,

@@ -47,8 +47,8 @@
             <h2 class="text-xl font-semibold text-white mb-6">Hero text</h2>
 
             <div class="mb-4">
-                <label for="eyebrow" class="block text-white/70 text-sm font-medium mb-2">Eyebrow</label>
-                <input type="text" id="eyebrow" name="eyebrow" value="{{ old('eyebrow', $home['eyebrow']) }}"
+                <label for="eyebrow" class="block text-white/70 text-sm font-medium mb-2">Eyebrow <span class="text-white/40 font-normal">(optional)</span></label>
+                <input type="text" id="eyebrow" name="eyebrow" value="{{ old('eyebrow', $home['eyebrow'] ?? '') }}"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                 @error('eyebrow')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -56,8 +56,8 @@
             </div>
 
             <div class="mb-4">
-                <label for="headline_line_1" class="block text-white/70 text-sm font-medium mb-2">Headline line 1</label>
-                <input type="text" id="headline_line_1" name="headline_line_1" value="{{ old('headline_line_1', $home['headline_line_1']) }}"
+                <label for="headline_line_1" class="block text-white/70 text-sm font-medium mb-2">Headline line 1 <span class="text-white/40 font-normal">(optional)</span></label>
+                <input type="text" id="headline_line_1" name="headline_line_1" value="{{ old('headline_line_1', $home['headline_line_1'] ?? '') }}"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                 @error('headline_line_1')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -65,8 +65,8 @@
             </div>
 
             <div class="mb-4">
-                <label for="headline_line_2" class="block text-white/70 text-sm font-medium mb-2">Headline line 2 <span class="text-white/40">(shown in italic)</span></label>
-                <input type="text" id="headline_line_2" name="headline_line_2" value="{{ old('headline_line_2', $home['headline_line_2']) }}"
+                <label for="headline_line_2" class="block text-white/70 text-sm font-medium mb-2">Headline line 2 <span class="text-white/40 font-normal">(optional, shown in italic)</span></label>
+                <input type="text" id="headline_line_2" name="headline_line_2" value="{{ old('headline_line_2', $home['headline_line_2'] ?? '') }}"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                 @error('headline_line_2')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -74,8 +74,8 @@
             </div>
 
             <div class="mb-4">
-                <label for="headline_line_3" class="block text-white/70 text-sm font-medium mb-2">Headline line 3</label>
-                <input type="text" id="headline_line_3" name="headline_line_3" value="{{ old('headline_line_3', $home['headline_line_3']) }}"
+                <label for="headline_line_3" class="block text-white/70 text-sm font-medium mb-2">Headline line 3 <span class="text-white/40 font-normal">(optional)</span></label>
+                <input type="text" id="headline_line_3" name="headline_line_3" value="{{ old('headline_line_3', $home['headline_line_3'] ?? '') }}"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                 @error('headline_line_3')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>

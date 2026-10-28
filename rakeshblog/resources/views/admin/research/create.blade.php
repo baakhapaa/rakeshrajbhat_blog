@@ -48,9 +48,9 @@
                 </label>
                 <select id="category" name="category" required class="w-full px-4 py-2.5 bg-[#0b0e12] border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                     <option value="" class="text-gray-500">Select Category</option>
-                    <option value="Vision" {{ old('category') == 'Vision' ? 'selected' : '' }}>Vision</option>
-                    <option value="Research Papers" {{ old('category') == 'Research Papers' ? 'selected' : '' }}>Research Papers</option>
-                    <option value="Media" {{ old('category') == 'Media' ? 'selected' : '' }}>Media</option>
+                    @foreach($researchCategories as $value => $label)
+                        <option value="{{ $value }}" {{ old('category') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
                 </select>
                 @error('category')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
