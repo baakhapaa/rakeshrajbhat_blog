@@ -357,6 +357,17 @@ class Setting extends Model
         ];
     }
 
+    public static function getStatsSection(): array
+    {
+        $title = trim((string) static::getValue('stats_section_title', "What I've done so far"));
+        $description = trim((string) static::getValue('stats_section_description', 'Turning Ideas Into Impact'));
+
+        return [
+            'title' => $title !== '' ? $title : "What I've done so far",
+            'description' => $description !== '' ? $description : 'Turning Ideas Into Impact',
+        ];
+    }
+
     public static function getResearchSection(): array
     {
         $title = trim((string) static::getValue('research_section_title', 'Stories, Ideas & Research That Matters'));

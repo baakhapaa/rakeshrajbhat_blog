@@ -299,8 +299,9 @@
     <section id="impact" class="py-20 bg-[#0c1016] scroll-mt-20">
         <div class="max-w-7xl mx-auto px-6">
             <div class="mb-12">
-                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">What I've done so far</p>
-                <h2 class="text-4xl font-serif font-bold text-white/95">Turning Ideas Into Impact</h2>
+                @php $statsSection = \App\Models\Setting::getStatsSection(); @endphp
+                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">{{ $statsSection['title'] }}</p>
+                <h2 class="text-4xl font-serif font-bold text-white/95">{{ $statsSection['description'] }}</h2>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 border border-white/5 rounded-xl overflow-hidden divide-y divide-white/5 sm:divide-y-0 sm:divide-x divide-white/5">
                 @forelse($stats ?? [] as $stat)

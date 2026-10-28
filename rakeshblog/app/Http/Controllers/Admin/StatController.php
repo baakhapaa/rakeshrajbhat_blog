@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Stat;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class StatController extends Controller
@@ -11,7 +12,22 @@ class StatController extends Controller
     public function index()
     {
         $stats = Stat::ordered()->get();
-        return view('admin.stats.index', compact('stats'));
+        $statsSection = Setting::getStatsSection();
+
+        return view('admin.stats.index', compact('stats', 'statsSection'));
+    }
+
+    public function updateSection(Request $request)
+    {
+        $validated = $request->validate([
+            'stats_section_title' => 'required|string|max:80',
+            'stats_section_description' => 'required|string|max:160',
+        ]);
+
+        Setting::setValue('stats_section_title', trim(strip_tags($validated['stats_section_title'])));
+        Setting::setValue('stats_section_description', trim(strip_tags($validated['stats_section_description'])));
+
+        return redirect()->route('admin.stats.index')->with('success', 'Stats heading updated.');
     }
 
     public function create()

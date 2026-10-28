@@ -196,6 +196,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('/delete-image', [ImageController::class, 'delete'])->name('delete-image');
         
         // Resource Routes
+        Route::put('/stats/section', [StatController::class, 'updateSection'])->name('stats.update-section');
         Route::resource('stats', StatController::class);       
         Route::resource('team-members', TeamMemberController::class);
         Route::put('/blogs/page', [AdminBlogController::class, 'updatePage'])->name('blogs.update-page');
