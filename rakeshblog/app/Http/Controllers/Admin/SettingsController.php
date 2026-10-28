@@ -20,6 +20,7 @@ class SettingsController extends Controller
         $settings = Setting::getSiteSettings();
         $navIcons = Setting::navIconOptions();
         $navItems = $settings['nav_items'];
+        $footer = Setting::getFooter();
 
         if (is_array(old('nav_label'))) {
             $navItems = [];
@@ -32,7 +33,21 @@ class SettingsController extends Controller
             }
         }
 
-        return view('admin.settings.index', compact('admin', 'settings', 'navIcons', 'navItems'));
+        if (is_array(old('social_label'))) {
+            $footer['socials'] = [];
+            foreach (old('social_label') as $index => $label) {
+                $footer['socials'][] = ['label' => $label, 'url' => old('social_url.'.$index)];
+            }
+        }
+
+        if (is_array(old('page_label'))) {
+            $footer['pages'] = [];
+            foreach (old('page_label') as $index => $label) {
+                $footer['pages'][] = ['label' => $label, 'url' => old('page_url.'.$index)];
+            }
+        }
+
+        return view('admin.settings.index', compact('admin', 'settings', 'navIcons', 'navItems', 'footer'));
     }
 
     public function updateProfile(Request $request)
@@ -169,6 +184,88 @@ class SettingsController extends Controller
         Setting::setValue('nav_items', json_encode($items, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
         return redirect()->route('admin.settings', ['tab' => 'navbar'])->with('success', 'Navigation updated successfully!');
+    }
+
+    public function updateFooter(Request $request)
+    {
+        $validated = $request->validate([
+            'footer_name' => 'required|string|max:80',
+            'footer_tagline' => 'required|string|max:160',
+            'footer_intro' => 'required|string|max:400',
+            'footer_copyright' => 'required|string|max:160',
+            'footer_logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'remove_footer_logo' => 'nullable|boolean',
+            'socials_heading' => 'required|string|max:40',
+            'pages_heading' => 'required|string|max:40',
+            'newsletter_heading' => 'required|string|max:40',
+            'newsletter_note' => 'required|string|max:240',
+            'social_label' => 'nullable|array|max:12',
+            'social_label.*' => 'nullable|string|max:40',
+            'social_url' => 'nullable|array|max:12',
+            'social_url.*' => 'nullable|string|max:255',
+            'page_label' => 'nullable|array|max:12',
+            'page_label.*' => 'nullable|string|max:40',
+            'page_url' => 'nullable|array|max:12',
+            'page_url.*' => 'nullable|string|max:255',
+        ]);
+
+        $socials = $this->footerLinks($validated['social_label'] ?? [], $validated['social_url'] ?? []);
+        $pages = $this->footerLinks($validated['page_label'] ?? [], $validated['page_url'] ?? []);
+
+        if ($socials === false || $pages === false) {
+            return redirect()
+                ->route('admin.settings', ['tab' => 'footer'])
+                ->withErrors(['footer_name' => 'Each social and page link needs a label and a safe link (/page or https://).'])
+                ->withInput();
+        }
+
+        if ($request->boolean('remove_footer_logo')) {
+            $this->deleteStoredAsset(Setting::getValue('footer_logo'));
+            Setting::setValue('footer_logo', '');
+        }
+
+        if ($request->hasFile('footer_logo')) {
+            $this->deleteStoredAsset(Setting::getValue('footer_logo'));
+            $logoPath = $request->file('footer_logo')->store('site-settings', 'media');
+            Setting::setValue('footer_logo', Storage::disk('media')->url($logoPath));
+        }
+
+        Setting::setValue('footer_content', Setting::encodeJson([
+            'name' => trim(strip_tags($validated['footer_name'])),
+            'tagline' => trim(strip_tags($validated['footer_tagline'])),
+            'intro' => trim(strip_tags($validated['footer_intro'])),
+            'copyright' => trim(strip_tags($validated['footer_copyright'])),
+            'socials_heading' => trim(strip_tags($validated['socials_heading'])),
+            'pages_heading' => trim(strip_tags($validated['pages_heading'])),
+            'newsletter_heading' => trim(strip_tags($validated['newsletter_heading'])),
+            'newsletter_note' => trim(strip_tags($validated['newsletter_note'])),
+            'socials' => $socials,
+            'pages' => $pages,
+        ]));
+
+        return redirect()->route('admin.settings', ['tab' => 'footer'])->with('success', 'Footer updated.');
+    }
+
+    private function footerLinks(array $labels, array $urls): array|false
+    {
+        $items = [];
+
+        foreach ($labels as $index => $label) {
+            $label = trim(strip_tags((string) $label));
+            $url = trim((string) ($urls[$index] ?? ''));
+
+            if ($label === '' && $url === '') {
+                continue;
+            }
+
+            if ($label === '' || $url === '' || ! Setting::navUrlIsSafe($url)) {
+                return false;
+            }
+
+            $items[] = ['label' => $label, 'url' => $url];
+        }
+
+        return array_slice($items, 0, 12);
     }
 
     private function deleteStoredAsset(?string $url): void
