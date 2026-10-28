@@ -143,11 +143,11 @@ class SettingsController extends Controller
     public function updateNavigation(Request $request)
     {
         $validated = $request->validate([
-            'nav_label' => 'required|array|min:1|max:8',
+            'nav_label' => 'required|array|min:1|max:12',
             'nav_label.*' => 'nullable|string|max:40',
-            'nav_url' => 'required|array|max:8',
+            'nav_url' => 'required|array|max:12',
             'nav_url.*' => 'nullable|string|max:255',
-            'nav_icon' => 'nullable|array|max:8',
+            'nav_icon' => 'nullable|array|max:12',
             'nav_icon.*' => 'nullable|string|max:60',
         ]);
 
