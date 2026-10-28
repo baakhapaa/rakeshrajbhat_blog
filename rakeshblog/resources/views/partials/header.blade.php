@@ -2,39 +2,43 @@
     $workNavItem = collect($siteSettings['nav_items'] ?? [])->first(function ($item) {
         return \App\Models\Setting::navOpensWorkWithMe($item['url'] ?? '');
     });
+    $navTagline = trim((string) ($homeContent['eyebrow'] ?? 'Founder · Builder · Future Maker'));
+    $workLabel = trim((string) ($workNavItem['label'] ?? 'Work with me'));
+    if ($workLabel === '') {
+        $workLabel = 'Work with me';
+    }
 @endphp
-<header class="fixed top-0 left-0 right-0 z-50 bg-[#0b0e12]/95 backdrop-blur-md border-b border-white/5">
-    <div class="max-w-7xl mx-auto px-4 lg:px-6 flex items-center gap-4" style="min-height:5rem">
-        <a href="{{ route('home') }}" class="shrink-0 text-2xl font-serif font-bold italic tracking-tight text-white inline-flex items-center gap-3">
-            @if($siteSettings['site_logo'] ?? null)
-                <img src="{{ $siteSettings['site_logo'] }}" alt="{{ $siteSettings['site_name'] }}" class="h-10 w-auto max-w-[180px] object-contain">
-            @else
-                <span class="text-[#D4AF37]">{{ $siteSettings['site_name'] ?? 'Rakesh Rajbhat' }}</span>
+<header class="fixed top-0 left-0 right-0 z-50 bg-white">
+    <div class="max-w-[1440px] mx-auto px-5 lg:px-10 flex items-center gap-6" style="min-height:92px">
+        <a href="{{ route('home') }}" class="shrink-0 min-w-0 leading-none">
+            <span class="block truncate text-[15px] sm:text-[17px] font-bold uppercase tracking-[0.14em] text-[#1c1c1c]">{{ $siteSettings['site_name'] ?? 'Rakesh Rajbhat' }}</span>
+            @if($navTagline !== '')
+                <span class="mt-1.5 block truncate text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9a4e32]">{{ $navTagline }}</span>
             @endif
         </a>
 
-        <nav class="hidden min-w-0 lg:flex flex-1 flex-wrap justify-center items-center gap-4 xl:gap-8 text-sm font-medium tracking-wide text-gray-300" aria-label="Primary navigation">
+        <nav class="hidden min-w-0 lg:flex flex-1 flex-wrap justify-center items-center gap-4 xl:gap-8 text-[15px] font-medium text-[#1c1c1c]" aria-label="Primary navigation">
             @foreach($siteSettings['nav_items'] ?? [] as $item)
                 @continue(\App\Models\Setting::navOpensWorkWithMe($item['url']))
-                <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="nav-link whitespace-nowrap hover:text-[#D4AF37] transition-colors px-1">{{ $item['label'] }}</a>
+                <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="nav-link whitespace-nowrap px-0.5 text-[#1c1c1c] transition-colors hover:text-[#9a4e32]">{{ $item['label'] }}</a>
             @endforeach
         </nav>
 
-        <div class="ml-auto shrink-0 flex items-center gap-3">
-            <div id="langSwitch" class="notranslate relative flex shrink-0 items-center gap-1 text-[11px] font-semibold tracking-[0.16em] text-white" translate="no">
-                <button type="button" data-set-lang="en" class="lang-option rounded-sm px-1.5 py-1 text-[#D4AF37]" style="color:#D4AF37" aria-pressed="true">EN</button>
-                <span style="color:#ffffff" aria-hidden="true">|</span>
-                <button type="button" data-set-lang="ne" class="lang-option rounded-sm px-1.5 py-1 text-white" style="color:#e5e7eb" aria-pressed="false">NP</button>
+        <div class="ml-auto shrink-0 flex items-center gap-3 sm:gap-4">
+            <div id="langSwitch" class="notranslate relative hidden lg:flex shrink-0 items-center gap-1 text-[11px] font-semibold tracking-[0.16em] text-[#1c1c1c]" translate="no">
+                <button type="button" data-set-lang="en" class="lang-option rounded-sm px-1.5 py-1 text-[#1c1c1c]" style="color:#1c1c1c" aria-pressed="true">EN</button>
+                <span class="text-[#8a8178]" aria-hidden="true">|</span>
+                <button type="button" data-set-lang="ne" class="lang-option rounded-sm px-1.5 py-1 text-[#8a8178]" style="color:#8a8178" aria-pressed="false">NP</button>
             </div>
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
                     <div class="relative hidden sm:block group">
                         @php($currentUser = Auth::user())
-                        <button type="button" class="user-menu-toggle inline-flex items-center gap-2 text-white/80 hover:text-[#D4AF37] text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37] rounded-md px-2 py-2" aria-haspopup="true" aria-expanded="false">
+                        <button type="button" class="user-menu-toggle inline-flex items-center gap-2 text-[#1c1c1c] hover:text-[#9a4e32] text-sm focus:outline-none focus:ring-2 focus:ring-[#9a4e32] rounded-md px-2 py-2" aria-haspopup="true" aria-expanded="false">
                             @if($currentUser->profile_photo_url)
-                                <img src="{{ $currentUser->profile_photo_url }}" alt="" class="h-9 w-9 rounded-full object-cover border border-[#D4AF37]/70">
+                                <img src="{{ $currentUser->profile_photo_url }}" alt="" class="h-9 w-9 rounded-full object-cover border border-[#c4a484]">
                             @else
-                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#D4AF37] text-[#0b0e12] text-xs font-bold" aria-hidden="true">{{ $currentUser->initials }}</span>
+                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#c4a484] text-white text-xs font-bold" aria-hidden="true">{{ $currentUser->initials }}</span>
                             @endif
                             <svg class="w-4 h-4 transition-transform group-focus-within:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6"/></svg>
                         </button>
@@ -48,42 +52,50 @@
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="hidden sm:inline text-white/70 hover:text-[#D4AF37] text-sm">Login</a>
-                    <a href="{{ route('register') }}" class="hidden sm:inline border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold tracking-widest">SIGN UP</a>
+                    <a href="{{ route('login') }}" class="hidden sm:inline text-[#1c1c1c] hover:text-[#9a4e32] text-sm">Login</a>
+                    <a href="{{ route('register') }}" class="hidden sm:inline rounded-full bg-[#c4a484] px-4 py-2 text-xs font-semibold text-white">Sign up</a>
                 @endauth
-            @elseif($workNavItem)
-                <button type="button" data-open-work="education" class="notranslate inline-flex shrink-0 border border-[#D4AF37] text-[#D4AF37] px-4 py-2 rounded-sm text-xs font-semibold uppercase tracking-widest hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all" translate="no">{{ $workNavItem['label'] }}</button>
+            @else
+                <button type="button" data-open-work="education" class="notranslate hidden sm:inline-flex shrink-0 items-center gap-2 rounded-full bg-[#c4a484] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#b8956c]" translate="no">
+                    {{ $workLabel }}
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M11.5 4.5H6.5M11.5 4.5V9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
             @endif
-            <button type="button" id="mobileMenuToggle" class="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileNavigation">
+            <button type="button" id="mobileMenuToggle" class="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-[#1c1c1c] hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-[#c4a484]" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileNavigation">
                 <svg id="mobileMenuOpenIcon" class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 <svg id="mobileMenuCloseIcon" class="hidden h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
     </div>
 
-    <nav id="mobileNavigation" class="hidden lg:hidden border-t border-white/10 bg-[#0b0e12] px-6 py-5" aria-label="Mobile navigation">
+    <nav id="mobileNavigation" class="hidden lg:hidden border-t border-black/10 bg-white px-6 py-5" aria-label="Mobile navigation">
         <div class="flex flex-col gap-1">
             @foreach($siteSettings['nav_items'] ?? [] as $item)
                 @continue(\App\Models\Setting::navOpensWorkWithMe($item['url']))
-                <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">{{ $item['label'] }}</a>
+                <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="mobile-nav-link rounded-md px-3 py-3 text-[#1c1c1c] hover:bg-black/5 hover:text-[#9a4e32]">{{ $item['label'] }}</a>
             @endforeach
-            <div class="notranslate mt-2 flex items-center gap-2 px-3 py-3 text-xs font-semibold tracking-[0.16em] text-white" translate="no">
-                <button type="button" data-set-lang="en" class="lang-option text-[#D4AF37]" style="color:#D4AF37">EN</button>
-                <span style="color:#ffffff">|</span>
-                <button type="button" data-set-lang="ne" class="lang-option text-white" style="color:#e5e7eb">NP</button>
+            <div class="notranslate mt-2 flex items-center gap-2 px-3 py-3 text-xs font-semibold tracking-[0.16em] text-[#1c1c1c]" translate="no">
+                <button type="button" data-set-lang="en" class="lang-option text-[#1c1c1c]" style="color:#1c1c1c">EN</button>
+                <span class="text-[#8a8178]">|</span>
+                <button type="button" data-set-lang="ne" class="lang-option text-[#8a8178]" style="color:#8a8178">NP</button>
             </div>
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
-                    <a href="{{ route('profile') }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Profile</a>
-                    <a href="{{ route('settings') }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Settings</a>
+                    <a href="{{ route('profile') }}" class="mobile-nav-link rounded-md px-3 py-3 text-[#1c1c1c] hover:bg-black/5 hover:text-[#9a4e32]">Profile</a>
+                    <a href="{{ route('settings') }}" class="mobile-nav-link rounded-md px-3 py-3 text-[#1c1c1c] hover:bg-black/5 hover:text-[#9a4e32]">Settings</a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="mobile-nav-link w-full text-left rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Logout</button>
+                        <button type="submit" class="mobile-nav-link w-full text-left rounded-md px-3 py-3 text-[#1c1c1c] hover:bg-black/5 hover:text-[#9a4e32]">Logout</button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Login</a>
-                    <a href="{{ route('register') }}" class="mobile-nav-link rounded-md px-3 py-3 text-gray-200 hover:bg-white/10 hover:text-[#D4AF37]">Sign Up</a>
+                    <a href="{{ route('login') }}" class="mobile-nav-link rounded-md px-3 py-3 text-[#1c1c1c] hover:bg-black/5 hover:text-[#9a4e32]">Login</a>
+                    <a href="{{ route('register') }}" class="mobile-nav-link rounded-md px-3 py-3 text-[#1c1c1c] hover:bg-black/5 hover:text-[#9a4e32]">Sign Up</a>
                 @endauth
+            @else
+                <button type="button" data-open-work="education" class="mobile-nav-link notranslate mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-[#c4a484] px-4 py-3 text-sm font-medium text-white" translate="no">
+                    {{ $workLabel }}
+                    <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M11.5 4.5H6.5M11.5 4.5V9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
             @endif
         </div>
     </nav>

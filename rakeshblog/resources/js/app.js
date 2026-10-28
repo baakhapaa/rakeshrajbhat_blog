@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
      * @param {HTMLElement} activeLink - The navigation link to set as active
      */
     function setActiveNav(activeLink) {
-        const activeClasses = ['active', 'border-b-2', 'border-[#D4AF37]', 'text-[#D4AF37]', 'pb-1'];
+        const activeClasses = ['active', 'border-b', 'border-black', 'text-black', 'pb-0.5'];
         
         navLinks.forEach(link => {
             link.classList.remove(...activeClasses);
