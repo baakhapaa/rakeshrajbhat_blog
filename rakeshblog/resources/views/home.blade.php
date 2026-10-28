@@ -892,6 +892,38 @@ document.addEventListener('keydown', function(e) {
     </section>
     --}}
 
+    <section id="news" class="py-24 bg-white text-[#1e1e1a] scroll-mt-20">
+        @php
+            $newsContent = \App\Models\Setting::getNewsContent();
+        @endphp
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-end mb-16">
+                <div class="lg:col-span-7">
+                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-4 uppercase">{{ $newsContent['label'] }}</p>
+                    <h2 class="text-5xl lg:text-6xl font-serif font-bold leading-[1.05]">{{ $newsContent['heading'] }}</h2>
+                </div>
+                <p class="lg:col-span-5 text-[#5a5a52] leading-relaxed lg:pb-2">{{ $newsContent['intro'] }}</p>
+            </div>
+
+            @if(!empty($newsContent['items']))
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-12">
+                    @foreach($newsContent['items'] as $item)
+                        <article class="border-t border-[#1e1e1a]/15 pt-6">
+                            @if($item['kicker'] !== '')
+                                <p class="text-xs font-bold tracking-widest uppercase text-[#D4AF37] mb-4">{{ $item['kicker'] }}</p>
+                            @endif
+                            <h3 class="text-xl font-bold text-[#1e1e1a] mb-3">{{ $item['title'] }}</h3>
+                            <p class="text-sm text-[#5a5a52] leading-relaxed">{{ $item['body'] }}</p>
+                            @if($item['note'] !== '')
+                                <p class="text-xs text-[#8a8a82] mt-5 leading-relaxed">{{ $item['note'] }}</p>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    </section>
+
     <section id="gallery" class="gallery-section py-24 scroll-mt-20">
         <div class="max-w-7xl mx-auto px-6">
             @php
@@ -943,7 +975,7 @@ document.addEventListener('keydown', function(e) {
         </div>
     </section>
 
-    <section class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a]">
+    {{-- <section class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a]">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-16">
                 <div class="inline-flex items-center gap-2 bg-[#D4AF37]/10 px-4 py-2 rounded-full mb-4">
@@ -1000,7 +1032,7 @@ document.addEventListener('keydown', function(e) {
                 </button>
             </div>
         </div>
-    </section>
+    </section> --}}
 @endsection
 
 <style>
