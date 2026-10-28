@@ -126,6 +126,16 @@
             </span>
         </a>
 
+        {{-- Legal pages --}}
+        <a href="{{ route('admin.legal.edit') }}"
+            class="block px-4 py-3 rounded-lg transition-all duration-200
+            {{ Str::startsWith(Route::currentRouteName(), 'admin.legal') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+            <span class="flex items-center">
+                <i class="fa-solid fa-scale-balanced inline-block w-5 text-center text-base mr-3" aria-hidden="true"></i>
+                Legal
+            </span>
+        </a>
+
         {{-- Gallery --}}
         <a href="{{ route('admin.gallery.index') }}"
             class="block px-4 py-3 rounded-lg transition-all duration-200

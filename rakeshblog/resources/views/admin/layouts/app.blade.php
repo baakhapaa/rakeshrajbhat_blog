@@ -16,8 +16,8 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- CKEditor 5 CDN -->
-    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.0/classic/ckeditor.js"></script>
+    <!-- Editor -->
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@8.8.2/tinymce.min.js"></script>
     
     <style>
         body {
@@ -62,61 +62,14 @@
             border-right: 2px solid #D4AF37;
         }
 
-        /* CKEditor Dark Theme Overrides */
-        .ck-editor__editable {
-            min-height: 300px !important;
-            background: #1a1f26 !important;
-            color: #e5e7eb !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
+        .tox-tinymce {
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 0.5rem;
         }
-        .ck-editor__editable p {
-            color: #e5e7eb !important;
-        }
-        .ck.ck-editor__main > .ck-editor__editable:not(.ck-focused) {
-            border-color: rgba(255, 255, 255, 0.1) !important;
-        }
-        .ck.ck-editor__main > .ck-editor__editable.ck-focused {
-            border-color: #D4AF37 !important;
-            box-shadow: 0 0 0 1px #D4AF37 !important;
-        }
-        .ck.ck-toolbar {
-            background: #0f1419 !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
-        }
-        .ck.ck-toolbar .ck-button {
-            color: #e5e7eb !important;
-        }
-        .ck.ck-toolbar .ck-button:hover {
-            background: rgba(212, 175, 55, 0.1) !important;
-        }
-        .ck.ck-toolbar .ck-button.ck-on {
-            background: rgba(212, 175, 55, 0.2) !important;
-            color: #D4AF37 !important;
-        }
-        .ck.ck-dropdown .ck-dropdown__panel {
-            background: #1a1f26 !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
-        }
-        .ck.ck-list__item .ck-button {
-            color: #e5e7eb !important;
-        }
-        .ck.ck-list__item .ck-button:hover {
-            background: rgba(212, 175, 55, 0.1) !important;
-        }
-        .ck.ck-list__item .ck-button.ck-on {
-            background: rgba(212, 175, 55, 0.2) !important;
-            color: #D4AF37 !important;
-        }
-        .ck.ck-input {
-            background: #0f1419 !important;
-            color: #e5e7eb !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
-        }
-        .ck.ck-input:focus {
-            border-color: #D4AF37 !important;
-        }
-        .ck.ck-labeled-field-view__status {
-            color: #e5e7eb !important;
+        .tox .tox-toolbar__primary,
+        .tox .tox-toolbar-overlord,
+        .tox .tox-edit-area__iframe {
+            background: #0f1419;
         }
     </style>
     
@@ -209,46 +162,69 @@
             });
         });
 
-        // CKEditor Initialization Function (to be called on pages with editor)
+        function fitEditorToSlot(editor) {
+            const element = editor.getElement && editor.getElement();
+            const slot = element && element.closest('[data-editor-slot]');
+            if (!slot) return;
+            const height = Math.floor(slot.getBoundingClientRect().height);
+            if (height < 160) return;
+            const container = editor.getContainer();
+            if (!container) return;
+            container.style.width = '100%';
+            container.style.height = height + 'px';
+        }
+
+        window.resizePageEditors = function () {
+            if (!window.tinymce) return;
+            const editors = tinymce.get() || [];
+            editors.forEach(fitEditorToSlot);
+        };
+
+        if (!window.__editorResizeBound) {
+            window.__editorResizeBound = true;
+            window.addEventListener('resize', window.resizePageEditors);
+        }
+
         function initCKEditor(selector = '#content', config = {}) {
             const element = document.querySelector(selector);
-            if (!element) return;
+            if (!element || typeof tinymce === 'undefined' || tinymce.get(element.id)) {
+                return;
+            }
 
-            const defaultConfig = {
-                toolbar: {
-                    items: [
-                        'heading', '|',
-                        'bold', 'italic', 'underline', 'strikethrough', '|',
-                        'alignment', '|',
-                        'bulletedList', 'numberedList', '|',
-                        'link', 'imageUpload', '|',
-                        'blockQuote', 'insertTable', 'mediaEmbed', '|',
-                        'undo', 'redo'
-                    ]
-                },
-                heading: {
-                    options: [
-                        { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                        { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                        { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                        { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
-                    ]
-                },
-                language: 'en',
-                height: 500,
-                removePlugins: ['Title'],
-                ...config
-            };
+            const fullHeight = config.height === 'full';
 
-            ClassicEditor
-                .create(element, defaultConfig)
-                .then(editor => {
-                    console.log('CKEditor initialized successfully');
-                    window.editor = editor;
-                })
-                .catch(error => {
-                    console.error('CKEditor Error:', error);
-                });
+            tinymce.init({
+                selector: selector,
+                base_url: 'https://cdn.jsdelivr.net/npm/tinymce@8.8.2',
+                suffix: '.min',
+                license_key: 'gpl',
+                width: '100%',
+                height: fullHeight ? 480 : (Number(config.height) || 500),
+                menubar: false,
+                branding: false,
+                promotion: false,
+                statusbar: !fullHeight,
+                skin: 'oxide-dark',
+                toolbar_mode: 'wrap',
+                plugins: 'lists link image table media',
+                toolbar: 'blocks | bold italic underline strikethrough | fontsize forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | link image blockquote table media | undo redo',
+                block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4',
+                font_size_formats: '12px 14px 16px 18px 20px 24px 28px 32px',
+                content_style: [
+                    'body { background:#1a1f26; color:#e5e7eb; font-family: Inter, Helvetica, Arial, sans-serif; font-size:16px; line-height:1.6; margin:1rem; }',
+                    'h1,h2,h3,h4 { color:#f8fafc; font-weight:700; line-height:1.25; margin:0.75em 0 0.35em; }',
+                    'h1 { font-size:2rem; } h2 { font-size:1.5rem; } h3 { font-size:1.25rem; } h4 { font-size:1.1rem; }',
+                    'a { color:#D4AF37; }',
+                    'ul,ol { padding-left:1.4rem; }',
+                    'blockquote { border-left:3px solid #D4AF37; margin-left:0; padding-left:1rem; color:#d1d5db; }'
+                ].join(' '),
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        window.editor = editor;
+                        if (fullHeight) fitEditorToSlot(editor);
+                    });
+                }
+            });
         }
     </script>
     

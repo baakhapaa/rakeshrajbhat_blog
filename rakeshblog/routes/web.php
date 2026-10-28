@@ -26,6 +26,8 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BootcampController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\LegalPageController;
+use App\Http\Controllers\Admin\LegalPageController as AdminLegalPageController;
 use App\Models\Blog;
 
 /*
@@ -41,8 +43,8 @@ use App\Models\Blog;
 // Home & Blog
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/gallery/{gallery}', [HomeController::class, 'gallery'])->name('gallery.show');
-Route::view('/privacy', 'legal.privacy')->name('privacy');
-Route::view('/terms', 'legal.terms')->name('terms');
+Route::get('/privacy', [LegalPageController::class, 'privacy'])->name('privacy');
+Route::get('/terms', [LegalPageController::class, 'terms'])->name('terms');
 Route::get('/sitemap.xml', function () {
     $staticUrls = collect([
         ['loc' => route('home'), 'lastmod' => now()->toDateString(), 'changefreq' => 'weekly', 'priority' => '1.0'],
@@ -280,6 +282,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/home-content', [HomeContentController::class, 'editHome'])->name('home-content.edit');
         Route::put('/home-content', [HomeContentController::class, 'updateHome'])->name('home-content.update');
         Route::put('/home-content/about', [HomeContentController::class, 'updateAbout'])->name('home-content.update-about');
+        Route::get('/legal', [AdminLegalPageController::class, 'edit'])->name('legal.edit');
+        Route::put('/legal', [AdminLegalPageController::class, 'update'])->name('legal.update');
 
         // ==========================================
         // SETTINGS ROUTES
