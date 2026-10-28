@@ -135,6 +135,7 @@ class Setting extends Model
             ],
             'media_url' => null,
             'media_type' => null,
+            'media_poster' => null,
         ];
     }
 
@@ -171,6 +172,8 @@ class Setting extends Model
         $content['media_type'] = in_array($mediaType, ['image', 'video'], true) && $content['media_url']
             ? $mediaType
             : null;
+        $posterUrl = trim((string) ($decoded['media_poster'] ?? ''));
+        $content['media_poster'] = $content['media_type'] === 'video' && $posterUrl !== '' ? $posterUrl : null;
 
         return $content;
     }

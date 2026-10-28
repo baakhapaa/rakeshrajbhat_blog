@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Support\AboutVideo;
 use App\Support\MediaStorage;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -139,11 +140,14 @@ class HomeContentController extends Controller
         $current = Setting::getAboutContent();
         $mediaUrl = $current['media_url'];
         $mediaType = $current['media_type'];
+        $posterUrl = $current['media_poster'];
 
         if ($request->boolean('remove_about_media') && ! $request->hasFile('about_media')) {
             $this->deleteStoredAsset($mediaUrl);
+            $this->deleteStoredAsset($posterUrl);
             $mediaUrl = null;
             $mediaType = null;
+            $posterUrl = null;
         }
 
         if ($request->hasFile('about_media')) {
@@ -166,8 +170,24 @@ class HomeContentController extends Controller
             }
 
             $this->deleteStoredAsset($mediaUrl);
-            $path = $file->store('about', 'media');
-            $mediaUrl = Storage::disk('media')->url($path);
+            $this->deleteStoredAsset($posterUrl);
+            $posterUrl = null;
+
+            if ($kind === 'video') {
+                $optimized = AboutVideo::storeOptimized($file->getRealPath());
+
+                if ($optimized) {
+                    $mediaUrl = $optimized['url'];
+                    $posterUrl = $optimized['poster'];
+                } else {
+                    $path = $file->store('about', 'media');
+                    $mediaUrl = Storage::disk('media')->url($path);
+                }
+            } else {
+                $path = $file->store('about', 'media');
+                $mediaUrl = Storage::disk('media')->url($path);
+            }
+
             $mediaType = $kind;
         }
 
@@ -183,6 +203,7 @@ class HomeContentController extends Controller
             'facts' => $facts,
             'media_url' => $mediaUrl,
             'media_type' => $mediaType,
+            'media_poster' => $posterUrl,
         ]));
 
         return redirect()->route('admin.home-content.edit', ['tab' => 'about'])->with('success', 'About me updated successfully!');

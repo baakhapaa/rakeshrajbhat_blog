@@ -77,15 +77,6 @@
                     <h2 class="pt-3 font-jakarta text-[2rem] font-bold leading-tight tracking-[-0.6px] text-[#1b1c1a] sm:text-[44px] sm:leading-[48px] sm:tracking-[-1.1px]">
                         {{ $aboutContent['heading_line_1'] }}@if(filled($aboutContent['heading_line_2'])) {{ $aboutContent['heading_line_2'] }}@endif
                     </h2>
-                    @if(!empty($aboutContent['media_url']))
-                        <div class="mt-8 max-w-[840px]">
-                            @if(($aboutContent['media_type'] ?? null) === 'video')
-                                <video src="{{ $aboutContent['media_url'] }}" controls playsinline preload="metadata" class="w-full rounded-2xl bg-[#1e1e1a]"></video>
-                            @else
-                                <img src="{{ $aboutContent['media_url'] }}" alt="" class="w-full rounded-2xl object-cover">
-                            @endif
-                        </div>
-                    @endif
                     <div class="flex max-w-[840px] flex-col gap-10 pt-10 lg:gap-[50px] lg:pt-[51px]">
                         <div class="rounded-2xl border-l-4 border-[#89351d] bg-[#f5f3f0] py-6 pl-7 pr-6">
                             <p class="font-jakarta text-[1.35rem] font-bold leading-8 text-[#1b1c1a] sm:text-[31px] sm:leading-[40px]">{{ $aboutContent['paragraph_1'] }}</p>
@@ -108,16 +99,118 @@
                         </div>
                     @endif
                 </div>
-                <div class="w-full self-end overflow-hidden">
-                    <img
-                        src="{{ asset('images/rakeshrajbhat.jpg') }}"
-                        alt="{{ $homeContent['name'] ?? 'Rakesh Rajbhat' }}"
-                        class="aspect-[4/5] h-auto w-full object-cover lg:aspect-[5/6] 2xl:aspect-auto 2xl:h-[738px]"
-                    >
+                <div class="relative w-full self-end overflow-hidden">
+                    @php
+                        $aboutMediaClass = 'aspect-[4/5] h-auto w-full object-cover lg:aspect-[5/6] 2xl:aspect-auto 2xl:h-[738px]';
+                    @endphp
+                    @if(!empty($aboutContent['media_url']) && ($aboutContent['media_type'] ?? null) === 'video')
+                        <div class="about-portrait">
+                            <video
+                                id="aboutPortraitVideo"
+                                @if(!empty($aboutContent['media_poster'])) poster="{{ $aboutContent['media_poster'] }}" @endif
+                                data-src="{{ $aboutContent['media_url'] }}"
+                                muted
+                                loop
+                                playsinline
+                                preload="none"
+                                class="{{ $aboutMediaClass }}"
+                            ></video>
+                            <button type="button" id="aboutPortraitSound" aria-pressed="false" aria-label="Turn sound on">
+                                <i class="fa-solid fa-volume-xmark" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    @else
+                        <img
+                            src="{{ !empty($aboutContent['media_url']) ? $aboutContent['media_url'] : asset('images/rakeshrajbhat.jpg') }}"
+                            alt="{{ $homeContent['name'] ?? 'Rakesh Rajbhat' }}"
+                            class="{{ $aboutMediaClass }}"
+                        >
+                    @endif
                 </div>
             </div>
         </div>
     </section>
+    <style>
+        .about-portrait { position: relative; }
+        .about-portrait video { position: relative; z-index: 0; display: block; }
+        #aboutPortraitSound {
+            position: absolute;
+            right: 16px;
+            bottom: 16px;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border: 0;
+            border-radius: 999px;
+            background: rgba(11, 14, 18, 0.72);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+        }
+        #aboutPortraitSound:hover { background: rgba(11, 14, 18, 0.9); }
+    </style>
+    <script>
+        (function () {
+            const button = document.getElementById('aboutPortraitSound');
+            const video = document.getElementById('aboutPortraitVideo');
+            if (!video) {
+                return;
+            }
+
+            const source = video.getAttribute('data-src');
+            let started = false;
+
+            function start() {
+                if (started || !source) {
+                    return;
+                }
+                started = true;
+                video.src = source;
+                video.preload = 'auto';
+                const play = video.play();
+                if (play && typeof play.catch === 'function') {
+                    play.catch(function () {});
+                }
+            }
+
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver(function (entries) {
+                    entries.forEach(function (entry) {
+                        if (entry.isIntersecting) {
+                            start();
+                            observer.disconnect();
+                        }
+                    });
+                }, { rootMargin: '400px 0px' });
+                observer.observe(video);
+            } else {
+                start();
+            }
+
+            if (!button) {
+                return;
+            }
+
+            button.addEventListener('click', function () {
+                start();
+                video.muted = !video.muted;
+                if (!video.muted) {
+                    video.volume = 1;
+                    video.play();
+                }
+
+                const soundOn = !video.muted;
+                button.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+                button.setAttribute('aria-label', soundOn ? 'Turn sound off' : 'Turn sound on');
+                button.querySelector('i').className = soundOn
+                    ? 'fa-solid fa-volume-high text-sm'
+                    : 'fa-solid fa-volume-xmark text-sm';
+            });
+        })();
+    </script>
 
     <!-- About/Mission Section -->
     @php
