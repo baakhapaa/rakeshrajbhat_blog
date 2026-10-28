@@ -20,7 +20,9 @@ use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\ResearchController;
+use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BootcampController;
 use App\Http\Controllers\NewsletterController;
@@ -87,6 +89,8 @@ Route::get('/api/latest-blogs', [HomeController::class, 'getLatestBlogs'])->name
 Route::get('/research/{id}/video', [ResearchController::class, 'getVideoData'])->name('research.video');
 Route::get('/research/featured', [ResearchController::class, 'featured'])->name('research.featured');
 Route::get('/research/{id}/detail', [ResearchController::class, 'getResearchDetail'])->name('research.detail'); // <-- THIS IS THE MISSING ROUTE
+Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+Route::get('/news/{newsItem}/detail', [NewsController::class, 'detail'])->name('news.detail');
 
 // Authentication Routes (Public)
 Route::controller(AuthController::class)->group(function () {
@@ -259,6 +263,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/projects/section', [ProjectController::class, 'updateSection'])->name('projects.update-section');
         Route::resource('projects', ProjectController::class);
 
+        Route::put('/news/section', [AdminNewsController::class, 'updateSection'])->name('news.update-section');
+        Route::post('/news/{news}/refresh', [AdminNewsController::class, 'refresh'])->name('news.refresh');
+        Route::resource('news', AdminNewsController::class)->only(['index', 'store', 'destroy']);
+
         Route::put('/gallery/section', [GalleryController::class, 'updateSection'])->name('gallery.update-section');
         Route::delete('/gallery-images/{image}', [GalleryController::class, 'destroyImage'])->name('gallery.images.destroy');
         Route::post('/gallery/{gallery}/toggle-status', [GalleryController::class, 'toggleStatus'])->name('gallery.toggle-status');
@@ -272,7 +280,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/home-content', [HomeContentController::class, 'editHome'])->name('home-content.edit');
         Route::put('/home-content', [HomeContentController::class, 'updateHome'])->name('home-content.update');
         Route::put('/home-content/about', [HomeContentController::class, 'updateAbout'])->name('home-content.update-about');
-        Route::put('/home-content/news', [HomeContentController::class, 'updateNews'])->name('home-content.update-news');
 
         // ==========================================
         // SETTINGS ROUTES

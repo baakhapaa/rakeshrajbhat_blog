@@ -892,37 +892,41 @@ document.addEventListener('keydown', function(e) {
     </section>
     --}}
 
-    <section id="news" class="py-24 bg-white text-[#1e1e1a] scroll-mt-20">
+    <section id="news" class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a] scroll-mt-20">
         @php
             $newsContent = \App\Models\Setting::getNewsContent();
+            $newsItems = $newsItems ?? collect();
+            $newsHasMore = $newsHasMore ?? false;
         @endphp
         <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-end mb-16">
-                <div class="lg:col-span-7">
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-4 uppercase">{{ $newsContent['label'] }}</p>
-                    <h2 class="text-5xl lg:text-6xl font-serif font-bold leading-[1.05]">{{ $newsContent['heading'] }}</h2>
-                </div>
-                <p class="lg:col-span-5 text-[#5a5a52] leading-relaxed lg:pb-2">{{ $newsContent['intro'] }}</p>
+            <div class="text-center mb-12">
+                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-3 uppercase">{{ $newsContent['label'] }}</p>
+                <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#1e1e1a] leading-tight">{{ $newsContent['heading'] }}</h2>
+                <p class="text-[#5a5a52] mt-4 max-w-2xl mx-auto text-lg leading-relaxed">{{ $newsContent['intro'] }}</p>
             </div>
 
-            @if(!empty($newsContent['items']))
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-12">
-                    @foreach($newsContent['items'] as $item)
-                        <article class="border-t border-[#1e1e1a]/15 pt-6">
-                            @if($item['kicker'] !== '')
-                                <p class="text-xs font-bold tracking-widest uppercase text-[#D4AF37] mb-4">{{ $item['kicker'] }}</p>
-                            @endif
-                            <h3 class="text-xl font-bold text-[#1e1e1a] mb-3">{{ $item['title'] }}</h3>
-                            <p class="text-sm text-[#5a5a52] leading-relaxed">{{ $item['body'] }}</p>
-                            @if($item['note'] !== '')
-                                <p class="text-xs text-[#8a8a82] mt-5 leading-relaxed">{{ $item['note'] }}</p>
-                            @endif
-                        </article>
+            @if($newsItems->isNotEmpty())
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    @foreach($newsItems as $item)
+                        @include('partials.news-card', ['item' => $item])
                     @endforeach
                 </div>
+                @if($newsHasMore)
+                    <div class="text-center mt-16">
+                        <a href="{{ route('news.index') }}"
+                            class="inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#c4a030] text-[#0b0e12] font-medium rounded-2xl hover:shadow-xl hover:shadow-[#D4AF37]/25 transition-all duration-300 hover:-translate-y-0.5 group">
+                            <span>Read more news</span>
+                            <span class="group-hover:translate-x-1 transition-transform">→</span>
+                        </a>
+                    </div>
+                @endif
+            @else
+                <p class="text-center text-sm text-[#8a8a82]">News will appear here once a link is added.</p>
             @endif
         </div>
     </section>
+
+    @include('partials.news-modal')
 
     <section id="gallery" class="gallery-section py-24 scroll-mt-20">
         <div class="max-w-7xl mx-auto px-6">
