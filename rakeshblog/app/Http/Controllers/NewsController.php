@@ -3,9 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\NewsItem;
+use App\Models\Setting;
 
 class NewsController extends Controller
 {
+    public function index()
+    {
+        $newsItems = NewsItem::query()
+            ->where('is_active', true)
+            ->latestFirst()
+            ->get();
+        $newsContent = Setting::getNewsContent();
+
+        return view('news.index', compact('newsItems', 'newsContent'));
+    }
+
     public function detail(NewsItem $newsItem)
     {
         if (! $newsItem->is_active) {

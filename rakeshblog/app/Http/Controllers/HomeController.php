@@ -120,14 +120,12 @@ class HomeController extends Controller
         }
 
         try {
-            $newsItems = NewsItem::query()
-                ->where('is_active', true)
-                ->orderByDesc('published_at')
-                ->orderByDesc('id')
-                ->take(9)
-                ->get();
+            $activeNews = NewsItem::query()->where('is_active', true);
+            $newsHasMore = (clone $activeNews)->count() > 3;
+            $newsItems = (clone $activeNews)->latestFirst()->take(3)->get();
         } catch (\Exception $e) {
             $newsItems = collect();
+            $newsHasMore = false;
         }
 
         try {
@@ -154,7 +152,8 @@ class HomeController extends Controller
             'featuredResearch',
             'galleryCollections',
             'spotlightResearch',
-            'newsItems'
+            'newsItems',
+            'newsHasMore'
         ));
     }
 

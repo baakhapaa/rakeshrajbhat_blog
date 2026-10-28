@@ -89,6 +89,7 @@ Route::get('/api/latest-blogs', [HomeController::class, 'getLatestBlogs'])->name
 Route::get('/research/{id}/video', [ResearchController::class, 'getVideoData'])->name('research.video');
 Route::get('/research/featured', [ResearchController::class, 'featured'])->name('research.featured');
 Route::get('/research/{id}/detail', [ResearchController::class, 'getResearchDetail'])->name('research.detail'); // <-- THIS IS THE MISSING ROUTE
+Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{newsItem}/detail', [NewsController::class, 'detail'])->name('news.detail');
 
 // Authentication Routes (Public)

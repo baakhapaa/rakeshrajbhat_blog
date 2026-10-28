@@ -60,6 +60,8 @@ class NewsSourceReader
             $content = '<p>'.e($excerpt).'</p>';
         }
 
+        $excerpt = $this->articleExcerpt($excerpt, $content);
+
         $sourceName = $this->firstText([
             $meta['og:site_name'] ?? null,
             $jsonLd['publisher'] ?? null,
@@ -139,7 +141,14 @@ class NewsSourceReader
     private function articleHtml(\DOMXPath $xpath, string $jsonBody): string
     {
         $jsonHtml = $this->paragraphsFromText($jsonBody);
-        $root = $xpath->query('//article | //*[@itemprop="articleBody"] | //main')->item(0);
+
+        if (mb_strlen(strip_tags($jsonHtml)) >= 180) {
+            return $this->onlyThisStory($jsonHtml);
+        }
+
+        $root = $xpath->query('//*[@itemprop="articleBody"]')->item(0)
+            ?: $xpath->query('//article')->item(0)
+            ?: $xpath->query('//main')->item(0);
         $nodes = $root
             ? $xpath->query('.//h2 | .//h3 | .//p | .//blockquote', $root)
             : $xpath->query('//h2 | //h3 | //p');
@@ -148,35 +157,84 @@ class NewsSourceReader
 
         if ($nodes) {
             foreach ($nodes as $node) {
+                if ($this->isInsideOtherNews($node)) {
+                    continue;
+                }
+
                 $text = $this->cleanText($node->textContent ?? '');
 
-                if ($text === '' || $this->isBoilerplate($text)) {
+                if ($text === '' || $this->isBoilerplate($text) || $this->isOtherNewsHeading($text)) {
+                    if ($this->isOtherNewsHeading($text)) {
+                        break;
+                    }
+
                     continue;
                 }
 
                 $tag = strtolower($node->nodeName);
                 $isHeading = in_array($tag, ['h2', 'h3'], true);
 
-                if (! $isHeading && mb_strlen($text) < 40) {
+                if (! $isHeading && mb_strlen($text) < 80) {
                     continue;
                 }
 
                 $element = $isHeading ? 'h3' : ($tag === 'blockquote' ? 'blockquote' : 'p');
                 $blocks[] = '<'.$element.'>'.e($text).'</'.$element.'>';
 
-                if (count($blocks) >= 40) {
+                if (count($blocks) >= 24) {
                     break;
                 }
             }
         }
 
-        $html = implode('', $blocks);
+        return $this->onlyThisStory(implode('', $blocks));
+    }
 
-        if (mb_strlen(strip_tags($jsonHtml)) > mb_strlen(strip_tags($html))) {
-            return $jsonHtml;
+    private function onlyThisStory(string $html): string
+    {
+        if (! preg_match_all('/<(p|h3|blockquote)>(.*?)<\/\1>/s', $html, $matches, PREG_SET_ORDER)) {
+            return $html;
         }
 
-        return $html;
+        $kept = [];
+
+        foreach ($matches as $match) {
+            $text = $this->cleanText(html_entity_decode($match[2], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+
+            if ($text === '' || $this->isBreadcrumb($text)) {
+                continue;
+            }
+
+            if ($this->isOtherNewsHeading($text)) {
+                break;
+            }
+
+            if (mb_strlen($text) < 140 && ! preg_match('/[.?!।]/u', $text)) {
+                continue;
+            }
+
+            $kept[] = '<'.$match[1].'>'.e($text).'</'.$match[1].'>';
+        }
+
+        return implode('', $kept);
+    }
+
+    private function isBreadcrumb(string $text): bool
+    {
+        return str_contains($text, '»') || str_starts_with($text, 'Home ');
+    }
+
+    private function articleExcerpt(string $excerpt, string $content): string
+    {
+        $plain = $this->cleanText(strip_tags($content));
+        $lead = Str::limit($plain, 320, '');
+        $sample = mb_substr($this->cleanText($excerpt), 0, 80);
+
+        if ($sample !== '' && $plain !== '' && str_contains($plain, $sample)) {
+            return Str::limit($excerpt, 320, '');
+        }
+
+        return $lead !== '' ? $lead : ($excerpt !== '' ? Str::limit($excerpt, 320, '') : '');
     }
 
     private function paragraphsFromText(string $text): string
@@ -187,7 +245,7 @@ class NewsSourceReader
             return '';
         }
 
-        $parts = preg_split("/\n{2,}/", $text) ?: [];
+        $parts = preg_split("/\n+/", $text) ?: [];
         $blocks = [];
 
         foreach ($parts as $part) {
@@ -561,8 +619,30 @@ class NewsSourceReader
 
     private function isBoilerplate(string $text): bool
     {
-        return (bool) preg_match('/\b(cookie|subscribe|sign up|newsletter|advertisement|all rights reserved)\b/i', $text)
+        return (bool) preg_match('/\b(cookie|subscribe|sign up|newsletter|advertisement|all rights reserved|react to this post)\b/i', $text)
             && mb_strlen($text) < 180;
+    }
+
+    private function isOtherNewsHeading(string $text): bool
+    {
+        return (bool) preg_match('/^(recent updates?|related (articles|news|stories)|also read|hot topics|most read|editor\'?s pick|just in|top news|next article|trending|more in\b|republica watch|you may also like|recommended|latest news|conversation)\b/i', $text);
+    }
+
+    private function isInsideOtherNews(\DOMNode $node): bool
+    {
+        for ($parent = $node->parentNode; $parent instanceof \DOMElement; $parent = $parent->parentNode) {
+            if (strtolower($parent->nodeName) === 'aside') {
+                return true;
+            }
+
+            $hint = strtolower($parent->getAttribute('class').' '.$parent->getAttribute('id').' '.$parent->getAttribute('aria-label'));
+
+            if (preg_match('/\b(related|recent|sidebar|recommend|trending|most-read|most_read|also-read|hot-topic|just-in|top-news|widget|outbrain|taboola)\b/', $hint)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function hostLabel(string $url): string

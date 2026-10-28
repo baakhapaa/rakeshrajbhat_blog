@@ -26,6 +26,13 @@ class NewsItem extends Model
         'is_active' => 'boolean',
     ];
 
+    public function scopeLatestFirst($query)
+    {
+        return $query
+            ->orderByRaw('COALESCE(published_at, created_at) DESC')
+            ->orderByDesc('id');
+    }
+
     protected static function booted(): void
     {
         static::deleting(function (NewsItem $item) {
