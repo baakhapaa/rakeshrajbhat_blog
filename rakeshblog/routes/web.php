@@ -27,6 +27,8 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BootcampController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\LegalPageController;
+use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\NewsletterSubscriberController;
 use App\Http\Controllers\Admin\LegalPageController as AdminLegalPageController;
 use App\Models\Blog;
 
@@ -287,6 +289,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/home-content/about', [HomeContentController::class, 'updateAbout'])->name('home-content.update-about');
         Route::get('/legal', [AdminLegalPageController::class, 'edit'])->name('legal.edit');
         Route::put('/legal', [AdminLegalPageController::class, 'update'])->name('legal.update');
+
+        Route::get('/newsletter/export', [NewsletterSubscriberController::class, 'export'])->name('newsletter.export');
+        Route::get('/newsletter', [NewsletterSubscriberController::class, 'index'])->name('newsletter.index');
+
+        Route::get('/messages/contact', [MessageController::class, 'index'])->defaults('channel', 'contact')->name('messages.contact');
+        Route::get('/messages/work', [MessageController::class, 'index'])->defaults('channel', 'work')->name('messages.work');
+        Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+        Route::get('/messages/{message}', [MessageController::class, 'show'])->name('messages.show');
 
         // ==========================================
         // SETTINGS ROUTES

@@ -74,6 +74,15 @@
                     <h2 class="text-5xl lg:text-6xl font-serif font-bold leading-[1.05]">
                         {{ $aboutContent['heading_line_1'] }}<br>{{ $aboutContent['heading_line_2'] }}
                     </h2>
+                    @if(!empty($aboutContent['media_url']))
+                        <div class="mt-8">
+                            @if(($aboutContent['media_type'] ?? null) === 'video')
+                                <video src="{{ $aboutContent['media_url'] }}" controls playsinline preload="metadata" class="w-full rounded-2xl bg-[#1e1e1a]"></video>
+                            @else
+                                <img src="{{ $aboutContent['media_url'] }}" alt="" class="w-full rounded-2xl object-cover">
+                            @endif
+                        </div>
+                    @endif
                 </div>
                 <div class="lg:col-span-7">
                     <div class="max-w-lg lg:pt-2">

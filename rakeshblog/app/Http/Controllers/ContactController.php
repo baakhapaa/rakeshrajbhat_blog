@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SiteMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -35,6 +36,16 @@ class ContactController extends Controller
         }
 
         // Send email
+        SiteMessage::create([
+            'channel' => SiteMessage::CHANNEL_CONTACT,
+            'name' => $request->name,
+            'email' => $request->email,
+            'subject' => $request->subject,
+            'details' => [
+                'message' => $request->message,
+            ],
+        ]);
+
         Mail::send('emails.contact', [
             'name' => $request->name,
             'email' => $request->email,
@@ -120,8 +131,18 @@ class ContactController extends Controller
         // 2. Gather dynamic data based on type
         $data = $this->gatherFormData($type, $request);
         $data['type_label'] = ucwords(str_replace('_', ' ', $type));
+        $details = $data;
+        unset($details['name'], $details['email'], $details['phone'], $details['type_label']);
 
-        // 3. Send the email
+        SiteMessage::create([
+            'channel' => SiteMessage::CHANNEL_WORK,
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'subject' => $data['type_label'],
+            'details' => $details,
+        ]);
+
         Mail::send('emails.work-with-me', $data, function ($mail) use ($request, $data) {
             $mail->to('admin@rakeshrajbhat.com')
                  ->subject('New Work With Me Request: ' . $data['type_label'])
@@ -132,7 +153,7 @@ class ContactController extends Controller
         return redirect()->back()
             ->with('work_modal', true)
             ->with('work_type', $type)
-            ->with('work_success', 'Your message has been sent! I\'ll get back to you within 24 hours.');
+            ->with('work_success', 'Your message has been sent! I\'ll get back to you soon.');
     }
 
     /**
@@ -168,12 +189,12 @@ class ContactController extends Controller
                     'requirements'      => 'nullable|string',
                 ]);
             case 'investor':
-                    return array_merge($base, [
-                        'org_name'       => $request->organization ?? 'Not specified', // Change this
-                        'investor_type'  => $request->investor_type ?? 'Not specified',
-                        'exploration'    => $request->exploration ?? 'None',
-                        'website'        => $request->website ?? 'Not provided',
-                    ]);
+                return array_merge($common, [
+                    'organization' => 'nullable|string|max:255',
+                    'investor_type' => 'nullable|string|max:255',
+                    'exploration' => 'nullable|string|max:5000',
+                    'website' => 'nullable|string|max:255',
+                ]);
             case 'partner':
                 return array_merge($common, [
                     'org_name'          => 'required|string|max:255',

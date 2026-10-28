@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Support\MediaStorage;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class HomeContentController extends Controller
@@ -118,6 +119,41 @@ class HomeContentController extends Controller
             ];
         }
 
+        $current = Setting::getAboutContent();
+        $mediaUrl = $current['media_url'];
+        $mediaType = $current['media_type'];
+
+        if ($request->boolean('remove_about_media') && ! $request->hasFile('about_media')) {
+            $this->deleteStoredAsset($mediaUrl);
+            $mediaUrl = null;
+            $mediaType = null;
+        }
+
+        if ($request->hasFile('about_media')) {
+            $file = $request->file('about_media');
+            $kind = $this->aboutMediaKind($file);
+
+            if (! $file->isValid() || $kind === null) {
+                return back()->withErrors([
+                    'about_media' => 'Upload an image (JPG, PNG, WEBP, GIF, or SVG) or a video (MP4, WEBM, or MOV).',
+                ])->withInput();
+            }
+
+            $maxKilobytes = $kind === 'video' ? 102400 : 5120;
+            if ($file->getSize() > $maxKilobytes * 1024) {
+                return back()->withErrors([
+                    'about_media' => $kind === 'video'
+                        ? 'Video must be 100MB or smaller.'
+                        : 'Image must be 5MB or smaller.',
+                ])->withInput();
+            }
+
+            $this->deleteStoredAsset($mediaUrl);
+            $path = $file->store('about', 'media');
+            $mediaUrl = Storage::disk('media')->url($path);
+            $mediaType = $kind;
+        }
+
         Setting::setValue('about_content', Setting::encodeJson([
             'label' => $validated['about_label'],
             'heading_line_1' => $validated['about_heading_line_1'],
@@ -125,9 +161,26 @@ class HomeContentController extends Controller
             'paragraph_1' => $validated['about_paragraph_1'],
             'paragraph_2' => $validated['about_paragraph_2'],
             'facts' => $facts,
+            'media_url' => $mediaUrl,
+            'media_type' => $mediaType,
         ]));
 
         return redirect()->route('admin.home-content.edit', ['tab' => 'about'])->with('success', 'About me updated successfully!');
+    }
+
+    private function aboutMediaKind(UploadedFile $file): ?string
+    {
+        $extension = strtolower($file->getClientOriginalExtension());
+
+        if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'], true)) {
+            return 'image';
+        }
+
+        if (in_array($extension, ['mp4', 'webm', 'mov'], true)) {
+            return 'video';
+        }
+
+        return null;
     }
 
     private function deleteStoredAsset(?string $url): void

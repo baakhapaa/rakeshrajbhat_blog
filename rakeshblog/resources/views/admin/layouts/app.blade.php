@@ -71,6 +71,9 @@
         .tox .tox-edit-area__iframe {
             background: #0f1419;
         }
+        .messages-summary::-webkit-details-marker {
+            display: none;
+        }
     </style>
     
     @stack('styles')

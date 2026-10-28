@@ -130,6 +130,8 @@ class Setting extends Model
                 ['title' => 'Civil engineering', 'caption' => 'Education'],
                 ['title' => 'Nepal & Texas', 'caption' => 'Experience'],
             ],
+            'media_url' => null,
+            'media_type' => null,
         ];
     }
 
@@ -155,6 +157,13 @@ class Setting extends Model
         if ($facts !== []) {
             $content['facts'] = $facts;
         }
+
+        $mediaUrl = trim((string) ($decoded['media_url'] ?? ''));
+        $mediaType = $decoded['media_type'] ?? null;
+        $content['media_url'] = $mediaUrl !== '' ? $mediaUrl : null;
+        $content['media_type'] = in_array($mediaType, ['image', 'video'], true) && $content['media_url']
+            ? $mediaType
+            : null;
 
         return $content;
     }
