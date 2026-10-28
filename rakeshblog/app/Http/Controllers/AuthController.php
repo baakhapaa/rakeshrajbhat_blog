@@ -44,9 +44,9 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
-            
+
             $user = Auth::user();
-            
+
             try {
                 $user->ip_address = $request->ip();
                 $user->last_login_ip = $request->ip();
@@ -55,13 +55,13 @@ class AuthController extends Controller
             } catch (\Exception $e) {
                 \Log::warning('Could not update login tracking: ' . $e->getMessage());
             }
-            
+
             // Log successful login
             ActivityLogger::log('user_login', 'User logged in', [
                 'email' => $user->email,
                 'ip' => $request->ip()
             ]);
-            
+
             return redirect()->intended('/');
         }
 
@@ -186,7 +186,7 @@ class AuthController extends Controller
             ]);
         }
 
-        return redirect()->route('password.verify-otp')->with('status', 'We have sent a 6-digit OTP to your email address.');
+        return redirect()->route('password.verify-otp')->with('status', 'We have sent a 6-digit OTP to your email address. Please check on your spam folder if you don\'t see it in your inbox.');
     }
 
     // Show OTP verification form
@@ -273,14 +273,14 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $user = Auth::user();
-        
+
         // Log logout
         if ($user) {
             ActivityLogger::log('user_logout', 'User logged out', [
                 'email' => $user->email
             ]);
         }
-        
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

@@ -968,7 +968,7 @@ document.addEventListener('keydown', function(e) {
                         </a>
                     @endforeach
                 </div>
-                <p class="mt-4 text-xs text-[#8a8a82]">Drag or scroll sideways to move through the collections. Select a collection to see every photograph.</p>
+                <p class="mt-4 text-xs text-[#8a8a82]">Drag or scroll sideways to move through the collections. Click on a collection to see every photograph.</p>
             @else
                 <p class="text-sm text-[#8a8a82]">{{ $gallerySection['empty'] }}</p>
             @endif
@@ -1118,6 +1118,7 @@ document.addEventListener('keydown', function(e) {
     padding-bottom: 1.35rem;
     cursor: grab;
     user-select: none;
+    touch-action: pan-x;
     scrollbar-width: none;
     scroll-snap-type: x proximity;
 }
@@ -1125,6 +1126,11 @@ document.addEventListener('keydown', function(e) {
 .gallery-scroller.is-dragging {
     cursor: grabbing;
     scroll-snap-type: none;
+}
+
+.gallery-scroller.is-dragging .gallery-card {
+    cursor: grabbing;
+    pointer-events: none;
 }
 
 .gallery-card {
@@ -1140,7 +1146,9 @@ document.addEventListener('keydown', function(e) {
     background: #e7e1d6;
     text-decoration: none;
     color: inherit;
-    cursor: pointer;
+    cursor: grab;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .gallery-card:hover {
@@ -1629,26 +1637,37 @@ document.addEventListener('DOMContentLoaded', function () {
     let startX = 0;
     let startScroll = 0;
     let dragged = false;
+    let suppressClick = false;
+    const dragThreshold = 10;
 
     const canScroll = () => scroller.scrollWidth > scroller.clientWidth + 4;
 
+    const beginDrag = function (event) {
+        if (dragged) return;
+        dragged = true;
+        scroller.classList.add('is-dragging');
+        try {
+            scroller.setPointerCapture(event.pointerId);
+        } catch (error) {}
+    };
+
     scroller.addEventListener('pointerdown', function (event) {
         if (event.pointerType !== 'mouse' || event.button !== 0) return;
+
         pointerId = event.pointerId;
         startX = event.clientX;
         startScroll = scroller.scrollLeft;
         dragged = false;
+        suppressClick = false;
     });
 
     scroller.addEventListener('pointermove', function (event) {
         if (event.pointerId !== pointerId) return;
+
         const delta = event.clientX - startX;
-        if (!dragged && Math.abs(delta) <= 8) return;
-        if (!dragged) {
-            dragged = true;
-            scroller.classList.add('is-dragging');
-            try { scroller.setPointerCapture(pointerId); } catch (error) {}
-        }
+        if (!dragged && Math.abs(delta) <= dragThreshold) return;
+
+        beginDrag(event);
         scroller.scrollLeft = startScroll - delta;
         event.preventDefault();
     });
@@ -1656,10 +1675,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const finishDrag = function (event) {
         if (pointerId === null) return;
         if (event && event.pointerId !== undefined && event.pointerId !== pointerId) return;
+
         const activePointerId = pointerId;
+        const didDrag = dragged;
         pointerId = null;
         scroller.classList.remove('is-dragging');
-        try { scroller.releasePointerCapture(activePointerId); } catch (error) {}
+
+        try {
+            scroller.releasePointerCapture(activePointerId);
+        } catch (error) {}
+
+        if (didDrag) {
+            suppressClick = true;
+            window.setTimeout(function () {
+                suppressClick = false;
+            }, 300);
+        }
+
+        dragged = false;
     };
 
     scroller.addEventListener('pointerup', finishDrag);
@@ -1667,11 +1700,15 @@ document.addEventListener('DOMContentLoaded', function () {
     scroller.addEventListener('lostpointercapture', finishDrag);
 
     scroller.addEventListener('click', function (event) {
-        if (!dragged) return;
+        if (!event.target.closest('.gallery-card')) return;
+        if (!suppressClick) return;
         event.preventDefault();
         event.stopPropagation();
-        dragged = false;
     }, true);
+
+    scroller.addEventListener('dragstart', function (event) {
+        event.preventDefault();
+    });
 
     scroller.addEventListener('wheel', function (event) {
         if (!canScroll()) return;
