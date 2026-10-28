@@ -253,7 +253,7 @@
             flex-wrap: nowrap;
             align-items: center;
             justify-content: flex-end;
-            column-gap: calc(50 * var(--fu));
+            column-gap: clamp(14px, calc(26 * var(--fu)), 26px);
             font-family: "Plus Jakarta Sans", sans-serif;
             font-weight: 500;
             font-size: max(12px, calc(18 * var(--fu)));
@@ -269,8 +269,8 @@
         .site-nav .nav-link:hover { color: #b36855; }
         .site-nav .nav-link.active { border-bottom-color: #000000; padding-bottom: calc(4 * var(--fu)); }
         .site-header-actions {
-            margin-left: max(16px, calc(43 * var(--fu)));
-            gap: max(12px, calc(24 * var(--fu)));
+            margin-left: max(16px, calc(28 * var(--fu)));
+            gap: max(10px, calc(18 * var(--fu)));
         }
         .site-lang { font-size: max(11px, calc(15 * var(--fu))); }
         .site-cta {

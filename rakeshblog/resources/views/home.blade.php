@@ -27,7 +27,7 @@
             }
             .hero-canvas {
                 width: 2305px;
-                height: 1119px;
+                height: 1331px;
                 position: absolute;
                 left: 0;
                 top: 0;
@@ -40,7 +40,8 @@
             .hero-cubes {
                 background-image: url("{{ asset('images/hero/hero-cubes.jpg') }}");
                 background-repeat: repeat-y;
-                opacity: 0.06;
+                opacity: 0.1;
+                filter: contrast(1.5) brightness(1.25);
                 pointer-events: none;
             }
             .hero-cubes-a {
@@ -53,7 +54,7 @@
                 left: 7px;
                 top: 0;
                 width: 2298px;
-                height: 1119px;
+                height: 1331px;
                 background-size: 2298px 5802px;
                 background-position: 0 -2292px;
                 animation: heroCubesB 190s linear infinite;
@@ -265,6 +266,7 @@
                     inset: 0;
                     width: auto;
                     z-index: 0;
+                    background-repeat: repeat;
                     background-size: 780px 1688px;
                     background-position: 50% 0;
                     animation-name: heroCubesM;
@@ -449,7 +451,7 @@
                     }
                     var scale = fit.clientWidth / 2305;
                     canvas.style.transform = 'scale(' + scale + ')';
-                    fit.style.height = Math.round(1119 * scale) + 'px';
+                    fit.style.height = Math.round(1331 * scale) + 'px';
                     var headerHeight = header ? header.getBoundingClientRect().height : 0;
                     stage.style.paddingTop = Math.max(0, Math.round(headerHeight - 138 * scale)) + 'px';
                 }
@@ -461,42 +463,47 @@
     </section>
 
     <!-- About Me -->
-    <section id="about-me" class="scroll-mt-20 border-b border-[#efeeeb] bg-[#fbf9f6] text-[#1b1c1a]">
-        <div class="mx-auto w-full max-w-[1920px] px-6 pb-16 pt-20 sm:px-10 md:pb-24 md:pt-28 lg:px-16 lg:pb-[113px] lg:pt-[160px] xl:px-24 2xl:px-[196px]">
-            <div class="grid items-end gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-x-16">
-                <div class="lg:pt-[39px]">
-                    <div class="flex items-center gap-2">
-                        <span class="block h-0.5 w-6 shrink-0 bg-[#89351d]" aria-hidden="true"></span>
-                        <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#89351d]">{{ $aboutContent['label'] }}</p>
+    <section id="about-me" class="about-reveal scroll-mt-20 text-[#1b1c1a]">
+        <div class="about-card">
+            <div class="about-grid">
+                <div class="about-reveal-text">
+                    <div class="about-label">
+                        <span class="about-label-rule" aria-hidden="true"></span>
+                        <p>{{ $aboutContent['label'] }}</p>
                     </div>
-                    <h2 class="pt-3 font-jakarta text-[2rem] font-bold leading-tight tracking-[-0.6px] text-[#1b1c1a] sm:text-[44px] sm:leading-[48px] sm:tracking-[-1.1px]">
+                    <h2 class="about-heading">
                         {{ $aboutContent['heading_line_1'] }}@if(filled($aboutContent['heading_line_2'])) {{ $aboutContent['heading_line_2'] }}@endif
                     </h2>
-                    <div class="flex max-w-[840px] flex-col gap-10 pt-10 lg:gap-[50px] lg:pt-[51px]">
-                        <div class="rounded-2xl border-l-4 border-[#89351d] bg-[#f5f3f0] py-6 pl-7 pr-6">
-                            <p class="font-jakarta text-[1.35rem] font-bold leading-8 text-[#1b1c1a] sm:text-[31px] sm:leading-[40px]">{{ $aboutContent['paragraph_1'] }}</p>
+                    @php
+                        $aboutSecond = trim((string) ($aboutContent['paragraph_2'] ?? ''));
+                        $aboutThird = trim((string) ($aboutContent['paragraph_3'] ?? ''));
+                        if ($aboutSecond !== '' && $aboutThird !== '' && str_contains($aboutSecond, $aboutThird)) {
+                            $aboutSecond = trim(str_replace($aboutThird, '', $aboutSecond));
+                        }
+                    @endphp
+                    <div class="about-copy">
+                        <div class="about-quote-box">
+                            <p class="about-quote">{{ $aboutContent['paragraph_1'] }}</p>
                         </div>
-                        @if(filled($aboutContent['paragraph_2']))
-                            <p class="font-jakarta text-[17px] font-bold leading-9 text-[#5f5e5e]">{{ $aboutContent['paragraph_2'] }}</p>
+                        @if($aboutSecond !== '')
+                            <p class="about-body">{{ $aboutSecond }}</p>
                         @endif
-                        @if(filled($aboutContent['paragraph_3']))
-                            <p class="font-jakarta text-lg font-normal leading-[1.35] text-[#5f5e5e]">{{ $aboutContent['paragraph_3'] }}</p>
+                        @if($aboutThird !== '')
+                            <p class="about-note">{{ $aboutThird }}</p>
                         @endif
                     </div>
                     @if(filled($aboutContent['button_label']))
-                        <div class="pt-12 lg:pt-20">
-                            <a href="{{ \App\Models\Setting::linkHref($aboutContent['button_url'] ?: '#projects') }}" @if(str_starts_with((string) $aboutContent['button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="inline-flex items-center rounded-full bg-[#b36855] px-6 py-2.5 font-jakarta text-sm font-medium leading-[21px] text-[#faf7f2] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.12),0px_2px_4px_-2px_rgba(0,0,0,0.43)] transition hover:brightness-110">
+                        <div class="about-action">
+                            <a href="{{ \App\Models\Setting::linkHref($aboutContent['button_url'] ?: '#projects') }}" @if(str_starts_with((string) $aboutContent['button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="about-btn">
                                 <span>{{ $aboutContent['button_label'] }}</span>
-                                <span class="inline-flex pl-2">
-                                    <img src="{{ asset('images/about-arrow.svg') }}" alt="" width="9.46875" height="3.75">
-                                </span>
+                                <img src="{{ asset('images/about-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                             </a>
                         </div>
                     @endif
                 </div>
-                <div class="relative w-full self-end overflow-hidden">
+                <div class="about-reveal-media">
                     @php
-                        $aboutMediaClass = 'aspect-[4/5] h-auto w-full object-cover lg:aspect-[5/6] 2xl:aspect-auto 2xl:h-[738px]';
+                        $aboutMediaClass = 'about-photo';
                     @endphp
                     @if(!empty($aboutContent['media_url']) && ($aboutContent['media_type'] ?? null) === 'video')
                         <div class="about-portrait">
@@ -526,8 +533,187 @@
         </div>
     </section>
     <style>
-        .about-portrait { position: relative; }
-        .about-portrait video { position: relative; z-index: 0; display: block; }
+        #about-me {
+            position: relative;
+            overflow-x: clip;
+            padding: 0 16px 48px;
+            background: linear-gradient(to bottom, #e9e9e9 0, #e9e9e9 96px, #f3f3f3 96px, #f3f3f3 100%);
+            font-family: "Plus Jakarta Sans", sans-serif;
+        }
+        .about-card {
+            --about-stack-x: 12px;
+            --about-stack-y: 24px;
+            position: relative;
+            margin: 0 auto;
+            max-width: 1920px;
+            padding: 40px 20px 48px;
+            background: #fbf9f6;
+            border-bottom: 1px solid #efeeeb;
+            box-shadow:
+                var(--about-stack-x) var(--about-stack-y) 0 rgba(255, 255, 255, 0.7),
+                0 18px 50px -12px rgba(0, 0, 0, 0.28),
+                0 4px 14px rgba(0, 0, 0, 0.08);
+        }
+        .about-grid { display: grid; gap: 40px; }
+        .about-label { display: flex; align-items: center; gap: 8px; }
+        .about-label-rule { display: block; flex-shrink: 0; width: 24px; height: 2px; background: #89351d; }
+        .about-label p {
+            margin: 0;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 16px;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+            color: #89351d;
+        }
+        .about-heading {
+            margin: 0;
+            padding-top: 12px;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.6px;
+            color: #1b1c1a;
+        }
+        .about-copy { display: flex; flex-direction: column; gap: 32px; padding-top: 32px; }
+        .about-quote-box {
+            border-left: 4px solid #89351d;
+            border-radius: 16px;
+            background: #f5f3f0;
+            padding: 20px 20px 20px 24px;
+        }
+        .about-quote { margin: 0; font-size: 22px; font-weight: 700; line-height: 1.35; color: #1b1c1a; }
+        .about-body { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.9; color: #5f5e5e; }
+        .about-note { margin: 0; font-size: 16px; font-weight: 400; line-height: 1.4; color: #5f5e5e; }
+        .about-action { padding-top: 32px; }
+        .about-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border-radius: 9999px;
+            background: #b36855;
+            color: #faf7f2;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 21px;
+            text-decoration: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
+            transition: filter 0.2s ease;
+        }
+        .about-btn:hover { filter: brightness(1.1); }
+        .about-btn img { flex-shrink: 0; }
+        .about-reveal-media {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 665.333 / 738;
+            overflow: hidden;
+        }
+        .about-photo {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            object-fit: cover;
+        }
+        @media (min-width: 1024px) {
+            #about-me {
+                z-index: 1;
+                margin-top: calc(-212 * var(--fu));
+                padding: 0 0 calc(60 * var(--fu));
+                background: linear-gradient(to bottom, transparent 0, transparent calc(212 * var(--fu)), #f3f3f3 calc(212 * var(--fu)), #f3f3f3 100%);
+            }
+            .about-card {
+                width: calc(1920 * var(--fu));
+                min-height: calc(1065 * var(--fu));
+                padding: calc(160 * var(--fu)) calc(196 * var(--fu)) calc(113 * var(--fu));
+            }
+            .about-card {
+                --about-stack-x: calc(27 * var(--fu));
+                --about-stack-y: calc(52 * var(--fu));
+            }
+            .about-grid {
+                width: calc(1548 * var(--fu));
+                grid-template-columns: minmax(0, 1fr) calc(665.333 * var(--fu));
+                column-gap: calc(64 * var(--fu));
+                align-items: end;
+                min-height: calc(777 * var(--fu));
+            }
+            .about-reveal-text { align-self: start; padding-top: calc(39 * var(--fu)); }
+            .about-label { gap: calc(8 * var(--fu)); }
+            .about-label-rule { width: calc(24 * var(--fu)); height: max(1px, calc(2 * var(--fu))); }
+            .about-label p {
+                font-size: max(9px, calc(14 * var(--fu)));
+                line-height: calc(16 * var(--fu));
+                letter-spacing: calc(1.1 * var(--fu));
+            }
+            .about-heading {
+                padding-top: calc(12 * var(--fu));
+                font-size: calc(44 * var(--fu));
+                line-height: calc(48 * var(--fu));
+                letter-spacing: calc(-1.1 * var(--fu));
+            }
+            .about-copy { gap: calc(50 * var(--fu)); padding-top: calc(51 * var(--fu)); }
+            .about-quote-box {
+                width: calc(840 * var(--fu));
+                border-left-width: max(2px, calc(4 * var(--fu)));
+                border-radius: calc(16 * var(--fu));
+                padding: calc(24 * var(--fu)) calc(24 * var(--fu)) calc(24 * var(--fu)) calc(28 * var(--fu));
+            }
+            .about-quote { font-size: calc(31 * var(--fu)); line-height: calc(40 * var(--fu)); }
+            .about-body {
+                max-width: calc(720 * var(--fu));
+                font-size: max(10px, calc(17 * var(--fu)));
+                line-height: calc(36 * var(--fu));
+            }
+            .about-note {
+                max-width: calc(600 * var(--fu));
+                font-size: max(10px, calc(18 * var(--fu)));
+                line-height: calc(24.38 * var(--fu));
+            }
+            .about-action { padding-top: calc(80 * var(--fu)); }
+            .about-btn {
+                gap: calc(8 * var(--fu));
+                padding: calc(10 * var(--fu)) calc(24 * var(--fu));
+                font-size: max(10px, calc(14 * var(--fu)));
+                line-height: calc(21 * var(--fu));
+            }
+            .about-btn img { width: calc(9.46875 * var(--fu)); height: calc(3.75 * var(--fu)); }
+            .about-reveal-media { height: calc(738 * var(--fu)); aspect-ratio: auto; }
+        }
+        .about-reveal-ready .about-card {
+            opacity: 0;
+            transform: translateY(160px);
+            transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.5s ease-out;
+        }
+        .about-reveal-ready .about-reveal-text,
+        .about-reveal-ready .about-reveal-media {
+            opacity: 0;
+            transition: transform 0.5s ease-in 0.15s, opacity 0.5s ease-in 0.15s;
+        }
+        .about-reveal-ready .about-reveal-text { transform: translateX(-59.375vw); }
+        .about-reveal-ready .about-reveal-media { transform: translateX(46.875vw); }
+        .about-card { overflow: visible; }
+        .about-card > .about-grid { overflow: clip; overflow-clip-margin: 40px; }
+        .about-reveal-ready .about-reveal.is-revealed .about-card,
+        .about-reveal-ready .about-reveal.is-revealed .about-reveal-text,
+        .about-reveal-ready .about-reveal.is-revealed .about-reveal-media {
+            opacity: 1;
+            transform: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .about-reveal-ready .about-card,
+            .about-reveal-ready .about-reveal-text,
+            .about-reveal-ready .about-reveal-media {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+        }
+        .about-portrait { position: absolute; inset: 0; }
+        .about-portrait video { z-index: 0; display: block; }
         #aboutPortraitSound {
             position: absolute;
             right: 16px;
@@ -547,6 +733,28 @@
         }
         #aboutPortraitSound:hover { background: rgba(11, 14, 18, 0.9); }
     </style>
+    <script>
+        (function () {
+            const section = document.getElementById('about-me');
+            if (!section) {
+                return;
+            }
+            document.documentElement.classList.add('about-reveal-ready');
+            function check() {
+                if (window.scrollY < 10) {
+                    return;
+                }
+                if (section.getBoundingClientRect().top < window.innerHeight * 0.92) {
+                    section.classList.add('is-revealed');
+                    window.removeEventListener('scroll', check);
+                    window.removeEventListener('resize', check);
+                }
+            }
+            window.addEventListener('scroll', check, { passive: true });
+            window.addEventListener('resize', check);
+            check();
+        })();
+    </script>
     <script>
         (function () {
             const button = document.getElementById('aboutPortraitSound');
