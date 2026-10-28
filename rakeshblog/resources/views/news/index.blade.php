@@ -5,12 +5,15 @@
 @section('meta_description', $newsContent['intro'])
 
 @section('content')
-<section class="py-20 md:py-28 bg-gradient-to-b from-[#f8f6f1] to-[#f2efe8]">
+<section class="bg-[#fbf9f6] py-20 text-[#1b1c1a] md:py-28">
     <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-3 uppercase">{{ $newsContent['label'] }}</p>
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#1e1e1a] leading-tight">{{ $newsContent['heading'] }}</h1>
-            <p class="text-[#5a5a52] mt-4 text-lg leading-relaxed max-w-2xl mx-auto">{{ $newsContent['intro'] }}</p>
+        <div class="mb-16 max-w-xl">
+            <div class="flex items-center gap-2">
+                <span class="block h-0.5 w-6 shrink-0 bg-[#89351d]" aria-hidden="true"></span>
+                <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#89351d]">{{ $newsContent['label'] }}</p>
+            </div>
+            <h1 class="pt-1 font-jakarta text-[2rem] font-bold leading-tight tracking-[-0.6px] text-[#1b1c1a] sm:text-[40px] sm:leading-[48px] sm:tracking-[-1px]">{{ $newsContent['heading'] }}</h1>
+            <p class="max-w-xl pt-2 font-jakarta text-base leading-6 text-[#5f5e5e]">{{ $newsContent['intro'] }}</p>
         </div>
 
         @if($newsItems->isNotEmpty())

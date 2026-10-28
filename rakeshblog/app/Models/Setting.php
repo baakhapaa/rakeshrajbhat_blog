@@ -120,11 +120,14 @@ class Setting extends Model
     public static function defaultAboutContent(): array
     {
         return [
-            'label' => '01 / About me',
-            'heading_line_1' => 'My journey',
-            'heading_line_2' => 'so far.',
+            'label' => 'About',
+            'heading_line_1' => 'My Journey So Far',
+            'heading_line_2' => '',
             'paragraph_1' => 'I studied civil engineering, worked in Texas and returned to Nepal to build projects in education, technology and tourism.',
-            'paragraph_2' => 'Through Baakhapaa, Skill Sikka, HillyChilly and Future Builders, I have been exploring ways to connect learning with practical opportunities. As I prepare for public service in Palungtar, I want to bring that experience into conversations about employment, education and the services people depend on every day.',
+            'paragraph_2' => 'Through Baakhapaa, Skill Sikka, HillyChilly and Future Builders, I have been exploring ways to connect learning with practical opportunities. These initiatives reflect the areas I care about: useful education, local enterprise and opportunities for young people.',
+            'paragraph_3' => 'As I prepare for public service in Palungtar, I want to bring that experience into conversations about employment, education and the services people depend on every day.',
+            'button_label' => 'View my work',
+            'button_url' => '#projects',
             'facts' => [
                 ['title' => 'Civil engineering', 'caption' => 'Education'],
                 ['title' => 'Nepal & Texas', 'caption' => 'Experience'],
@@ -143,10 +146,14 @@ class Setting extends Model
 
         $content = $defaults;
 
-        foreach (['label', 'heading_line_1', 'heading_line_2', 'paragraph_1', 'paragraph_2'] as $key) {
+        foreach (['label', 'heading_line_1', 'paragraph_1', 'paragraph_2', 'paragraph_3', 'button_label', 'button_url'] as $key) {
             if (isset($decoded[$key]) && is_string($decoded[$key]) && trim($decoded[$key]) !== '') {
                 $content[$key] = $decoded[$key];
             }
+        }
+
+        if (array_key_exists('heading_line_2', $decoded) && is_string($decoded['heading_line_2'])) {
+            $content['heading_line_2'] = trim($decoded['heading_line_2']);
         }
 
         $facts = static::aboutFactsFrom($decoded);
@@ -202,9 +209,9 @@ class Setting extends Model
     public static function defaultNewsContent(): array
     {
         return [
-            'label' => '05 / News & Updates',
-            'heading' => 'From the journey.',
-            'intro' => 'News from community visits, project activities, public discussions and events.',
+            'label' => 'News',
+            'heading' => 'Latest News and Activities',
+            'intro' => 'Updates from community visits, project activities and public discussions, along with interviews and media coverage.',
             'items' => [
                 [
                     'kicker' => 'Palungtar · Community',

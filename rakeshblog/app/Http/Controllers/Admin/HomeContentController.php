@@ -89,9 +89,12 @@ class HomeContentController extends Controller
         $validated = $request->validate([
             'about_label' => 'required|string|max:80',
             'about_heading_line_1' => 'required|string|max:80',
-            'about_heading_line_2' => 'required|string|max:80',
+            'about_heading_line_2' => 'nullable|string|max:80',
             'about_paragraph_1' => 'required|string|max:1000',
             'about_paragraph_2' => 'required|string|max:1500',
+            'about_paragraph_3' => 'nullable|string|max:1500',
+            'about_button_label' => 'nullable|string|max:40',
+            'about_button_url' => 'nullable|string|max:255',
             'about_fact_title' => 'required|array|min:1|max:12',
             'about_fact_title.*' => 'required|string|max:80',
             'about_fact_caption' => 'required|array|min:1|max:12',
@@ -118,12 +121,29 @@ class HomeContentController extends Controller
             ];
         }
 
+        $buttonUrl = trim((string) ($validated['about_button_url'] ?? ''));
+
+        if ($buttonUrl === '') {
+            $buttonUrl = '#projects';
+        } else {
+            $buttonUrl = Setting::sanitizeLink($buttonUrl);
+
+            if ($buttonUrl === null) {
+                return back()->withErrors([
+                    'about_button_url' => 'Use a section anchor like #projects, a site path like /blog, or an http(s) URL.',
+                ])->withInput();
+            }
+        }
+
         Setting::setValue('about_content', Setting::encodeJson([
             'label' => $validated['about_label'],
             'heading_line_1' => $validated['about_heading_line_1'],
-            'heading_line_2' => $validated['about_heading_line_2'],
+            'heading_line_2' => trim((string) ($validated['about_heading_line_2'] ?? '')),
             'paragraph_1' => $validated['about_paragraph_1'],
             'paragraph_2' => $validated['about_paragraph_2'],
+            'paragraph_3' => trim((string) ($validated['about_paragraph_3'] ?? '')),
+            'button_label' => trim((string) ($validated['about_button_label'] ?? '')),
+            'button_url' => $buttonUrl,
             'facts' => $facts,
         ]));
 

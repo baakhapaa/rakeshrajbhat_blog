@@ -212,7 +212,7 @@
                     @enderror
                 </div>
                 <div>
-                    <label for="about_heading_line_2" class="block text-white/70 text-sm font-medium mb-2">Heading line 2</label>
+                    <label for="about_heading_line_2" class="block text-white/70 text-sm font-medium mb-2">Heading line 2 (optional)</label>
                     <input type="text" id="about_heading_line_2" name="about_heading_line_2" value="{{ old('about_heading_line_2', $about['heading_line_2']) }}"
                         class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                     @error('about_heading_line_2')
@@ -222,7 +222,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="about_paragraph_1" class="block text-white/70 text-sm font-medium mb-2">First paragraph</label>
+                <label for="about_paragraph_1" class="block text-white/70 text-sm font-medium mb-2">Highlight</label>
                 <textarea id="about_paragraph_1" name="about_paragraph_1" rows="3"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">{{ old('about_paragraph_1', $about['paragraph_1']) }}</textarea>
                 @error('about_paragraph_1')
@@ -231,12 +231,40 @@
             </div>
 
             <div>
-                <label for="about_paragraph_2" class="block text-white/70 text-sm font-medium mb-2">Second paragraph</label>
+                <label for="about_paragraph_2" class="block text-white/70 text-sm font-medium mb-2">Body</label>
                 <textarea id="about_paragraph_2" name="about_paragraph_2" rows="5"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">{{ old('about_paragraph_2', $about['paragraph_2']) }}</textarea>
                 @error('about_paragraph_2')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror
+            </div>
+
+            <div class="mt-4">
+                <label for="about_paragraph_3" class="block text-white/70 text-sm font-medium mb-2">Closing paragraph</label>
+                <textarea id="about_paragraph_3" name="about_paragraph_3" rows="4"
+                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">{{ old('about_paragraph_3', $about['paragraph_3'] ?? '') }}</textarea>
+                @error('about_paragraph_3')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="about_button_label" class="block text-white/70 text-sm font-medium mb-2">Button label</label>
+                    <input type="text" id="about_button_label" name="about_button_label" value="{{ old('about_button_label', $about['button_label'] ?? '') }}"
+                        class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
+                    @error('about_button_label')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label for="about_button_url" class="block text-white/70 text-sm font-medium mb-2">Button link</label>
+                    <input type="text" id="about_button_url" name="about_button_url" value="{{ old('about_button_url', $about['button_url'] ?? '#projects') }}"
+                        class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
+                    @error('about_button_url')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
         </div>
 
