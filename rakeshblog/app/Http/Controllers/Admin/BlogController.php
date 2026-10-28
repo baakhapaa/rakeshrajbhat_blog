@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Quiz;
+use App\Models\Setting;
 use App\Models\QuizQuestion;
 use App\Helpers\ActivityLogger;
 use Illuminate\Http\Request;
@@ -47,7 +48,16 @@ class BlogController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('admin.blogs.index', compact('blogs', 'totalBlogs', 'featuredCount', 'publishedCount', 'draftCount'));
+        $blogPage = Setting::getBlogPage();
+        if (is_array(old('category_order'))) {
+            $blogCategories = old('category_order');
+        } elseif ($blogPage['categories_managed']) {
+            $blogCategories = $blogPage['category_order'];
+        } else {
+            $blogCategories = Blog::query()->whereNotNull('category')->distinct()->orderBy('category')->pluck('category')->filter()->values()->all();
+        }
+
+        return view('admin.blogs.index', compact('blogs', 'totalBlogs', 'featuredCount', 'publishedCount', 'draftCount', 'blogPage', 'blogCategories'));
     }
 
     public function create()
@@ -555,6 +565,26 @@ class BlogController extends Controller
         return redirect()->back()->with('success', 
             $blog->is_featured ? 'Blog marked as featured!' : 'Blog removed from featured!'
         );
+    }
+
+    public function updatePage(Request $request)
+    {
+        $validated = $request->validate([
+            'blog_eyebrow' => 'required|string|max:60',
+            'blog_title' => 'required|string|max:120',
+            'blog_paragraph' => 'required|string|max:400',
+            'category_order' => 'nullable|array|max:40',
+            'category_order.*' => 'nullable|string|max:100',
+        ]);
+
+        Setting::setValue('blog_page', Setting::encodeJson([
+            'eyebrow' => trim(strip_tags($validated['blog_eyebrow'])),
+            'title' => trim(strip_tags($validated['blog_title'])),
+            'paragraph' => trim(strip_tags($validated['blog_paragraph'])),
+            'category_order' => Setting::cleanNameList($validated['category_order'] ?? []),
+        ]));
+
+        return redirect()->route('admin.blogs.index')->with('success', 'Blog page updated.');
     }
 
     /**

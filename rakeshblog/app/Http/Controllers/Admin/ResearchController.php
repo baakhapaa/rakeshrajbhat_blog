@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Research;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -50,8 +51,28 @@ class ResearchController extends Controller
         // Paginate results (10 per page)
         $researchItems = $query->paginate(10)->withQueryString();
         $researchSection = Setting::getResearchSection();
+        $featuredPage = Setting::getResearchFeaturedPage();
 
-        return view('admin.research.index', compact('researchItems', 'researchSection'));
+        if (is_array(old('filter_label'))) {
+            $featuredPage['filters'] = [];
+            foreach (old('filter_label') as $index => $label) {
+                $key = (string) old('filter_key.'.$index);
+                $type = (string) old('filter_type.'.$index);
+                if ($type === '') {
+                    $type = $key === 'all' ? 'all' : ($key === 'blog' ? 'blog' : 'category');
+                }
+                $featuredPage['filters'][] = [
+                    'key' => $key,
+                    'label' => $label,
+                    'type' => $type,
+                    'icon' => Setting::researchFilterIcons()[$key] ?? 'fa-tag',
+                ];
+            }
+        }
+
+        $researchCategories = $this->categoryChoices();
+
+        return view('admin.research.index', compact('researchItems', 'researchSection', 'featuredPage', 'researchCategories'));
     }
 
     public function updateSection(Request $request)
@@ -67,16 +88,66 @@ class ResearchController extends Controller
         return redirect()->route('admin.research.index')->with('success', 'Research section heading updated.');
     }
 
+    public function updateFeaturedPage(Request $request)
+    {
+        $validated = $request->validate([
+            'title_line' => 'required|string|max:80',
+            'title_accent' => 'nullable|string|max:80',
+            'paragraph' => 'required|string|max:400',
+            'filter_key' => 'nullable|array|max:12',
+            'filter_key.*' => 'nullable|string|max:100',
+            'filter_label' => 'nullable|array|max:12',
+            'filter_label.*' => 'nullable|string|max:40',
+            'filter_type' => 'nullable|array|max:12',
+            'filter_type.*' => 'nullable|string|in:all,category,blog',
+        ]);
+
+        $rows = [];
+        foreach ($validated['filter_label'] ?? [] as $index => $label) {
+            $rows[] = [
+                'label' => $label,
+                'key' => $validated['filter_key'][$index] ?? '',
+                'type' => $validated['filter_type'][$index] ?? 'category',
+            ];
+        }
+
+        $filters = Setting::researchFiltersFrom($rows, false);
+        $filled = 0;
+        foreach ($validated['filter_label'] ?? [] as $label) {
+            if (trim(strip_tags((string) $label)) !== '') {
+                $filled++;
+            }
+        }
+
+        if (count($filters) !== $filled) {
+            return redirect()
+                ->route('admin.research.index')
+                ->withErrors(['filter_label' => 'Each category needs its own name.'])
+                ->withInput();
+        }
+
+        Setting::setValue('research_featured_page', Setting::encodeJson([
+            'title_line' => trim(strip_tags($validated['title_line'])),
+            'title_accent' => trim(strip_tags((string) ($validated['title_accent'] ?? ''))),
+            'paragraph' => trim(strip_tags($validated['paragraph'])),
+            'filters' => $filters,
+        ]));
+
+        return redirect()->route('admin.research.index')->with('success', 'Featured research page updated.');
+    }
+
     public function create()
     {
-        return view('admin.research.create');
+        $researchCategories = $this->categoryChoices();
+
+        return view('admin.research.create', compact('researchCategories'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'category' => 'required|in:Vision,Research Papers,Media',
+            'category' => ['required', 'string', 'max:100', Rule::in(array_keys($this->categoryChoices()))],
             'description' => 'required|string',
             'content' => 'nullable|string',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -135,14 +206,16 @@ class ResearchController extends Controller
 
     public function edit(Research $research)
     {
-        return view('admin.research.edit', compact('research'));
+        $researchCategories = $this->categoryChoices($research->category);
+
+        return view('admin.research.edit', compact('research', 'researchCategories'));
     }
 
     public function update(Request $request, Research $research)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
-            'category' => 'required|in:Vision,Research Papers,Media',
+            'category' => ['required', 'string', 'max:100', Rule::in(array_keys($this->categoryChoices()))],
             'description' => 'required|string',
             'content' => 'nullable|string',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -303,6 +376,32 @@ class ResearchController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    private function categoryChoices(?string $current = null): array
+    {
+        $choices = [];
+
+        foreach (Setting::getResearchFeaturedPage()['filters'] as $filter) {
+            if (($filter['type'] ?? '') !== 'category' || $filter['key'] === '') {
+                continue;
+            }
+
+            $choices[$filter['key']] = $filter['label'];
+        }
+
+        foreach (Research::query()->distinct()->pluck('category') as $name) {
+            $name = trim((string) $name);
+            if ($name !== '' && ! array_key_exists($name, $choices)) {
+                $choices[$name] = $name;
+            }
+        }
+
+        if ($current !== null && $current !== '' && ! array_key_exists($current, $choices)) {
+            $choices[$current] = $current;
+        }
+
+        return $choices;
     }
 
     private function rejectExtraHomeSlot(Request $request, string $category, ?int $exceptId = null)

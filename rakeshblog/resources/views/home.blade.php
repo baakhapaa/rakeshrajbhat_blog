@@ -98,78 +98,372 @@
     </section>
 
     <!-- About/Mission Section -->
-    <section id="about" class="py-24 bg-[#f2f2f2] text-[#1e1e1a] scroll-mt-20">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
-                <div class="lg:col-span-5">
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-4 uppercase">My Mission</p>
-                    <h2 class="text-4xl font-serif font-bold mb-6 leading-tight">I believe in building systems that create lasting impact.</h2>
-                    <p class="text-[#3a3a34] mb-8 leading-relaxed">
-                        I grew up in Nepal. Studied Civil Engineering. Worked in Texas. Explored the world. And I returned home with a simple belief – that we can build a better future for our people with the right knowledge, technology and opportunities.
-                    </p>
-                    <blockquote class="border-l-4 border-[#D4AF37] pl-6 py-2 italic text-xl text-[#2a2a24]">
-                        "I am not in politics to play politics. <br/> I am here to build opportunities."
-                    </blockquote>
+    @php
+        $missionItems = [
+            ['number' => '01', 'title' => 'Education', 'body' => 'Making learning practical, accessible and future-ready.'],
+            ['number' => '02', 'title' => 'Youth Empowerment', 'body' => 'Equipping young minds with skills, confidence and purpose.'],
+            ['number' => '03', 'title' => 'Technology', 'body' => 'Using technology to solve real problems in communities.'],
+            ['number' => '04', 'title' => 'Local Economy', 'body' => 'Creating opportunities that strengthen local communities.'],
+            ['number' => '05', 'title' => 'Sustainability', 'body' => 'Building projects that respect nature and culture.'],
+            ['number' => '06', 'title' => 'Nation First', 'body' => 'Every step I take is for Nepal and her future.'],
+        ];
+    @endphp
+    <section id="about" class="mission-scroll text-[#1e1e1a] scroll-mt-20" aria-labelledby="mission-heading">
+        <div class="mission-scroll__intro">
+            <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-4 uppercase">My Mission</p>
+            <h2 id="mission-heading" class="text-4xl md:text-5xl font-serif font-bold mb-6 leading-tight">I believe in building systems that create lasting impact.</h2>
+            <p class="text-[#3a3a34] mb-8 leading-relaxed max-w-2xl">
+                I grew up in Nepal. Studied Civil Engineering. Worked in Texas. Explored the world. And I returned home with a simple belief – that we can build a better future for our people with the right knowledge, technology and opportunities.
+            </p>
+            <blockquote class="border-l-4 border-[#D4AF37] pl-6 py-2 italic text-xl text-[#2a2a24]">
+                "I am not in politics to play politics. <br/> I am here to build opportunities."
+            </blockquote>
+        </div>
+
+        <div class="mission-scroll__list">
+            @foreach($missionItems as $item)
+                <div class="mission-scroll__listItem">
+                    <div class="mission-scroll__listNum">{{ $item['number'] }}</div>
+                    <h3 class="mission-scroll__listTitle">{{ $item['title'] }}</h3>
+                    <p class="mission-scroll__listBody">{{ $item['body'] }}</p>
                 </div>
-                <div class="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-                    <div class="flex gap-4">
-                        <div class="text-[#D4AF37] shrink-0">
-                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg mb-1">Education</h4>
-                            <p class="text-sm text-[#4a4a42]">Making learning practical, accessible and future-ready.</p>
-                        </div>
+            @endforeach
+        </div>
+
+        <div class="mission-scroll__track" id="missionTrack">
+            <div class="mission-scroll__sticky" id="missionSticky">
+                <div class="mission-scroll__dialZone" aria-hidden="true">
+                    <div class="mission-scroll__dialBaseOuter"></div>
+                    <div class="mission-scroll__dialBaseInner"></div>
+                    <div class="mission-scroll__dialBaseCenter"></div>
+                    <div class="mission-scroll__dialCanvas" id="missionDial">
+                        @foreach($missionItems as $item)
+                            <div class="mission-scroll__marker">
+                                <div class="mission-scroll__markerContent">
+                                    <span class="mission-scroll__markerNum">{{ $item['number'] }}</span>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                    <div class="flex gap-4">
-                        <div class="text-[#D4AF37] shrink-0">
-                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg mb-1">Youth Empowerment</h4>
-                            <p class="text-sm text-[#4a4a42]">Equipping young minds with skills, confidence and purpose.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="text-[#D4AF37] shrink-0">
-                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg mb-1">Technology</h4>
-                            <p class="text-sm text-[#4a4a42]">Using technology to solve real problems in communities.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="text-[#D4AF37] shrink-0">
-                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg mb-1">Local Economy</h4>
-                            <p class="text-sm text-[#4a4a42]">Creating opportunities that strengthen local communities.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="text-[#D4AF37] shrink-0">
-                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg mb-1">Sustainability</h4>
-                            <p class="text-sm text-[#4a4a42]">Building projects that respect nature and culture.</p>
-                        </div>
-                    </div>
-                    <div class="flex gap-4">
-                        <div class="text-[#D4AF37] shrink-0">
-                            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/></svg>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-lg mb-1">Nation First</h4>
-                            <p class="text-sm text-[#4a4a42]">Every step I take is for Nepal and her future.</p>
-                        </div>
+                </div>
+                <div class="mission-scroll__textZone">
+                    <div class="mission-scroll__textViewport" id="missionText">
+                        @foreach($missionItems as $item)
+                            <article class="mission-scroll__reason">
+                                <h3 class="mission-scroll__headline">{{ $item['title'] }}</h3>
+                                <p class="mission-scroll__body">{{ $item['body'] }}</p>
+                            </article>
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <style>
+        .mission-scroll {
+            --gold: #D4AF37;
+            --ink: #1e1e1a;
+            --muted: #5a5a52;
+            --dial-size: min(52vw, 800px);
+            --dial-center: -0.02;
+            --number-margin: min(4vw, 64px);
+            position: relative;
+            width: 100%;
+            background: #f2f2f2;
+            overflow: clip;
+        }
+        .mission-scroll__intro {
+            position: relative;
+            z-index: 2;
+            max-width: 48rem;
+            margin: 0 auto;
+            padding: 96px 24px 48px;
+        }
+        .mission-scroll__list { display: none; max-width: 40rem; margin: 0 auto; padding: 0 24px 80px; }
+        .mission-scroll__listItem + .mission-scroll__listItem { margin-top: 28px; padding-top: 28px; border-top: 1px solid rgba(30, 30, 26, 0.08); }
+        .mission-scroll__listNum { color: #D4AF37; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; }
+        .mission-scroll__listTitle { margin: 8px 0 0; font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; }
+        .mission-scroll__listBody { margin: 8px 0 0; color: #5a5a52; font-size: 15px; line-height: 1.6; }
+        .mission-scroll__track { position: relative; width: 100%; height: 600vh; }
+        .mission-scroll__sticky {
+            position: sticky;
+            top: 5rem;
+            height: calc(100vh - 5rem);
+            width: 100%;
+            overflow: hidden;
+        }
+        .mission-scroll__dialZone {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 40%;
+            height: 100%;
+            pointer-events: none;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+        }
+        .mission-scroll__dialBaseOuter,
+        .mission-scroll__dialBaseInner,
+        .mission-scroll__dialBaseCenter {
+            position: absolute;
+            top: 50%;
+            border-radius: 50%;
+        }
+        .mission-scroll__dialBaseOuter {
+            width: var(--dial-size);
+            height: var(--dial-size);
+            left: calc(var(--dial-size) * (var(--dial-center) - 0.5));
+            margin-top: calc(var(--dial-size) / -2);
+            background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f7f4ee 100%);
+            box-shadow: 30px 40px 90px rgba(30, 30, 26, 0.08), inset -6px -6px 16px rgba(255, 255, 255, 0.95), inset 6px 6px 16px rgba(30, 30, 26, 0.05);
+        }
+        .mission-scroll__dialBaseInner {
+            width: calc(var(--dial-size) * 0.76);
+            height: calc(var(--dial-size) * 0.76);
+            left: calc(var(--dial-size) * (var(--dial-center) - 0.38));
+            margin-top: calc(var(--dial-size) * 0.76 / -2);
+            background: radial-gradient(circle at 35% 35%, #ffffff 0%, #faf8f5 100%);
+            box-shadow: 12px 16px 40px rgba(30, 30, 26, 0.05), inset -4px -4px 10px rgba(255, 255, 255, 0.9);
+        }
+        .mission-scroll__dialBaseCenter {
+            width: calc(var(--dial-size) * 0.52);
+            height: calc(var(--dial-size) * 0.52);
+            left: calc(var(--dial-size) * (var(--dial-center) - 0.26));
+            margin-top: calc(var(--dial-size) * 0.52 / -2);
+            background: #fff;
+            box-shadow: 6px 8px 24px rgba(30, 30, 26, 0.04);
+        }
+        .mission-scroll__dialCanvas {
+            position: absolute;
+            width: var(--dial-size);
+            height: var(--dial-size);
+            left: calc(var(--dial-size) * (var(--dial-center) - 0.5));
+            top: 50%;
+            margin-top: calc(var(--dial-size) / -2);
+            transform-origin: 50% 50%;
+            will-change: transform;
+        }
+        .mission-scroll__marker {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 0;
+            height: 0;
+            transform-origin: 0 0;
+            transform: rotate(var(--angle)) translateX(calc(var(--dial-size) * 0.4375 + var(--number-margin)));
+        }
+        .mission-scroll__markerContent {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .mission-scroll__markerNum {
+            display: inline-block;
+            font-family: 'Playfair Display', serif;
+            font-size: 72px;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            transform-origin: left center;
+            will-change: transform, color, opacity;
+        }
+        .mission-scroll__textZone {
+            position: absolute;
+            left: 38%;
+            width: 54%;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+        .mission-scroll__textViewport { position: relative; height: 280px; width: 100%; }
+        .mission-scroll__reason {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+        .mission-scroll__headline {
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(36px, 3.4vw, 56px);
+            font-weight: 700;
+            line-height: 1.1;
+            color: #1e1e1a;
+            will-change: transform;
+        }
+        .mission-scroll__body {
+            margin: 16px 0 0;
+            max-width: 36rem;
+            color: #5a5a52;
+            font-size: 18px;
+            line-height: 1.6;
+            will-change: transform;
+        }
+        @media (max-width: 1100px) {
+            .mission-scroll__textZone { left: 42%; width: 52%; }
+        }
+        @media (max-width: 768px) {
+            .mission-scroll {
+                --dial-size: min(72vw, 320px);
+                --dial-center: -0.16;
+                --number-margin: 8px;
+            }
+            .mission-scroll__intro { padding: 72px 20px 24px; }
+            .mission-scroll__sticky {
+                top: 5rem;
+                height: calc(100svh - 5rem);
+            }
+            .mission-scroll__dialZone { width: 42%; }
+            .mission-scroll__markerNum { font-size: 32px; }
+            .mission-scroll__textZone {
+                left: 40%;
+                width: 56%;
+                padding-right: 20px;
+            }
+            .mission-scroll__textViewport { height: 200px; }
+            .mission-scroll__headline { font-size: 28px; }
+            .mission-scroll__body { margin-top: 10px; font-size: 15px; line-height: 1.5; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .mission-scroll__track { display: none !important; height: auto !important; }
+            .mission-scroll__list { display: block !important; }
+        }
+    </style>
+    <script>
+        (function () {
+            const section = document.getElementById('about');
+            const track = document.getElementById('missionTrack');
+            const sticky = document.getElementById('missionSticky');
+            const canvas = document.getElementById('missionDial');
+            const viewport = document.getElementById('missionText');
+            if (!section || !track || !sticky || !canvas || !viewport) return;
+
+            const CONFIG = { angleStep: 28, exitY: 135, stiffness: 85, damping: 26, mass: 0.3, headlineYOffset: 45, bodyYOffset: 25, scrollPadding: 0 };
+            function applyMotionScale() {
+                const narrow = window.innerWidth <= 768;
+                CONFIG.exitY = narrow ? 64 : 135;
+                CONFIG.headlineYOffset = narrow ? 20 : 45;
+                CONFIG.bodyYOffset = narrow ? 12 : 25;
+            }
+            const COLOR_FADED = 'rgba(30, 30, 26, 0.18)';
+            const COLOR_ACTIVE = '#D4AF37';
+            const markers = Array.from(canvas.querySelectorAll('.mission-scroll__marker'));
+            const nums = Array.from(canvas.querySelectorAll('.mission-scroll__markerNum'));
+            const articles = Array.from(viewport.querySelectorAll('.mission-scroll__reason'));
+            const headlines = Array.from(viewport.querySelectorAll('.mission-scroll__headline'));
+            const bodies = Array.from(viewport.querySelectorAll('.mission-scroll__body'));
+            const total = articles.length;
+            if (total < 2) return;
+
+            markers.forEach(function (marker, index) {
+                marker.style.setProperty('--angle', (index * CONFIG.angleStep) + 'deg');
+            });
+
+            const clamp = function (value, min, max) { return Math.min(Math.max(value, min), max); };
+            function interpolate(x, input, output) {
+                if (x <= input[0]) return output[0];
+                if (x >= input[input.length - 1]) return output[output.length - 1];
+                for (let i = 1; i < input.length; i++) {
+                    if (x <= input[i]) {
+                        const t = (x - input[i - 1]) / (input[i] - input[i - 1]);
+                        return output[i - 1] + (output[i] - output[i - 1]) * t;
+                    }
+                }
+                return output[output.length - 1];
+            }
+            function parseColor(str) {
+                if (str[0] === '#') {
+                    const hex = str.slice(1);
+                    return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16), 1];
+                }
+                const parts = str.match(/rgba?\(([^)]+)\)/)[1].split(',').map(Number);
+                return [parts[0], parts[1], parts[2], parts[3] === undefined ? 1 : parts[3]];
+            }
+            function lerpColor(a, b, t) {
+                const A = parseColor(a);
+                const B = parseColor(b);
+                const ch = function (i) { return Math.sqrt(A[i] * A[i] + (B[i] * B[i] - A[i] * A[i]) * t); };
+                const alpha = A[3] + (B[3] - A[3]) * t;
+                return 'rgba(' + Math.round(ch(0)) + ', ' + Math.round(ch(1)) + ', ' + Math.round(ch(2)) + ', ' + alpha.toFixed(4) + ')';
+            }
+
+            const spring = { value: 0, target: 0, velocity: 0 };
+            let trackTop = 0;
+            let travel = 1;
+
+            function readProgress() {
+                return clamp((window.scrollY - trackTop) / travel, 0, 1);
+            }
+            function layout() {
+                applyMotionScale();
+                const rect = track.getBoundingClientRect();
+                trackTop = rect.top + window.scrollY;
+                travel = Math.max(1, track.offsetHeight - sticky.offsetHeight);
+                spring.value = spring.target = readProgress();
+            }
+            function stepSpring(dt) {
+                const steps = Math.min(12, Math.max(1, Math.ceil(dt / (1 / 240))));
+                const h = dt / steps;
+                for (let i = 0; i < steps; i++) {
+                    const accel = (-CONFIG.stiffness * (spring.value - spring.target) - CONFIG.damping * spring.velocity) / CONFIG.mass;
+                    spring.velocity += accel * h;
+                    spring.value += spring.velocity * h;
+                }
+                if (Math.abs(spring.velocity) < 0.001 && Math.abs(spring.value - spring.target) < 0.00005) {
+                    spring.value = spring.target;
+                    spring.velocity = 0;
+                }
+            }
+            function render() {
+                const progress = spring.value;
+                const pad = CONFIG.scrollPadding;
+                const step = (1 - 2 * pad) / (total - 1);
+                canvas.style.transform = 'rotate(' + interpolate(progress, [pad, 1 - pad], [0, -(total - 1) * CONFIG.angleStep]) + 'deg)';
+
+                for (let i = 0; i < total; i++) {
+                    const s = pad + (i / (total - 1)) * (1 - 2 * pad);
+                    const scale = interpolate(progress, [s - step * 0.8, s, s + step * 0.8], [0.5, 1, 0.5]);
+                    const opacity = interpolate(progress, [s - step * 0.9, s, s + step * 0.9], [0.3, 1, 0.3]);
+                    const cRange = [s - step * 0.6, s, s + step * 0.6];
+                    let color = COLOR_FADED;
+                    if (progress > cRange[0] && progress < cRange[2]) {
+                        color = progress < cRange[1]
+                            ? lerpColor(COLOR_FADED, COLOR_ACTIVE, (progress - cRange[0]) / (cRange[1] - cRange[0]))
+                            : lerpColor(COLOR_ACTIVE, COLOR_FADED, (progress - cRange[1]) / (cRange[2] - cRange[1]));
+                    }
+                    nums[i].style.transform = 'scale(' + scale.toFixed(4) + ')';
+                    nums[i].style.opacity = opacity.toFixed(4);
+                    nums[i].style.color = color;
+
+                    const y = interpolate(progress, [s - step * 0.8, s, s + step * 0.8], [CONFIG.exitY, 0, -CONFIG.exitY]);
+                    const cardOpacity = interpolate(progress, [s - step * 0.6, s - step * 0.2, s + step * 0.2, s + step * 0.6], [0, 1, 1, 0]);
+                    articles[i].style.transform = 'translate3d(0, ' + y.toFixed(2) + 'px, 0)';
+                    articles[i].style.opacity = cardOpacity.toFixed(4);
+                    articles[i].style.visibility = cardOpacity < 0.002 ? 'hidden' : 'visible';
+                    headlines[i].style.transform = 'translate3d(0, ' + interpolate(progress, [s - step * 0.6, s, s + step * 0.6], [CONFIG.headlineYOffset, 0, -CONFIG.headlineYOffset]).toFixed(2) + 'px, 0)';
+                    bodies[i].style.transform = 'translate3d(0, ' + interpolate(progress, [s - step * 0.5, s, s + step * 0.5], [CONFIG.bodyYOffset, 0, -CONFIG.bodyYOffset]).toFixed(2) + 'px, 0)';
+                }
+            }
+
+            let last = performance.now();
+            function frame(now) {
+                const dt = Math.min(0.05, (now - last) / 1000);
+                last = now;
+                spring.target = readProgress();
+                stepSpring(dt);
+                render();
+                requestAnimationFrame(frame);
+            }
+
+            window.addEventListener('resize', layout);
+            layout();
+            render();
+            requestAnimationFrame(frame);
+        })();
+    </script>
 
     <!-- Projects Section -->
     <section id="projects" class="py-28 bg-[#fff6e0] scroll-mt-20 overflow-visible">
@@ -299,8 +593,9 @@
     <section id="impact" class="py-20 bg-[#0c1016] scroll-mt-20">
         <div class="max-w-7xl mx-auto px-6">
             <div class="mb-12">
-                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">What I've done so far</p>
-                <h2 class="text-4xl font-serif font-bold text-white/95">Turning Ideas Into Impact</h2>
+                @php $statsSection = \App\Models\Setting::getStatsSection(); @endphp
+                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">{{ $statsSection['title'] }}</p>
+                <h2 class="text-4xl font-serif font-bold text-white/95">{{ $statsSection['description'] }}</h2>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 border border-white/5 rounded-xl overflow-hidden divide-y divide-white/5 sm:divide-y-0 sm:divide-x divide-white/5">
                 @forelse($stats ?? [] as $stat)

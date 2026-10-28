@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -34,14 +35,7 @@ class FrontendBlogController extends Controller
             $query->where('category', $request->category);
         }
 
-        // Get all categories for filter dropdown
-        $categories = Blog::where('is_published', true)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
-            ->distinct()
-            ->pluck('category')
-            ->filter()
-            ->values();
+        $categories = $this->publishedCategories();
 
         // Get blogs with comment count
         $blogs = $query->withCount('comments')
@@ -151,13 +145,7 @@ class FrontendBlogController extends Controller
             ->orderBy('published_at', 'desc')
             ->paginate(9);
 
-        $categories = Blog::where('is_published', true)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
-            ->distinct()
-            ->pluck('category')
-            ->filter()
-            ->values();
+        $categories = $this->publishedCategories();
 
         $featuredBlogs = Blog::where('is_published', true)
             ->where('is_featured', true)
@@ -208,13 +196,7 @@ class FrontendBlogController extends Controller
             ->orderBy('published_at', 'desc')
             ->paginate(9);
 
-        $categories = Blog::where('is_published', true)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
-            ->distinct()
-            ->pluck('category')
-            ->filter()
-            ->values();
+        $categories = $this->publishedCategories();
 
         $featuredBlogs = Blog::where('is_published', true)
             ->where('is_featured', true)
@@ -254,13 +236,7 @@ class FrontendBlogController extends Controller
             ->orderBy('published_at', 'desc')
             ->paginate(9);
 
-        $categories = Blog::where('is_published', true)
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
-            ->distinct()
-            ->pluck('category')
-            ->filter()
-            ->values();
+        $categories = $this->publishedCategories();
 
         $featuredBlogs = Blog::where('is_published', true)
             ->where('is_featured', true)
@@ -448,5 +424,23 @@ class FrontendBlogController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    private function publishedCategories()
+    {
+        $page = Setting::getBlogPage();
+        if ($page['categories_managed']) {
+            return collect($page['category_order']);
+        }
+
+        $names = Blog::where('is_published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->distinct()
+            ->pluck('category')
+            ->filter()
+            ->all();
+
+        return collect(Setting::cleanNameList($names));
     }
 }

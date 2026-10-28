@@ -69,6 +69,67 @@
         </form>
     </div>
 
+    <div class="bg-[#1a1f26] rounded-2xl border border-white/5 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-white mb-1">Featured page</h2>
+        <p class="text-sm text-gray-400 mb-5">Heading and category buttons on the All Research page. Use the arrows to set the category order.</p>
+        @error('filter_label')
+            <p class="mb-4 text-sm text-red-400">{{ $message }}</p>
+        @enderror
+        <form action="{{ route('admin.research.update-featured-page') }}" method="POST" class="grid grid-cols-1 gap-4">
+            @csrf
+            @method('PUT')
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="title_line" class="block text-sm text-white/70 mb-2">Title</label>
+                    <input id="title_line" type="text" name="title_line" value="{{ old('title_line', $featuredPage['title_line']) }}" maxlength="80" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                </div>
+                <div>
+                    <label for="title_accent" class="block text-sm text-white/70 mb-2">Gold word</label>
+                    <input id="title_accent" type="text" name="title_accent" value="{{ old('title_accent', $featuredPage['title_accent']) }}" maxlength="80" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                </div>
+            </div>
+            <div>
+                <label for="featured_paragraph" class="block text-sm text-white/70 mb-2">Short paragraph</label>
+                <textarea id="featured_paragraph" name="paragraph" rows="3" maxlength="400" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">{{ old('paragraph', $featuredPage['paragraph']) }}</textarea>
+            </div>
+            <div>
+                <p class="text-sm text-white/70 mb-2">Categories</p>
+                <div id="featuredFilterRows" class="space-y-3">
+                    @foreach($featuredPage['filters'] as $filter)
+                        <div class="filter-row grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-center">
+                            <input type="hidden" name="filter_type[]" value="{{ $filter['type'] ?? 'category' }}">
+                            <input type="hidden" name="filter_key[]" value="{{ $filter['key'] }}">
+                            <input type="text" name="filter_label[]" value="{{ $filter['label'] }}" maxlength="40" placeholder="Category name" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                            <div class="flex gap-2">
+                                <button type="button" class="move-filter-up px-3 py-2 text-white/60 hover:text-white" title="Move up">↑</button>
+                                <button type="button" class="move-filter-down px-3 py-2 text-white/60 hover:text-white" title="Move down">↓</button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition">Save featured page</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        (function () {
+            const list = document.getElementById('featuredFilterRows');
+            list.addEventListener('click', function (event) {
+                const row = event.target.closest('.filter-row');
+                if (!row) {
+                    return;
+                }
+                if (event.target.closest('.move-filter-up') && row.previousElementSibling) {
+                    list.insertBefore(row, row.previousElementSibling);
+                } else if (event.target.closest('.move-filter-down') && row.nextElementSibling) {
+                    list.insertBefore(row.nextElementSibling, row);
+                }
+            });
+        })();
+    </script>
+
     <!-- Filters -->
     <div class="bg-[#1a1f26] rounded-2xl border border-white/5 p-5 mb-6 backdrop-blur-sm">
         <form method="GET" action="{{ route('admin.research.index') }}" class="flex flex-wrap gap-4">
@@ -83,9 +144,9 @@
             <div class="min-w-[180px]">
                 <select name="category" class="w-full px-4 py-2.5 bg-[#0b0e12] border border-white/10 rounded-xl text-gray-200 focus:border-[#D4AF37] focus:outline-none transition-all duration-300 cursor-pointer appearance-none">
                     <option value="">All Categories</option>
-                    <option value="Vision" {{ request('category') == 'Vision' ? 'selected' : '' }}>Vision</option>
-                    <option value="Research Papers" {{ request('category') == 'Research Papers' ? 'selected' : '' }}>Research Papers</option>
-                    <option value="Media" {{ request('category') == 'Media' ? 'selected' : '' }}>Media</option>
+                    @foreach($researchCategories as $value => $label)
+                        <option value="{{ $value }}" {{ request('category') == $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
                 </select>
             </div>
             <div class="min-w-[150px]">

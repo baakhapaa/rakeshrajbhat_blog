@@ -3,41 +3,47 @@
 @section('title', 'Research & Resources · Rakesh Rajbhat')
 
 @section('content')
+@php
+    $featuredPage = \App\Models\Setting::getResearchFeaturedPage();
+    $categoryOrder = collect($featuredPage['filters'])->pluck('key')->flip();
+    $featuredResearch = collect($featuredResearch)->sortBy(function ($items, $category) use ($categoryOrder) {
+        return $categoryOrder->has($category) ? $categoryOrder[$category] : 100;
+    });
+@endphp
 <section class="py-20 md:py-28 bg-gradient-to-b from-[#f8f6f1] to-[#f2efe8]">
     <div class="max-w-7xl mx-auto px-6">
         <!-- Hero Header -->
         <div class="text-center max-w-3xl mx-auto mb-16">
-            <div class="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-[#D4AF37]/10 mb-5">
-                <i class="fas fa-sparkles text-[#D4AF37] text-sm"></i>
-                <span class="text-xs font-medium text-[#8a8a82] tracking-widest uppercase">Knowledge Hub</span>
+            <!-- this div is hidden because we don't want to show the Knowledge Hub text on the featured page -->
+            <div class="hidden">
+                <!-- <i class="fas fa-sparkles text-[#D4AF37] text-sm"></i>
+                <span class="text-xs font-medium text-[#8a8a82] tracking-widest uppercase">Knowledge Hub</span> -->
             </div>
             <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#1e1e1a] leading-tight">
-                All Research &amp; <br class="hidden sm:block">
-                <span class="text-[#D4AF37]">Resources</span>
+                {{ $featuredPage['title_line'] }}
+                @if($featuredPage['title_accent'] !== '')
+                    <br class="hidden sm:block">
+                    <span class="text-[#D4AF37]">{{ $featuredPage['title_accent'] }}</span>
+                @endif
             </h1>
             <p class="text-[#5a5a52] mt-4 text-lg leading-relaxed max-w-2xl mx-auto">
-                Explore ideas, frameworks, and stories from the ground — 
-                <span class="text-[#1e1e1a] font-medium">shaping Nepal's future together.</span>
+                {{ $featuredPage['paragraph'] }}
             </p>
         </div>
 
         <!-- Filter Tabs -->
         <div class="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
-            <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-[#D4AF37] text-[#0b0e12] shadow-lg shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30" data-filter="all">
-                <i class="fas fa-th-list mr-2"></i> All
-            </button>
-            <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-white/70 text-[#4a4a42] hover:bg-[#D4AF37] hover:text-[#0b0e12] hover:shadow-lg hover:shadow-[#D4AF37]/20" data-filter="Vision">
-                <i class="fas fa-eye mr-2"></i> Vision
-            </button>
-            <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-white/70 text-[#4a4a42] hover:bg-[#D4AF37] hover:text-[#0b0e12] hover:shadow-lg hover:shadow-[#D4AF37]/20" data-filter="Research Papers">
-                <i class="fas fa-book mr-2"></i> Research
-            </button>
-            <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-white/70 text-[#4a4a42] hover:bg-[#D4AF37] hover:text-[#0b0e12] hover:shadow-lg hover:shadow-[#D4AF37]/20" data-filter="Media">
-                <i class="fas fa-video mr-2"></i> Media
-            </button>
-            <a href="{{ route('blog') }}" class="px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-white/70 text-[#4a4a42] hover:bg-[#D4AF37] hover:text-[#0b0e12] hover:shadow-lg hover:shadow-[#D4AF37]/20">
-                <i class="fas fa-newspaper mr-2"></i> Blog
-            </a>
+            @foreach($featuredPage['filters'] as $filter)
+                @if($filter['key'] === 'blog')
+                    <a href="{{ route('blog') }}" class="px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-white/70 text-[#4a4a42] hover:bg-[#D4AF37] hover:text-[#0b0e12] hover:shadow-lg hover:shadow-[#D4AF37]/20">
+                        <i class="fas {{ $filter['icon'] }} mr-2"></i> {{ $filter['label'] }}
+                    </a>
+                @else
+                    <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 {{ $filter['key'] === 'all' ? 'bg-[#D4AF37] text-[#0b0e12] shadow-lg shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30' : 'bg-white/70 text-[#4a4a42] hover:bg-[#D4AF37] hover:text-[#0b0e12] hover:shadow-lg hover:shadow-[#D4AF37]/20' }}" data-filter="{{ $filter['key'] }}">
+                        <i class="fas {{ $filter['icon'] }} mr-2"></i> {{ $filter['label'] }}
+                    </button>
+                @endif
+            @endforeach
         </div>
 
         <!-- Research Cards -->

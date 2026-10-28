@@ -4,7 +4,7 @@
     });
 @endphp
 <header class="fixed top-0 left-0 right-0 z-50 bg-[#0b0e12]/95 backdrop-blur-md border-b border-white/5">
-    <div class="max-w-7xl mx-auto h-20 px-4 lg:px-6 flex items-center gap-4">
+    <div class="max-w-7xl mx-auto px-4 lg:px-6 flex items-center gap-4" style="min-height:5rem">
         <a href="{{ route('home') }}" class="shrink-0 text-2xl font-serif font-bold italic tracking-tight text-white inline-flex items-center gap-3">
             @if($siteSettings['site_logo'] ?? null)
                 <img src="{{ $siteSettings['site_logo'] }}" alt="{{ $siteSettings['site_name'] }}" class="h-10 w-auto max-w-[180px] object-contain">
@@ -13,10 +13,10 @@
             @endif
         </a>
 
-        <nav class="hidden min-w-0 lg:flex flex-1 justify-center items-center gap-4 xl:gap-8 whitespace-nowrap text-sm font-medium tracking-wide text-gray-300" aria-label="Primary navigation">
+        <nav class="hidden min-w-0 lg:flex flex-1 flex-wrap justify-center items-center gap-4 xl:gap-8 text-sm font-medium tracking-wide text-gray-300" aria-label="Primary navigation">
             @foreach($siteSettings['nav_items'] ?? [] as $item)
                 @continue(\App\Models\Setting::navOpensWorkWithMe($item['url']))
-                <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="nav-link hover:text-[#D4AF37] transition-colors px-1">{{ $item['label'] }}</a>
+                <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="nav-link whitespace-nowrap hover:text-[#D4AF37] transition-colors px-1">{{ $item['label'] }}</a>
             @endforeach
         </nav>
 
@@ -88,3 +88,59 @@
         </div>
     </nav>
 </header>
+<style>
+    header + main > :first-child { margin-top: var(--site-header-extra, 0px); }
+    html { scroll-padding-top: var(--site-header-extra, 0px); }
+</style>
+<script>
+    (function () {
+        var header = document.querySelector('header');
+        var nav = header && header.querySelector('nav[aria-label="Primary navigation"]');
+        if (!header || !nav) return;
+
+        function fitNav() {
+            var desktop = window.matchMedia('(min-width: 1024px)').matches;
+            nav.style.fontSize = '';
+            nav.style.columnGap = '';
+            nav.style.rowGap = '';
+            nav.style.flexWrap = '';
+            document.documentElement.style.setProperty('--site-header-extra', '0px');
+            if (!desktop) return;
+
+            var size = 14;
+            var gap = 32;
+            var guard = 0;
+            nav.style.flexWrap = 'nowrap';
+            nav.style.fontSize = size + 'px';
+            nav.style.columnGap = gap + 'px';
+            while (nav.scrollWidth > nav.clientWidth + 1 && guard < 40) {
+                guard += 1;
+                if (gap > 8) {
+                    gap -= 2;
+                } else if (size > 12) {
+                    size -= 0.5;
+                } else {
+                    break;
+                }
+                nav.style.fontSize = size + 'px';
+                nav.style.columnGap = gap + 'px';
+            }
+            if (nav.scrollWidth > nav.clientWidth + 1) {
+                nav.style.flexWrap = 'wrap';
+                nav.style.rowGap = '0.4rem';
+                nav.style.justifyContent = 'center';
+            }
+            var extra = Math.round(header.getBoundingClientRect().height) - 81;
+            if (extra < 8) {
+                extra = 0;
+            }
+            document.documentElement.style.setProperty('--site-header-extra', extra + 'px');
+        }
+
+        window.addEventListener('resize', fitNav);
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(fitNav);
+        }
+        fitNav();
+    })();
+</script>

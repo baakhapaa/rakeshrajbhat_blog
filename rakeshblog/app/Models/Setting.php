@@ -358,6 +358,17 @@ class Setting extends Model
         ];
     }
 
+    public static function getStatsSection(): array
+    {
+        $title = trim((string) static::getValue('stats_section_title', "What I've done so far"));
+        $description = trim((string) static::getValue('stats_section_description', 'Turning Ideas Into Impact'));
+
+        return [
+            'title' => $title !== '' ? $title : "What I've done so far",
+            'description' => $description !== '' ? $description : 'Turning Ideas Into Impact',
+        ];
+    }
+
     public static function getResearchSection(): array
     {
         $title = trim((string) static::getValue('research_section_title', 'Stories, Ideas & Research That Matters'));
@@ -367,6 +378,191 @@ class Setting extends Model
             'title' => $title !== '' ? $title : 'Stories, Ideas & Research That Matters',
             'paragraph' => $paragraph !== '' ? $paragraph : "Exploring ideas, frameworks, and stories that shape Nepal's future — one insight at a time.",
         ];
+    }
+
+    public static function defaultResearchFeaturedPage(): array
+    {
+        return [
+            'title_line' => 'All Research &',
+            'title_accent' => 'Resources',
+            'paragraph' => "Explore ideas, frameworks, and stories from the ground — shaping Nepal's future together.",
+            'filters' => [
+                ['key' => 'all', 'label' => 'All', 'type' => 'all', 'icon' => 'fa-th-list'],
+                ['key' => 'Vision', 'label' => 'Vision', 'type' => 'category', 'icon' => 'fa-eye'],
+                ['key' => 'Research Papers', 'label' => 'Research', 'type' => 'category', 'icon' => 'fa-book'],
+                ['key' => 'Media', 'label' => 'Media', 'type' => 'category', 'icon' => 'fa-video'],
+                ['key' => 'blog', 'label' => 'Blog', 'type' => 'blog', 'icon' => 'fa-newspaper'],
+            ],
+        ];
+    }
+
+    public static function researchFilterIcons(): array
+    {
+        return [
+            'all' => 'fa-th-list',
+            'Vision' => 'fa-eye',
+            'Research Papers' => 'fa-book',
+            'Media' => 'fa-video',
+            'blog' => 'fa-newspaper',
+        ];
+    }
+
+    public static function getResearchFeaturedPage(): array
+    {
+        $defaults = static::defaultResearchFeaturedPage();
+        $decoded = static::decodeJson(static::getValue('research_featured_page'));
+        $page = $defaults;
+
+        if (is_array($decoded)) {
+            foreach (['title_line', 'paragraph'] as $key) {
+                $value = trim(strip_tags((string) ($decoded[$key] ?? '')));
+                if ($value !== '') {
+                    $page[$key] = $value;
+                }
+            }
+
+            if (array_key_exists('title_accent', $decoded)) {
+                $page['title_accent'] = trim(strip_tags((string) $decoded['title_accent']));
+            }
+        }
+
+        if (is_array($decoded) && array_key_exists('filters', $decoded)) {
+            $page['filters'] = static::researchFiltersFrom($decoded['filters'], false);
+        }
+
+        return $page;
+    }
+
+    public static function researchFiltersFrom(mixed $rows, bool $fillDefaults = true): array
+    {
+        $icons = static::researchFilterIcons();
+        $defaults = static::defaultResearchFeaturedPage()['filters'];
+        $defaultLabels = [];
+        foreach ($defaults as $filter) {
+            $defaultLabels[$filter['key']] = $filter['label'];
+        }
+
+        if (! is_array($rows)) {
+            return $fillDefaults ? $defaults : [];
+        }
+
+        $filters = [];
+        $seen = [];
+
+        foreach ($rows as $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+
+            $label = trim(strip_tags((string) ($row['label'] ?? '')));
+            $key = trim(strip_tags((string) ($row['key'] ?? '')));
+            $type = (string) ($row['type'] ?? '');
+
+            if ($type === '' ) {
+                $type = $key === 'all' ? 'all' : ($key === 'blog' ? 'blog' : 'category');
+            }
+
+            if (! in_array($type, ['all', 'blog', 'category'], true)) {
+                continue;
+            }
+
+            if ($type === 'all') {
+                $key = 'all';
+            } elseif ($type === 'blog') {
+                $key = 'blog';
+            } elseif ($key === '' || in_array($key, ['all', 'blog'], true)) {
+                $key = $label;
+            }
+
+            if ($label === '') {
+                $label = $defaultLabels[$key] ?? '';
+            }
+
+            if ($label === '' || $key === '' || isset($seen[$key])) {
+                continue;
+            }
+
+            $filters[] = [
+                'key' => $key,
+                'label' => $label,
+                'type' => $type,
+                'icon' => $icons[$key] ?? 'fa-tag',
+            ];
+            $seen[$key] = true;
+        }
+
+        return $filters === [] && $fillDefaults ? $defaults : array_slice($filters, 0, 12);
+    }
+
+    public static function defaultBlogPage(): array
+    {
+        return [
+            'eyebrow' => 'Latest Articles',
+            'title' => 'Blog & Insights',
+            'paragraph' => 'Thoughts, stories and ideas from my journey in building opportunities for Nepal.',
+            'category_order' => [],
+            'categories_managed' => false,
+        ];
+    }
+
+    public static function getBlogPage(): array
+    {
+        $defaults = static::defaultBlogPage();
+        $decoded = static::decodeJson(static::getValue('blog_page'));
+        $page = $defaults;
+
+        if (is_array($decoded)) {
+            foreach (['eyebrow', 'title', 'paragraph'] as $key) {
+                $value = trim(strip_tags((string) ($decoded[$key] ?? '')));
+                if ($value !== '') {
+                    $page[$key] = $value;
+                }
+            }
+
+            $page['categories_managed'] = array_key_exists('category_order', $decoded);
+            $page['category_order'] = static::cleanNameList($decoded['category_order'] ?? []);
+        }
+
+        return $page;
+    }
+
+    public static function orderedNames(array $preferred, iterable $available): array
+    {
+        $available = static::cleanNameList($available);
+        $lookup = array_fill_keys($available, true);
+        $ordered = [];
+
+        foreach (static::cleanNameList($preferred) as $name) {
+            if (isset($lookup[$name])) {
+                $ordered[] = $name;
+                unset($lookup[$name]);
+            }
+        }
+
+        foreach ($available as $name) {
+            if (isset($lookup[$name])) {
+                $ordered[] = $name;
+            }
+        }
+
+        return $ordered;
+    }
+
+    public static function cleanNameList(mixed $names): array
+    {
+        if (! is_array($names) && ! $names instanceof \Traversable) {
+            return [];
+        }
+
+        $clean = [];
+        foreach ($names as $name) {
+            $name = trim(strip_tags((string) $name));
+            if ($name !== '' && ! in_array($name, $clean, true)) {
+                $clean[] = $name;
+            }
+        }
+
+        return $clean;
     }
 
     public static function getGallerySection(): array

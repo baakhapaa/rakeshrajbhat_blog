@@ -108,9 +108,9 @@
                         <input type="checkbox" name="remember" class="mr-2 rounded border-white/20 bg-white/5 text-[#D4AF37] focus:ring-[#D4AF37]">
                         Remember me
                     </label>
-                    <a href="#" class="text-sm text-[#D4AF37] hover:underline">
+                    <!-- <a href="#" class="text-sm text-[#D4AF37] hover:underline">
                         Forgot Password?
-                    </a>
+                    </a> -->
                 </div>
 
                 <button type="submit" class="w-full gold-bg text-[#0b0e12] py-3 rounded-lg font-semibold transition-all hover:shadow-lg hover:shadow-[#D4AF37]/20">
