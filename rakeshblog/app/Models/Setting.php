@@ -350,6 +350,83 @@ class Setting extends Model
         ];
     }
 
+    public static function defaultFooter(): array
+    {
+        return [
+            'name' => 'Rakesh Rajbhat',
+            'tagline' => 'For the root. For the youth. For the nation.',
+            'intro' => 'Founder of Baakhapaa, Skill Sikka, HillyChilly and Future Builders. Transforming education, tourism, technology, and local economies in Nepal.',
+            'copyright' => '© {year} RAKESH RAJBHAT. ALL RIGHTS RESERVED.',
+            'socials_heading' => 'Socials',
+            'pages_heading' => 'Pages',
+            'newsletter_heading' => 'Newsletter',
+            'newsletter_note' => 'Get an email when a new article, research piece, or project is published.',
+            'socials' => [
+                ['label' => 'LinkedIn', 'url' => 'https://www.linkedin.com/in/raacb/'],
+                ['label' => 'Facebook', 'url' => 'https://www.facebook.com/raacb/'],
+                ['label' => 'Instagram', 'url' => 'https://www.instagram.com/raa_case7/'],
+            ],
+            'pages' => [
+                ['label' => 'Contact', 'url' => '/contact'],
+                ['label' => 'Privacy', 'url' => '/privacy'],
+                ['label' => 'Terms', 'url' => '/terms'],
+            ],
+        ];
+    }
+
+    public static function getFooter(): array
+    {
+        $defaults = static::defaultFooter();
+        $decoded = static::decodeJson(static::getValue('footer_content'));
+        $footer = $defaults;
+
+        if (is_array($decoded)) {
+            foreach (['name', 'tagline', 'intro', 'copyright', 'socials_heading', 'pages_heading', 'newsletter_heading', 'newsletter_note'] as $key) {
+                if (isset($decoded[$key]) && is_string($decoded[$key]) && trim($decoded[$key]) !== '') {
+                    $footer[$key] = trim(strip_tags($decoded[$key]));
+                }
+            }
+
+            foreach (['socials', 'pages'] as $list) {
+                if (array_key_exists($list, $decoded)) {
+                    $footer[$list] = static::footerLinksFrom($decoded[$list]);
+                }
+            }
+        }
+
+        $logo = trim((string) static::getValue('footer_logo', ''));
+        $footer['logo'] = $logo !== '' ? $logo : null;
+        $footer['copyright_text'] = str_replace('{year}', date('Y'), $footer['copyright']);
+
+        return $footer;
+    }
+
+    public static function footerLinksFrom(mixed $rows): array
+    {
+        if (! is_array($rows)) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($rows as $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+
+            $label = trim(strip_tags((string) ($row['label'] ?? '')));
+            $url = trim((string) ($row['url'] ?? ''));
+
+            if ($label === '' || $url === '' || ! static::navUrlIsSafe($url)) {
+                continue;
+            }
+
+            $items[] = ['label' => $label, 'url' => $url];
+        }
+
+        return array_slice($items, 0, 12);
+    }
+
     public static function navIconOptions(): array
     {
         return [
