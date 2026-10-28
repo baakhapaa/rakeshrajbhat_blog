@@ -77,6 +77,15 @@
                     <h2 class="pt-3 font-jakarta text-[2rem] font-bold leading-tight tracking-[-0.6px] text-[#1b1c1a] sm:text-[44px] sm:leading-[48px] sm:tracking-[-1.1px]">
                         {{ $aboutContent['heading_line_1'] }}@if(filled($aboutContent['heading_line_2'])) {{ $aboutContent['heading_line_2'] }}@endif
                     </h2>
+                    @if(!empty($aboutContent['media_url']))
+                        <div class="mt-8 max-w-[840px]">
+                            @if(($aboutContent['media_type'] ?? null) === 'video')
+                                <video src="{{ $aboutContent['media_url'] }}" controls playsinline preload="metadata" class="w-full rounded-2xl bg-[#1e1e1a]"></video>
+                            @else
+                                <img src="{{ $aboutContent['media_url'] }}" alt="" class="w-full rounded-2xl object-cover">
+                            @endif
+                        </div>
+                    @endif
                     <div class="flex max-w-[840px] flex-col gap-10 pt-10 lg:gap-[50px] lg:pt-[51px]">
                         <div class="rounded-2xl border-l-4 border-[#89351d] bg-[#f5f3f0] py-6 pl-7 pr-6">
                             <p class="font-jakarta text-[1.35rem] font-bold leading-8 text-[#1b1c1a] sm:text-[31px] sm:leading-[40px]">{{ $aboutContent['paragraph_1'] }}</p>
@@ -599,10 +608,11 @@
             <div class="w-full shrink-0 lg:w-[250px]">
                 <div class="flex items-center gap-2">
                     <span class="block h-0.5 w-6 shrink-0 bg-[#b36855]" aria-hidden="true"></span>
-                    <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#b36855]">Metrics</p>
+                    @php $statsSection = \App\Models\Setting::getStatsSection(); @endphp
+                    <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#b36855]">{{ $statsSection['title'] }}</p>
                 </div>
                 <h2 class="mt-3 font-poppins text-[2.4rem] font-bold leading-[1.2] tracking-[-1px] text-white sm:text-[50px] sm:leading-[62px] sm:tracking-[-1.15px]">
-                    Turning Ideas<br>Into<br>Impact
+                    {{ $statsSection['description'] }}
                 </h2>
             </div>
             <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#1e2530] bg-[#12161e] shadow-[0px_25px_50px_-12px_rgba(0,0,0,0.25)]">

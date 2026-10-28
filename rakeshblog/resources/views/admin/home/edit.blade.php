@@ -185,7 +185,7 @@
         </button>
     </form>
 
-    <form action="{{ route('admin.home-content.update-about') }}" method="POST" id="aboutTab" class="space-y-6 {{ $homeTab === 'about' ? '' : 'hidden' }}">
+    <form action="{{ route('admin.home-content.update-about') }}" method="POST" enctype="multipart/form-data" id="aboutTab" class="space-y-6 {{ $homeTab === 'about' ? '' : 'hidden' }}">
         @csrf
         @method('PUT')
         <input type="hidden" name="_tab" value="about">
@@ -266,6 +266,39 @@
                     @enderror
                 </div>
             </div>
+        </div>
+
+        <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
+            <h2 class="text-xl font-semibold text-white mb-2">Photo or video</h2>
+            <p class="text-sm text-white/40 mb-6">Upload one image or one video. It is stored with the other site media, in the about folder.</p>
+
+            @if(!empty($about['media_url']))
+                <div id="aboutMediaCurrent" class="mb-4">
+                    <p class="text-xs text-white/40 mb-2">Current file</p>
+                    @if(($about['media_type'] ?? null) === 'video')
+                        <video src="{{ $about['media_url'] }}" controls class="max-h-64 w-auto max-w-full rounded-lg border border-white/10"></video>
+                    @else
+                        <img src="{{ $about['media_url'] }}" alt="Current about media" class="max-h-64 w-auto max-w-full object-cover rounded-lg border border-white/10">
+                    @endif
+                </div>
+                <label class="flex items-center gap-2 text-sm text-white/70 mb-4">
+                    <input type="checkbox" name="remove_about_media" value="1" class="rounded border-white/20 bg-white/5 text-[#D4AF37] focus:ring-[#D4AF37]" {{ old('remove_about_media') ? 'checked' : '' }}>
+                    Remove the current file
+                </label>
+            @endif
+
+            <div id="aboutMediaPreview" class="mb-4 hidden">
+                <p class="text-xs text-white/40 mb-2">Preview</p>
+                <img id="aboutMediaPreviewImage" alt="Selected image preview" class="hidden max-h-64 w-auto max-w-full object-cover rounded-lg border border-white/10">
+                <video id="aboutMediaPreviewVideo" controls class="hidden max-h-64 w-auto max-w-full rounded-lg border border-white/10"></video>
+            </div>
+
+            <input type="file" id="about_media" name="about_media" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml,video/mp4,video/webm,video/quicktime"
+                class="block w-full text-white/70 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20">
+            <p class="text-xs text-white/30 mt-1">Image up to 5MB, or MP4, WEBM, or MOV up to 100MB. A new upload replaces the current file.</p>
+            @error('about_media')
+                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         @php
@@ -374,6 +407,45 @@
             const row = factTemplate.content.firstElementChild.cloneNode(true);
             factRows.appendChild(row);
             bindFactRow(row);
+        });
+
+        const mediaInput = document.getElementById('about_media');
+        const mediaPreview = document.getElementById('aboutMediaPreview');
+        const previewImage = document.getElementById('aboutMediaPreviewImage');
+        const previewVideo = document.getElementById('aboutMediaPreviewVideo');
+        const currentMedia = document.getElementById('aboutMediaCurrent');
+        let previewUrl = null;
+
+        mediaInput.addEventListener('change', function () {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+                previewUrl = null;
+            }
+
+            previewImage.classList.add('hidden');
+            previewVideo.classList.add('hidden');
+            previewImage.removeAttribute('src');
+            previewVideo.removeAttribute('src');
+            previewVideo.load();
+
+            const file = mediaInput.files && mediaInput.files[0];
+            if (!file) {
+                mediaPreview.classList.add('hidden');
+                if (currentMedia) {
+                    currentMedia.classList.remove('hidden');
+                }
+                return;
+            }
+
+            previewUrl = URL.createObjectURL(file);
+            const isVideo = file.type.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(file.name);
+            const target = isVideo ? previewVideo : previewImage;
+            target.src = previewUrl;
+            target.classList.remove('hidden');
+            mediaPreview.classList.remove('hidden');
+            if (currentMedia) {
+                currentMedia.classList.add('hidden');
+            }
         });
     });
 </script>
