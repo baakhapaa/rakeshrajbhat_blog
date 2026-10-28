@@ -270,7 +270,16 @@
 
         <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
             <h2 class="text-xl font-semibold text-white mb-2">Photo or video</h2>
-            <p class="text-sm text-white/40 mb-6">Upload one image or one video. It is stored with the other site media, in the about folder.</p>
+            <p class="text-sm text-white/40 mb-4">Upload one image or one video. It replaces the portrait on the right of the About text.</p>
+            <div class="mb-6 rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/70">
+                <p class="text-white">Use a portrait, not a wide video. Best size is <span class="text-[#D4AF37]">1500 × 1800</span> pixels (5:6).</p>
+                <ul class="mt-2 space-y-1 text-xs text-white/50">
+                    <li>Phone: 4:5, for example 1200 × 1500</li>
+                    <li>Laptop and desktop: 5:6, for example 1500 × 1800</li>
+                    <li>Widest screens: about 1362 × 1476</li>
+                </ul>
+                <p class="mt-2 text-xs text-white/50">Keep the subject in the center. A 16:9 video is cropped and looks zoomed in this frame.</p>
+            </div>
 
             @if(!empty($about['media_url']))
                 <div id="aboutMediaCurrent" class="mb-4">
@@ -295,7 +304,7 @@
 
             <input type="file" id="about_media" name="about_media" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml,video/mp4,video/webm,video/quicktime"
                 class="block w-full text-white/70 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20">
-            <p class="text-xs text-white/30 mt-1">Image up to 5MB, or MP4, WEBM, or MOV up to 100MB. A new upload replaces the current file.</p>
+            <p class="text-xs text-white/30 mt-1">Image up to 5MB, or MP4, WEBM, or MOV up to 100MB. Videos are compressed for faster loading. A new upload replaces the current file.</p>
             @error('about_media')
                 <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
             @enderror
