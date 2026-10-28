@@ -10,59 +10,193 @@
         $homeContent = $homeContent ?? \App\Models\Setting::getHomeContent();
         $aboutContent = \App\Models\Setting::getAboutContent();
     @endphp
-    <!-- Hero Section -->
-    <section id="home" class="relative min-h-screen pt-20 flex items-center overflow-hidden">
-        <!-- Background Image -->
-        <div class="absolute inset-0 z-0">
-            <img
-                src="{{ $homeContent['background_image'] ?: asset('images/rakeshrajbhat.jpg') }}"
-                alt="{{ $homeContent['name'] }}"
-                class="w-full h-full object-cover opacity-50 saturate-[1.1]"
-            >
-            <div class="absolute inset-0 bg-gradient-to-r from-[#0b0e12] via-[#0b0e12]/70 to-transparent"></div>
-        </div>
-
-        <!-- Content -->
-        <div class="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
-                <div>
-                    @if(filled($homeContent['eyebrow']))
-                        <p class="text-[#D4AF37] tracking-[0.25em] text-xs font-bold mb-4 uppercase">{{ $homeContent['eyebrow'] }}</p>
-                    @endif
-                    @if(filled($homeContent['headline_line_1']) || filled($homeContent['headline_line_2']) || filled($homeContent['headline_line_3']))
-                        <h1 class="text-5xl lg:text-7xl font-serif leading-[1.1] mb-8 text-balance text-white">
-                            @if(filled($homeContent['headline_line_1']))
-                                <span class="block">{{ $homeContent['headline_line_1'] }}</span>
-                            @endif
-                            @if(filled($homeContent['headline_line_2']))
-                                <span class="block italic">{{ $homeContent['headline_line_2'] }}</span>
-                            @endif
-                            @if(filled($homeContent['headline_line_3']))
-                                <span class="block">{{ $homeContent['headline_line_3'] }}</span>
-                            @endif
-                        </h1>
-                    @endif
-                    <p class="text-gray-300 text-lg max-w-lg mb-10 leading-relaxed">
-                        {{ $homeContent['intro'] }}
-                    </p>
-                    <div class="flex flex-wrap items-center gap-6">
-                        <a href="{{ \App\Models\Setting::linkHref($homeContent['primary_button_url']) }}" @if(str_starts_with($homeContent['primary_button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="bg-[#D4AF37] text-[#0b0e12] px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20">
+    <!-- Hero Section — Figma frame 1978 × 844 -->
+    <section id="home" class="hero-stage">
+        <style>
+            .hero-stage {
+                background: #e2e2e2;
+                margin-top: 0 !important;
+                padding-top: max(92px, calc(81px + var(--site-header-extra, 0px)));
+            }
+            .hero-fit {
+                width: min(1978px, 100%);
+                margin: 0 auto;
+                position: relative;
+                overflow: hidden;
+                background: #e2e2e2;
+            }
+            .hero-canvas {
+                width: 1978px;
+                height: 844px;
+                position: absolute;
+                left: 0;
+                top: 0;
+                transform-origin: top left;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                color: #111111;
+                background: #e2e2e2;
+            }
+            .hero-lead {
+                position: absolute;
+                left: 101px;
+                top: 116px;
+                margin: 0;
+                font-size: 32px;
+                font-weight: 600;
+                line-height: 40px;
+                letter-spacing: -0.02em;
+                color: #1a1a1a;
+            }
+            .hero-title {
+                position: absolute;
+                left: 101px;
+                top: 168px;
+                margin: 0;
+                max-width: 980px;
+                font-size: 72px;
+                font-weight: 800;
+                line-height: 80px;
+                letter-spacing: -0.03em;
+                color: #111111;
+            }
+            .hero-title span { display: block; }
+            .hero-body {
+                position: absolute;
+                left: 101px;
+                top: 360px;
+                width: 640px;
+                margin: 0;
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 26px;
+                color: #6b6b6b;
+            }
+            .hero-actions {
+                position: absolute;
+                left: 101px;
+                top: 477px;
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+            .hero-btn {
+                height: 52px;
+                padding: 0 22px;
+                border-radius: 999px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 15px;
+                font-weight: 500;
+                line-height: 1;
+                letter-spacing: -0.01em;
+                text-decoration: none;
+                white-space: nowrap;
+            }
+            .hero-btn-primary { background: #b36855; color: #ffffff; }
+            .hero-btn-primary:hover { filter: brightness(1.05); }
+            .hero-btn-secondary {
+                background: #ffffff;
+                color: #1c1c1c;
+                border: 1px solid #e4e4e4;
+            }
+            .hero-btn-secondary:hover { background: #fafafa; }
+            .hero-tag {
+                position: absolute;
+                left: 101px;
+                bottom: 32px;
+                margin: 0;
+                font-size: 12px;
+                font-weight: 600;
+                line-height: 16px;
+                letter-spacing: 0.18em;
+                text-transform: uppercase;
+                color: #8a8a8a;
+            }
+            .hero-portrait {
+                position: absolute;
+                width: 1120px;
+                height: 1120px;
+                right: -150px;
+                bottom: -20px;
+                object-fit: contain;
+                pointer-events: none;
+                user-select: none;
+            }
+            .hero-orbit {
+                position: absolute;
+                width: 860px;
+                height: 760px;
+                right: 8px;
+                top: 78px;
+                pointer-events: none;
+                user-select: none;
+            }
+        </style>
+        <div id="heroFit" class="hero-fit">
+            <div id="heroCanvas" class="hero-canvas">
+                @php
+                    $heroLead = trim((string) ($homeContent['headline_line_1'] ?? ''));
+                    $heroLine2 = trim((string) ($homeContent['headline_line_2'] ?? ''));
+                    $heroLine3 = trim((string) ($homeContent['headline_line_3'] ?? ''));
+                    if ($heroLead !== '' && preg_match('/^for\s+/i', $heroLine2)) {
+                        $heroLead = rtrim($heroLead, " :") . ' for:';
+                        $heroLine2 = preg_replace('/^for\s+/i', '', $heroLine2);
+                    }
+                    if (preg_match('/^and\s+/i', $heroLine3)) {
+                        $heroLine3 = '& ' . preg_replace('/^and\s+/i', '', $heroLine3);
+                    }
+                @endphp
+                @if($heroLead !== '')
+                    <p class="hero-lead">{{ $heroLead }}</p>
+                @endif
+                @if($heroLine2 !== '' || $heroLine3 !== '')
+                    <h1 class="hero-title">
+                        @if($heroLine2 !== '')
+                            <span>{{ $heroLine2 }}</span>
+                        @endif
+                        @if($heroLine3 !== '')
+                            <span>{{ $heroLine3 }}</span>
+                        @endif
+                    </h1>
+                @endif
+                @if(filled($homeContent['intro']))
+                    <p class="hero-body">{{ $homeContent['intro'] }}</p>
+                @endif
+                <div class="hero-actions">
+                    @if(filled($homeContent['primary_button_label']))
+                        <a href="{{ \App\Models\Setting::linkHref($homeContent['primary_button_url']) }}" @if(str_starts_with((string) $homeContent['primary_button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="hero-btn hero-btn-primary">
                             {{ $homeContent['primary_button_label'] }}
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M11.5 4.5H6.5M11.5 4.5V9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </a>
-                        <button type="button" data-open-work="education" class="notranslate inline-flex border border-[#D4AF37] text-[#D4AF37] px-8 py-3 font-bold text-sm tracking-wide rounded-sm hover:bg-[#D4AF37] hover:text-[#0b0e12] transition-all" translate="no">
-                            Work With Me
-                        </button>
-                        <a href="{{ \App\Models\Setting::linkHref($homeContent['text_link_url']) }}" @if(str_starts_with($homeContent['text_link_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="text-[#D4AF37] text-sm font-bold flex items-center gap-2 group">
-                            {{ $homeContent['text_link_label'] }} <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    @endif
+                    @if(filled($homeContent['text_link_label']))
+                        <a href="{{ \App\Models\Setting::linkHref($homeContent['text_link_url']) }}" @if(str_starts_with((string) $homeContent['text_link_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="hero-btn hero-btn-secondary">
+                            {{ $homeContent['text_link_label'] }}
                         </a>
-                    </div>
+                    @endif
                 </div>
-                <div class="lg:text-right pb-4">
-                    <div class="font-serif italic text-5xl lg:text-7xl mb-2 drop-shadow-lg text-[#D4AF37]">{{ $homeContent['name'] }}</div>
-                    <p class="text-xs tracking-[0.35em] font-medium text-white/70 uppercase">{{ $homeContent['tagline'] }}</p>
-                </div>
+                @if(filled($homeContent['tagline']))
+                    <p class="hero-tag">{{ $homeContent['tagline'] }}</p>
+                @endif
+                <img class="hero-portrait" src="{{ asset('images/hero/hero-portrait.png') }}" alt="{{ $homeContent['name'] }}">
+                <img class="hero-orbit" src="{{ asset('images/hero/hero-orbit.gif') }}" alt="" width="860" height="760">
             </div>
         </div>
+        <script>
+            (function () {
+                var fit = document.getElementById('heroFit');
+                var canvas = document.getElementById('heroCanvas');
+                if (!fit || !canvas) return;
+                function applyHeroScale() {
+                    var scale = fit.clientWidth / 1978;
+                    canvas.style.transform = 'scale(' + scale + ')';
+                    fit.style.height = Math.round(844 * scale) + 'px';
+                }
+                applyHeroScale();
+                window.addEventListener('resize', applyHeroScale);
+            })();
+        </script>
     </section>
 
     <!-- About Me -->
