@@ -75,6 +75,18 @@
                     <p class="text-xs text-[#D4AF37] uppercase tracking-wider mb-1">{{ $item->source_name ?: 'News' }}</p>
                     <h3 class="text-white font-semibold leading-snug">{{ $item->title }}</h3>
                     <a href="{{ $item->source_url }}" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-500 hover:text-white break-all">{{ $item->source_url }}</a>
+                    <form action="{{ route('admin.news.update-category', $item) }}" method="POST" class="mt-3 flex items-center gap-2">
+                        @csrf
+                        @method('PUT')
+                        <label for="news-category-{{ $item->id }}" class="text-xs text-white/50">Category</label>
+                        <select id="news-category-{{ $item->id }}" name="category" class="px-3 py-1.5 bg-[#0b0e12] border border-white/10 rounded-lg text-sm text-white focus:border-[#D4AF37] focus:outline-none">
+                            <option value="">Uncategorized</option>
+                            @foreach(\App\Models\NewsItem::CATEGORIES as $key => $category)
+                                <option value="{{ $key }}" @selected($item->category === $key)>{{ $category['filter'] }}</option>
+                            @endforeach
+                        </select>
+                        <button type="submit" class="px-3 py-1.5 text-sm text-white/80 border border-white/10 rounded-lg hover:text-white">Save</button>
+                    </form>
                 </div>
                 <div class="flex items-center gap-2">
                     <form action="{{ route('admin.news.refresh', $item) }}" method="POST">

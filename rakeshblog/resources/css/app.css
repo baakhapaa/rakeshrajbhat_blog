@@ -34,6 +34,26 @@
   .font-serif {
     font-family: var(--font-family-serif);
   }
+
+  .font-jakarta {
+    font-family: "Plus Jakarta Sans", Inter, "Noto Sans Devanagari", sans-serif;
+  }
+
+  .font-grotesk {
+    font-family: "Space Grotesk", Inter, sans-serif;
+  }
+
+  .font-poppins {
+    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
+  }
+
+  .font-playfair {
+    font-family: "Playfair Display", serif;
+  }
+
+  .font-inter {
+    font-family: Inter, "Noto Sans Devanagari", sans-serif;
+  }
   
   .text-balance {
     text-wrap: balance;

@@ -185,7 +185,7 @@
         </button>
     </form>
 
-    <form action="{{ route('admin.home-content.update-about') }}" method="POST" id="aboutTab" class="space-y-6 {{ $homeTab === 'about' ? '' : 'hidden' }}">
+    <form action="{{ route('admin.home-content.update-about') }}" method="POST" enctype="multipart/form-data" id="aboutTab" class="space-y-6 {{ $homeTab === 'about' ? '' : 'hidden' }}">
         @csrf
         @method('PUT')
         <input type="hidden" name="_tab" value="about">
@@ -212,7 +212,7 @@
                     @enderror
                 </div>
                 <div>
-                    <label for="about_heading_line_2" class="block text-white/70 text-sm font-medium mb-2">Heading line 2</label>
+                    <label for="about_heading_line_2" class="block text-white/70 text-sm font-medium mb-2">Heading line 2 (optional)</label>
                     <input type="text" id="about_heading_line_2" name="about_heading_line_2" value="{{ old('about_heading_line_2', $about['heading_line_2']) }}"
                         class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                     @error('about_heading_line_2')
@@ -222,7 +222,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="about_paragraph_1" class="block text-white/70 text-sm font-medium mb-2">First paragraph</label>
+                <label for="about_paragraph_1" class="block text-white/70 text-sm font-medium mb-2">Highlight</label>
                 <textarea id="about_paragraph_1" name="about_paragraph_1" rows="3"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">{{ old('about_paragraph_1', $about['paragraph_1']) }}</textarea>
                 @error('about_paragraph_1')
@@ -231,13 +231,74 @@
             </div>
 
             <div>
-                <label for="about_paragraph_2" class="block text-white/70 text-sm font-medium mb-2">Second paragraph</label>
+                <label for="about_paragraph_2" class="block text-white/70 text-sm font-medium mb-2">Body</label>
                 <textarea id="about_paragraph_2" name="about_paragraph_2" rows="5"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">{{ old('about_paragraph_2', $about['paragraph_2']) }}</textarea>
                 @error('about_paragraph_2')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
+
+            <div class="mt-4">
+                <label for="about_paragraph_3" class="block text-white/70 text-sm font-medium mb-2">Closing paragraph</label>
+                <textarea id="about_paragraph_3" name="about_paragraph_3" rows="4"
+                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">{{ old('about_paragraph_3', $about['paragraph_3'] ?? '') }}</textarea>
+                @error('about_paragraph_3')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="about_button_label" class="block text-white/70 text-sm font-medium mb-2">Button label</label>
+                    <input type="text" id="about_button_label" name="about_button_label" value="{{ old('about_button_label', $about['button_label'] ?? '') }}"
+                        class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
+                    @error('about_button_label')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label for="about_button_url" class="block text-white/70 text-sm font-medium mb-2">Button link</label>
+                    <input type="text" id="about_button_url" name="about_button_url" value="{{ old('about_button_url', $about['button_url'] ?? '#projects') }}"
+                        class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
+                    @error('about_button_url')
+                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
+            <h2 class="text-xl font-semibold text-white mb-2">Photo or video</h2>
+            <p class="text-sm text-white/40 mb-6">Upload one image or one video. It is stored with the other site media, in the about folder.</p>
+
+            @if(!empty($about['media_url']))
+                <div id="aboutMediaCurrent" class="mb-4">
+                    <p class="text-xs text-white/40 mb-2">Current file</p>
+                    @if(($about['media_type'] ?? null) === 'video')
+                        <video src="{{ $about['media_url'] }}" controls class="max-h-64 w-auto max-w-full rounded-lg border border-white/10"></video>
+                    @else
+                        <img src="{{ $about['media_url'] }}" alt="Current about media" class="max-h-64 w-auto max-w-full object-cover rounded-lg border border-white/10">
+                    @endif
+                </div>
+                <label class="flex items-center gap-2 text-sm text-white/70 mb-4">
+                    <input type="checkbox" name="remove_about_media" value="1" class="rounded border-white/20 bg-white/5 text-[#D4AF37] focus:ring-[#D4AF37]" {{ old('remove_about_media') ? 'checked' : '' }}>
+                    Remove the current file
+                </label>
+            @endif
+
+            <div id="aboutMediaPreview" class="mb-4 hidden">
+                <p class="text-xs text-white/40 mb-2">Preview</p>
+                <img id="aboutMediaPreviewImage" alt="Selected image preview" class="hidden max-h-64 w-auto max-w-full object-cover rounded-lg border border-white/10">
+                <video id="aboutMediaPreviewVideo" controls class="hidden max-h-64 w-auto max-w-full rounded-lg border border-white/10"></video>
+            </div>
+
+            <input type="file" id="about_media" name="about_media" accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml,video/mp4,video/webm,video/quicktime"
+                class="block w-full text-white/70 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20">
+            <p class="text-xs text-white/30 mt-1">Image up to 5MB, or MP4, WEBM, or MOV up to 100MB. A new upload replaces the current file.</p>
+            @error('about_media')
+                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+            @enderror
         </div>
 
         @php
@@ -346,6 +407,45 @@
             const row = factTemplate.content.firstElementChild.cloneNode(true);
             factRows.appendChild(row);
             bindFactRow(row);
+        });
+
+        const mediaInput = document.getElementById('about_media');
+        const mediaPreview = document.getElementById('aboutMediaPreview');
+        const previewImage = document.getElementById('aboutMediaPreviewImage');
+        const previewVideo = document.getElementById('aboutMediaPreviewVideo');
+        const currentMedia = document.getElementById('aboutMediaCurrent');
+        let previewUrl = null;
+
+        mediaInput.addEventListener('change', function () {
+            if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+                previewUrl = null;
+            }
+
+            previewImage.classList.add('hidden');
+            previewVideo.classList.add('hidden');
+            previewImage.removeAttribute('src');
+            previewVideo.removeAttribute('src');
+            previewVideo.load();
+
+            const file = mediaInput.files && mediaInput.files[0];
+            if (!file) {
+                mediaPreview.classList.add('hidden');
+                if (currentMedia) {
+                    currentMedia.classList.remove('hidden');
+                }
+                return;
+            }
+
+            previewUrl = URL.createObjectURL(file);
+            const isVideo = file.type.startsWith('video/') || /\.(mp4|webm|mov)$/i.test(file.name);
+            const target = isVideo ? previewVideo : previewImage;
+            target.src = previewUrl;
+            target.classList.remove('hidden');
+            mediaPreview.classList.remove('hidden');
+            if (currentMedia) {
+                currentMedia.classList.add('hidden');
+            }
         });
     });
 </script>

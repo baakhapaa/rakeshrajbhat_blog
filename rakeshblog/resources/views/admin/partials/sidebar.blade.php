@@ -87,6 +87,47 @@
         </span>
     </a>
 
+    {{-- Messages --}}
+    @php
+        $messagesOpen = Str::startsWith(Route::currentRouteName(), 'admin.messages');
+        $messageChannel = request()->routeIs('admin.messages.contact')
+            ? 'contact'
+            : (request()->routeIs('admin.messages.work') ? 'work' : request()->route('message')?->channel);
+    @endphp
+    <details class="group" @if($messagesOpen) open @endif>
+        <summary class="messages-summary flex cursor-pointer list-none items-center justify-between rounded-lg px-4 py-3 text-gray-300 transition-all duration-200 hover:bg-white/5 hover:text-white {{ $messagesOpen ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : '' }}">
+            <span class="flex items-center">
+                <i class="fa-solid fa-envelope inline-block w-5 text-center text-base mr-3" aria-hidden="true"></i>
+                Messages
+            </span>
+            <i class="fa-solid fa-chevron-down text-xs transition-transform group-open:rotate-180" aria-hidden="true"></i>
+        </summary>
+        <div class="mt-1 ml-4 space-y-1">
+            <a href="{{ route('admin.messages.contact') }}"
+                class="flex items-center rounded-lg px-4 py-2 text-sm transition-all duration-200
+                {{ $messageChannel === 'contact' ? 'bg-[#D4AF37]/10 text-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                <i class="fa-solid fa-paper-plane inline-block w-5 text-center text-sm mr-3" aria-hidden="true"></i>
+                Contact Message
+            </a>
+            <a href="{{ route('admin.messages.work') }}"
+                class="flex items-center rounded-lg px-4 py-2 text-sm transition-all duration-200
+                {{ $messageChannel === 'work' ? 'bg-[#D4AF37]/10 text-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                <i class="fa-solid fa-handshake inline-block w-5 text-center text-sm mr-3" aria-hidden="true"></i>
+                Work Message
+            </a>
+        </div>
+    </details>
+
+    {{-- Newsletter --}}
+    <a href="{{ route('admin.newsletter.index') }}"
+        class="block px-4 py-3 rounded-lg transition-all duration-200
+        {{ Str::startsWith(Route::currentRouteName(), 'admin.newsletter') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+        <span class="flex items-center">
+            <i class="fa-solid fa-envelope-open-text inline-block w-5 text-center text-base mr-3" aria-hidden="true"></i>
+            Newsletter
+        </span>
+    </a>
+
     {{-- Activity Logs --}}
         <a href="{{ route('admin.activity.logs') }}"
             class="block px-4 py-3 rounded-lg transition-all duration-200
@@ -123,6 +164,16 @@
             <span class="flex items-center">
                 <i class="fa-solid fa-rss inline-block w-5 text-center text-base mr-3" aria-hidden="true"></i>
                 News & Updates
+            </span>
+        </a>
+
+        {{-- Legal pages --}}
+        <a href="{{ route('admin.legal.edit') }}"
+            class="block px-4 py-3 rounded-lg transition-all duration-200
+            {{ Str::startsWith(Route::currentRouteName(), 'admin.legal') ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+            <span class="flex items-center">
+                <i class="fa-solid fa-scale-balanced inline-block w-5 text-center text-base mr-3" aria-hidden="true"></i>
+                Legal
             </span>
         </a>
 

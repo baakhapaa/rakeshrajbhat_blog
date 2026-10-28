@@ -26,6 +26,10 @@ use App\Http\Controllers\NewsController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BootcampController;
 use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\LegalPageController;
+use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\NewsletterSubscriberController;
+use App\Http\Controllers\Admin\LegalPageController as AdminLegalPageController;
 use App\Models\Blog;
 
 /*
@@ -41,8 +45,8 @@ use App\Models\Blog;
 // Home & Blog
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/gallery/{gallery}', [HomeController::class, 'gallery'])->name('gallery.show');
-Route::view('/privacy', 'legal.privacy')->name('privacy');
-Route::view('/terms', 'legal.terms')->name('terms');
+Route::get('/privacy', [LegalPageController::class, 'privacy'])->name('privacy');
+Route::get('/terms', [LegalPageController::class, 'terms'])->name('terms');
 Route::get('/sitemap.xml', function () {
     $staticUrls = collect([
         ['loc' => route('home'), 'lastmod' => now()->toDateString(), 'changefreq' => 'weekly', 'priority' => '1.0'],
@@ -267,6 +271,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('projects', ProjectController::class);
 
         Route::put('/news/section', [AdminNewsController::class, 'updateSection'])->name('news.update-section');
+        Route::put('/news/{news}/category', [AdminNewsController::class, 'updateCategory'])->name('news.update-category');
         Route::post('/news/{news}/refresh', [AdminNewsController::class, 'refresh'])->name('news.refresh');
         Route::resource('news', AdminNewsController::class)->only(['index', 'store', 'destroy']);
 
@@ -283,6 +288,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/home-content', [HomeContentController::class, 'editHome'])->name('home-content.edit');
         Route::put('/home-content', [HomeContentController::class, 'updateHome'])->name('home-content.update');
         Route::put('/home-content/about', [HomeContentController::class, 'updateAbout'])->name('home-content.update-about');
+        Route::get('/legal', [AdminLegalPageController::class, 'edit'])->name('legal.edit');
+        Route::put('/legal', [AdminLegalPageController::class, 'update'])->name('legal.update');
+
+        Route::get('/newsletter/export', [NewsletterSubscriberController::class, 'export'])->name('newsletter.export');
+        Route::get('/newsletter', [NewsletterSubscriberController::class, 'index'])->name('newsletter.index');
+
+        Route::get('/messages/contact', [MessageController::class, 'index'])->defaults('channel', 'contact')->name('messages.contact');
+        Route::get('/messages/work', [MessageController::class, 'index'])->defaults('channel', 'work')->name('messages.work');
+        Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
+        Route::get('/messages/{message}', [MessageController::class, 'show'])->name('messages.show');
 
         // ==========================================
         // SETTINGS ROUTES

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\RichText;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 
@@ -120,15 +121,20 @@ class Setting extends Model
     public static function defaultAboutContent(): array
     {
         return [
-            'label' => '01 / About me',
-            'heading_line_1' => 'My journey',
-            'heading_line_2' => 'so far.',
+            'label' => 'About',
+            'heading_line_1' => 'My Journey So Far',
+            'heading_line_2' => '',
             'paragraph_1' => 'I studied civil engineering, worked in Texas and returned to Nepal to build projects in education, technology and tourism.',
-            'paragraph_2' => 'Through Baakhapaa, Skill Sikka, HillyChilly and Future Builders, I have been exploring ways to connect learning with practical opportunities. As I prepare for public service in Palungtar, I want to bring that experience into conversations about employment, education and the services people depend on every day.',
+            'paragraph_2' => 'Through Baakhapaa, Skill Sikka, HillyChilly and Future Builders, I have been exploring ways to connect learning with practical opportunities. These initiatives reflect the areas I care about: useful education, local enterprise and opportunities for young people.',
+            'paragraph_3' => 'As I prepare for public service in Palungtar, I want to bring that experience into conversations about employment, education and the services people depend on every day.',
+            'button_label' => 'View my work',
+            'button_url' => '#projects',
             'facts' => [
                 ['title' => 'Civil engineering', 'caption' => 'Education'],
                 ['title' => 'Nepal & Texas', 'caption' => 'Experience'],
             ],
+            'media_url' => null,
+            'media_type' => null,
         ];
     }
 
@@ -143,10 +149,14 @@ class Setting extends Model
 
         $content = $defaults;
 
-        foreach (['label', 'heading_line_1', 'heading_line_2', 'paragraph_1', 'paragraph_2'] as $key) {
+        foreach (['label', 'heading_line_1', 'paragraph_1', 'paragraph_2', 'paragraph_3', 'button_label', 'button_url'] as $key) {
             if (isset($decoded[$key]) && is_string($decoded[$key]) && trim($decoded[$key]) !== '') {
                 $content[$key] = $decoded[$key];
             }
+        }
+
+        if (array_key_exists('heading_line_2', $decoded) && is_string($decoded['heading_line_2'])) {
+            $content['heading_line_2'] = trim($decoded['heading_line_2']);
         }
 
         $facts = static::aboutFactsFrom($decoded);
@@ -154,6 +164,13 @@ class Setting extends Model
         if ($facts !== []) {
             $content['facts'] = $facts;
         }
+
+        $mediaUrl = trim((string) ($decoded['media_url'] ?? ''));
+        $mediaType = $decoded['media_type'] ?? null;
+        $content['media_url'] = $mediaUrl !== '' ? $mediaUrl : null;
+        $content['media_type'] = in_array($mediaType, ['image', 'video'], true) && $content['media_url']
+            ? $mediaType
+            : null;
 
         return $content;
     }
@@ -202,9 +219,9 @@ class Setting extends Model
     public static function defaultNewsContent(): array
     {
         return [
-            'label' => '05 / News & Updates',
-            'heading' => 'From the journey.',
-            'intro' => 'News from community visits, project activities, public discussions and events.',
+            'label' => 'News',
+            'heading' => 'Latest News and Activities',
+            'intro' => 'Updates from community visits, project activities and public discussions, along with interviews and media coverage.',
             'items' => [
                 [
                     'kicker' => 'Palungtar · Community',
@@ -596,9 +613,9 @@ class Setting extends Model
                 ['label' => 'Instagram', 'url' => 'https://www.instagram.com/raa_case7/'],
             ],
             'pages' => [
-                ['label' => 'Contact', 'url' => '/contact'],
-                ['label' => 'Privacy', 'url' => '/privacy'],
-                ['label' => 'Terms', 'url' => '/terms'],
+                ['label' => 'Contact Me', 'url' => '/contact'],
+                ['label' => 'Privacy Policy', 'url' => '/privacy'],
+                ['label' => 'Terms & Conditions', 'url' => '/terms'],
             ],
         ];
     }
@@ -754,5 +771,85 @@ class Setting extends Model
         }
 
         return (bool) preg_match('#^https?://#i', $url);
+    }
+
+    /**
+     * @return array{title: string, meta_description: string, updated_on: string, body: string}
+     */
+    public static function defaultLegalPage(string $page): array
+    {
+        $pages = [
+            'privacy' => [
+                'title' => 'Privacy Policy',
+                'meta_description' => 'Learn how Rakesh Rajbhat’s website collects, uses and protects information submitted through the website.',
+                'updated_on' => '2026-09-04',
+                'body' => <<<'HTML'
+<p>This policy explains how the Rakesh Rajbhat website handles personal information submitted through its contact, bootcamp, partnership and account-related features.</p>
+<h2>Information we collect</h2>
+<p>We may collect the information you provide, such as your name, email address, phone number, organization, location and message. If you create an account or use connected features, we may also process the information needed to provide those features.</p>
+<h2>How we use information</h2>
+<p>Information is used to respond to inquiries, assess program or partnership requests, operate requested website features, protect the website from misuse and meet applicable legal obligations. We do not sell personal information.</p>
+<h2>Newsletter subscriptions</h2>
+<p>If you subscribe to the newsletter, we collect your email address and consent timestamp. We send a confirmation email before adding you to the mailing list. After you confirm, we email you when a new article, research piece, or project is published. Every email includes an unsubscribe link. You can also request deletion through the <a href="/contact">Contact page</a>.</p>
+<h2>Sharing and service providers</h2>
+<p>Information may be shared only with people who need it to respond to your request or operate the website, and with service providers that support hosting, email delivery, security or form processing. They may use it only to provide those services.</p>
+<h2>Retention and security</h2>
+<p>We retain information only for as long as reasonably necessary for the purpose it was collected, legal requirements and record keeping. Reasonable technical and organizational safeguards are used, but no online system can guarantee absolute security.</p>
+<h2>Your choices</h2>
+<p>You may request access to, correction of or deletion of personal information held about you, subject to legal and operational requirements. To make a request or ask a privacy question, use the <a href="/contact">Contact page</a>.</p>
+<h2>Changes to this policy</h2>
+<p>We may update this policy as the website or its services change. The current version and its update date will always appear on this page.</p>
+HTML,
+            ],
+            'terms' => [
+                'title' => 'Terms of Use',
+                'meta_description' => 'Terms governing the use of the Rakesh Rajbhat website and its public content and services.',
+                'updated_on' => '2026-09-04',
+                'body' => <<<'HTML'
+<p>These Terms of Use govern your use of the Rakesh Rajbhat website. By using this website, you agree to these terms.</p>
+<h2>Website content</h2>
+<p>Unless otherwise stated, the website’s text, design, graphics and original media are protected by applicable intellectual-property laws. You may share links to public pages, but may not reproduce, republish or commercially use material without prior permission.</p>
+<h2>Acceptable use</h2>
+<p>You must not misuse the website, interfere with its security or operation, submit unlawful or harmful content, impersonate another person, attempt unauthorized access or use automated methods that place unreasonable load on the service.</p>
+<h2>Inquiries and accounts</h2>
+<p>Submitting a form does not create a contract, partnership, employment relationship or obligation to provide services. Where accounts, comments, quizzes or connected learning features are available, users are responsible for providing accurate information and keeping account credentials secure.</p>
+<h2>External links</h2>
+<p>This website may link to third-party websites. Those sites are governed by their own terms and privacy practices, and we are not responsible for their content or availability.</p>
+<h2>Disclaimer and changes</h2>
+<p>Website content is provided for general information and may change without notice. We may update these terms or suspend features when necessary. Continued use after an update means you accept the updated terms.</p>
+<h2>Contact</h2>
+<p>For questions about these terms, please use the <a href="/contact">Contact page</a>.</p>
+HTML,
+            ],
+        ];
+
+        return $pages[$page] ?? $pages['privacy'];
+    }
+
+    /**
+     * @return array{title: string, meta_description: string, updated_on: string, body: string}
+     */
+    public static function getLegalPage(string $page): array
+    {
+        $defaults = static::defaultLegalPage($page);
+        $decoded = static::decodeJson(static::getValue('legal_'.$page));
+
+        if (! is_array($decoded)) {
+            return $defaults;
+        }
+
+        $title = trim(strip_tags((string) ($decoded['title'] ?? '')));
+        $meta = trim(strip_tags((string) ($decoded['meta_description'] ?? '')));
+        $updatedOn = trim((string) ($decoded['updated_on'] ?? ''));
+        $body = array_key_exists('body', $decoded)
+            ? RichText::clean((string) $decoded['body'])
+            : $defaults['body'];
+
+        return [
+            'title' => $title !== '' ? $title : $defaults['title'],
+            'meta_description' => $meta !== '' ? $meta : $defaults['meta_description'],
+            'updated_on' => preg_match('/^\d{4}-\d{2}-\d{2}$/', $updatedOn) ? $updatedOn : $defaults['updated_on'],
+            'body' => $body,
+        ];
     }
 }

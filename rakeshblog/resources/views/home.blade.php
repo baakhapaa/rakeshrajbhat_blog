@@ -200,32 +200,54 @@
     </section>
 
     <!-- About Me -->
-    <section id="about-me" class="py-24 bg-white text-[#1e1e1a] scroll-mt-20">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-                <div class="lg:col-span-5">
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-5 uppercase">{{ $aboutContent['label'] }}</p>
-                    <h2 class="text-5xl lg:text-6xl font-serif font-bold leading-[1.05]">
-                        {{ $aboutContent['heading_line_1'] }}<br>{{ $aboutContent['heading_line_2'] }}
+    <section id="about-me" class="scroll-mt-20 border-b border-[#efeeeb] bg-[#fbf9f6] text-[#1b1c1a]">
+        <div class="mx-auto w-full max-w-[1920px] px-6 pb-16 pt-20 sm:px-10 md:pb-24 md:pt-28 lg:px-16 lg:pb-[113px] lg:pt-[160px] xl:px-24 2xl:px-[196px]">
+            <div class="grid items-end gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:gap-x-16">
+                <div class="lg:pt-[39px]">
+                    <div class="flex items-center gap-2">
+                        <span class="block h-0.5 w-6 shrink-0 bg-[#89351d]" aria-hidden="true"></span>
+                        <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#89351d]">{{ $aboutContent['label'] }}</p>
+                    </div>
+                    <h2 class="pt-3 font-jakarta text-[2rem] font-bold leading-tight tracking-[-0.6px] text-[#1b1c1a] sm:text-[44px] sm:leading-[48px] sm:tracking-[-1.1px]">
+                        {{ $aboutContent['heading_line_1'] }}@if(filled($aboutContent['heading_line_2'])) {{ $aboutContent['heading_line_2'] }}@endif
                     </h2>
-                </div>
-                <div class="lg:col-span-7">
-                    <div class="max-w-lg lg:pt-2">
-                        <div class="space-y-6 text-[#3a3a34] leading-relaxed">
-                            <p>{{ $aboutContent['paragraph_1'] }}</p>
-                            <p>{{ $aboutContent['paragraph_2'] }}</p>
+                    @if(!empty($aboutContent['media_url']))
+                        <div class="mt-8 max-w-[840px]">
+                            @if(($aboutContent['media_type'] ?? null) === 'video')
+                                <video src="{{ $aboutContent['media_url'] }}" controls playsinline preload="metadata" class="w-full rounded-2xl bg-[#1e1e1a]"></video>
+                            @else
+                                <img src="{{ $aboutContent['media_url'] }}" alt="" class="w-full rounded-2xl object-cover">
+                            @endif
                         </div>
-                        @if(!empty($aboutContent['facts']))
-                            <div class="mt-10 grid grid-cols-2 gap-x-8 gap-y-6">
-                                @foreach($aboutContent['facts'] as $fact)
-                                    <div>
-                                        <p class="font-bold text-[#1e1e1a]">{{ $fact['title'] }}</p>
-                                        <p class="text-sm text-[#6a6a62] mt-1">{{ $fact['caption'] }}</p>
-                                    </div>
-                                @endforeach
-                            </div>
+                    @endif
+                    <div class="flex max-w-[840px] flex-col gap-10 pt-10 lg:gap-[50px] lg:pt-[51px]">
+                        <div class="rounded-2xl border-l-4 border-[#89351d] bg-[#f5f3f0] py-6 pl-7 pr-6">
+                            <p class="font-jakarta text-[1.35rem] font-bold leading-8 text-[#1b1c1a] sm:text-[31px] sm:leading-[40px]">{{ $aboutContent['paragraph_1'] }}</p>
+                        </div>
+                        @if(filled($aboutContent['paragraph_2']))
+                            <p class="font-jakarta text-[17px] font-bold leading-9 text-[#5f5e5e]">{{ $aboutContent['paragraph_2'] }}</p>
+                        @endif
+                        @if(filled($aboutContent['paragraph_3']))
+                            <p class="font-jakarta text-lg font-normal leading-[1.35] text-[#5f5e5e]">{{ $aboutContent['paragraph_3'] }}</p>
                         @endif
                     </div>
+                    @if(filled($aboutContent['button_label']))
+                        <div class="pt-12 lg:pt-20">
+                            <a href="{{ \App\Models\Setting::linkHref($aboutContent['button_url'] ?: '#projects') }}" @if(str_starts_with((string) $aboutContent['button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="inline-flex items-center rounded-full bg-[#b36855] px-6 py-2.5 font-jakarta text-sm font-medium leading-[21px] text-[#faf7f2] shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.12),0px_2px_4px_-2px_rgba(0,0,0,0.43)] transition hover:brightness-110">
+                                <span>{{ $aboutContent['button_label'] }}</span>
+                                <span class="inline-flex pl-2">
+                                    <img src="{{ asset('images/about-arrow.svg') }}" alt="" width="9.46875" height="3.75">
+                                </span>
+                            </a>
+                        </div>
+                    @endif
+                </div>
+                <div class="w-full self-end overflow-hidden">
+                    <img
+                        src="{{ asset('images/rakeshrajbhat.jpg') }}"
+                        alt="{{ $homeContent['name'] ?? 'Rakesh Rajbhat' }}"
+                        class="aspect-[4/5] h-auto w-full object-cover lg:aspect-[5/6] 2xl:aspect-auto 2xl:h-[738px]"
+                    >
                 </div>
             </div>
         </div>
@@ -243,18 +265,8 @@
         ];
     @endphp
     <section id="about" class="mission-scroll text-[#1e1e1a] scroll-mt-20" aria-labelledby="mission-heading">
-        <div class="mission-scroll__intro">
-            <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-4 uppercase">My Mission</p>
-            <h2 id="mission-heading" class="text-4xl md:text-5xl font-serif font-bold mb-6 leading-tight">I believe in building systems that create lasting impact.</h2>
-            <p class="text-[#3a3a34] mb-8 leading-relaxed max-w-2xl">
-                I grew up in Nepal. Studied Civil Engineering. Worked in Texas. Explored the world. And I returned home with a simple belief – that we can build a better future for our people with the right knowledge, technology and opportunities.
-            </p>
-            <blockquote class="border-l-4 border-[#D4AF37] pl-6 py-2 italic text-xl text-[#2a2a24]">
-                "I am not in politics to play politics. <br/> I am here to build opportunities."
-            </blockquote>
-        </div>
-
         <div class="mission-scroll__list">
+            <p class="mission-scroll__kicker">My Mission</p>
             @foreach($missionItems as $item)
                 <div class="mission-scroll__listItem">
                     <div class="mission-scroll__listNum">{{ $item['number'] }}</div>
@@ -281,6 +293,7 @@
                     </div>
                 </div>
                 <div class="mission-scroll__textZone">
+                    <p id="mission-heading" class="mission-scroll__kicker">My Mission</p>
                     <div class="mission-scroll__textViewport" id="missionText">
                         @foreach($missionItems as $item)
                             <article class="mission-scroll__reason">
@@ -306,14 +319,15 @@
             background: #f2f2f2;
             overflow: clip;
         }
-        .mission-scroll__intro {
-            position: relative;
-            z-index: 2;
-            max-width: 48rem;
-            margin: 0 auto;
-            padding: 96px 24px 48px;
+        .mission-scroll__kicker {
+            margin: 0 0 12px;
+            color: #D4AF37;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
         }
-        .mission-scroll__list { display: none; max-width: 40rem; margin: 0 auto; padding: 0 24px 80px; }
+        .mission-scroll__list { display: none; max-width: 40rem; margin: 0 auto; padding: 72px 24px 80px; }
         .mission-scroll__listItem + .mission-scroll__listItem { margin-top: 28px; padding-top: 28px; border-top: 1px solid rgba(30, 30, 26, 0.08); }
         .mission-scroll__listNum { color: #D4AF37; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; }
         .mission-scroll__listTitle { margin: 8px 0 0; font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; }
@@ -406,16 +420,16 @@
             left: 38%;
             width: 54%;
             top: 50%;
-            transform: translateY(-50%);
+            transform: translateY(-28px);
             z-index: 2;
         }
-        .mission-scroll__textViewport { position: relative; height: 280px; width: 100%; }
+        .mission-scroll__textViewport { position: relative; height: 190px; width: 100%; overflow: hidden; }
         .mission-scroll__reason {
             position: absolute;
             inset: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             opacity: 0;
             will-change: transform, opacity;
         }
@@ -445,7 +459,6 @@
                 --dial-center: -0.16;
                 --number-margin: 8px;
             }
-            .mission-scroll__intro { padding: 72px 20px 24px; }
             .mission-scroll__sticky {
                 top: 5rem;
                 height: calc(100svh - 5rem);
@@ -457,7 +470,7 @@
                 width: 56%;
                 padding-right: 20px;
             }
-            .mission-scroll__textViewport { height: 200px; }
+            .mission-scroll__textViewport { height: 160px; }
             .mission-scroll__headline { font-size: 28px; }
             .mission-scroll__body { margin-top: 10px; font-size: 15px; line-height: 1.5; }
         }
@@ -724,41 +737,52 @@
     </section>
 
     <!-- Impact Stats -->
-    <section id="impact" class="py-20 bg-[#0c1016] scroll-mt-20">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="mb-12">
-                @php $statsSection = \App\Models\Setting::getStatsSection(); @endphp
-                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">{{ $statsSection['title'] }}</p>
-                <h2 class="text-4xl font-serif font-bold text-white/95">{{ $statsSection['description'] }}</h2>
+    <section id="impact" class="scroll-mt-20 bg-[#010a19] py-16">
+        <div class="mx-auto flex w-full max-w-[1640px] flex-col items-center gap-10 px-4 sm:px-6 lg:flex-row lg:items-center lg:gap-8 xl:px-8">
+            <div class="w-full shrink-0 lg:w-[250px]">
+                <div class="flex items-center gap-2">
+                    <span class="block h-0.5 w-6 shrink-0 bg-[#b36855]" aria-hidden="true"></span>
+                    @php $statsSection = \App\Models\Setting::getStatsSection(); @endphp
+                    <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#b36855]">{{ $statsSection['title'] }}</p>
+                </div>
+                <h2 class="mt-3 font-poppins text-[2.4rem] font-bold leading-[1.2] tracking-[-1px] text-white sm:text-[50px] sm:leading-[62px] sm:tracking-[-1.15px]">
+                    {{ $statsSection['description'] }}
+                </h2>
             </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 border border-white/5 rounded-xl overflow-hidden divide-y divide-white/5 sm:divide-y-0 sm:divide-x divide-white/5">
-                @forelse($stats ?? [] as $stat)
-                    @php
-                        $number = trim((string) $stat->number);
-                        preg_match('/^([0-9]+(?:\\.[0-9]+)?)(.*)$/', $number, $numberParts);
-                        $numericValue = $numberParts[1] ?? '0';
-                        $numberSuffix = trim($numberParts[2] ?? '');
-                    @endphp
-                    <div class="p-8 text-center flex flex-col items-center bg-[#0f1419] {{ $loop->last ? '' : 'border-b border-white/5 sm:border-b-0' }} stat-item">
-                        @if($stat->icon)
-                            <i class="{{ $stat->icon }} h-8 w-8 text-[#D4AF37] mb-4" aria-hidden="true"></i>
-                        @else
-                            <svg class="h-8 w-8 text-[#D4AF37] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path d="M3 3v18h18M7 16l3-4 3 2 5-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
-                            </svg>
-                        @endif
-                        <div class="text-4xl font-serif font-bold text-white mb-1">
-                            <span class="counter" data-target="{{ $numericValue }}">
-                                    {{ $numericValue }}
-                    </span>@if($numberSuffix) <span class="text-4xl text-white">{{ $numberSuffix }}</span>@endif
+            <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#1e2530] bg-[#12161e] shadow-[0px_25px_50px_-12px_rgba(0,0,0,0.25)]">
+                <div class="grid grid-cols-2 gap-px bg-[#1c232d] md:grid-cols-3 xl:grid-cols-6">
+                    @forelse($stats ?? [] as $stat)
+                        @php
+                            $number = trim((string) $stat->number);
+                            preg_match('/^([0-9]+(?:\\.[0-9]+)?)(.*)$/', $number, $numberParts);
+                            $numericValue = $numberParts[1] ?? '0';
+                            $numberSuffix = trim($numberParts[2] ?? '');
+                            $accentSuffix = '';
+                            $inlineSuffix = '';
+                            if (preg_match('/lakh/i', $numberSuffix)) {
+                                $accentSuffix = $numberSuffix;
+                            } elseif ($numberSuffix !== '') {
+                                $inlineSuffix = $numberSuffix;
+                            }
+                        @endphp
+                        <div class="flex min-h-[220px] flex-col items-center justify-between bg-[#12161e] px-4 py-10 text-center">
+                            <img src="{{ asset('images/metric-arrow.svg') }}" alt="" width="32" height="32">
+                            <div class="flex flex-col items-center py-3">
+                                <p class="font-inter text-[34px] font-extrabold leading-[34px] tracking-[-0.85px] text-white">
+                                    <span class="counter" data-target="{{ $numericValue }}">{{ $numericValue }}</span>@if($inlineSuffix !== '') {{ $inlineSuffix }}@endif
+                                </p>
+                                @if($accentSuffix !== '')
+                                    <p class="font-playfair text-[28px] font-extrabold leading-8 text-[#d4a034]">{{ $accentSuffix }}</p>
+                                @endif
+                            </div>
+                            <p class="font-inter text-[11px] font-semibold uppercase leading-[1.35] tracking-[1.54px] text-[#9ca3af]">
+                                {{ $stat->label }}@if(filled($stat->sub_label))<br>{{ $stat->sub_label }}@endif
+                            </p>
                         </div>
-                        <div class="text-[10px] tracking-widest text-gray-400 uppercase leading-tight">
-                            {{ $stat->label }}@if($stat->sub_label)<br/>{{ $stat->sub_label }}@endif
-                        </div>
-                    </div>
-                @empty
-                    <div class="col-span-full p-8 text-center text-gray-400 stat-item">No impact stats available.</div>
-                @endforelse
+                    @empty
+                        <div class="col-span-full bg-[#12161e] px-8 py-10 text-center text-[#9ca3af]">No impact stats available.</div>
+                    @endforelse
+                </div>
             </div>
         </div>
     </section>
@@ -1331,36 +1355,35 @@ document.addEventListener('keydown', function(e) {
     </section>
     --}}
 
-    <section id="news" class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a] scroll-mt-20">
+    <section id="news" class="scroll-mt-20 bg-[#fbf9f6] pb-16 pt-16 text-[#1b1c1a] lg:pb-28 lg:pt-24">
         @php
             $newsContent = \App\Models\Setting::getNewsContent();
             $newsItems = $newsItems ?? collect();
-            $newsHasMore = $newsHasMore ?? false;
         @endphp
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-3 uppercase">{{ $newsContent['label'] }}</p>
-                <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#1e1e1a] leading-tight">{{ $newsContent['heading'] }}</h2>
-                <p class="text-[#5a5a52] mt-4 max-w-2xl mx-auto text-lg leading-relaxed">{{ $newsContent['intro'] }}</p>
+        <div class="mx-auto w-full max-w-[1648px] px-6 lg:px-12">
+            <div class="max-w-xl">
+                <div class="flex items-center gap-2">
+                    <span class="block h-0.5 w-6 shrink-0 bg-[#89351d]" aria-hidden="true"></span>
+                    <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#89351d]">{{ $newsContent['label'] }}</p>
+                </div>
+                <h2 class="pt-1 font-jakarta text-[2rem] font-bold leading-tight tracking-[-0.6px] text-[#1b1c1a] sm:text-[40px] sm:leading-[48px] sm:tracking-[-1px]">{{ $newsContent['heading'] }}</h2>
+                <p class="max-w-xl pt-2 font-jakarta text-base leading-6 text-[#5f5e5e]">{{ $newsContent['intro'] }}</p>
             </div>
 
             @if($newsItems->isNotEmpty())
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="mt-12 grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-[46px]">
                     @foreach($newsItems as $item)
                         @include('partials.news-card', ['item' => $item])
                     @endforeach
                 </div>
-                @if($newsHasMore)
-                    <div class="text-center mt-16">
-                        <a href="{{ route('news.index') }}"
-                            class="inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#c4a030] text-[#0b0e12] font-medium rounded-2xl hover:shadow-xl hover:shadow-[#D4AF37]/25 transition-all duration-300 hover:-translate-y-0.5 group">
-                            <span>Read more news</span>
-                            <span class="group-hover:translate-x-1 transition-transform">→</span>
-                        </a>
-                    </div>
-                @endif
+                <div class="mt-12 flex justify-center">
+                    <a href="{{ route('news.index') }}" class="inline-flex items-center gap-2 rounded-full px-8 py-3.5 font-grotesk text-base font-semibold leading-[18px] tracking-[1.04px] text-[#89351d]">
+                        <span>View All Updates</span>
+                        <img src="{{ asset('images/news-all-arrow.svg') }}" alt="" width="15" height="10.5">
+                    </a>
+                </div>
             @else
-                <p class="text-center text-sm text-[#8a8a82]">News will appear here once a link is added.</p>
+                <p class="mt-12 text-center font-jakarta text-sm text-[#5f5e5e]">News will appear here once a link is added.</p>
             @endif
         </div>
     </section>

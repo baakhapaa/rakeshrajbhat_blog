@@ -7,6 +7,7 @@ use App\Models\NewsItem;
 use App\Models\Setting;
 use App\Services\NewsSourceReader;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -66,6 +67,23 @@ class NewsController extends Controller
         NewsItem::query()->create($payload);
 
         return back()->with('success', 'News added. It is now on the homepage.');
+    }
+
+    public function updateCategory(Request $request, NewsItem $news)
+    {
+        $request->merge([
+            'category' => $request->input('category') ?: null,
+        ]);
+
+        $validated = $request->validate([
+            'category' => ['nullable', Rule::in(array_keys(NewsItem::CATEGORIES))],
+        ]);
+
+        $news->update([
+            'category' => $validated['category'] ?? null,
+        ]);
+
+        return back()->with('success', 'News category saved.');
     }
 
     public function refresh(NewsItem $news, NewsSourceReader $reader)
