@@ -26,12 +26,22 @@
         <div class="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
                 <div>
-                    <p class="text-[#D4AF37] tracking-[0.25em] text-xs font-bold mb-4 uppercase">{{ $homeContent['eyebrow'] }}</p>
-                    <h1 class="text-5xl lg:text-7xl font-serif leading-[1.1] mb-8 text-balance text-white">
-                        {{ $homeContent['headline_line_1'] }} <br/>
-                        <span class="italic">{{ $homeContent['headline_line_2'] }}</span><br/>
-                        {{ $homeContent['headline_line_3'] }}
-                    </h1>
+                    @if(filled($homeContent['eyebrow']))
+                        <p class="text-[#D4AF37] tracking-[0.25em] text-xs font-bold mb-4 uppercase">{{ $homeContent['eyebrow'] }}</p>
+                    @endif
+                    @if(filled($homeContent['headline_line_1']) || filled($homeContent['headline_line_2']) || filled($homeContent['headline_line_3']))
+                        <h1 class="text-5xl lg:text-7xl font-serif leading-[1.1] mb-8 text-balance text-white">
+                            @if(filled($homeContent['headline_line_1']))
+                                <span class="block">{{ $homeContent['headline_line_1'] }}</span>
+                            @endif
+                            @if(filled($homeContent['headline_line_2']))
+                                <span class="block italic">{{ $homeContent['headline_line_2'] }}</span>
+                            @endif
+                            @if(filled($homeContent['headline_line_3']))
+                                <span class="block">{{ $homeContent['headline_line_3'] }}</span>
+                            @endif
+                        </h1>
+                    @endif
                     <p class="text-gray-300 text-lg max-w-lg mb-10 leading-relaxed">
                         {{ $homeContent['intro'] }}
                     </p>

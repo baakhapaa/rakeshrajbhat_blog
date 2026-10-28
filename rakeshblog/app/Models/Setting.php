@@ -59,6 +59,32 @@ class Setting extends Model
         ];
     }
 
+    /**
+     * Hero fields that may be cleared in admin without falling back to defaults.
+     *
+     * @return list<string>
+     */
+    public static function optionalHomeHeroTextKeys(): array
+    {
+        return [
+            'eyebrow',
+            'headline_line_1',
+            'headline_line_2',
+            'headline_line_3',
+        ];
+    }
+
+    public static function nullableHomeString(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        $trimmed = trim($value);
+
+        return $trimmed === '' ? null : $trimmed;
+    }
+
     public static function getHomeContent(): array
     {
         $defaults = static::defaultHomeContent();
@@ -73,6 +99,13 @@ class Setting extends Model
         foreach ($defaults as $key => $default) {
             if ($key === 'background_image') {
                 $content[$key] = is_string($content[$key]) && $content[$key] !== '' ? $content[$key] : null;
+                continue;
+            }
+
+            if (in_array($key, static::optionalHomeHeroTextKeys(), true)) {
+                if (array_key_exists($key, $decoded)) {
+                    $content[$key] = static::nullableHomeString(is_string($content[$key]) ? $content[$key] : null);
+                }
                 continue;
             }
 
