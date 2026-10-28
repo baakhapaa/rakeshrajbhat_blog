@@ -26,12 +26,22 @@
         <div class="relative z-10 max-w-7xl mx-auto px-6 w-full py-20">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-end">
                 <div>
-                    <p class="text-[#D4AF37] tracking-[0.25em] text-xs font-bold mb-4 uppercase">{{ $homeContent['eyebrow'] }}</p>
-                    <h1 class="text-5xl lg:text-7xl font-serif leading-[1.1] mb-8 text-balance text-white">
-                        {{ $homeContent['headline_line_1'] }} <br/>
-                        <span class="italic">{{ $homeContent['headline_line_2'] }}</span><br/>
-                        {{ $homeContent['headline_line_3'] }}
-                    </h1>
+                    @if(filled($homeContent['eyebrow']))
+                        <p class="text-[#D4AF37] tracking-[0.25em] text-xs font-bold mb-4 uppercase">{{ $homeContent['eyebrow'] }}</p>
+                    @endif
+                    @if(filled($homeContent['headline_line_1']) || filled($homeContent['headline_line_2']) || filled($homeContent['headline_line_3']))
+                        <h1 class="text-5xl lg:text-7xl font-serif leading-[1.1] mb-8 text-balance text-white">
+                            @if(filled($homeContent['headline_line_1']))
+                                <span class="block">{{ $homeContent['headline_line_1'] }}</span>
+                            @endif
+                            @if(filled($homeContent['headline_line_2']))
+                                <span class="block italic">{{ $homeContent['headline_line_2'] }}</span>
+                            @endif
+                            @if(filled($homeContent['headline_line_3']))
+                                <span class="block">{{ $homeContent['headline_line_3'] }}</span>
+                            @endif
+                        </h1>
+                    @endif
                     <p class="text-gray-300 text-lg max-w-lg mb-10 leading-relaxed">
                         {{ $homeContent['intro'] }}
                     </p>
@@ -892,37 +902,41 @@ document.addEventListener('keydown', function(e) {
     </section>
     --}}
 
-    <section id="news" class="py-24 bg-white text-[#1e1e1a] scroll-mt-20">
+    <section id="news" class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a] scroll-mt-20">
         @php
             $newsContent = \App\Models\Setting::getNewsContent();
+            $newsItems = $newsItems ?? collect();
+            $newsHasMore = $newsHasMore ?? false;
         @endphp
         <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-end mb-16">
-                <div class="lg:col-span-7">
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-4 uppercase">{{ $newsContent['label'] }}</p>
-                    <h2 class="text-5xl lg:text-6xl font-serif font-bold leading-[1.05]">{{ $newsContent['heading'] }}</h2>
-                </div>
-                <p class="lg:col-span-5 text-[#5a5a52] leading-relaxed lg:pb-2">{{ $newsContent['intro'] }}</p>
+            <div class="text-center mb-12">
+                <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-3 uppercase">{{ $newsContent['label'] }}</p>
+                <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#1e1e1a] leading-tight">{{ $newsContent['heading'] }}</h2>
+                <p class="text-[#5a5a52] mt-4 max-w-2xl mx-auto text-lg leading-relaxed">{{ $newsContent['intro'] }}</p>
             </div>
 
-            @if(!empty($newsContent['items']))
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-12">
-                    @foreach($newsContent['items'] as $item)
-                        <article class="border-t border-[#1e1e1a]/15 pt-6">
-                            @if($item['kicker'] !== '')
-                                <p class="text-xs font-bold tracking-widest uppercase text-[#D4AF37] mb-4">{{ $item['kicker'] }}</p>
-                            @endif
-                            <h3 class="text-xl font-bold text-[#1e1e1a] mb-3">{{ $item['title'] }}</h3>
-                            <p class="text-sm text-[#5a5a52] leading-relaxed">{{ $item['body'] }}</p>
-                            @if($item['note'] !== '')
-                                <p class="text-xs text-[#8a8a82] mt-5 leading-relaxed">{{ $item['note'] }}</p>
-                            @endif
-                        </article>
+            @if($newsItems->isNotEmpty())
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    @foreach($newsItems as $item)
+                        @include('partials.news-card', ['item' => $item])
                     @endforeach
                 </div>
+                @if($newsHasMore)
+                    <div class="text-center mt-16">
+                        <a href="{{ route('news.index') }}"
+                            class="inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#c4a030] text-[#0b0e12] font-medium rounded-2xl hover:shadow-xl hover:shadow-[#D4AF37]/25 transition-all duration-300 hover:-translate-y-0.5 group">
+                            <span>Read more news</span>
+                            <span class="group-hover:translate-x-1 transition-transform">→</span>
+                        </a>
+                    </div>
+                @endif
+            @else
+                <p class="text-center text-sm text-[#8a8a82]">News will appear here once a link is added.</p>
             @endif
         </div>
     </section>
+
+    @include('partials.news-modal')
 
     <section id="gallery" class="gallery-section py-24 scroll-mt-20">
         <div class="max-w-7xl mx-auto px-6">
@@ -968,7 +982,7 @@ document.addEventListener('keydown', function(e) {
                         </a>
                     @endforeach
                 </div>
-                <p class="mt-4 text-xs text-[#8a8a82]">Drag or scroll sideways to move through the collections. Select a collection to see every photograph.</p>
+                <p class="mt-4 text-xs text-[#8a8a82]">Drag or scroll sideways to move through the collections. Click on a collection to see every photograph.</p>
             @else
                 <p class="text-sm text-[#8a8a82]">{{ $gallerySection['empty'] }}</p>
             @endif
@@ -1118,6 +1132,7 @@ document.addEventListener('keydown', function(e) {
     padding-bottom: 1.35rem;
     cursor: grab;
     user-select: none;
+    touch-action: pan-x;
     scrollbar-width: none;
     scroll-snap-type: x proximity;
 }
@@ -1125,6 +1140,11 @@ document.addEventListener('keydown', function(e) {
 .gallery-scroller.is-dragging {
     cursor: grabbing;
     scroll-snap-type: none;
+}
+
+.gallery-scroller.is-dragging .gallery-card {
+    cursor: grabbing;
+    pointer-events: none;
 }
 
 .gallery-card {
@@ -1140,7 +1160,9 @@ document.addEventListener('keydown', function(e) {
     background: #e7e1d6;
     text-decoration: none;
     color: inherit;
-    cursor: pointer;
+    cursor: grab;
+    -webkit-user-drag: none;
+    user-select: none;
 }
 
 .gallery-card:hover {
@@ -1629,26 +1651,37 @@ document.addEventListener('DOMContentLoaded', function () {
     let startX = 0;
     let startScroll = 0;
     let dragged = false;
+    let suppressClick = false;
+    const dragThreshold = 10;
 
     const canScroll = () => scroller.scrollWidth > scroller.clientWidth + 4;
 
+    const beginDrag = function (event) {
+        if (dragged) return;
+        dragged = true;
+        scroller.classList.add('is-dragging');
+        try {
+            scroller.setPointerCapture(event.pointerId);
+        } catch (error) {}
+    };
+
     scroller.addEventListener('pointerdown', function (event) {
         if (event.pointerType !== 'mouse' || event.button !== 0) return;
+
         pointerId = event.pointerId;
         startX = event.clientX;
         startScroll = scroller.scrollLeft;
         dragged = false;
+        suppressClick = false;
     });
 
     scroller.addEventListener('pointermove', function (event) {
         if (event.pointerId !== pointerId) return;
+
         const delta = event.clientX - startX;
-        if (!dragged && Math.abs(delta) <= 8) return;
-        if (!dragged) {
-            dragged = true;
-            scroller.classList.add('is-dragging');
-            try { scroller.setPointerCapture(pointerId); } catch (error) {}
-        }
+        if (!dragged && Math.abs(delta) <= dragThreshold) return;
+
+        beginDrag(event);
         scroller.scrollLeft = startScroll - delta;
         event.preventDefault();
     });
@@ -1656,10 +1689,24 @@ document.addEventListener('DOMContentLoaded', function () {
     const finishDrag = function (event) {
         if (pointerId === null) return;
         if (event && event.pointerId !== undefined && event.pointerId !== pointerId) return;
+
         const activePointerId = pointerId;
+        const didDrag = dragged;
         pointerId = null;
         scroller.classList.remove('is-dragging');
-        try { scroller.releasePointerCapture(activePointerId); } catch (error) {}
+
+        try {
+            scroller.releasePointerCapture(activePointerId);
+        } catch (error) {}
+
+        if (didDrag) {
+            suppressClick = true;
+            window.setTimeout(function () {
+                suppressClick = false;
+            }, 300);
+        }
+
+        dragged = false;
     };
 
     scroller.addEventListener('pointerup', finishDrag);
@@ -1667,11 +1714,15 @@ document.addEventListener('DOMContentLoaded', function () {
     scroller.addEventListener('lostpointercapture', finishDrag);
 
     scroller.addEventListener('click', function (event) {
-        if (!dragged) return;
+        if (!event.target.closest('.gallery-card')) return;
+        if (!suppressClick) return;
         event.preventDefault();
         event.stopPropagation();
-        dragged = false;
     }, true);
+
+    scroller.addEventListener('dragstart', function (event) {
+        event.preventDefault();
+    });
 
     scroller.addEventListener('wheel', function (event) {
         if (!canScroll()) return;

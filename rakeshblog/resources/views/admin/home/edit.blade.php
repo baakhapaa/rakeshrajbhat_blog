@@ -5,7 +5,7 @@
 @section('content')
 @php
     $homeTab = old('_tab', request('tab', 'hero'));
-    if (! in_array($homeTab, ['hero', 'about', 'news'], true)) {
+    if (! in_array($homeTab, ['hero', 'about'], true)) {
         $homeTab = 'hero';
     }
 @endphp
@@ -36,9 +36,6 @@
         <button type="button" onclick="switchHomeTab('about')" id="tabAbout" class="px-4 py-2 text-sm font-medium transition border-b-2 {{ $homeTab === 'about' ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 hover:text-white border-transparent' }}">
             About me
         </button>
-        <button type="button" onclick="switchHomeTab('news')" id="tabNews" class="px-4 py-2 text-sm font-medium transition border-b-2 {{ $homeTab === 'news' ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 hover:text-white border-transparent' }}">
-            News &amp; Updates
-        </button>
     </div>
 
     <form action="{{ route('admin.home-content.update') }}" method="POST" enctype="multipart/form-data" id="heroTab" class="space-y-6 {{ $homeTab === 'hero' ? '' : 'hidden' }}">
@@ -50,8 +47,8 @@
             <h2 class="text-xl font-semibold text-white mb-6">Hero text</h2>
 
             <div class="mb-4">
-                <label for="eyebrow" class="block text-white/70 text-sm font-medium mb-2">Eyebrow</label>
-                <input type="text" id="eyebrow" name="eyebrow" value="{{ old('eyebrow', $home['eyebrow']) }}"
+                <label for="eyebrow" class="block text-white/70 text-sm font-medium mb-2">Eyebrow <span class="text-white/40 font-normal">(optional)</span></label>
+                <input type="text" id="eyebrow" name="eyebrow" value="{{ old('eyebrow', $home['eyebrow'] ?? '') }}"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                 @error('eyebrow')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -59,8 +56,8 @@
             </div>
 
             <div class="mb-4">
-                <label for="headline_line_1" class="block text-white/70 text-sm font-medium mb-2">Headline line 1</label>
-                <input type="text" id="headline_line_1" name="headline_line_1" value="{{ old('headline_line_1', $home['headline_line_1']) }}"
+                <label for="headline_line_1" class="block text-white/70 text-sm font-medium mb-2">Headline line 1 <span class="text-white/40 font-normal">(optional)</span></label>
+                <input type="text" id="headline_line_1" name="headline_line_1" value="{{ old('headline_line_1', $home['headline_line_1'] ?? '') }}"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                 @error('headline_line_1')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -68,8 +65,8 @@
             </div>
 
             <div class="mb-4">
-                <label for="headline_line_2" class="block text-white/70 text-sm font-medium mb-2">Headline line 2 <span class="text-white/40">(shown in italic)</span></label>
-                <input type="text" id="headline_line_2" name="headline_line_2" value="{{ old('headline_line_2', $home['headline_line_2']) }}"
+                <label for="headline_line_2" class="block text-white/70 text-sm font-medium mb-2">Headline line 2 <span class="text-white/40 font-normal">(optional, shown in italic)</span></label>
+                <input type="text" id="headline_line_2" name="headline_line_2" value="{{ old('headline_line_2', $home['headline_line_2'] ?? '') }}"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                 @error('headline_line_2')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -77,8 +74,8 @@
             </div>
 
             <div class="mb-4">
-                <label for="headline_line_3" class="block text-white/70 text-sm font-medium mb-2">Headline line 3</label>
-                <input type="text" id="headline_line_3" name="headline_line_3" value="{{ old('headline_line_3', $home['headline_line_3']) }}"
+                <label for="headline_line_3" class="block text-white/70 text-sm font-medium mb-2">Headline line 3 <span class="text-white/40 font-normal">(optional)</span></label>
+                <input type="text" id="headline_line_3" name="headline_line_3" value="{{ old('headline_line_3', $home['headline_line_3'] ?? '') }}"
                     class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
                 @error('headline_line_3')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -288,102 +285,6 @@
             Save about me
         </button>
     </form>
-
-    @php
-        $newsItems = $news['items'];
-        $oldNewsTitles = old('news_item_title');
-        if (is_array($oldNewsTitles)) {
-            $oldKickers = old('news_item_kicker', []);
-            $oldBodies = old('news_item_body', []);
-            $oldNotes = old('news_item_note', []);
-            $newsItems = [];
-            foreach ($oldNewsTitles as $index => $title) {
-                $newsItems[] = [
-                    'kicker' => $oldKickers[$index] ?? '',
-                    'title' => $title,
-                    'body' => $oldBodies[$index] ?? '',
-                    'note' => $oldNotes[$index] ?? '',
-                ];
-            }
-        }
-    @endphp
-    <form action="{{ route('admin.home-content.update-news') }}" method="POST" id="newsTab" class="space-y-6 {{ $homeTab === 'news' ? '' : 'hidden' }}">
-        @csrf
-        @method('PUT')
-        <input type="hidden" name="_tab" value="news">
-
-        <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
-            <h2 class="text-xl font-semibold text-white mb-6">News &amp; Updates</h2>
-
-            <div class="mb-4">
-                <label for="news_label" class="block text-white/70 text-sm font-medium mb-2">Eyebrow</label>
-                <input type="text" id="news_label" name="news_label" value="{{ old('news_label', $news['label']) }}"
-                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
-                @error('news_label')
-                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="mb-4">
-                <label for="news_heading" class="block text-white/70 text-sm font-medium mb-2">Heading</label>
-                <input type="text" id="news_heading" name="news_heading" value="{{ old('news_heading', $news['heading']) }}"
-                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
-                @error('news_heading')
-                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="news_intro" class="block text-white/70 text-sm font-medium mb-2">Intro</label>
-                <textarea id="news_intro" name="news_intro" rows="3"
-                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">{{ old('news_intro', $news['intro']) }}</textarea>
-                @error('news_intro')
-                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-        </div>
-
-        <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
-            <h2 class="text-xl font-semibold text-white mb-2">Updates</h2>
-            <p class="text-sm text-white/40 mb-6">Add up to 6. They appear in columns under the heading. The note is optional.</p>
-
-            <div id="newsItemRows" class="space-y-4">
-                @foreach($newsItems as $item)
-                    <div class="news-item-row rounded-lg border border-white/10 p-4 space-y-3">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <input type="text" name="news_item_kicker[]" value="{{ $item['kicker'] }}" maxlength="80" placeholder="Label, e.g. Palungtar · Community" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
-                            <input type="text" name="news_item_title[]" value="{{ $item['title'] }}" maxlength="120" placeholder="Title" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
-                        </div>
-                        <textarea name="news_item_body[]" rows="3" maxlength="500" placeholder="Short description" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">{{ $item['body'] }}</textarea>
-                        <input type="text" name="news_item_note[]" value="{{ $item['note'] }}" maxlength="200" placeholder="Optional note" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
-                        <button type="button" class="remove-news-item text-sm text-red-300 hover:text-red-200">Remove</button>
-                    </div>
-                @endforeach
-            </div>
-
-            @error('news_item_kicker')
-                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
-            @enderror
-            @error('news_item_kicker.*')
-                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
-            @enderror
-            @error('news_item_title')
-                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
-            @enderror
-            @error('news_item_title.*')
-                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
-            @enderror
-            @error('news_item_body.*')
-                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
-            @enderror
-
-            <button type="button" id="addNewsItem" class="mt-4 px-4 py-2 rounded-lg border border-white/10 text-white/80 hover:text-white">Add update</button>
-        </div>
-
-        <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition-all">
-            Save news
-        </button>
-    </form>
 </div>
 
 <template id="aboutFactTemplate">
@@ -394,24 +295,11 @@
     </div>
 </template>
 
-<template id="newsItemTemplate">
-    <div class="news-item-row rounded-lg border border-white/10 p-4 space-y-3">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <input type="text" name="news_item_kicker[]" value="" maxlength="80" placeholder="Label, e.g. Palungtar · Community" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
-            <input type="text" name="news_item_title[]" value="" maxlength="120" placeholder="Title" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
-        </div>
-        <textarea name="news_item_body[]" rows="3" maxlength="500" placeholder="Short description" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none"></textarea>
-        <input type="text" name="news_item_note[]" value="" maxlength="200" placeholder="Optional note" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
-        <button type="button" class="remove-news-item text-sm text-red-300 hover:text-red-200">Remove</button>
-    </div>
-</template>
-
 <script>
     function switchHomeTab(tab) {
         const panels = {
             hero: [document.getElementById('heroTab'), document.getElementById('tabHero')],
             about: [document.getElementById('aboutTab'), document.getElementById('tabAbout')],
-            news: [document.getElementById('newsTab'), document.getElementById('tabNews')],
         };
 
         Object.values(panels).forEach(function (pair) {
@@ -458,29 +346,6 @@
             const row = factTemplate.content.firstElementChild.cloneNode(true);
             factRows.appendChild(row);
             bindFactRow(row);
-        });
-
-        const newsRows = document.getElementById('newsItemRows');
-        const newsTemplate = document.getElementById('newsItemTemplate');
-
-        function bindNewsRow(row) {
-            row.querySelector('.remove-news-item').addEventListener('click', function () {
-                if (newsRows.querySelectorAll('.news-item-row').length === 1) {
-                    return;
-                }
-                row.remove();
-            });
-        }
-
-        newsRows.querySelectorAll('.news-item-row').forEach(bindNewsRow);
-
-        document.getElementById('addNewsItem').addEventListener('click', function () {
-            if (newsRows.querySelectorAll('.news-item-row').length >= 6) {
-                return;
-            }
-            const row = newsTemplate.content.firstElementChild.cloneNode(true);
-            newsRows.appendChild(row);
-            bindNewsRow(row);
         });
     });
 </script>

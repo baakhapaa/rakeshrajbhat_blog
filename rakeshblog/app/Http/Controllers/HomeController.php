@@ -8,6 +8,7 @@ use App\Models\Blog;
 use App\Models\Project;
 use App\Models\Research;
 use App\Models\GalleryCollection;
+use App\Models\NewsItem;
 
 class HomeController extends Controller
 {
@@ -119,6 +120,15 @@ class HomeController extends Controller
         }
 
         try {
+            $activeNews = NewsItem::query()->where('is_active', true);
+            $newsHasMore = (clone $activeNews)->count() > 3;
+            $newsItems = (clone $activeNews)->latestFirst()->take(3)->get();
+        } catch (\Exception $e) {
+            $newsItems = collect();
+            $newsHasMore = false;
+        }
+
+        try {
             $galleryCollections = GalleryCollection::active()
                 ->ordered()
                 ->with('images')
@@ -141,7 +151,9 @@ class HomeController extends Controller
             'research',
             'featuredResearch',
             'galleryCollections',
-            'spotlightResearch'
+            'spotlightResearch',
+            'newsItems',
+            'newsHasMore'
         ));
     }
 
