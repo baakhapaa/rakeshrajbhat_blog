@@ -10,146 +10,376 @@
         $homeContent = $homeContent ?? \App\Models\Setting::getHomeContent();
         $aboutContent = \App\Models\Setting::getAboutContent();
     @endphp
-    <!-- Hero Section — Figma frame 1978 × 844 -->
+    <!-- Hero Section — Figma frame 8 (2305 × 1119) -->
     <section id="home" class="hero-stage">
         <style>
             .hero-stage {
-                background: #e2e2e2;
+                background: #ffffff;
                 margin-top: 0 !important;
-                padding-top: max(92px, calc(81px + var(--site-header-extra, 0px)));
+                padding-top: 0;
             }
             .hero-fit {
-                width: min(1978px, 100%);
+                width: min(2305px, 100%);
                 margin: 0 auto;
                 position: relative;
                 overflow: hidden;
-                background: #e2e2e2;
+                background: #ffffff;
             }
             .hero-canvas {
-                width: 1978px;
-                height: 844px;
+                width: 2305px;
+                height: 1119px;
                 position: absolute;
                 left: 0;
                 top: 0;
                 transform-origin: top left;
                 font-family: "Plus Jakarta Sans", Inter, sans-serif;
                 color: #111111;
-                background: #e2e2e2;
+                background: #ffffff;
+            }
+            .hero-canvas > * { position: absolute; }
+            .hero-cubes {
+                background-image: url("{{ asset('images/hero/hero-cubes.jpg') }}");
+                background-repeat: repeat-y;
+                opacity: 0.06;
+                pointer-events: none;
+            }
+            .hero-cubes-a {
+                inset: 0;
+                background-size: 5239px 11342px;
+                background-position: -1467px 0;
+                animation: heroCubesA 360s linear infinite;
+            }
+            .hero-cubes-b {
+                left: 7px;
+                top: 0;
+                width: 2298px;
+                height: 1119px;
+                background-size: 2298px 5802px;
+                background-position: 0 -2292px;
+                animation: heroCubesB 190s linear infinite;
+            }
+            @keyframes heroCubesA { to { background-position: -1467px 11342px; } }
+            @keyframes heroCubesB { to { background-position: 0 3510px; } }
+            .hero-warm {
+                left: 227px;
+                top: 795px;
+                width: 1922px;
+                height: 274px;
+                background: rgba(179, 104, 85, 0.06);
+                filter: blur(82.3px);
+                pointer-events: none;
+            }
+            .hero-glow,
+            .hero-haze,
+            .hero-arc {
+                max-width: none;
+                pointer-events: none;
+                user-select: none;
+            }
+            .hero-glow { left: 1019.4px; top: 74.4px; }
+            .hero-haze-a { left: -271.8px; top: -674.8px; }
+            .hero-haze-b { left: 1401.2px; top: -764.8px; }
+            .hero-portrait {
+                left: 834.08px;
+                top: 187.34px;
+                width: 1154.061px;
+                height: 930.639px;
+                overflow: hidden;
+                transform: rotate(0.13deg);
+                pointer-events: none;
+            }
+            .hero-portrait img {
+                position: absolute;
+                left: -6.1%;
+                top: -39.52%;
+                width: 121.45%;
+                height: 155.05%;
+                max-width: none;
+                user-select: none;
             }
             .hero-lead {
-                position: absolute;
-                left: 101px;
-                top: 116px;
+                left: 415px;
+                top: 233px;
+                width: 539px;
                 margin: 0;
-                font-size: 32px;
-                font-weight: 600;
-                line-height: 40px;
-                letter-spacing: -0.02em;
-                color: #1a1a1a;
+                font-family: Poppins, "Plus Jakarta Sans", sans-serif;
+                font-size: 38px;
+                font-weight: 500;
+                line-height: 92px;
+                letter-spacing: -1.26px;
+                color: #111111;
+                white-space: nowrap;
             }
             .hero-title {
-                position: absolute;
-                left: 101px;
-                top: 168px;
+                left: 419px;
+                top: 314px;
                 margin: 0;
-                max-width: 980px;
-                font-size: 72px;
-                font-weight: 800;
-                line-height: 80px;
-                letter-spacing: -0.03em;
+                font-family: Poppins, "Plus Jakarta Sans", sans-serif;
+                font-size: 81px;
+                font-weight: 600;
+                line-height: 81px;
+                letter-spacing: -1.26px;
                 color: #111111;
+                white-space: nowrap;
             }
             .hero-title span { display: block; }
             .hero-body {
-                position: absolute;
-                left: 101px;
-                top: 360px;
-                width: 640px;
+                left: 418px;
+                top: 512px;
                 margin: 0;
-                font-size: 16px;
+                font-size: 21px;
                 font-weight: 400;
-                line-height: 26px;
-                color: #6b6b6b;
+                line-height: 36px;
+                letter-spacing: 2px;
+                color: #59554f;
+                white-space: nowrap;
             }
+            .hero-body span { display: block; }
+            .hero-body .hero-body-lead { font-weight: 500; }
+            .hero-body strong { font-weight: 700; }
+            .hero-body .hero-body-note { font-style: italic; color: #46433f; }
+            .hero-body.is-plain { width: 900px; white-space: normal; }
             .hero-actions {
-                position: absolute;
-                left: 101px;
-                top: 477px;
+                left: 419px;
+                top: 628px;
                 display: flex;
-                align-items: center;
-                gap: 16px;
+                align-items: flex-start;
+                gap: 12px;
             }
             .hero-btn {
-                height: 52px;
-                padding: 0 22px;
-                border-radius: 999px;
+                height: 53px;
+                border-radius: 9999px;
                 display: inline-flex;
                 align-items: center;
-                gap: 8px;
-                font-size: 15px;
-                font-weight: 500;
-                line-height: 1;
-                letter-spacing: -0.01em;
+                font-size: 14px;
+                line-height: 21px;
                 text-decoration: none;
                 white-space: nowrap;
             }
-            .hero-btn-primary { background: #b36855; color: #ffffff; }
+            .hero-btn-primary {
+                background: #b36855;
+                color: #faf7f2;
+                font-weight: 700;
+                padding: 10px 24px;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
+            }
             .hero-btn-primary:hover { filter: brightness(1.05); }
+            .hero-btn-primary img { margin-left: 8px; }
             .hero-btn-secondary {
-                background: #ffffff;
-                color: #1c1c1c;
-                border: 1px solid #e4e4e4;
+                color: #000000;
+                font-weight: 500;
+                padding: 11px 21px;
+                border: 1px solid #d5cec2;
             }
-            .hero-btn-secondary:hover { background: #fafafa; }
+            .hero-btn-secondary:hover { background: rgba(255, 255, 255, 0.35); }
+            .hero-glass {
+                -webkit-backdrop-filter: blur(4px);
+                backdrop-filter: blur(4px);
+                box-shadow:
+                    inset 1.5px 1.5px 1px rgba(255, 255, 255, 0.85),
+                    inset -1px -1px 1px rgba(255, 255, 255, 0.45),
+                    0 6px 20px -8px rgba(0, 0, 0, 0.12);
+            }
+            .hero-pill {
+                left: 368px;
+                top: 941px;
+                width: 563px;
+                height: 54px;
+                border-radius: 52px;
+                background: rgba(217, 217, 217, 0.2);
+            }
             .hero-tag {
-                position: absolute;
-                left: 101px;
-                bottom: 32px;
+                left: 402px;
+                top: 951px;
+                width: 515px;
                 margin: 0;
-                font-size: 12px;
-                font-weight: 600;
-                line-height: 16px;
-                letter-spacing: 0.18em;
+                font-family: Poppins, "Plus Jakarta Sans", sans-serif;
+                font-size: 18px;
+                font-weight: 500;
+                line-height: 31px;
+                letter-spacing: 1px;
                 text-transform: uppercase;
-                color: #8a8a8a;
+                white-space: pre;
+                color: #000000;
             }
-            .hero-portrait {
-                position: absolute;
-                width: 1120px;
-                height: 1120px;
-                right: -150px;
-                bottom: -20px;
-                object-fit: contain;
+            .hero-arc-1 { left: 1232.86px; top: 263.89px; }
+            .hero-arc-2 { left: 1064.05px; top: 325.27px; }
+            .hero-arc-3 {
+                left: 1086.14px;
+                top: 566.22px;
+                width: 840.858px;
+                height: 318.517px;
+                transform: rotate(-7.48deg);
+            }
+            .hero-arc-3 img { position: absolute; left: -1.09px; top: -1.08px; max-width: none; }
+            .hero-badge {
+                width: 45px;
+                height: 45px;
+                animation: heroBadgeFloat 4.8s ease-in-out infinite;
                 pointer-events: none;
+            }
+            .hero-badge > span {
+                position: absolute;
+                inset: 0;
+            }
+            .hero-badge img {
+                position: absolute;
+                left: -250px;
+                top: -250px;
+                max-width: none;
                 user-select: none;
             }
-            .hero-orbit {
-                position: absolute;
-                width: 860px;
-                height: 760px;
-                right: 8px;
-                top: 78px;
-                pointer-events: none;
-                user-select: none;
+            .hero-badge-baakhapaa { left: 1871.29px; top: 470.19px; }
+            .hero-badge-baakhapaa > span { transform: rotate(-10.48deg); }
+            .hero-badge-hillychilly { left: 1406.11px; top: 285px; animation-delay: -1.6s; }
+            .hero-badge-hillychilly > span { transform: rotate(-22.58deg); }
+            .hero-badge-skillsikka { left: 1801.57px; top: 220.48px; width: 47px; height: 47px; animation-delay: -3.2s; }
+            .hero-badge-skillsikka > span { transform: rotate(-16.37deg); }
+            @keyframes heroBadgeFloat {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-8px); }
+            }
+            @keyframes heroCubesM { to { background-position: 50% 1688px; } }
+            @media (max-width: 1023px) {
+                .hero-fit { height: auto !important; }
+                #heroCanvas {
+                    position: relative;
+                    width: auto;
+                    height: auto;
+                    transform: none !important;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    padding: 40px 20px 0;
+                    overflow: hidden;
+                }
+                #heroCanvas > * {
+                    position: relative;
+                    left: auto;
+                    top: auto;
+                    width: auto;
+                    z-index: 1;
+                }
+                #heroCanvas > .hero-cubes-a {
+                    position: absolute;
+                    inset: 0;
+                    width: auto;
+                    z-index: 0;
+                    background-size: 780px 1688px;
+                    background-position: 50% 0;
+                    animation-name: heroCubesM;
+                    animation-duration: 120s;
+                }
+                #heroCanvas > .hero-cubes-b,
+                #heroCanvas > .hero-glow,
+                #heroCanvas > .hero-haze,
+                #heroCanvas > .hero-arc,
+                #heroCanvas > .hero-badge,
+                #heroCanvas > .hero-pill,
+                #heroCanvas > .hero-warm { display: none; }
+                #heroCanvas > .hero-lead {
+                    order: 1;
+                    font-size: 20px;
+                    line-height: 1.35;
+                    letter-spacing: -0.4px;
+                    white-space: normal;
+                }
+                #heroCanvas > .hero-title {
+                    order: 2;
+                    margin-top: 8px;
+                    font-size: clamp(34px, 8.6vw, 56px);
+                    line-height: 1.08;
+                    letter-spacing: -0.8px;
+                    white-space: normal;
+                }
+                #heroCanvas > .hero-body {
+                    order: 3;
+                    margin-top: 18px;
+                    max-width: 640px;
+                    font-size: 15px;
+                    line-height: 1.7;
+                    letter-spacing: 0.5px;
+                    white-space: normal;
+                }
+                #heroCanvas > .hero-body .hero-body-note { margin-top: 4px; }
+                #heroCanvas > .hero-actions {
+                    order: 4;
+                    margin-top: 24px;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                }
+                #heroCanvas > .hero-actions .hero-btn { height: 48px; }
+                #heroCanvas > .hero-actions .hero-btn-primary { padding: 10px 20px; }
+                #heroCanvas > .hero-actions .hero-btn-secondary { padding: 11px 18px; }
+                #heroCanvas > .hero-tag {
+                    order: 5;
+                    margin-top: 28px;
+                    padding: 11px 20px;
+                    border-radius: 52px;
+                    background: rgba(217, 217, 217, 0.2);
+                    -webkit-backdrop-filter: blur(4px);
+                    backdrop-filter: blur(4px);
+                    box-shadow:
+                        inset 1.5px 1.5px 1px rgba(255, 255, 255, 0.85),
+                        inset -1px -1px 1px rgba(255, 255, 255, 0.45),
+                        0 6px 20px -8px rgba(0, 0, 0, 0.12);
+                    font-size: 11px;
+                    line-height: 1.6;
+                    letter-spacing: 0.6px;
+                    word-spacing: 2px;
+                    white-space: normal;
+                    text-wrap: balance;
+                }
+                @media (min-width: 560px) {
+                    #heroCanvas > .hero-tag { font-size: 13px; white-space: pre-wrap; }
+                }
+                #heroCanvas > .hero-portrait {
+                    order: 6;
+                    align-self: center;
+                    width: calc(100% + 40px);
+                    max-width: 760px;
+                    height: auto;
+                    aspect-ratio: 1154.061 / 930.639;
+                    margin: 28px -20px 0;
+                    transform: none;
+                }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .hero-cubes,
+                .hero-badge { animation: none; }
             }
         </style>
+        @php
+            $heroLead = trim((string) ($homeContent['headline_line_1'] ?? ''));
+            $heroLine2 = trim((string) ($homeContent['headline_line_2'] ?? ''));
+            $heroLine3 = trim((string) ($homeContent['headline_line_3'] ?? ''));
+            if ($heroLead !== '' && preg_match('/^for\s+/i', $heroLine2)) {
+                $heroLead = rtrim($heroLead, " :") . ' for:';
+                $heroLine2 = preg_replace('/^for\s+/i', '', $heroLine2);
+            }
+            if (preg_match('/^and\s+/i', $heroLine3)) {
+                $heroLine3 = '& ' . preg_replace('/^and\s+/i', '', $heroLine3);
+            }
+            $heroIntro = trim((string) ($homeContent['intro'] ?? ''));
+            $heroIntroParts = preg_split('/(?<=\.)\s+/', $heroIntro, 2) ?: [];
+            $heroIntroFirst = trim((string) ($heroIntroParts[0] ?? ''));
+            $heroIntroSecond = trim((string) ($heroIntroParts[1] ?? ''));
+            $heroIntroLead = '';
+            if (preg_match('/^(Founder of)\s+(.+)$/i', $heroIntroFirst, $heroIntroMatch)) {
+                $heroIntroLead = $heroIntroMatch[1];
+                $heroIntroFirst = preg_replace('/\s+and\s+(?=[^,]+\.?$)/i', ' & ', $heroIntroMatch[2]);
+            }
+            $heroTagline = preg_replace('/\.\s+/', '.    ', trim((string) ($homeContent['tagline'] ?? '')));
+        @endphp
         <div id="heroFit" class="hero-fit">
             <div id="heroCanvas" class="hero-canvas">
-                @php
-                    $heroLead = trim((string) ($homeContent['headline_line_1'] ?? ''));
-                    $heroLine2 = trim((string) ($homeContent['headline_line_2'] ?? ''));
-                    $heroLine3 = trim((string) ($homeContent['headline_line_3'] ?? ''));
-                    if ($heroLead !== '' && preg_match('/^for\s+/i', $heroLine2)) {
-                        $heroLead = rtrim($heroLead, " :") . ' for:';
-                        $heroLine2 = preg_replace('/^for\s+/i', '', $heroLine2);
-                    }
-                    if (preg_match('/^and\s+/i', $heroLine3)) {
-                        $heroLine3 = '& ' . preg_replace('/^and\s+/i', '', $heroLine3);
-                    }
-                @endphp
-                @if($heroLead !== '')
-                    <p class="hero-lead">{{ $heroLead }}</p>
-                @endif
+                <div class="hero-cubes hero-cubes-a" aria-hidden="true"></div>
+                <div class="hero-cubes hero-cubes-b" aria-hidden="true"></div>
+                <div class="hero-warm" aria-hidden="true"></div>
+                <img class="hero-glow" src="{{ asset('images/hero/figma/ellipse9.svg') }}" alt="" width="1769" height="1692">
+                <div class="hero-portrait">
+                    <img src="{{ asset('images/hero/hero-portrait.png') }}" alt="{{ $homeContent['name'] }}">
+                </div>
                 @if($heroLine2 !== '' || $heroLine3 !== '')
                     <h1 class="hero-title">
                         @if($heroLine2 !== '')
@@ -160,41 +390,72 @@
                         @endif
                     </h1>
                 @endif
-                @if(filled($homeContent['intro']))
-                    <p class="hero-body">{{ $homeContent['intro'] }}</p>
+                @if($heroIntro !== '')
+                    @if($heroIntroSecond !== '' || $heroIntroLead !== '')
+                        <p class="hero-body">
+                            <span>@if($heroIntroLead !== '')<span class="hero-body-lead" style="display:inline">{{ $heroIntroLead }}</span> <strong>{{ $heroIntroFirst }}</strong>@else{{ $heroIntroFirst }}@endif</span>
+                            @if($heroIntroSecond !== '')
+                                <span class="hero-body-note">{{ $heroIntroSecond }}</span>
+                            @endif
+                        </p>
+                    @else
+                        <p class="hero-body is-plain">{{ $heroIntro }}</p>
+                    @endif
                 @endif
                 <div class="hero-actions">
                     @if(filled($homeContent['primary_button_label']))
                         <a href="{{ \App\Models\Setting::linkHref($homeContent['primary_button_url']) }}" @if(str_starts_with((string) $homeContent['primary_button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="hero-btn hero-btn-primary">
                             {{ $homeContent['primary_button_label'] }}
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M11.5 4.5H6.5M11.5 4.5V9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <img src="{{ asset('images/hero/figma/arrow.svg') }}" alt="" width="9.46875" height="3.75">
                         </a>
                     @endif
                     @if(filled($homeContent['text_link_label']))
-                        <a href="{{ \App\Models\Setting::linkHref($homeContent['text_link_url']) }}" @if(str_starts_with((string) $homeContent['text_link_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="hero-btn hero-btn-secondary">
+                        <a href="{{ \App\Models\Setting::linkHref($homeContent['text_link_url']) }}" @if(str_starts_with((string) $homeContent['text_link_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="hero-btn hero-btn-secondary hero-glass">
                             {{ $homeContent['text_link_label'] }}
                         </a>
                     @endif
                 </div>
-                @if(filled($homeContent['tagline']))
-                    <p class="hero-tag">{{ $homeContent['tagline'] }}</p>
+                @if($heroLead !== '')
+                    <p class="hero-lead">{{ $heroLead }}</p>
                 @endif
-                <img class="hero-portrait" src="{{ asset('images/hero/hero-portrait.png') }}" alt="{{ $homeContent['name'] }}">
-                <img class="hero-orbit" src="{{ asset('images/hero/hero-orbit.gif') }}" alt="" width="860" height="760">
+                <div class="hero-badge hero-badge-baakhapaa" aria-hidden="true"><span><img src="{{ asset('images/hero/figma/badge-baakhapaa.png') }}" alt="" width="545" height="545"></span></div>
+                <div class="hero-badge hero-badge-hillychilly" aria-hidden="true"><span><img src="{{ asset('images/hero/figma/badge-hillychilly.png') }}" alt="" width="545" height="545"></span></div>
+                <div class="hero-badge hero-badge-skillsikka" aria-hidden="true"><span><img src="{{ asset('images/hero/figma/badge-skillsikka.png') }}" alt="" width="547" height="547"></span></div>
+                <img class="hero-arc hero-arc-1" src="{{ asset('images/hero/figma/arc-1.svg') }}" alt="" width="608.976" height="720.521">
+                <img class="hero-arc hero-arc-2" src="{{ asset('images/hero/figma/arc-2.svg') }}" alt="" width="410.827" height="549.7">
+                <div class="hero-arc hero-arc-3" aria-hidden="true"><img src="{{ asset('images/hero/figma/arc-3.svg') }}" alt="" width="843.457" height="321.101"></div>
+                <img class="hero-haze hero-haze-a" src="{{ asset('images/hero/figma/ellipse8.svg') }}" alt="" width="1281" height="1281">
+                @if($heroTagline !== '')
+                    <div class="hero-pill hero-glass" aria-hidden="true"></div>
+                    <p class="hero-tag">{{ $heroTagline }}</p>
+                @endif
+                <img class="hero-haze hero-haze-b" src="{{ asset('images/hero/figma/ellipse8.svg') }}" alt="" width="1281" height="1281">
             </div>
         </div>
         <script>
             (function () {
+                var stage = document.querySelector('.hero-stage');
                 var fit = document.getElementById('heroFit');
                 var canvas = document.getElementById('heroCanvas');
-                if (!fit || !canvas) return;
+                var header = document.getElementById('siteHeader');
+                if (!stage || !fit || !canvas) return;
+                var stacked = window.matchMedia('(max-width: 1023px)');
                 function applyHeroScale() {
-                    var scale = fit.clientWidth / 1978;
+                    if (stacked.matches) {
+                        canvas.style.transform = '';
+                        fit.style.height = '';
+                        stage.style.paddingTop = Math.round(header ? header.getBoundingClientRect().height : 0) + 'px';
+                        return;
+                    }
+                    var scale = fit.clientWidth / 2305;
                     canvas.style.transform = 'scale(' + scale + ')';
-                    fit.style.height = Math.round(844 * scale) + 'px';
+                    fit.style.height = Math.round(1119 * scale) + 'px';
+                    var headerHeight = header ? header.getBoundingClientRect().height : 0;
+                    stage.style.paddingTop = Math.max(0, Math.round(headerHeight - 138 * scale)) + 'px';
                 }
                 applyHeroScale();
                 window.addEventListener('resize', applyHeroScale);
+                document.documentElement.addEventListener('site-header:fit', applyHeroScale);
             })();
         </script>
     </section>

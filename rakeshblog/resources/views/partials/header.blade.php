@@ -7,25 +7,34 @@
     if ($workLabel === '') {
         $workLabel = 'Work with me';
     }
+    $navTaglineParts = array_values(array_filter(array_map('trim', preg_split('/\s*[·•|]\s*/u', $navTagline) ?: []), fn ($part) => $part !== ''));
+    $headerOverlay = request()->routeIs('home');
 @endphp
-<header class="fixed top-0 left-0 right-0 z-50 bg-white">
-    <div class="max-w-[1440px] mx-auto px-5 lg:px-10 flex items-center gap-6" style="min-height:92px">
-        <a href="{{ route('home') }}" class="shrink-0 min-w-0 leading-none">
-            <span class="block truncate text-[15px] sm:text-[17px] font-bold uppercase tracking-[0.14em] text-[#1c1c1c]">{{ $siteSettings['site_name'] ?? 'Rakesh Rajbhat' }}</span>
-            @if($navTagline !== '')
-                <span class="mt-1.5 block truncate text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.16em] text-[#9a4e32]">{{ $navTagline }}</span>
+<header id="siteHeader" class="site-header{{ $headerOverlay ? ' is-overlay' : '' }}">
+    <div class="site-header-inner">
+        <a href="{{ route('home') }}" class="site-brand">
+            <span class="site-brand-name">{{ $siteSettings['site_name'] ?? 'Rakesh Rajbhat' }}</span>
+            @if($navTaglineParts)
+                <span class="site-brand-tag">
+                    @foreach($navTaglineParts as $part)
+                        <span>{{ $part }}</span>
+                        @if(! $loop->last)
+                            <span class="site-brand-dot" aria-hidden="true">•</span>
+                        @endif
+                    @endforeach
+                </span>
             @endif
         </a>
 
-        <nav class="hidden min-w-0 lg:flex flex-1 flex-wrap justify-center items-center gap-4 xl:gap-8 text-[15px] font-medium text-[#1c1c1c]" aria-label="Primary navigation">
+        <nav class="site-nav" aria-label="Primary navigation">
             @foreach($siteSettings['nav_items'] ?? [] as $item)
                 @continue(\App\Models\Setting::navOpensWorkWithMe($item['url']))
-                <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="nav-link whitespace-nowrap px-0.5 text-[#1c1c1c] transition-colors hover:text-[#9a4e32]">{{ $item['label'] }}</a>
+                <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="nav-link whitespace-nowrap">{{ $item['label'] }}</a>
             @endforeach
         </nav>
 
-        <div class="ml-auto shrink-0 flex items-center gap-3 sm:gap-4">
-            <div id="langSwitch" class="notranslate relative hidden lg:flex shrink-0 items-center gap-1 text-[11px] font-semibold tracking-[0.16em] text-[#1c1c1c]" translate="no">
+        <div class="site-header-actions">
+            <div id="langSwitch" class="site-lang notranslate relative hidden lg:flex shrink-0 items-center gap-1" translate="no">
                 <button type="button" data-set-lang="en" class="lang-option rounded-sm px-1.5 py-1 text-[#1c1c1c]" style="color:#1c1c1c" aria-pressed="true">EN</button>
                 <span class="text-[#8a8178]" aria-hidden="true">|</span>
                 <button type="button" data-set-lang="ne" class="lang-option rounded-sm px-1.5 py-1 text-[#8a8178]" style="color:#8a8178" aria-pressed="false">NP</button>
@@ -56,9 +65,12 @@
                     <a href="{{ route('register') }}" class="hidden sm:inline rounded-full bg-[#c4a484] px-4 py-2 text-xs font-semibold text-white">Sign up</a>
                 @endauth
             @else
-                <button type="button" data-open-work="education" class="notranslate hidden sm:inline-flex shrink-0 items-center gap-2 rounded-full bg-[#c4a484] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#b8956c]" translate="no">
-                    {{ $workLabel }}
-                    <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M11.5 4.5H6.5M11.5 4.5V9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <button type="button" data-open-work="education" class="site-cta notranslate hidden sm:inline-flex" translate="no">
+                    <span>{{ $workLabel }}</span>
+                    <span class="site-cta-icon" aria-hidden="true">
+                        <img class="site-cta-icon-a" src="{{ asset('images/hero/figma/nav-arrow-a.svg') }}" alt="">
+                        <img class="site-cta-icon-b" src="{{ asset('images/hero/figma/nav-arrow-b.svg') }}" alt="">
+                    </span>
                 </button>
             @endif
             <button type="button" id="mobileMenuToggle" class="lg:hidden inline-flex items-center justify-center rounded-md p-2 text-[#1c1c1c] hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-[#c4a484]" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileNavigation">
@@ -92,7 +104,7 @@
                     <a href="{{ route('register') }}" class="mobile-nav-link rounded-md px-3 py-3 text-[#1c1c1c] hover:bg-black/5 hover:text-[#9a4e32]">Sign Up</a>
                 @endauth
             @else
-                <button type="button" data-open-work="education" class="mobile-nav-link notranslate mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-[#c4a484] px-4 py-3 text-sm font-medium text-white" translate="no">
+                <button type="button" data-open-work="education" class="mobile-nav-link notranslate mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-[#b36855] px-4 py-3 text-sm font-semibold text-white" translate="no">
                     {{ $workLabel }}
                     <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M11.5 4.5H6.5M11.5 4.5V9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
@@ -101,33 +113,205 @@
     </nav>
 </header>
 <style>
+    :root { --fu: calc(min(100vw, 2305px) / 2305); }
     header + main > :first-child { margin-top: var(--site-header-extra, 0px); }
     html { scroll-padding-top: var(--site-header-extra, 0px); }
+    .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        background: #ffffff;
+        transition: background-color 0.2s ease;
+    }
+    .site-header::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: rgba(179, 104, 85, 0.5);
+        pointer-events: none;
+    }
+    .site-header.is-overlay {
+        background: transparent;
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(4px);
+    }
+    .site-header.is-overlay.is-scrolled,
+    .site-header.is-overlay.is-menu-open { background: rgba(255, 255, 255, 0.96); }
+    .site-header-inner {
+        width: calc(100% - 40px);
+        min-height: 72px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .site-brand {
+        flex-shrink: 0;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        color: #000000;
+        text-decoration: none;
+    }
+    .site-brand-name {
+        font-family: Poppins, "Plus Jakarta Sans", sans-serif;
+        font-weight: 800;
+        font-size: 17px;
+        line-height: 1;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: #000000;
+    }
+    .site-brand-tag {
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-family: Inter, sans-serif;
+        font-weight: 700;
+        font-size: 9px;
+        line-height: 1.22;
+        text-transform: uppercase;
+        white-space: nowrap;
+        color: #7f2f1a;
+    }
+    .site-brand-dot {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 6px;
+        color: #372e23;
+    }
+    .site-nav { display: none; }
+    .site-header-actions {
+        margin-left: auto;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .site-lang {
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        color: #000000;
+    }
+    .site-cta {
+        align-items: center;
+        height: 40px;
+        padding: 0 16px;
+        border-radius: 9999px;
+        background: #b36855;
+        color: #ffffff;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-weight: 600;
+        font-size: 13px;
+        line-height: 1.5;
+        letter-spacing: -0.025em;
+        white-space: nowrap;
+        transition: filter 0.2s ease;
+    }
+    .site-cta:hover { filter: brightness(1.06); }
+    .site-cta-icon {
+        position: relative;
+        flex-shrink: 0;
+        width: 1em;
+        height: 1em;
+        margin-left: 0.93em;
+    }
+    .site-cta-icon img { position: absolute; max-width: none; }
+    .site-cta-icon-a { left: 9.17%; top: 9.17%; width: 81.67%; height: 81.67%; }
+    .site-cta-icon-b { left: 17.5%; top: 9.17%; width: 73.33%; height: 73.33%; }
+    @media (min-width: 1024px) {
+        .site-header-inner {
+            width: max(calc(1476 * var(--fu)), min(calc(100% - 48px), 960px));
+            min-height: max(72px, calc(138 * var(--fu)));
+            padding-top: calc(6 * var(--fu));
+            gap: 0;
+        }
+        .site-brand-name {
+            font-size: max(17px, calc(31 * var(--fu)));
+            line-height: calc(30 / 31);
+            letter-spacing: max(2px, calc(4 * var(--fu)));
+        }
+        .site-brand-tag {
+            margin-top: max(5px, calc(11.5 * var(--fu)));
+            gap: max(5px, calc(10 * var(--fu)));
+            font-size: max(9px, calc(16 * var(--fu)));
+        }
+        .site-brand-dot { font-size: max(6px, calc(8 * var(--fu))); }
+        .site-nav {
+            margin-left: auto;
+            min-width: 0;
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: center;
+            justify-content: flex-end;
+            column-gap: calc(50 * var(--fu));
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-weight: 500;
+            font-size: max(12px, calc(18 * var(--fu)));
+            line-height: 1.25;
+            color: #000000;
+        }
+        .site-nav .nav-link {
+            color: #000000;
+            border-bottom: 1px solid transparent;
+            padding-bottom: calc(4 * var(--fu));
+            transition: color 0.2s ease;
+        }
+        .site-nav .nav-link:hover { color: #b36855; }
+        .site-nav .nav-link.active { border-bottom-color: #000000; padding-bottom: calc(4 * var(--fu)); }
+        .site-header-actions {
+            margin-left: max(16px, calc(43 * var(--fu)));
+            gap: max(12px, calc(24 * var(--fu)));
+        }
+        .site-lang { font-size: max(11px, calc(15 * var(--fu))); }
+        .site-cta {
+            height: max(36px, calc(53 * var(--fu)));
+            padding: 0 max(14px, calc(24 * var(--fu)));
+            font-size: max(12px, calc(14 * var(--fu)));
+            letter-spacing: calc(-0.35 * var(--fu));
+        }
+    }
 </style>
 <script>
     (function () {
-        var header = document.querySelector('header');
+        var root = document.documentElement;
+        var header = document.getElementById('siteHeader');
         var nav = header && header.querySelector('nav[aria-label="Primary navigation"]');
         if (!header || !nav) return;
 
+        function setUnit() {
+            root.style.setProperty('--fu', (Math.min(root.clientWidth, 2305) / 2305) + 'px');
+        }
+
         function fitNav() {
+            setUnit();
             var desktop = window.matchMedia('(min-width: 1024px)').matches;
             nav.style.fontSize = '';
             nav.style.columnGap = '';
             nav.style.rowGap = '';
             nav.style.flexWrap = '';
-            document.documentElement.style.setProperty('--site-header-extra', '0px');
-            if (!desktop) return;
+            root.style.setProperty('--site-header-extra', '0px');
+            if (!desktop) {
+                root.dispatchEvent(new CustomEvent('site-header:fit'));
+                return;
+            }
 
-            var size = 14;
-            var gap = 32;
+            var style = window.getComputedStyle(nav);
+            var size = parseFloat(style.fontSize);
+            var gap = parseFloat(style.columnGap);
             var guard = 0;
-            nav.style.flexWrap = 'nowrap';
-            nav.style.fontSize = size + 'px';
-            nav.style.columnGap = gap + 'px';
-            while (nav.scrollWidth > nav.clientWidth + 1 && guard < 40) {
+            while (nav.scrollWidth > nav.clientWidth + 1 && guard < 60) {
                 guard += 1;
-                if (gap > 8) {
+                if (gap > 10) {
                     gap -= 2;
                 } else if (size > 12) {
                     size -= 0.5;
@@ -140,19 +324,34 @@
             if (nav.scrollWidth > nav.clientWidth + 1) {
                 nav.style.flexWrap = 'wrap';
                 nav.style.rowGap = '0.4rem';
-                nav.style.justifyContent = 'center';
             }
             var extra = Math.round(header.getBoundingClientRect().height) - 81;
             if (extra < 8) {
                 extra = 0;
             }
-            document.documentElement.style.setProperty('--site-header-extra', extra + 'px');
+            root.style.setProperty('--site-header-extra', extra + 'px');
+            root.dispatchEvent(new CustomEvent('site-header:fit'));
+        }
+
+        function onScroll() {
+            header.classList.toggle('is-scrolled', window.scrollY > 8);
+        }
+
+        var menuToggle = document.getElementById('mobileMenuToggle');
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function () {
+                window.setTimeout(function () {
+                    header.classList.toggle('is-menu-open', menuToggle.getAttribute('aria-expanded') === 'true');
+                }, 0);
+            });
         }
 
         window.addEventListener('resize', fitNav);
+        window.addEventListener('scroll', onScroll, { passive: true });
         if (document.fonts && document.fonts.ready) {
             document.fonts.ready.then(fitNav);
         }
         fitNav();
+        onScroll();
     })();
 </script>
