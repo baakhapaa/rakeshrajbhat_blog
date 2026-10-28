@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
+use App\Mail\PasswordResetOtpMail;
 use App\Models\User;
 use App\Models\PasswordResetOtp;
 use App\Helpers\ActivityLogger;
@@ -255,58 +256,15 @@ class AuthController extends Controller
         return redirect()->route('login')->with('status', 'Your password has been reset successfully! You can now login with your new password.');
     }
 
-    // Send OTP via email
-    private function sendOtpEmail($name, $email, $otp)
+    private function sendOtpEmail(string $name, string $email, string $otp): bool
     {
-        $subject = 'Password Reset OTP - Rakesh Rajbhat';
-        
-        $html = "
-            <html>
-            <head>
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; }
-                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                    .header { text-align: center; padding: 20px 0; border-bottom: 3px solid #D4AF37; }
-                    .otp-box { background: #f8f6f0; padding: 30px; text-align: center; border-radius: 8px; margin: 30px 0; }
-                    .otp-code { font-size: 36px; font-weight: bold; color: #D4AF37; letter-spacing: 8px; }
-                    .footer { text-align: center; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; }
-                    .expiry { color: #999; font-size: 14px; }
-                </style>
-            </head>
-            <body>
-                <div class='container'>
-                    <div class='header'>
-                        <h1 style='color: #D4AF37; font-family: Playfair Display, serif;'>Rakesh Rajbhat</h1>
-                        <p style='color: #666;'>Password Reset OTP</p>
-                    </div>
-                    
-                    <p>Hello <strong>{$name}</strong>,</p>
-                    <p>You requested to reset your password. Use the 6-digit OTP below to verify your identity:</p>
-                    
-                    <div class='otp-box'>
-                        <div class='otp-code'>{$otp}</div>
-                        <p class='expiry'>This OTP is valid for 10 minutes.</p>
-                    </div>
-                    
-                    <p>If you didn't request this, please ignore this email.</p>
-                    
-                    <div class='footer'>
-                        <p>&copy; " . date('Y') . " Rakesh Rajbhat. All rights reserved.</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-        ";
-
         try {
-            Mail::send([], [], function ($message) use ($email, $subject, $html) {
-                $message->to($email)
-                        ->subject($subject)
-                        ->html($html);
-            });
+            Mail::to($email)->send(new PasswordResetOtpMail($name, $otp));
+
             return true;
-        } catch (\Exception $e) {
-            \Log::error('Failed to send OTP email: ' . $e->getMessage());
+        } catch (\Throwable $exception) {
+            \Log::error('Failed to send OTP email: '.$exception->getMessage());
+
             return false;
         }
     }
