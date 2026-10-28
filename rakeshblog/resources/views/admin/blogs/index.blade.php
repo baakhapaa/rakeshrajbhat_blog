@@ -31,6 +31,83 @@
         </div>
     @endif
 
+    <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-white mb-1">Blog page</h2>
+        <p class="text-sm text-white/50 mb-5">Heading on the public blog page. Add or remove a category, and use the arrows to set the order. The name should match the category on the blog post.</p>
+        <form action="{{ route('admin.blogs.update-page') }}" method="POST" class="grid grid-cols-1 gap-4">
+            @csrf
+            @method('PUT')
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="blog_eyebrow" class="block text-sm text-white/70 mb-2">Label</label>
+                    <input id="blog_eyebrow" type="text" name="blog_eyebrow" value="{{ old('blog_eyebrow', $blogPage['eyebrow']) }}" maxlength="60" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                </div>
+                <div>
+                    <label for="blog_title" class="block text-sm text-white/70 mb-2">Title</label>
+                    <input id="blog_title" type="text" name="blog_title" value="{{ old('blog_title', $blogPage['title']) }}" maxlength="120" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                </div>
+            </div>
+            <div>
+                <label for="blog_paragraph" class="block text-sm text-white/70 mb-2">Short paragraph</label>
+                <textarea id="blog_paragraph" name="blog_paragraph" rows="3" maxlength="400" required class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">{{ old('blog_paragraph', $blogPage['paragraph']) }}</textarea>
+            </div>
+            <div>
+                <p class="text-sm text-white/70 mb-2">Categories</p>
+                <div id="blogCategoryRows" class="space-y-3">
+                    @foreach($blogCategories as $category)
+                        <div class="category-row grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-center">
+                            <input type="text" name="category_order[]" value="{{ $category }}" maxlength="100" placeholder="Category name" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                            <div class="flex gap-2">
+                                <button type="button" class="move-category-up px-3 py-2 text-white/60 hover:text-white" title="Move up">↑</button>
+                                <button type="button" class="move-category-down px-3 py-2 text-white/60 hover:text-white" title="Move down">↓</button>
+                                <button type="button" class="remove-category-row px-2 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <button type="button" id="addBlogCategory" class="mt-3 px-4 py-2 rounded-lg border border-white/10 text-white/80 hover:text-white">Add category</button>
+            </div>
+            <div>
+                <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition">Save blog page</button>
+            </div>
+        </form>
+    </div>
+    <template id="blogCategoryTemplate">
+        <div class="category-row grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-center">
+            <input type="text" name="category_order[]" value="" maxlength="100" placeholder="Category name" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+            <div class="flex gap-2">
+                <button type="button" class="move-category-up px-3 py-2 text-white/60 hover:text-white" title="Move up">↑</button>
+                <button type="button" class="move-category-down px-3 py-2 text-white/60 hover:text-white" title="Move down">↓</button>
+                <button type="button" class="remove-category-row px-2 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+            </div>
+        </div>
+    </template>
+    <script>
+        (function () {
+            const list = document.getElementById('blogCategoryRows');
+            const template = document.getElementById('blogCategoryTemplate');
+            list.addEventListener('click', function (event) {
+                const row = event.target.closest('.category-row');
+                if (!row) {
+                    return;
+                }
+                if (event.target.closest('.remove-category-row')) {
+                    row.remove();
+                } else if (event.target.closest('.move-category-up') && row.previousElementSibling) {
+                    list.insertBefore(row, row.previousElementSibling);
+                } else if (event.target.closest('.move-category-down') && row.nextElementSibling) {
+                    list.insertBefore(row.nextElementSibling, row);
+                }
+            });
+            document.getElementById('addBlogCategory').addEventListener('click', function () {
+                if (list.querySelectorAll('.category-row').length >= 40) {
+                    return;
+                }
+                list.appendChild(template.content.firstElementChild.cloneNode(true));
+            });
+        })();
+    </script>
+
     <!-- ========================================== -->
     <!-- FILTER TABS                                -->
     <!-- ========================================== -->

@@ -6,13 +6,16 @@
 @section('meta_description', 'Articles and field reflections from Rakesh Rajbhat on AI, education, entrepreneurship, tourism, Palungtar and Nepal’s future.')
 
 @section('content')
+@php
+    $blogPage = \App\Models\Setting::getBlogPage();
+@endphp
 <section class="min-h-screen pt-32 pb-20 bg-[#f2f2f2] text-[#1e1e1a]">
     <div class="max-w-7xl mx-auto px-6">
         <!-- Header -->
         <div class="text-center mb-12">
-            <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-4 uppercase">Latest Articles</p>
-            <h1 class="text-5xl font-serif font-bold mb-4">Blog &amp; Insights</h1>
-            <p class="text-[#3a3a34] max-w-2xl mx-auto">Thoughts, stories and ideas from my journey in building opportunities for Nepal.</p>
+            <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-4 uppercase">{{ $blogPage['eyebrow'] }}</p>
+            <h1 class="text-5xl font-serif font-bold mb-4">{{ $blogPage['title'] }}</h1>
+            <p class="text-[#3a3a34] max-w-2xl mx-auto">{{ $blogPage['paragraph'] }}</p>
         </div>
 
         <!-- Search & Filter -->

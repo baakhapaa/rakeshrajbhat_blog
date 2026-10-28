@@ -194,6 +194,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Resource Routes
         Route::resource('stats', StatController::class);       
         Route::resource('team-members', TeamMemberController::class);
+        Route::put('/blogs/page', [AdminBlogController::class, 'updatePage'])->name('blogs.update-page');
         Route::resource('blogs', AdminBlogController::class);
         
         // ==========================================
@@ -204,6 +205,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/research/{id}/toggle-home', [ResearchController::class, 'toggleHome'])->name('research.toggle-home');
         Route::post('/research/reorder', [ResearchController::class, 'reorder'])->name('research.reorder');
         Route::put('/research/section', [ResearchController::class, 'updateSection'])->name('research.update-section');
+        Route::put('/research/featured-page', [ResearchController::class, 'updateFeaturedPage'])->name('research.update-featured-page');
         
         // Then the resource route
         Route::resource('research', ResearchController::class);
