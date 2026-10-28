@@ -14,6 +14,7 @@ class SiteSettingsSeeder extends Seeder
             'site_description' => 'Official website of Rakesh Rajbhat - Founder, Builder, Future Maker',
             'home_content' => Setting::encodeJson(Setting::defaultHomeContent()),
             'about_content' => Setting::encodeJson(Setting::defaultAboutContent()),
+            'news_content' => Setting::encodeJson(Setting::defaultNewsContent()),
         ];
 
         foreach ($settings as $key => $value) {

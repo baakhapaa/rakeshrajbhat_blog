@@ -272,6 +272,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/home-content', [HomeContentController::class, 'editHome'])->name('home-content.edit');
         Route::put('/home-content', [HomeContentController::class, 'updateHome'])->name('home-content.update');
         Route::put('/home-content/about', [HomeContentController::class, 'updateAbout'])->name('home-content.update-about');
+        Route::put('/home-content/news', [HomeContentController::class, 'updateNews'])->name('home-content.update-news');
 
         // ==========================================
         // SETTINGS ROUTES
