@@ -21,26 +21,6 @@
             </p>
         </div>
 
-        <!-- Stats Bar -->
-        @php
-            $totalItems = 0;
-            foreach($featuredResearch as $items) {
-                $totalItems += $items->count();
-            }
-        @endphp
-        <div class="flex flex-wrap justify-center gap-6 mb-12">
-            <div class="text-center">
-                <span class="text-2xl font-bold text-[#1e1e1a]">{{ $totalItems }}</span>
-                <p class="text-xs text-[#8a8a82]">Total Resources</p>
-            </div>
-            @foreach($featuredResearch as $category => $items)
-                <div class="text-center px-4 border-l border-gray-200">
-                    <span class="text-2xl font-bold text-[#1e1e1a]">{{ $items->count() }}</span>
-                    <p class="text-xs text-[#8a8a82]">{{ $category }}</p>
-                </div>
-            @endforeach
-        </div>
-
         <!-- Filter Tabs -->
         <div class="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
             <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-[#D4AF37] text-[#0b0e12] shadow-lg shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30" data-filter="all">

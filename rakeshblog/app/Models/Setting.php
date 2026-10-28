@@ -166,6 +166,96 @@ class Setting extends Model
         return array_slice($facts, 0, 12);
     }
 
+    public static function defaultNewsContent(): array
+    {
+        return [
+            'label' => '05 / News & Updates',
+            'heading' => 'From the journey.',
+            'intro' => 'News from community visits, project activities, public discussions and events.',
+            'items' => [
+                [
+                    'kicker' => 'Palungtar · Community',
+                    'title' => 'News from Palungtar',
+                    'body' => 'Share updates from visits, conversations and local activities here.',
+                    'note' => 'Sample placeholders — replace with real updates, dates and links.',
+                ],
+                [
+                    'kicker' => 'Learning · Education',
+                    'title' => 'Learning in action',
+                    'body' => 'Add updates from bootcamps and other learning programmes here.',
+                    'note' => '',
+                ],
+                [
+                    'kicker' => 'Projects · Updates',
+                    'title' => 'Work in progress',
+                    'body' => 'Share project milestones, events and news from the team here.',
+                    'note' => '',
+                ],
+            ],
+        ];
+    }
+
+    public static function getNewsContent(): array
+    {
+        $defaults = static::defaultNewsContent();
+        $decoded = static::decodeJson(static::getValue('news_content'));
+
+        if (! is_array($decoded)) {
+            return $defaults;
+        }
+
+        $content = $defaults;
+
+        foreach (['label', 'heading', 'intro'] as $key) {
+            if (isset($decoded[$key]) && is_string($decoded[$key]) && trim($decoded[$key]) !== '') {
+                $content[$key] = $decoded[$key];
+            }
+        }
+
+        $items = static::newsItemsFrom($decoded);
+
+        if ($items !== []) {
+            $content['items'] = $items;
+        }
+
+        return $content;
+    }
+
+    public static function newsItemsFrom(array $decoded): array
+    {
+        $rows = $decoded['items'] ?? null;
+
+        if (! is_array($rows)) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($rows as $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+
+            $kicker = trim(strip_tags((string) ($row['kicker'] ?? '')));
+            $title = trim(strip_tags((string) ($row['title'] ?? '')));
+            $body = trim(strip_tags((string) ($row['body'] ?? '')));
+            $note = trim(strip_tags((string) ($row['note'] ?? '')));
+
+            if ($kicker === '' && $title === '' && $body === '') {
+                continue;
+            }
+
+            $items[] = [
+                'kicker' => $kicker,
+                'title' => $title,
+                'body' => $body,
+                'note' => $note,
+            ];
+        }
+
+        return array_slice($items, 0, 6);
+    }
+
     public static function encodeJson(array $value): string
     {
         return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '[]';
@@ -258,6 +348,83 @@ class Setting extends Model
             'paragraph' => $paragraph !== '' ? $paragraph : 'Photographs from community visits, learning programmes, project activities and conversations.',
             'empty' => $empty !== '' ? $empty : 'Photographs will appear here as collections are added.',
         ];
+    }
+
+    public static function defaultFooter(): array
+    {
+        return [
+            'name' => 'Rakesh Rajbhat',
+            'tagline' => 'For the root. For the youth. For the nation.',
+            'intro' => 'Founder of Baakhapaa, Skill Sikka, HillyChilly and Future Builders. Transforming education, tourism, technology, and local economies in Nepal.',
+            'copyright' => '© {year} RAKESH RAJBHAT. ALL RIGHTS RESERVED.',
+            'socials_heading' => 'Socials',
+            'pages_heading' => 'Pages',
+            'newsletter_heading' => 'Newsletter',
+            'newsletter_note' => 'Get an email when a new article, research piece, or project is published.',
+            'socials' => [
+                ['label' => 'LinkedIn', 'url' => 'https://www.linkedin.com/in/raacb/'],
+                ['label' => 'Facebook', 'url' => 'https://www.facebook.com/raacb/'],
+                ['label' => 'Instagram', 'url' => 'https://www.instagram.com/raa_case7/'],
+            ],
+            'pages' => [
+                ['label' => 'Contact', 'url' => '/contact'],
+                ['label' => 'Privacy', 'url' => '/privacy'],
+                ['label' => 'Terms', 'url' => '/terms'],
+            ],
+        ];
+    }
+
+    public static function getFooter(): array
+    {
+        $defaults = static::defaultFooter();
+        $decoded = static::decodeJson(static::getValue('footer_content'));
+        $footer = $defaults;
+
+        if (is_array($decoded)) {
+            foreach (['name', 'tagline', 'intro', 'copyright', 'socials_heading', 'pages_heading', 'newsletter_heading', 'newsletter_note'] as $key) {
+                if (isset($decoded[$key]) && is_string($decoded[$key]) && trim($decoded[$key]) !== '') {
+                    $footer[$key] = trim(strip_tags($decoded[$key]));
+                }
+            }
+
+            foreach (['socials', 'pages'] as $list) {
+                if (array_key_exists($list, $decoded)) {
+                    $footer[$list] = static::footerLinksFrom($decoded[$list]);
+                }
+            }
+        }
+
+        $logo = trim((string) static::getValue('footer_logo', ''));
+        $footer['logo'] = $logo !== '' ? $logo : null;
+        $footer['copyright_text'] = str_replace('{year}', date('Y'), $footer['copyright']);
+
+        return $footer;
+    }
+
+    public static function footerLinksFrom(mixed $rows): array
+    {
+        if (! is_array($rows)) {
+            return [];
+        }
+
+        $items = [];
+
+        foreach ($rows as $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+
+            $label = trim(strip_tags((string) ($row['label'] ?? '')));
+            $url = trim((string) ($row['url'] ?? ''));
+
+            if ($label === '' || $url === '' || ! static::navUrlIsSafe($url)) {
+                continue;
+            }
+
+            $items[] = ['label' => $label, 'url' => $url];
+        }
+
+        return array_slice($items, 0, 12);
     }
 
     public static function navIconOptions(): array

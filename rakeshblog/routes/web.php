@@ -272,6 +272,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/home-content', [HomeContentController::class, 'editHome'])->name('home-content.edit');
         Route::put('/home-content', [HomeContentController::class, 'updateHome'])->name('home-content.update');
         Route::put('/home-content/about', [HomeContentController::class, 'updateAbout'])->name('home-content.update-about');
+        Route::put('/home-content/news', [HomeContentController::class, 'updateNews'])->name('home-content.update-news');
 
         // ==========================================
         // SETTINGS ROUTES
@@ -281,5 +282,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/settings/password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');
         Route::put('/settings/general', [SettingsController::class, 'updateGeneral'])->name('settings.update-general');
         Route::put('/settings/navigation', [SettingsController::class, 'updateNavigation'])->name('settings.update-navigation');
+        Route::put('/settings/footer', [SettingsController::class, 'updateFooter'])->name('settings.update-footer');
     });
 });

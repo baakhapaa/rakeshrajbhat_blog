@@ -1,42 +1,51 @@
+@php
+    $footer = \App\Models\Setting::getFooter();
+@endphp
 <footer class="py-12 md:py-16 bg-[#0c1016] text-white/90">
     <div class="max-w-7xl mx-auto px-4 md:px-6">
         <div class="grid grid-cols-1 items-start gap-10 text-left md:grid-cols-12 md:gap-8">
             <div class="md:col-span-4">
-                <p class="font-serif italic text-3xl text-[#D4AF37] notranslate" translate="no">Rakesh Rajbhat</p>
-                <p class="mt-4 text-sm text-gray-300 leading-relaxed">
-                    For the root. For the youth. For the nation.
-                </p>
-                <p class="mt-3 text-sm text-gray-400 leading-relaxed">
-                    Founder of Baakhapaa, Skill Sikka, HillyChilly and Future Builders. Transforming education, tourism, technology, and local economies in Nepal.
-                </p>
+                @if($footer['logo'])
+                    <img src="{{ $footer['logo'] }}" alt="{{ $footer['name'] }}" class="h-12 w-auto object-contain">
+                @else
+                    <p class="font-serif italic text-3xl text-[#D4AF37] notranslate" translate="no">{{ $footer['name'] }}</p>
+                @endif
+                @if($footer['tagline'] !== '')
+                    <p class="mt-4 text-sm text-gray-300 leading-relaxed">{{ $footer['tagline'] }}</p>
+                @endif
+                @if($footer['intro'] !== '')
+                    <p class="mt-3 text-sm text-gray-400 leading-relaxed">{{ $footer['intro'] }}</p>
+                @endif
                 <p class="mt-6 text-[11px] font-semibold tracking-[0.12em] text-gray-500">
-                    © {{ date('Y') }} RAKESH RAJBHAT. ALL RIGHTS RESERVED.
+                    {{ $footer['copyright_text'] }}
                 </p>
             </div>
 
-            <div class="md:col-span-2">
-                <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Socials</h3>
-                <div class="mt-3 flex flex-col items-start gap-2">
-                    <a href="https://www.linkedin.com/in/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">LinkedIn</a>
-                    <a href="https://www.facebook.com/raacb/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Facebook</a>
-                    <a href="https://www.instagram.com/raa_case7/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Instagram</a>
+            <div class="grid grid-cols-2 gap-6 md:col-span-4 md:gap-8">
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">{{ $footer['socials_heading'] }}</h3>
+                    <div class="mt-3 flex flex-col items-start gap-2">
+                        @foreach($footer['socials'] as $item)
+                            <a href="{{ \App\Models\Setting::navHref($item['url']) }}" @if(str_starts_with($item['url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">{{ $item['label'] }}</a>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
 
-            <div class="md:col-span-2">
-                <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">Pages</h3>
-                <div class="mt-3 flex flex-col items-start gap-2">
-                    <a href="{{ route('contact') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Contact</a>
-                    <a href="{{ route('privacy') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Privacy</a>
-                    <a href="{{ route('terms') }}" class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">Terms</a>
+                <div>
+                    <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400">{{ $footer['pages_heading'] }}</h3>
+                    <div class="mt-3 flex flex-col items-start gap-2">
+                        @foreach($footer['pages'] as $item)
+                            <a href="{{ \App\Models\Setting::navHref($item['url']) }}" @if(str_starts_with($item['url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="text-xs font-semibold tracking-[0.06em] text-gray-400 hover:text-[#D4AF37] transition-colors">{{ $item['label'] }}</a>
+                        @endforeach
+                    </div>
                 </div>
             </div>
 
             <section class="w-full rounded-xl border border-[#3a414b] bg-[#151a20] p-4 md:col-span-4" aria-labelledby="newsletter-heading" data-newsletter-card>
                 <div class="flex flex-col gap-3">
                     <div class="text-center">
-                        <h2 id="newsletter-heading" class="text-xs font-semibold uppercase tracking-wider text-gray-400">Newsletter</h2>
-                        <p class="mt-1 text-xs text-gray-400">Get an email when a new article, research piece, or project is published.</p>
+                        <h2 id="newsletter-heading" class="text-xs font-semibold uppercase tracking-wider text-gray-400">{{ $footer['newsletter_heading'] }}</h2>
+                        <p class="mt-1 text-xs text-gray-400">{{ $footer['newsletter_note'] }}</p>
                     </div>
                     <form action="{{ route('newsletter.subscribe') }}" method="POST" class="w-full">
                         @csrf
