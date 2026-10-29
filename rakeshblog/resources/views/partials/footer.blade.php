@@ -24,7 +24,7 @@
             inset: 0;
             background-size: 5239px 11342px;
             background-position: -1467px 0;
-            animation: heroCubesA 360s linear infinite;
+            animation: heroCubesA 180s linear infinite;
         }
         .site-footer .hero-cubes-b {
             inset: 0;
@@ -34,7 +34,7 @@
             top: 0;
             background-size: 2298px 5802px;
             background-position: 0 -2292px;
-            animation: heroCubesB 190s linear infinite;
+            animation: heroCubesB 95s linear infinite;
         }
         .site-footer__inner {
             position: relative;
@@ -273,7 +273,7 @@
                 background-size: 780px 1688px;
                 background-position: 50% 0;
                 animation-name: heroCubesM;
-                animation-duration: 120s;
+                animation-duration: 60s;
             }
             .site-footer .hero-cubes-b { display: none; }
         }

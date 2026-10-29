@@ -48,7 +48,7 @@
                 inset: 0;
                 background-size: 5239px 11342px;
                 background-position: -1467px 0;
-                animation: heroCubesA 360s linear infinite;
+                animation: heroCubesA 180s linear infinite;
             }
             .hero-cubes-b {
                 left: 7px;
@@ -57,7 +57,7 @@
                 height: 1331px;
                 background-size: 2298px 5802px;
                 background-position: 0 -2292px;
-                animation: heroCubesB 190s linear infinite;
+                animation: heroCubesB 95s linear infinite;
             }
             @keyframes heroCubesA { to { background-position: -1467px 11342px; } }
             @keyframes heroCubesB { to { background-position: 0 3510px; } }
@@ -147,6 +147,7 @@
                 gap: calc(12px / var(--hero-scale, 1));
             }
             .hero-btn {
+                box-sizing: border-box;
                 height: calc(var(--btn-h) / var(--hero-scale, 1));
                 padding: 0 calc(var(--btn-px) / var(--hero-scale, 1));
                 border-radius: 9999px;
@@ -159,6 +160,10 @@
                 text-decoration: none;
                 white-space: nowrap;
             }
+            .hero-btn img {
+                width: calc(10px / var(--hero-scale, 1));
+                height: auto;
+            }
             .hero-btn-primary {
                 background: #b36855;
                 color: #faf7f2;
@@ -166,7 +171,6 @@
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
             }
             .hero-btn-primary:hover { filter: brightness(1.05); }
-            .hero-btn-primary img { width: calc(10px / var(--hero-scale, 1)); height: auto; }
             .hero-btn-secondary {
                 color: #000000;
                 font-weight: 600;
@@ -264,7 +268,7 @@
                     background-size: 780px 1688px;
                     background-position: 50% 0;
                     animation-name: heroCubesM;
-                    animation-duration: 120s;
+                    animation-duration: 60s;
                 }
                 #heroCanvas > .hero-cubes-b,
                 #heroCanvas > .hero-glow,
@@ -1409,7 +1413,7 @@
             min-width: 0;
             width: 100%;
             margin: 8px 0 0;
-            max-height: 6.6em;
+            height: fit-content;
             overflow-x: auto;
             overflow-y: auto;
             overscroll-behavior: contain;
@@ -1490,12 +1494,14 @@
 
             .mission-scroll__reason {
                 grid-template-columns: minmax(0, 1fr);
-                grid-template-rows: minmax(0, 1fr) auto;
+                /* grid-template-rows: minmax(0, 1fr) auto; */
                 row-gap: 10px;
                 align-content: center;
+                padding-left:10px;
             }
 
             .mission-scroll__copy {
+                padding-left: 10px;
                 grid-row: 1;
                 mask-image: none;
                 -webkit-mask-image: none;
@@ -1503,6 +1509,7 @@
 
             .mission-scroll__more {
                 grid-column: 1;
+                margin-left: 0.6rem;
                 grid-row: 2;
                 justify-self: start;
             }
@@ -1513,7 +1520,7 @@
                 margin-top: 8px;
                 font-size: 13px;
                 line-height: 1.45;
-                max-height: 9.5em;
+                max-height: fit-content;
                 overflow: visible;
             }
 
@@ -1544,7 +1551,8 @@
             }
 
             .mission-scroll__body {
-                max-height: 11em;
+                font-size: 10px;
+                max-height: fit-content;
                 overflow: visible;
             }
 
@@ -1767,7 +1775,7 @@
             requestAnimationFrame(frame);
         })();
     </script>
-<section id="research" class="studies-section scroll-mt-20" aria-labelledby="studies-heading">
+<section id="research" class="studies-section rise-section scroll-mt-20" aria-labelledby="studies-heading">
     <style>
         .studies-section {
             background: #fff;
@@ -2032,7 +2040,7 @@
         $researchSection = \App\Models\Setting::getResearchSection();
     @endphp
     <div class="studies-head">
-    <div class="studies-intro" data-reveal>
+    <div class="studies-intro rise-item">
         <div class="studies-kicker">
             <span class="reveal-line" aria-hidden="true"></span>
             <p>Studies</p>
@@ -2043,7 +2051,7 @@
     @php
         $homeFilters = \App\Models\Setting::getResearchHomeFilters();
     @endphp
-    <div class="studies-filters" id="researchFilters" data-reveal>
+    <div class="studies-filters rise-item" id="researchFilters">
         @foreach($homeFilters as $filter)
             <button type="button" data-research-filter="{{ $filter['key'] }}" class="studies-pill {{ $filter['key'] === 'all' ? 'is-active' : '' }}" aria-pressed="{{ $filter['key'] === 'all' ? 'true' : 'false' }}">{{ $filter['label'] }}</button>
         @endforeach
@@ -2057,7 +2065,7 @@
     @endphp
 
     <div data-research-panel="all">
-        <div class="studies-grid" data-reveal-stagger>
+        <div class="studies-grid">
             @php
                 $allSlotOrder = collect($homeFilters)->pluck('key')->filter(fn ($key) => in_array($key, ['vision', 'research', 'blog'], true))->values();
                 $allSlotShown = false;
@@ -2081,7 +2089,7 @@
 
     @foreach(['vision' => 'Vision', 'research' => 'Research', 'media' => 'Media'] as $key => $studyCategory)
         <div data-research-panel="{{ $key }}" class="hidden">
-            <div class="studies-grid" data-reveal-stagger>
+            <div class="studies-grid">
                 @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
                     @foreach($featuredResearch[$key]->take(3) as $item)
                         @include('partials.home-research-card', ['item' => $item, 'studyCategory' => $studyCategory])
@@ -2094,7 +2102,7 @@
             @endforeach
 
     <div data-research-panel="blog" class="hidden">
-        <div class="studies-grid" data-reveal-stagger>
+        <div class="studies-grid">
             @forelse($homeBlogs as $blog)
                 @include('partials.home-blog-card', ['blog' => $blog, 'studyCategory' => 'Blog'])
             @empty
@@ -2103,7 +2111,7 @@
         </div>
         </div>
         
-    <div class="studies-cta" data-reveal>
+    <div class="studies-cta rise-item">
         <a class="studies-view-all site-btn" href="{{ route('research.featured') }}">
             View all Studies
             <img src="{{ asset('images/studies/view-all-arrow.svg') }}" alt="" width="9.46875" height="3.75">
@@ -2510,7 +2518,7 @@ document.addEventListener('keydown', function(e) {
     </section>
     --}}
 
-    <section id="news" class="news-section scroll-mt-20">
+    <section id="news" class="news-section rise-section scroll-mt-20">
         <style>
             .news-section {
                 background: #fbf9f6;
@@ -2757,9 +2765,9 @@ document.addEventListener('keydown', function(e) {
             };
         @endphp
         <div class="news-wrap">
-            <div data-reveal>
+            <div class="rise-item">
                 <div class="news-kicker">
-                    <span class="news-kicker-dash reveal-line" aria-hidden="true"></span>
+                    <span class="news-kicker-dash" aria-hidden="true"></span>
                     <p>{{ $newsContent['label'] }}</p>
                 </div>
                 <h2 class="news-heading">{!! $newsHeadingHtml !!}</h2>
@@ -2767,7 +2775,7 @@ document.addEventListener('keydown', function(e) {
 
             @if($featuredNews)
                 <div class="news-layout">
-                    <article data-reveal>
+                    <article class="rise-item">
                         <button type="button" class="news-feature-media" onclick="openNewsDetail({{ $featuredNews->id }})">
                             @if($featuredNews->image_url)
                                 <img src="{{ $featuredNews->image_url }}" alt="{{ $featuredNews->title }}">
@@ -2794,9 +2802,9 @@ document.addEventListener('keydown', function(e) {
                     </article>
 
                     @if($sideNews->isNotEmpty())
-                        <div class="news-side" data-reveal-stagger>
+                        <div class="news-side">
                             @foreach($sideNews as $item)
-                                <button type="button" class="news-row" onclick="openNewsDetail({{ $item->id }})">
+                                <button type="button" class="news-row rise-item" onclick="openNewsDetail({{ $item->id }})">
                                     <span class="news-row-copy">
                                         <span class="news-row-cat">{{ $item->badgeLabel() }}</span>
                                         <span class="news-row-titleline">
@@ -2820,7 +2828,7 @@ document.addEventListener('keydown', function(e) {
                         </div>
                     @endif
                 </div>
-                <div class="news-view" data-reveal>
+                <div class="news-view rise-item">
                     <a href="{{ route('news.index') }}" class="gallery-explore site-btn">
                         View all Articles
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
@@ -2834,14 +2842,14 @@ document.addEventListener('keydown', function(e) {
 
     @include('partials.news-modal')
 
-    <section id="gallery" class="gallery-section scroll-mt-20">
+    <section id="gallery" class="gallery-section rise-section scroll-mt-20">
         @php
             $gallerySection = \App\Models\Setting::getGallerySection();
             $galleryTitle = trim((string) ($gallerySection['title'] ?? ''));
         @endphp
-        <div class="gallery-wrap" data-reveal>
+        <div class="gallery-wrap rise-item">
             <div class="gallery-marker">
-                <span class="gallery-dash reveal-line" aria-hidden="true"></span>
+                <span class="gallery-dash" aria-hidden="true"></span>
                 <p class="gallery-kicker">{{ $gallerySection['label'] }}</p>
             </div>
             <h2 class="gallery-title">
@@ -2854,14 +2862,14 @@ document.addEventListener('keydown', function(e) {
         </div>
 
         @if($galleryCollections->isNotEmpty())
-            <div class="gallery-scroller" tabindex="0" aria-label="Photo collections" data-reveal-stagger>
+            <div class="gallery-scroller" tabindex="0" aria-label="Photo collections">
                 @foreach($galleryCollections as $collection)
                     @php
                         $previewImages = $collection->images->take(4);
                         $lead = $previewImages->first();
                         $sideImages = $previewImages->slice(1, 3);
                     @endphp
-                    <a href="{{ route('gallery.show', $collection) }}" class="gallery-card {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
+                    <a href="{{ route('gallery.show', $collection) }}" class="gallery-card rise-item {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
                         <div class="gallery-card-lead">
                             <img src="{{ $lead->url }}" alt="{{ $collection->title }}" draggable="false">
                             <span class="gallery-card-scrim" aria-hidden="true"></span>
@@ -2886,7 +2894,7 @@ document.addEventListener('keydown', function(e) {
                     </a>
                 @endforeach
             </div>
-            <div class="gallery-action" data-reveal>
+            <div class="gallery-action rise-item">
                 <a href="{{ route('gallery.index') }}" class="gallery-explore site-btn">
                     Explore gallery
                     <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
@@ -3030,6 +3038,42 @@ document.addEventListener('keydown', function(e) {
             targets.forEach(function (el) { observer.observe(el); });
         })();
     </script>
+        <script>
+            (function () {
+                var sections = document.querySelectorAll(".rise-section");
+                if (!sections.length) return;
+
+                document.documentElement.classList.add("rise-ready");
+
+                var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window);
+
+                sections.forEach(function (section) {
+                    var index = 0;
+                    section.querySelectorAll(".rise-item").forEach(function (item) {
+                        if (item.closest(".hidden")) {
+                            item.style.setProperty("--rise-index", "0");
+                            return;
+                        }
+                        item.style.setProperty("--rise-index", String(index));
+                        index += 1;
+                    });
+
+                    if (reduce) {
+                        section.classList.add("is-visible");
+                        return;
+                    }
+
+                    var observer = new IntersectionObserver(function (entries) {
+                        if (entries.some(function (entry) { return entry.isIntersecting; })) {
+                            section.classList.add("is-visible");
+                            observer.disconnect();
+                        }
+                    }, { threshold: 0.15 });
+
+                    observer.observe(section);
+                });
+            })();
+        </script>
 @endsection
 
 <style>
@@ -3453,6 +3497,31 @@ document.addEventListener('keydown', function(e) {
     transform: translateY(0);
 }
 
+.rise-ready .rise-section .rise-item {
+    --rise-delay: calc(var(--rise-index, 0) * 70ms);
+    transition:
+        opacity 650ms ease var(--rise-delay),
+        transform 650ms cubic-bezier(0.22, 1, 0.36, 1) var(--rise-delay),
+        translate 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.5s ease;
+}
+
+.rise-ready .rise-section:not(.is-visible) .rise-item {
+    opacity: 0;
+    transform: translateY(42px);
+}
+
+.rise-ready .rise-section.is-visible .rise-item {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.rise-ready .rise-section.is-visible .hidden .rise-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+}
+
 @media (max-width: 767px) {
     .initiative-card {
         flex-basis: 170px;
@@ -3533,9 +3602,14 @@ document.addEventListener('keydown', function(e) {
     }
 
     .initiatives-reveal-ready #projects:not(.is-visible) .initiatives-heading,
-    .initiatives-reveal-ready #projects:not(.is-visible) .initiative-card {
+    .initiatives-reveal-ready #projects:not(.is-visible) .initiative-card,
+    .rise-ready .rise-section:not(.is-visible) .rise-item {
         opacity: 1;
         transform: none;
+    }
+
+    .rise-ready .rise-section .rise-item {
+        transition: none;
     }
 }
 
@@ -4164,8 +4238,10 @@ document.addEventListener('DOMContentLoaded', function () {
     let dragged = false;
     let suppressClick = false;
     let paused = false;
+    let stoppedByTap = false;
     let direction = 1;
     const autoSpeed = 18; // slower drift to match the Figma motion cadence more closely
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
 
     const measure = () => {
         maxPosition = Math.max(0, track.scrollWidth - carousel.clientWidth);
@@ -4216,8 +4292,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const isProjectLink = (event) => Boolean(event.target.closest('a, button'));
 
-    carousel.addEventListener('pointerenter', () => { paused = true; });
-    carousel.addEventListener('pointerleave', () => { paused = false; });
+    carousel.addEventListener('pointerenter', () => {
+        if (!mobileQuery.matches) paused = true;
+    });
+    carousel.addEventListener('pointerleave', () => {
+        if (mobileQuery.matches && stoppedByTap) return;
+        if (!mobileQuery.matches) paused = false;
+    });
 
     track.querySelectorAll('.tooltip-container').forEach((card) => {
         card.addEventListener('mouseenter', () => card.classList.add('is-open'));
@@ -4226,6 +4307,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     track.addEventListener('pointerdown', (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
+        if (mobileQuery.matches && event.target.closest('.initiative-card')) {
+            stoppedByTap = true;
+            paused = true;
+        }
         if (isProjectLink(event)) return;
 
         measure();
@@ -4262,6 +4347,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }, true);
 
     window.addEventListener('resize', () => {
+        if (!mobileQuery.matches) {
+            stoppedByTap = false;
+            paused = carousel.matches(':hover');
+        }
         measure();
         render();
     });
