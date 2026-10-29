@@ -3651,6 +3651,22 @@ document.addEventListener('keydown', function(e) {
     overflow: auto;
 }
 
+#projects .initiatives-viewport:has(.initiative-card:first-child:hover),
+#projects .initiatives-viewport:has(.initiative-card:first-child.is-open) {
+    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 97%, transparent);
+    mask-image: linear-gradient(to right, #000 0%, #000 97%, transparent);
+}
+
+#projects .initiative-card:first-child .tooltip-popup {
+    left: 0;
+    transform: translate(0, -50%) scale(0.85);
+}
+
+#projects .initiative-card:first-child:hover .tooltip-popup,
+#projects .initiative-card:first-child.is-open .tooltip-popup {
+    transform: translate(0, -50%) scale(1);
+}
+
 #projects .initiative-card {
     border: 0;
     background: transparent;
