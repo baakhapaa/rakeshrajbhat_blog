@@ -10,7 +10,7 @@
         default => $item->category,
     };
 @endphp
-<article class="study-card">
+<article class="study-card rise-item">
     <div class="study-card-media" @unless($hasVideo) onclick="openResearchDetail({{ $item->id }})" role="link" tabindex="0" onkeydown="if (event.key === 'Enter') openResearchDetail({{ $item->id }})" @endunless>
         @if(filled($studyCategory))
             <p class="study-card-category">{{ $studyCategory }}</p>

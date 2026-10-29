@@ -4,7 +4,7 @@
     $studyText = trim(preg_replace('/\s+/', ' ', strip_tags((string) ($blog->excerpt ?: $blog->content ?: ''))));
     $studyUrl = route('blog.show', $blog->slug);
 @endphp
-<article class="study-card">
+<article class="study-card rise-item">
     <a class="study-card-media" href="{{ $studyUrl }}">
         <p class="study-card-category">{{ $studyCategory ?? 'Blog' }}</p>
         @if($studyImage)

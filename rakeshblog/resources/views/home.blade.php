@@ -48,7 +48,7 @@
                 inset: 0;
                 background-size: 5239px 11342px;
                 background-position: -1467px 0;
-                animation: heroCubesA 360s linear infinite;
+                animation: heroCubesA 180s linear infinite;
             }
             .hero-cubes-b {
                 left: 7px;
@@ -57,7 +57,7 @@
                 height: 1331px;
                 background-size: 2298px 5802px;
                 background-position: 0 -2292px;
-                animation: heroCubesB 190s linear infinite;
+                animation: heroCubesB 95s linear infinite;
             }
             @keyframes heroCubesA { to { background-position: -1467px 11342px; } }
             @keyframes heroCubesB { to { background-position: 0 3510px; } }
@@ -270,7 +270,7 @@
                     background-size: 780px 1688px;
                     background-position: 50% 0;
                     animation-name: heroCubesM;
-                    animation-duration: 120s;
+                    animation-duration: 60s;
                 }
                 #heroCanvas > .hero-cubes-b,
                 #heroCanvas > .hero-glow,
@@ -1802,7 +1802,7 @@
             requestAnimationFrame(frame);
         })();
     </script>
-<section id="research" class="studies-section scroll-mt-20" aria-labelledby="studies-heading">
+<section id="research" class="studies-section rise-section scroll-mt-20" aria-labelledby="studies-heading">
     <style>
         .studies-section {
             background: #fff;
@@ -2083,7 +2083,7 @@
     @php
         $researchSection = \App\Models\Setting::getResearchSection();
     @endphp
-    <div class="studies-intro">
+    <div class="studies-intro rise-item">
         <div class="studies-kicker">
             <span aria-hidden="true"></span>
             <p>Studies</p>
@@ -2094,7 +2094,7 @@
     @php
         $homeFilters = \App\Models\Setting::getResearchHomeFilters();
     @endphp
-    <div class="studies-filters" id="researchFilters">
+    <div class="studies-filters rise-item" id="researchFilters">
         @foreach($homeFilters as $filter)
             <button type="button" data-research-filter="{{ $filter['key'] }}" class="studies-pill {{ $filter['key'] === 'all' ? 'is-active' : '' }}" aria-pressed="{{ $filter['key'] === 'all' ? 'true' : 'false' }}">{{ $filter['label'] }}</button>
         @endforeach
@@ -2153,7 +2153,7 @@
         </div>
         </div>
         
-    <div class="studies-cta">
+    <div class="studies-cta rise-item">
         <a class="studies-view-all" href="{{ route('research.featured') }}">
             View all Studies
             <img src="{{ asset('images/studies/view-all-arrow.svg') }}" alt="" width="9.46875" height="3.75">
@@ -2560,7 +2560,7 @@ document.addEventListener('keydown', function(e) {
     </section>
     --}}
 
-    <section id="news" class="news-section scroll-mt-20">
+    <section id="news" class="news-section rise-section scroll-mt-20">
         <style>
             .news-section {
                 background: #fbf9f6;
@@ -2820,15 +2820,17 @@ document.addEventListener('keydown', function(e) {
             };
         @endphp
         <div class="news-wrap">
-            <div class="news-kicker">
-                <span class="news-kicker-dash" aria-hidden="true"></span>
-                <p>{{ $newsContent['label'] }}</p>
+            <div class="rise-item">
+                <div class="news-kicker">
+                    <span class="news-kicker-dash" aria-hidden="true"></span>
+                    <p>{{ $newsContent['label'] }}</p>
+                </div>
+                <h2 class="news-heading">{!! $newsHeadingHtml !!}</h2>
             </div>
-            <h2 class="news-heading">{!! $newsHeadingHtml !!}</h2>
 
             @if($featuredNews)
                 <div class="news-layout">
-                    <article>
+                    <article class="rise-item">
                         <button type="button" class="news-feature-media" onclick="openNewsDetail({{ $featuredNews->id }})">
                             @if($featuredNews->image_url)
                                 <img src="{{ $featuredNews->image_url }}" alt="{{ $featuredNews->title }}">
@@ -2857,7 +2859,7 @@ document.addEventListener('keydown', function(e) {
                     @if($sideNews->isNotEmpty())
                         <div class="news-side">
                             @foreach($sideNews as $item)
-                                <button type="button" class="news-row" onclick="openNewsDetail({{ $item->id }})">
+                                <button type="button" class="news-row rise-item" onclick="openNewsDetail({{ $item->id }})">
                                     <span class="news-row-copy">
                                         <span class="news-row-cat">{{ $item->badgeLabel() }}</span>
                                         <span class="news-row-titleline">
@@ -2881,7 +2883,7 @@ document.addEventListener('keydown', function(e) {
                         </div>
                     @endif
                 </div>
-                <div class="news-view">
+                <div class="news-view rise-item">
                     <a href="{{ route('news.index') }}" class="gallery-explore">
                         View all Articles
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
@@ -2895,12 +2897,12 @@ document.addEventListener('keydown', function(e) {
 
     @include('partials.news-modal')
 
-    <section id="gallery" class="gallery-section scroll-mt-20">
+    <section id="gallery" class="gallery-section rise-section scroll-mt-20">
         @php
             $gallerySection = \App\Models\Setting::getGallerySection();
             $galleryTitle = trim((string) ($gallerySection['title'] ?? ''));
         @endphp
-        <div class="gallery-wrap">
+        <div class="gallery-wrap rise-item">
             <div class="gallery-marker">
                 <span class="gallery-dash" aria-hidden="true"></span>
                 <p class="gallery-kicker">{{ $gallerySection['label'] }}</p>
@@ -2922,7 +2924,7 @@ document.addEventListener('keydown', function(e) {
                         $lead = $previewImages->first();
                         $sideImages = $previewImages->slice(1, 3);
                     @endphp
-                    <a href="{{ route('gallery.show', $collection) }}" class="gallery-card {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
+                    <a href="{{ route('gallery.show', $collection) }}" class="gallery-card rise-item {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
                         <div class="gallery-card-lead">
                             <img src="{{ $lead->url }}" alt="{{ $collection->title }}" draggable="false">
                             <span class="gallery-card-scrim" aria-hidden="true"></span>
@@ -2947,7 +2949,7 @@ document.addEventListener('keydown', function(e) {
                     </a>
                 @endforeach
             </div>
-            <div class="gallery-action">
+            <div class="gallery-action rise-item">
                 <a href="{{ route('gallery.index') }}" class="gallery-explore">
                     Explore gallery
                     <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
@@ -3016,6 +3018,42 @@ document.addEventListener('keydown', function(e) {
             </div>
         </div>
     </section> --}}
+        <script>
+            (function () {
+                var sections = document.querySelectorAll(".rise-section");
+                if (!sections.length) return;
+
+                document.documentElement.classList.add("rise-ready");
+
+                var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window);
+
+                sections.forEach(function (section) {
+                    var index = 0;
+                    section.querySelectorAll(".rise-item").forEach(function (item) {
+                        if (item.closest(".hidden")) {
+                            item.style.setProperty("--rise-index", "0");
+                            return;
+                        }
+                        item.style.setProperty("--rise-index", String(index));
+                        index += 1;
+                    });
+
+                    if (reduce) {
+                        section.classList.add("is-visible");
+                        return;
+                    }
+
+                    var observer = new IntersectionObserver(function (entries) {
+                        if (entries.some(function (entry) { return entry.isIntersecting; })) {
+                            section.classList.add("is-visible");
+                            observer.disconnect();
+                        }
+                    }, { threshold: 0.15 });
+
+                    observer.observe(section);
+                });
+            })();
+        </script>
 @endsection
 
 <style>
@@ -3443,6 +3481,27 @@ document.addEventListener('keydown', function(e) {
     transform: translateY(0);
 }
 
+.rise-ready .rise-section .rise-item {
+    transition: opacity 650ms ease, transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--rise-index, 0) * 70ms);
+}
+
+.rise-ready .rise-section:not(.is-visible) .rise-item {
+    opacity: 0;
+    transform: translateY(42px);
+}
+
+.rise-ready .rise-section.is-visible .rise-item {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.rise-ready .rise-section.is-visible .hidden .rise-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+}
+
 @media (max-width: 1919px) {
     .initiatives-track {
         margin-inline: 0;
@@ -3550,9 +3609,14 @@ document.addEventListener('keydown', function(e) {
     }
 
     .initiatives-reveal-ready #projects:not(.is-visible) .initiatives-heading,
-    .initiatives-reveal-ready #projects:not(.is-visible) .initiative-card {
+    .initiatives-reveal-ready #projects:not(.is-visible) .initiative-card,
+    .rise-ready .rise-section:not(.is-visible) .rise-item {
         opacity: 1;
         transform: none;
+    }
+
+    .rise-ready .rise-section .rise-item {
+        transition: none;
     }
 }
 
@@ -4182,8 +4246,10 @@ document.addEventListener('DOMContentLoaded', function () {
     let dragged = false;
     let suppressClick = false;
     let paused = false;
+    let stoppedByTap = false;
     let direction = 1;
     const autoSpeed = 18; // slower drift to match the Figma motion cadence more closely
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
 
     const measure = () => {
         maxPosition = Math.max(0, track.scrollWidth - carousel.clientWidth);
@@ -4234,8 +4300,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const isProjectLink = (event) => Boolean(event.target.closest('a, button'));
 
-    carousel.addEventListener('pointerenter', () => { paused = true; });
-    carousel.addEventListener('pointerleave', () => { paused = false; });
+    carousel.addEventListener('pointerenter', () => {
+        if (!mobileQuery.matches) paused = true;
+    });
+    carousel.addEventListener('pointerleave', () => {
+        if (mobileQuery.matches && stoppedByTap) return;
+        if (!mobileQuery.matches) paused = false;
+    });
 
     track.querySelectorAll('.tooltip-container').forEach((card) => {
         card.addEventListener('mouseenter', () => card.classList.add('is-open'));
@@ -4244,6 +4315,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     track.addEventListener('pointerdown', (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
+        if (mobileQuery.matches && event.target.closest('.initiative-card')) {
+            stoppedByTap = true;
+            paused = true;
+        }
         if (isProjectLink(event)) return;
 
         measure();
@@ -4280,6 +4355,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }, true);
 
     window.addEventListener('resize', () => {
+        if (!mobileQuery.matches) {
+            stoppedByTap = false;
+            paused = carousel.matches(':hover');
+        }
         measure();
         render();
     });
