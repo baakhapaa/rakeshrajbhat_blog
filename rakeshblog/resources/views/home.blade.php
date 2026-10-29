@@ -559,10 +559,10 @@
         .about-label p {
             margin: 0;
             font-family: "Space Grotesk", sans-serif;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
-            line-height: 16px;
-            letter-spacing: 1.1px;
+            line-height: 1.2;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
             color: #89351d;
         }
@@ -583,8 +583,8 @@
             padding: 20px 20px 20px 24px;
         }
         .about-quote { margin: 0; font-size: 22px; font-weight: 700; line-height: 1.35; color: #1b1c1a; }
-        .about-body { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.9; color: #5f5e5e; }
-        .about-note { margin: 0; font-size: 16px; font-weight: 400; line-height: 1.4; color: #5f5e5e; }
+        .about-body { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.75; color: #5f5e5e; }
+        .about-note { margin: 0; font-size: 17px; font-weight: 400; line-height: 1.55; color: #5f5e5e; }
         .about-action { padding-top: 32px; }
         .about-btn {
             display: inline-flex;
@@ -638,11 +638,11 @@
             }
             .about-reveal-text { align-self: start; padding-top: calc(39 * var(--fu)); }
             .about-label { gap: calc(8 * var(--fu)); }
-            .about-label-rule { width: calc(24 * var(--fu)); height: max(1px, calc(2 * var(--fu))); }
+            .about-label-rule { width: max(28px, calc(32 * var(--fu))); height: 2px; }
             .about-label p {
-                font-size: max(9px, calc(14 * var(--fu)));
-                line-height: calc(16 * var(--fu));
-                letter-spacing: calc(1.1 * var(--fu));
+                font-size: clamp(15px, 1.15vw, 18px);
+                line-height: 1.2;
+                letter-spacing: 1.2px;
             }
             .about-heading {
                 padding-top: calc(12 * var(--fu));
@@ -659,14 +659,14 @@
             }
             .about-quote { font-size: calc(31 * var(--fu)); line-height: calc(40 * var(--fu)); }
             .about-body {
-                max-width: calc(720 * var(--fu));
-                font-size: max(10px, calc(17 * var(--fu)));
-                line-height: calc(36 * var(--fu));
+                max-width: 100%;
+                font-size: clamp(16px, 1.2vw, 18px);
+                line-height: 1.75;
             }
             .about-note {
-                max-width: calc(600 * var(--fu));
-                font-size: max(10px, calc(18 * var(--fu)));
-                line-height: calc(24.38 * var(--fu));
+                max-width: min(100%, 38rem);
+                font-size: clamp(16px, 1.2vw, 18px);
+                line-height: 1.55;
             }
             .about-action { padding-top: calc(80 * var(--fu)); }
             .about-btn {
