@@ -486,7 +486,7 @@
             })();
         </script>
     </section>
-    
+
     <!-- About Me -->
     <section id="about-me" class="about-reveal scroll-mt-20 text-[#1b1c1a]">
         <div class="about-card">
@@ -532,19 +532,21 @@
                     @endphp
                     @if(!empty($aboutContent['media_url']) && ($aboutContent['media_type'] ?? null) === 'video')
                         <div class="about-portrait">
-                            <video
-                                id="aboutPortraitVideo"
-                                @if(!empty($aboutContent['media_poster'])) poster="{{ $aboutContent['media_poster'] }}" @endif
-                                data-src="{{ $aboutContent['media_url'] }}"
-                                muted
-                                loop
-                                playsinline
-                                preload="none"
-                                class="{{ $aboutMediaClass }}"
-                            ></video>
-                            <button type="button" id="aboutPortraitSound" aria-pressed="false" aria-label="Turn sound on">
-                                <i class="fa-solid fa-volume-xmark" aria-hidden="true"></i>
-                            </button>
+                            <div class="about-portrait-frame">
+                                <video
+                                    id="aboutPortraitVideo"
+                                    @if(!empty($aboutContent['media_poster'])) poster="{{ $aboutContent['media_poster'] }}" @endif
+                                    data-src="{{ $aboutContent['media_url'] }}"
+                                    muted
+                                    loop
+                                    playsinline
+                                    preload="none"
+                                    class="{{ $aboutMediaClass }}"
+                                ></video>
+                                <button type="button" id="aboutPortraitSound" aria-pressed="false" aria-label="Turn sound on">
+                                    <i class="fa-solid fa-volume-xmark" aria-hidden="true"></i>
+                                </button>
+                            </div>
                         </div>
                     @else
                         <img
@@ -616,9 +618,10 @@
         .about-photo {
             position: absolute;
             inset: 0;
-            width: 100%;
+            width: fit-content;
+            justify-self: center;
             height: 100%;
-            max-width: none;
+            /* max-width: none; */
             object-fit: cover;
         }
         @media (min-width: 1024px) {
@@ -693,12 +696,33 @@
                 transition: none;
             }
         }
-        .about-portrait { position: absolute; inset: 0; }
-        .about-portrait video { z-index: 0; display: block; }
+        .about-portrait {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+        }
+        .about-portrait-frame {
+            position: relative;
+            height: 100%;
+            width: fit-content;
+            max-width: 100%;
+        }
+        .about-portrait-frame .about-photo {
+            position: relative;
+            inset: auto;
+            display: block;
+            width: auto;
+            max-width: 100%;
+            height: 100%;
+            object-fit: cover;
+            justify-self: auto;
+        }
         #aboutPortraitSound {
             position: absolute;
-            right: 16px;
-            bottom: 16px;
+            right: 12px;
+            bottom: 12px;
             z-index: 5;
             display: flex;
             align-items: center;
@@ -711,6 +735,14 @@
             color: #fff;
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+        }
+        @media (min-width: 1024px) {
+            #aboutPortraitSound {
+                right: max(10px, calc(14 * var(--fu)));
+                bottom: max(10px, calc(14 * var(--fu)));
+                width: max(40px, calc(44 * var(--fu)));
+                height: max(40px, calc(44 * var(--fu)));
+            }
         }
         #aboutPortraitSound:hover { background: rgba(11, 14, 18, 0.9); }
     </style>
@@ -2046,8 +2078,8 @@
             <p>Studies</p>
                                         </div>
         <h2 id="studies-heading" class="studies-title">{{ $researchSection['title'] }}</h2>
-                                    </div>
-                                
+                                </div>
+
     @php
         $homeFilters = \App\Models\Setting::getResearchHomeFilters();
     @endphp
@@ -2110,7 +2142,7 @@
             @endforelse
         </div>
         </div>
-        
+
     <div class="studies-cta rise-item">
         <a class="studies-view-all site-btn" href="{{ route('research.featured') }}">
             View all Studies
@@ -2136,7 +2168,7 @@
 
 <!-- Research Detail Modal -->
 <div id="researchModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="min-h-screen px-4 py-8 flex items-center justify-center">   
+    <div class="min-h-screen px-4 py-8 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResearchDetail()"></div>
         <div class="relative research-modal-panel max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
             <button type="button" onclick="closeResearchDetail()" class="research-close" aria-label="Close">
@@ -2189,7 +2221,7 @@
 function openResearchDetail(id) {
     const modal = document.getElementById('researchModal');
     const content = document.getElementById('researchDetailContent');
-    
+
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     document.body.style.paddingRight = '0px';
@@ -2233,9 +2265,9 @@ function openResearchDetail(id) {
                         ${item.image_url ? `<div class="research-detail-media"><img src="${item.image_url}" alt="${escapeHtml(item.title)}"></div>` : ''}
                     ${item.video_url || item.video_file ? `
                             <div class="research-detail-media">
-                            ${item.video_file ? 
+                            ${item.video_file ?
                                     `<video controls class="w-full"><source src="${item.video_file}" type="video/mp4"></video>` :
-                                item.video_embed_url ? 
+                                item.video_embed_url ?
                                     `<iframe src="${item.video_embed_url}" class="w-full aspect-video" allowfullscreen></iframe>` :
                                     `<div class="aspect-video flex items-center justify-center text-white">No video available</div>`
                             }
@@ -2289,7 +2321,7 @@ function closeResearchDetail() {
 function playVideo(element, researchId) {
     const modal = document.getElementById('videoModal');
     const container = document.getElementById('videoContainer');
-    
+
     container.innerHTML = `
         <div class="w-full h-full flex items-center justify-center text-white">
             <div class="text-center">
@@ -2442,12 +2474,12 @@ document.addEventListener('keydown', function(e) {
             @if(isset($featuredBlogs) && $featuredBlogs->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($featuredBlogs as $blog)
-                        <a href="{{ route('blog.show', $blog->slug) }}" 
+                        <a href="{{ route('blog.show', $blog->slug) }}"
                         class="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <div class="relative overflow-hidden h-52">
                                 @if($blog->featured_image_url)
-                                    <img src="{{ $blog->featured_image_url }}" 
-                                        alt="{{ $blog->title }}" 
+                                    <img src="{{ $blog->featured_image_url }}"
+                                        alt="{{ $blog->title }}"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center">
@@ -2487,7 +2519,7 @@ document.addEventListener('keydown', function(e) {
                                     {{ $blog->excerpt ?? Str::limit(strip_tags($blog->content ?? ''), 120) }}
                                 </p>
                                 <div class="mt-4 flex items-center gap-2 text-sm text-[#D4AF37] font-medium">
-                                    Read More 
+                                    Read More
                                     <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
@@ -2498,7 +2530,7 @@ document.addEventListener('keydown', function(e) {
                 </div>
 
                 <div class="text-center mt-12">
-                    <a href="{{ route('blog') }}" 
+                    <a href="{{ route('blog') }}"
                     class="inline-flex items-center gap-2 px-8 py-3 bg-[#D4AF37] text-[#0b0e12] font-bold rounded-lg hover:bg-[#c4a030] transition-all shadow-lg shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/40 hover:-translate-y-0.5">
                         View All Blogs
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4155,7 +4187,7 @@ function playVideo(element, researchId) {
     const modal = document.getElementById('videoModal');
     const container = document.getElementById('videoContainer');
     if (!modal || !container) return;
-    
+
     // Get video data from server
     fetch(`/research/${researchId}/video`)
         .then(response => response.json())
