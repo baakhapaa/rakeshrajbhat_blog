@@ -148,12 +148,12 @@
                 gap: 12px;
             }
             .hero-btn {
-                height: 53px;
+                height: 58px;
                 border-radius: 9999px;
                 display: inline-flex;
                 align-items: center;
-                font-size: 14px;
-                line-height: 21px;
+                font-size: 16px;
+                line-height: 24px;
                 text-decoration: none;
                 white-space: nowrap;
             }
@@ -161,7 +161,7 @@
                 background: #b36855;
                 color: #faf7f2;
                 font-weight: 700;
-                padding: 10px 24px;
+                padding: 12px 28px;
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
             }
             .hero-btn-primary:hover { filter: brightness(1.05); }
@@ -169,7 +169,7 @@
             .hero-btn-secondary {
                 color: #000000;
                 font-weight: 500;
-                padding: 11px 21px;
+                padding: 12px 25px;
                 border: 1px solid #d5cec2;
             }
             .hero-btn-secondary:hover { background: rgba(255, 255, 255, 0.35); }
@@ -310,9 +310,13 @@
                     flex-wrap: wrap;
                     gap: 10px;
                 }
-                #heroCanvas > .hero-actions .hero-btn { height: 48px; }
-                #heroCanvas > .hero-actions .hero-btn-primary { padding: 10px 20px; }
-                #heroCanvas > .hero-actions .hero-btn-secondary { padding: 11px 18px; }
+                #heroCanvas > .hero-actions .hero-btn {
+                    height: 52px;
+                    font-size: 15px;
+                    line-height: 22px;
+                }
+                #heroCanvas > .hero-actions .hero-btn-primary { padding: 11px 23px; }
+                #heroCanvas > .hero-actions .hero-btn-secondary { padding: 12px 21px; }
                 #heroCanvas > .hero-tag {
                     order: 5;
                     margin-top: 28px;
@@ -856,128 +860,119 @@
         </div>
     </section>
 
-     <!-- Projects Section -->
-    <section id="projects" class="py-28 bg-[#fff6e0] scroll-mt-20 overflow-visible">
-        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 mb-8">
-            <div class="flex justify-between items-end">
-                <div>
-                    @php
-                        $projectsSection = \App\Models\Setting::getProjectsSection();
-                    @endphp
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">{{ $projectsSection['label'] }}</p>
-                    <h2 class="text-4xl font-serif font-bold text-[#1e1e1a]">{{ $projectsSection['title'] }}</h2>
+    <!-- Projects Section -->
+    <section id="projects" class="initiatives-section scroll-mt-20" aria-labelledby="initiatives-heading">
+        <div class="initiatives-cubes hero-cubes hero-cubes-a" aria-hidden="true"></div>
+        <div class="initiatives-cubes hero-cubes hero-cubes-b" aria-hidden="true"></div>
+
+        <div class="initiatives-content">
+            @php
+                $projectsSection = \App\Models\Setting::getProjectsSection();
+            @endphp
+
+            <div class="initiatives-heading">
+                <div class="initiatives-heading-inner">
+                    <div class="initiatives-kicker">
+                        <span aria-hidden="true"></span>
+                        <p>{{ $projectsSection["label"] }}</p>
+                    </div>
+                    <h2 id="initiatives-heading">{{ $projectsSection["title"] }}</h2>
+                </div>
+            </div>
+
+            <div class="initiatives-viewport carousel-container" tabindex="0" aria-label="Projects and initiatives">
+                <div class="initiatives-track carousel-track">
+                    @forelse($projects ?? [] as $project)
+                        @php
+                            $projectSlug = strtolower((string) ($project->slug ?? ""));
+                            $initiativeBackground = preg_match('/^#[0-9A-Fa-f]{6}$/', (string) $project->bg_color)
+                                ? $project->bg_color
+                                : '#ffffff';
+                            $initiativeLogoNumber = match (true) {
+                                str_contains($projectSlug, "bootcamp"), str_contains($projectSlug, "ict") => 1,
+                                str_contains($projectSlug, "baakhapaa") => 2,
+                                str_contains($projectSlug, "skill") => 3,
+                                str_contains($projectSlug, "hilly") => 4,
+                                str_contains($projectSlug, "kholso"), str_contains($projectSlug, "resort") => 5,
+                                default => null,
+                            };
+                            $initiativeLogo = $initiativeLogoNumber
+                                ? asset("images/initiatives/initiative-mark-" . $initiativeLogoNumber . ".png")
+                                : $project->image_url;
+                            $initiativeDescription = $project->short_description ?: $project->description;
+                        @endphp
+                        <article class="initiative-card tooltip-container" style="--initiative-index: {{ $loop->index }}; --initiative-bg: {{ $initiativeBackground }};">
+                            <div class="project-default">
+                                <div class="initiative-card-surface" aria-hidden="true"></div>
+                                <div class="initiative-mark">
+                                    @if($initiativeLogo)
+                                        <img src="{{ $initiativeLogo }}" alt="{{ $project->name }}" width="142" height="142" loading="lazy" decoding="async">
+                                    @else
+                                        <span>{{ strtoupper(substr($project->name, 0, 1)) }}</span>
+                                    @endif
+                                </div>
+                                <h3>{{ $project->name }}</h3>
+                                @if(filled($initiativeDescription))
+                                    <p>{{ $initiativeDescription }}</p>
+                                @endif
+                                @if(filled($project->url))
+                                    <a class="initiative-read-more" href="{{ $project->url }}" target="_blank" rel="noopener noreferrer">
+                                        <span>Read more</span>
+                                        <img src="{{ asset("images/initiatives/initiative-arrow.svg") }}" alt="" aria-hidden="true">
+                                    </a>
+                                @endif
+                            </div>
+
+                            @if(filled($project->description))
+                                <div class="tooltip-popup" role="dialog" aria-label="{{ $project->name }} overview">
+                                    <div class="project-popup-content">
+                                        <div class="popup-image">
+                                            @if($initiativeLogo)
+                                                <img src="{{ $initiativeLogo }}" alt="{{ $project->name }}" loading="lazy" decoding="async">
+                                            @else
+                                                <span>{{ strtoupper(substr($project->name, 0, 1)) }}</span>
+                                            @endif
+                                        </div>
+                                        <h4>{{ $project->name }}</h4>
+                                        <p>{{ $project->description }}</p>
+                                        @if(filled($project->url))
+                                            <a class="project-visit-link" href="{{ $project->url }}" target="_blank" rel="noopener noreferrer">
+                                                <span>Visit Website</span>
+                                                <img src="{{ asset('images/initiatives/initiative-arrow.svg') }}" alt="" aria-hidden="true">
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+                        </article>
+                    @empty
+                        <p class="initiatives-empty">No projects available yet.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
 
-        <!-- Infinite Carousel Outer Container -->
-        <div class="carousel-container relative w-full py-16">
-            <!-- Scrolling Track -->
-            <div class="carousel-track flex items-center gap-8 w-max">
+        <script>
+            (function () {
+                var section = document.getElementById("projects");
+                if (!section) return;
 
-                {{-- FIRST SET --}}
-                @forelse($projects ?? [] as $project)
-                    <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
-                        <!-- Normal Card Content -->
-                        <div class="project-default w-full flex flex-col items-center">
-                            <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
-                                @if($project->image)
-                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
-                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                    </div>
-                                @endif
-                            </div>
-                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
-                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
-                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
-                        </div>
+                document.documentElement.classList.add("initiatives-reveal-ready");
+                if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+                    section.classList.add("is-visible");
+                    return;
+                }
 
-                        <!-- Popup Content -->
-                        <div class="tooltip-popup">
-                            <div class="project-popup-content flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="popup-image">
-                                        @if($project->image)
-                                            <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
-                                        @else
-                                            <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                        @endif
-                                    </div>
-                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
+                var observer = new IntersectionObserver(function (entries) {
+                    if (entries.some(function (entry) { return entry.isIntersecting; })) {
+                        section.classList.add("is-visible");
+                        observer.disconnect();
+                    }
+                }, { threshold: 0.15 });
 
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
-                                        {{ $project->description ?? $project->long_description ?? $project->short_description }}
-                                    </p>
-                                </div>
-
-                                @if($project->url)
-                                    <div class="pt-4 mt-2 border-t border-gray-100">
-                                        <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
-                                            Visit Website <span>→</span>
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <p class="text-gray-500">No projects available yet.</p>
-                @endforelse
-
-                {{-- Only one project set is rendered so the homepage DOM remains unique. --}}
-                @if(false)
-                @foreach($projects ?? [] as $project)
-                    <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
-                        <!-- Normal Card Content -->
-                        <div class="project-default w-full flex flex-col items-center">
-                            <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
-                                @if($project->image)
-                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
-                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                    </div>
-                                @endif
-                            </div>
-                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
-                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
-                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
-                        </div>
-
-                        <!-- Popup Content -->
-                        <div class="tooltip-popup">
-                            <div class="project-popup-content flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="popup-image">
-                                        @if($project->image)
-                                            <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
-                                        @else
-                                            <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                        @endif
-                                    </div>
-                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
-
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
-                                        {{ $project->description ?? $project->long_description ?? $project->short_description }}
-                                    </p>
-                                </div>
-
-                                @if($project->url)
-                                    <div class="pt-4 mt-2 border-t border-gray-100">
-                                        <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
-                                            Visit Website <span>→</span>
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-                @endif
-            </div>
-        </div>
+                observer.observe(section);
+            })();
+        </script>
     </section>
   <!-- Mission Section -->
     @php
@@ -986,6 +981,7 @@
         $missionLabel = $missionContent['label'];
         $missionButtonLabel = $missionContent['button_label'];
     @endphp
+
     <section id="about" class="mission-scroll text-[#1e1e1a] scroll-mt-20" aria-labelledby="mission-heading">
         <div class="mission-scroll__list">
             <p class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>{{ $missionLabel }}</p>
@@ -1014,7 +1010,7 @@
                         @foreach($missionItems as $item)
                             <div class="mission-scroll__marker">
                                 <div class="mission-scroll__markerContent">
-                                    <span class="mission-scroll__markerNum">{{ $item['number'] }}</span>
+                                    <span class="mission-scroll__markerNum">{{ $item["number"] }}</span>
                                 </div>
                             </div>
                         @endforeach
@@ -1050,6 +1046,7 @@
             </div>
         </div>
     </section>
+
     <style>
         .mission-scroll {
             --dial-size: min(78vh, 898px);
@@ -1061,6 +1058,7 @@
             border-bottom: 1px solid #efeeeb;
             overflow: clip;
         }
+
         .mission-scroll__kicker {
             position: absolute;
             z-index: 3;
@@ -1078,13 +1076,53 @@
             line-height: 1;
             text-transform: uppercase;
         }
+        .mission-scroll__list {
+            display: none;
+            max-width: 40rem;
+            margin: 0 auto;
+            padding: 72px 24px 80px;
+        }
+
+        .mission-scroll__listItem + .mission-scroll__listItem {
+            margin-top: 28px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(30, 30, 26, 0.08);
+        }
+
+        .mission-scroll__listNum {
+            color: #D4AF37;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .mission-scroll__listTitle {
+            margin: 8px 0 0;
+            font-family: Poppins, sans-serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: #111111;
+        }
+
+        .mission-scroll__listBody {
+            margin: 8px 0 0;
+            color: #5a5a52;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .mission-scroll__track {
+            position: relative;
+            width: 100%;
+            height: 600vh;
+        }
+
         .mission-scroll__dash {
             width: 39px;
             height: 4px;
             background: #89351d;
             flex: none;
         }
-        .mission-scroll__list { display: none; max-width: 40rem; margin: 0 auto; padding: 72px 24px 80px; }
         .mission-scroll__list .mission-scroll__kicker {
             position: static;
             margin: 0 0 24px;
@@ -1103,6 +1141,7 @@
             width: 100%;
             overflow: hidden;
         }
+
         .mission-scroll__dialZone {
             position: absolute;
             left: 0;
@@ -1118,6 +1157,7 @@
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
         }
+
         .mission-scroll__dialBaseOuter,
         .mission-scroll__dialBaseInner,
         .mission-scroll__dialBaseCenter {
@@ -1125,6 +1165,7 @@
             top: 50%;
             border-radius: 50%;
         }
+
         .mission-scroll__dialBaseOuter {
             width: var(--dial-size);
             height: var(--dial-size);
@@ -1133,6 +1174,7 @@
             background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f7f4ee 100%);
             box-shadow: 30px 40px 90px rgba(30, 30, 26, 0.08), inset -6px -6px 16px rgba(255, 255, 255, 0.95), inset 6px 6px 16px rgba(30, 30, 26, 0.05);
         }
+
         .mission-scroll__dialBaseInner {
             width: calc(var(--dial-size) * 0.76);
             height: calc(var(--dial-size) * 0.76);
@@ -1141,6 +1183,7 @@
             background: radial-gradient(circle at 35% 35%, #ffffff 0%, #faf8f5 100%);
             box-shadow: 12px 16px 40px rgba(30, 30, 26, 0.05), inset -4px -4px 10px rgba(255, 255, 255, 0.9);
         }
+
         .mission-scroll__dialBaseCenter {
             width: calc(var(--dial-size) * 0.52);
             height: calc(var(--dial-size) * 0.52);
@@ -1149,6 +1192,7 @@
             background: #fff;
             box-shadow: 6px 8px 24px rgba(30, 30, 26, 0.04);
         }
+
         .mission-scroll__dialCanvas {
             position: absolute;
             width: var(--dial-size);
@@ -1159,6 +1203,7 @@
             transform-origin: 50% 50%;
             will-change: transform;
         }
+
         .mission-scroll__marker {
             position: absolute;
             left: 50%;
@@ -1168,23 +1213,25 @@
             transform-origin: 0 0;
             transform: rotate(var(--angle)) translateX(calc(var(--dial-size) * 0.5 + var(--number-margin)));
         }
+
         .mission-scroll__markerContent {
             position: absolute;
             left: 0;
             top: 50%;
             transform: translateY(-50%);
         }
+
         .mission-scroll__markerNum {
             display: inline-block;
-            font-family: "Plus Jakarta Sans", sans-serif;
+            font-family: "Playfair Display", serif;
             font-size: clamp(64px, 7vw, 126px);
             font-weight: 700;
             line-height: 0.8;
             letter-spacing: -0.04em;
             color: #111111;
-            transform-origin: left center;
             will-change: transform, color, opacity;
         }
+
         .mission-scroll__textZone {
             position: absolute;
             left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + clamp(150px, 16vw, 230px));
@@ -1193,6 +1240,7 @@
             transform: translateY(-50%);
             z-index: 2;
         }
+        .mission-scroll__textViewport { position: relative; height: 190px; width: min(560px, 54vw); overflow: hidden; }
         .mission-scroll__more {
             grid-column: 2;
             grid-row: 1 / span 2;
@@ -1348,18 +1396,17 @@
             grid-row: 1;
             min-width: 0;
             margin: 0;
-            font-family: Poppins, sans-serif;
-            font-size: clamp(22px, 2.1vw, 34px);
-            font-weight: 600;
-            line-height: 1.15;
-            letter-spacing: -0.6px;
-            color: #111111;
+            font-family: "Playfair Display", serif;
+            font-size: clamp(36px, 3.4vw, 56px);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: 0;
+            color: #1e1e1a;
             will-change: transform;
         }
         .mission-scroll__body {
             grid-column: 1;
             grid-row: 2;
-            min-width: 0;
             margin: 8px 0 0;
             max-width: 100%;
             color: #59554f;
@@ -1370,6 +1417,7 @@
             letter-spacing: 0;
             will-change: transform;
         }
+
         @media (max-width: 1100px) {
             .mission-scroll__textZone {
                 left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 112px);
@@ -1377,29 +1425,35 @@
             }
             .mission-scroll__textViewport { width: min(460px, 58vw); height: 150px; }
             .mission-scroll__reason { grid-template-columns: minmax(0, 280px) max-content; column-gap: 20px; }
-            .mission-scroll__headline { font-size: 24px; letter-spacing: -0.4px; }
+            .mission-scroll__headline { font-size: 24px; letter-spacing: 0; }
             .mission-scroll__kicker { top: calc(50% - 230px); font-size: 20px; }
         }
+
         @media (max-width: 768px) {
             .mission-scroll {
                 --dial-size: min(54vh, 420px);
                 --dial-center: -0.08;
                 --number-margin: 6px;
             }
+
             .mission-scroll__sticky {
                 top: 5rem;
                 height: calc(100svh - 5rem);
             }
+            .mission-scroll__dialZone {
+                width: 42%;
+            }
+
             .mission-scroll__markerNum { font-size: 48px; }
             .mission-scroll__textZone {
                 left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 72px);
                 right: 10px;
                 transform: translateY(-50%);
             }
-            .mission-scroll__textViewport { width: min(320px, 70vw); height: 130px; }
+            .mission-scroll__textViewport { width: min(320px, 70vw); height: 160px; }
             .mission-scroll__reason { grid-template-columns: minmax(0, 180px) max-content; column-gap: 12px; }
-            .mission-scroll__headline { font-size: 20px; letter-spacing: -0.4px; }
-            .mission-scroll__body { margin-top: 6px; font-size: 13px; line-height: 1.4; }
+            .mission-scroll__headline { font-size: 28px; letter-spacing: 0; }
+            .mission-scroll__body { margin-top: 10px; font-size: 15px; line-height: 1.5; }
             .mission-scroll__kicker {
                 font-size: 16px;
                 top: calc(50% - 176px);
@@ -1410,11 +1464,19 @@
                 padding: 0 12px 0 14px;
             }
         }
+
         @media (prefers-reduced-motion: reduce) {
-            .mission-scroll__track { display: none !important; height: auto !important; }
-            .mission-scroll__list { display: block !important; }
+            .mission-scroll__track {
+                display: none !important;
+                height: auto !important;
+            }
+
+            .mission-scroll__list {
+                display: block !important;
+            }
         }
     </style>
+
     <script>
         (function () {
             const missions = @json($missionItems);
@@ -1471,28 +1533,41 @@
             const viewport = document.getElementById('missionText');
             if (!section || !track || !sticky || !canvas || !viewport) return;
 
-            const CONFIG = { angleStep: 28, exitY: 200, stiffness: 85, damping: 26, mass: 0.3, headlineYOffset: 45, bodyYOffset: 25, scrollPadding: 0 };
+            const CONFIG = {
+                angleStep: 28,
+                exitY: 200,
+                stiffness: 85,
+                damping: 26,
+                mass: 0.3,
+                headlineYOffset: 45,
+                bodyYOffset: 25,
+                scrollPadding: 0
+            };
             function applyMotionScale() {
                 const narrow = window.innerWidth <= 768;
                 CONFIG.exitY = narrow ? 90 : 200;
                 CONFIG.headlineYOffset = narrow ? 20 : 45;
                 CONFIG.bodyYOffset = narrow ? 12 : 25;
             }
-            const COLOR_FADED = 'rgba(0, 0, 0, 0.26)';
-            const COLOR_ACTIVE = '#111111';
-            const markers = Array.from(canvas.querySelectorAll('.mission-scroll__marker'));
-            const nums = Array.from(canvas.querySelectorAll('.mission-scroll__markerNum'));
-            const articles = Array.from(viewport.querySelectorAll('.mission-scroll__reason'));
-            const headlines = Array.from(viewport.querySelectorAll('.mission-scroll__headline'));
-            const bodies = Array.from(viewport.querySelectorAll('.mission-scroll__body'));
+            const COLOR_FADED = "rgba(30, 30, 26, 0.18)";
+            const COLOR_ACTIVE = "#D4AF37";
+            const markers = Array.from(canvas.querySelectorAll(".mission-scroll__marker"));
+            const nums = Array.from(canvas.querySelectorAll(".mission-scroll__markerNum"));
+            const articles = Array.from(viewport.querySelectorAll(".mission-scroll__reason"));
+            const headlines = Array.from(viewport.querySelectorAll(".mission-scroll__headline"));
+            const bodies = Array.from(viewport.querySelectorAll(".mission-scroll__body"));
             const total = articles.length;
+
             if (total < 2) return;
 
             markers.forEach(function (marker, index) {
-                marker.style.setProperty('--angle', (index * CONFIG.angleStep) + 'deg');
+                marker.style.setProperty("--angle", (index * CONFIG.angleStep) + "deg");
             });
 
-            const clamp = function (value, min, max) { return Math.min(Math.max(value, min), max); };
+            const clamp = function (value, min, max) {
+                return Math.min(Math.max(value, min), max);
+            };
+
             function interpolate(x, input, output) {
                 if (x <= input[0]) return output[0];
                 if (x >= input[input.length - 1]) return output[output.length - 1];
@@ -1504,20 +1579,24 @@
                 }
                 return output[output.length - 1];
             }
+
             function parseColor(str) {
-                if (str[0] === '#') {
+                if (str[0] === "#") {
                     const hex = str.slice(1);
                     return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16), 1];
                 }
-                const parts = str.match(/rgba?\(([^)]+)\)/)[1].split(',').map(Number);
+                const parts = str.match(/rgba?\(([^)]+)\)/)[1].split(",").map(Number);
                 return [parts[0], parts[1], parts[2], parts[3] === undefined ? 1 : parts[3]];
             }
+
             function lerpColor(a, b, t) {
                 const A = parseColor(a);
                 const B = parseColor(b);
-                const ch = function (i) { return Math.sqrt(A[i] * A[i] + (B[i] * B[i] - A[i] * A[i]) * t); };
+                const ch = function (i) {
+                    return Math.sqrt(A[i] * A[i] + (B[i] * B[i] - A[i] * A[i]) * t);
+                };
                 const alpha = A[3] + (B[3] - A[3]) * t;
-                return 'rgba(' + Math.round(ch(0)) + ', ' + Math.round(ch(1)) + ', ' + Math.round(ch(2)) + ', ' + alpha.toFixed(4) + ')';
+                return "rgba(" + Math.round(ch(0)) + ", " + Math.round(ch(1)) + ", " + Math.round(ch(2)) + ", " + alpha.toFixed(4) + ")";
             }
 
             const spring = { value: 0, target: 0, velocity: 0 };
@@ -1527,6 +1606,7 @@
             function readProgress() {
                 return clamp((window.scrollY - trackTop) / travel, 0, 1);
             }
+
             function layout() {
                 applyMotionScale();
                 const rect = track.getBoundingClientRect();
@@ -1534,6 +1614,7 @@
                 travel = Math.max(1, track.offsetHeight - sticky.offsetHeight);
                 spring.value = spring.target = readProgress();
             }
+
             function stepSpring(dt) {
                 const steps = Math.min(12, Math.max(1, Math.ceil(dt / (1 / 240))));
                 const h = dt / steps;
@@ -1547,6 +1628,7 @@
                     spring.velocity = 0;
                 }
             }
+
             function render() {
                 const progress = spring.value;
                 const pad = CONFIG.scrollPadding;
@@ -1567,22 +1649,23 @@
                             ? lerpColor(COLOR_FADED, COLOR_ACTIVE, (progress - cRange[0]) / (cRange[1] - cRange[0]))
                             : lerpColor(COLOR_ACTIVE, COLOR_FADED, (progress - cRange[1]) / (cRange[2] - cRange[1]));
                     }
-                    nums[i].style.transform = 'scale(' + scale.toFixed(4) + ')';
+                    nums[i].style.transform = "scale(" + scale.toFixed(4) + ")";
                     nums[i].style.opacity = opacity.toFixed(4);
                     nums[i].style.visibility = opacity < 0.02 ? 'hidden' : 'visible';
                     nums[i].style.color = color;
 
                     const y = interpolate(progress, [s - step * 0.8, s, s + step * 0.8], [CONFIG.exitY, 0, -CONFIG.exitY]);
                     const cardOpacity = interpolate(progress, [s - step * 0.6, s - step * 0.2, s + step * 0.2, s + step * 0.6], [0, 1, 1, 0]);
-                    articles[i].style.transform = 'translate3d(0, ' + y.toFixed(2) + 'px, 0)';
+                    articles[i].style.transform = "translate3d(0, " + y.toFixed(2) + "px, 0)";
                     articles[i].style.opacity = cardOpacity.toFixed(4);
-                    articles[i].style.visibility = cardOpacity < 0.002 ? 'hidden' : 'visible';
-                    headlines[i].style.transform = 'translate3d(0, ' + interpolate(progress, [s - step * 0.6, s, s + step * 0.6], [CONFIG.headlineYOffset, 0, -CONFIG.headlineYOffset]).toFixed(2) + 'px, 0)';
-                    bodies[i].style.transform = 'translate3d(0, ' + interpolate(progress, [s - step * 0.5, s, s + step * 0.5], [CONFIG.bodyYOffset, 0, -CONFIG.bodyYOffset]).toFixed(2) + 'px, 0)';
+                    articles[i].style.visibility = cardOpacity < 0.002 ? "hidden" : "visible";
+                    headlines[i].style.transform = "translate3d(0, " + interpolate(progress, [s - step * 0.6, s, s + step * 0.6], [CONFIG.headlineYOffset, 0, -CONFIG.headlineYOffset]).toFixed(2) + "px, 0)";
+                    bodies[i].style.transform = "translate3d(0, " + interpolate(progress, [s - step * 0.5, s, s + step * 0.5], [CONFIG.bodyYOffset, 0, -CONFIG.bodyYOffset]).toFixed(2) + "px, 0)";
                 }
             }
 
             let last = performance.now();
+
             function frame(now) {
                 const dt = Math.min(0.05, (now - last) / 1000);
                 last = now;
@@ -1592,13 +1675,12 @@
                 requestAnimationFrame(frame);
             }
 
-            window.addEventListener('resize', layout);
+            window.addEventListener("resize", layout);
             layout();
             render();
             requestAnimationFrame(frame);
         })();
     </script>
-    <!-- Research Section -->
 <section id="research" class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a] scroll-mt-20">
     <div class="max-w-7xl mx-auto px-6">
         <!-- Section Title -->
@@ -1775,6 +1857,136 @@
                 <div class="text-center py-12">
                     <div class="inline-block">
                         <i class="fas fa-spinner fa-spin text-3xl text-[#D4AF37]"></i>
+        <style>
+            .mission-scroll {
+                --gold: #D4AF37;
+                --ink: #1e1e1a;
+                --muted: #5a5a52;
+                --dial-size: min(52vw, 800px);
+                --dial-center: -0.02;
+                --number-margin: min(4vw, 64px);
+                position: relative;
+                width: 100%;
+                background: #f2f2f2;
+                overflow: clip;
+            }
+            .mission-scroll__kicker {
+                margin: 0 0 12px;
+                color: #D4AF37;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+            }
+            .mission-scroll__list { display: none; max-width: 40rem; margin: 0 auto; padding: 72px 24px 80px; }
+            .mission-scroll__listItem + .mission-scroll__listItem { margin-top: 28px; padding-top: 28px; border-top: 1px solid rgba(30, 30, 26, 0.08); }
+            .mission-scroll__listNum { color: #D4AF37; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; }
+            .mission-scroll__listTitle { margin: 8px 0 0; font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; }
+            .mission-scroll__listBody { margin: 8px 0 0; color: #5a5a52; font-size: 15px; line-height: 1.6; }
+            .mission-scroll__track { position: relative; width: 100%; height: 600vh; }
+            .mission-scroll__sticky { position: sticky; top: 5rem; height: calc(100vh - 5rem); width: 100%; overflow: hidden; }
+            .mission-scroll__dialZone {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 40%;
+                height: 100%;
+                pointer-events: none;
+                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+                mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+            }
+            .mission-scroll__dialBaseOuter,
+            .mission-scroll__dialBaseInner,
+            .mission-scroll__dialBaseCenter { position: absolute; top: 50%; border-radius: 50%; }
+            .mission-scroll__dialBaseOuter {
+                width: var(--dial-size);
+                height: var(--dial-size);
+                left: calc(var(--dial-size) * (var(--dial-center) - 0.5));
+                margin-top: calc(var(--dial-size) / -2);
+                background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f7f4ee 100%);
+                box-shadow: 30px 40px 90px rgba(30, 30, 26, 0.08), inset -6px -6px 16px rgba(255, 255, 255, 0.95), inset 6px 6px 16px rgba(30, 30, 26, 0.05);
+            }
+            .mission-scroll__dialBaseInner {
+                width: calc(var(--dial-size) * 0.76);
+                height: calc(var(--dial-size) * 0.76);
+                left: calc(var(--dial-size) * (var(--dial-center) - 0.38));
+                margin-top: calc(var(--dial-size) * 0.76 / -2);
+                background: radial-gradient(circle at 35% 35%, #ffffff 0%, #faf8f5 100%);
+                box-shadow: 12px 16px 40px rgba(30, 30, 26, 0.05), inset -4px -4px 10px rgba(255, 255, 255, 0.9);
+            }
+            .mission-scroll__dialBaseCenter {
+                width: calc(var(--dial-size) * 0.52);
+                height: calc(var(--dial-size) * 0.52);
+                left: calc(var(--dial-size) * (var(--dial-center) - 0.26));
+                margin-top: calc(var(--dial-size) * 0.52 / -2);
+                background: #fff;
+                box-shadow: 6px 8px 24px rgba(30, 30, 26, 0.04);
+            }
+            .mission-scroll__dialCanvas {
+                position: absolute;
+                width: var(--dial-size);
+                height: var(--dial-size);
+                left: calc(var(--dial-size) * (var(--dial-center) - 0.5));
+                top: 50%;
+                margin-top: calc(var(--dial-size) / -2);
+                transform-origin: 50% 50%;
+                will-change: transform;
+            }
+            .mission-scroll__marker {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 0;
+                height: 0;
+                transform-origin: 0 0;
+                transform: rotate(var(--angle)) translateX(calc(var(--dial-size) * 0.4375 + var(--number-margin)));
+            }
+            .mission-scroll__markerContent { position: absolute; left: 0; top: 50%; transform: translateY(-50%); }
+            .mission-scroll__markerNum {
+                display: inline-block;
+                font-family: 'Playfair Display', serif;
+                font-size: 72px;
+                font-weight: 700;
+                letter-spacing: -0.03em;
+                transform-origin: left center;
+                will-change: transform, color, opacity;
+            }
+            .mission-scroll__textZone {
+                position: absolute;
+                left: 38%;
+                width: 54%;
+                top: 50%;
+                transform: translateY(-28px);
+                z-index: 2;
+            }
+            .mission-scroll__textViewport { position: relative; height: 190px; width: 100%; overflow: hidden; }
+            .mission-scroll__reason { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-start; opacity: 0; will-change: transform, opacity; }
+            .mission-scroll__headline {
+                margin: 0;
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(36px, 3.4vw, 56px);
+                font-weight: 700;
+                line-height: 1.1;
+                color: #1e1e1a;
+                will-change: transform;
+            }
+            .mission-scroll__body { margin: 16px 0 0; max-width: 36rem; color: #5a5a52; font-size: 18px; line-height: 1.6; will-change: transform; }
+            @media (max-width: 1100px) { .mission-scroll__textZone { left: 42%; width: 52%; } }
+            @media (max-width: 768px) {
+                .mission-scroll { --dial-size: min(72vw, 320px); --dial-center: -0.16; --number-margin: 8px; }
+                .mission-scroll__sticky { top: 5rem; height: calc(100svh - 5rem); }
+                .mission-scroll__dialZone { width: 42%; }
+                .mission-scroll__markerNum { font-size: 32px; }
+                .mission-scroll__textZone { left: 40%; width: 56%; padding-right: 20px; }
+                .mission-scroll__textViewport { height: 160px; }
+                .mission-scroll__headline { font-size: 28px; }
+                .mission-scroll__body { margin-top: 10px; font-size: 15px; line-height: 1.5; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .mission-scroll__track { display: none !important; height: auto !important; }
+                .mission-scroll__list { display: block !important; }
+            }
+        </style>
                     </div>
                     <p class="mt-3 text-[#8a8a82]">Loading story...</p>
                 </div>
@@ -1782,14 +1994,21 @@
         </div>
     </div>
 </div>
-
-<!-- Video Modal -->
-<div id="videoModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeVideoModal()"></div>
-    <div class="relative max-w-4xl w-full bg-black rounded-2xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
-        <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-10 text-white hover:text-[#D4AF37] bg-black/50 rounded-full p-2 transition-all duration-300 hover:scale-110">
-            <i class="fas fa-times text-xl"></i>
-        </button>
+        {{--
+                    <style>
+                        .mission-scroll {
+                            --gold: #D4AF37;
+                            --ink: #1e1e1a;
+                            --muted: #5a5a52;
+                            --dial-size: min(52vw, 800px);
+                            --dial-center: -0.02;
+                            --number-margin: min(4vw, 64px);
+                            position: relative;
+                            width: 100%;
+                            background: #f2f2f2;
+                            overflow: clip;
+                        }
+                        .mission-scroll__kicker {
         <div id="videoContainer" class="aspect-video">
             <!-- Video will be loaded here -->
         </div>
@@ -2166,35 +2385,335 @@ document.addEventListener('keydown', function(e) {
     </section>
     --}}
 
-    <section id="news" class="scroll-mt-20 bg-[#fbf9f6] pb-16 pt-16 text-[#1b1c1a] lg:pb-28 lg:pt-24">
+    <section id="news" class="news-section scroll-mt-20">
+        <style>
+            .news-section {
+                background: #fbf9f6;
+                color: #1b1c1a;
+                padding: 56px 0 64px;
+            }
+            .news-wrap {
+                width: min(1690px, calc(100% - 48px));
+                margin: 0 auto;
+            }
+            .news-kicker {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .news-kicker-dash {
+                width: 24px;
+                height: 2px;
+                background: #89351d;
+                flex: none;
+            }
+            .news-kicker p {
+                margin: 0;
+                font-family: "Space Grotesk", Inter, sans-serif;
+                font-size: 14px;
+                font-weight: 700;
+                line-height: 16px;
+                letter-spacing: 1.1px;
+                text-transform: uppercase;
+                color: #89351d;
+            }
+            .news-heading {
+                margin: 4px 0 0;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: clamp(32px, 3.2vw, 48px);
+                font-weight: 700;
+                line-height: 1.12;
+                letter-spacing: -0.6px;
+                color: #1b1c1a;
+            }
+            .news-layout {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                gap: 28px;
+                margin-top: 28px;
+            }
+            .news-feature-media {
+                position: relative;
+                display: block;
+                width: 100%;
+                padding: 0;
+                border: 0;
+                background: #efeae3;
+                border-radius: 8px;
+                overflow: hidden;
+                aspect-ratio: 16 / 7;
+                cursor: pointer;
+            }
+            .news-feature-media img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+            .news-feature-badge {
+                position: absolute;
+                top: 12px;
+                left: 12px;
+                padding: 6px 12px;
+                border-radius: 999px;
+                background: #fbf9f6;
+                color: #7f2f1a;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: 11px;
+                font-weight: 700;
+                line-height: 1;
+                letter-spacing: 0.4px;
+            }
+            .news-feature-meta {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                margin-top: 12px;
+            }
+            .news-feature-cat,
+            .news-row-cat {
+                margin: 0;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-weight: 700;
+                color: #7f2f1a;
+                letter-spacing: 0.4px;
+                text-transform: uppercase;
+            }
+            .news-feature-cat { font-size: 12px; line-height: 16px; }
+            .news-feature-date,
+            .news-row-date {
+                margin: 0;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-weight: 400;
+                color: #59554f;
+            }
+            .news-feature-date { font-size: 12px; line-height: 16px; }
+            .news-feature-title {
+                margin: 8px 0 0;
+                max-width: 640px;
+                font-family: Poppins, Inter, sans-serif;
+                font-size: clamp(22px, 1.9vw, 28px);
+                font-weight: 600;
+                line-height: 1.25;
+                color: #2f2f2f;
+            }
+            .news-feature-excerpt {
+                margin: 8px 0 0;
+                max-width: 640px;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 1.55;
+                color: #59554f;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .news-story-btn {
+                display: inline-flex;
+                align-items: center;
+                margin-top: 14px;
+                padding: 8px 18px;
+                border: 0;
+                border-radius: 9999px;
+                background: #b36855;
+                color: #fff;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: 13px;
+                font-weight: 600;
+                line-height: 18px;
+                letter-spacing: -0.35px;
+                cursor: pointer;
+            }
+            .news-story-btn:hover { background: #a35b49; }
+            .news-story-icon {
+                position: relative;
+                width: 14px;
+                height: 14px;
+                margin-left: 13px;
+                flex: none;
+            }
+            .news-story-icon img {
+                position: absolute;
+                max-width: none;
+            }
+            .news-story-icon img:first-child { left: 1.28px; top: 1.28px; }
+            .news-story-icon img:last-child { left: 2.45px; top: 1.28px; }
+            .news-side { min-width: 0; }
+            .news-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 16px;
+                width: 100%;
+                margin: 0;
+                padding: 16px 0;
+                border: 0;
+                border-top: 1px solid #d5cec2;
+                background: transparent;
+                color: inherit;
+                text-align: left;
+                cursor: pointer;
+                font: inherit;
+            }
+            .news-row-copy { min-width: 0; flex: 1; }
+            .news-row-cat, .news-row-date { display: block; }
+            .news-row-cat { font-size: 11px; line-height: 14px; }
+            .news-row-titleline {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                margin-top: 8px;
+            }
+            .news-row-title {
+                margin: 0;
+                flex: 1;
+                min-width: 0;
+                font-family: Poppins, Inter, sans-serif;
+                font-size: clamp(16px, 1.25vw, 18px);
+                font-weight: 600;
+                line-height: 1.25;
+                color: #2f2f2f;
+            }
+            .news-row-titleline img { flex: none; margin-top: 2px; max-width: none; }
+            .news-row-excerpt {
+                margin: 8px 0 0;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 1.6;
+                color: #59554f;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .news-row-date { margin-top: 10px; font-size: 11px; line-height: 14px; }
+            .news-row-thumb {
+                width: 128px;
+                height: 112px;
+                border-radius: 8px;
+                object-fit: cover;
+                flex: none;
+                background: #efeae3;
+            }
+            .news-row-thumb--empty { display: block; }
+            .news-view {
+                display: flex;
+                justify-content: center;
+                margin-top: 28px;
+            }
+            .news-empty {
+                margin-top: 48px;
+                text-align: center;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: 14px;
+                color: #5f5e5e;
+            }
+            @media (max-width: 720px) {
+                .news-section { padding: 40px 0 48px; }
+                .news-wrap { width: min(1690px, calc(100% - 32px)); }
+                .news-row { gap: 12px; padding: 14px 0; }
+                .news-row-thumb,
+                .news-row-thumb--empty { width: 96px; height: 84px; }
+            }
+            @media (min-width: 1024px) {
+                .news-section { padding: 72px 0 80px; }
+                .news-layout {
+                    grid-template-columns: minmax(0, 784fr) minmax(0, 771fr);
+                    column-gap: clamp(28px, 4vw, 64px);
+                    margin-top: 40px;
+                    align-items: start;
+                }
+            }
+        </style>
         @php
             $newsContent = \App\Models\Setting::getNewsContent();
             $newsItems = $newsItems ?? collect();
-        @endphp
-        <div class="mx-auto w-full max-w-[1648px] px-6 lg:px-12">
-            <div class="max-w-xl">
-                <div class="flex items-center gap-2">
-                    <span class="block h-0.5 w-6 shrink-0 bg-[#89351d]" aria-hidden="true"></span>
-                    <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#89351d]">{{ $newsContent['label'] }}</p>
-                </div>
-                <h2 class="pt-1 font-jakarta text-[2rem] font-bold leading-tight tracking-[-0.6px] text-[#1b1c1a] sm:text-[40px] sm:leading-[48px] sm:tracking-[-1px]">{{ $newsContent['heading'] }}</h2>
-                <p class="max-w-xl pt-2 font-jakarta text-base leading-6 text-[#5f5e5e]">{{ $newsContent['intro'] }}</p>
-            </div>
+            $featuredNews = $newsItems->first();
+            $sideNews = $newsItems->slice(1)->values();
+            $newsHeading = trim((string) ($newsContent['heading'] ?? 'Latest News and Activities'));
+            $newsHeadingHtml = e($newsHeading);
+            if (preg_match('/^(Latest News)\s+(and Activities)$/i', $newsHeading, $newsHeadingParts)) {
+                $newsHeadingHtml = e($newsHeadingParts[1]).'<br>'.e($newsHeadingParts[2]);
+            }
+            $newsDate = function ($item) {
+                $date = $item->published_at ?? $item->created_at;
 
-            @if($newsItems->isNotEmpty())
-                <div class="mt-12 grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-[46px]">
-                    @foreach($newsItems as $item)
-                        @include('partials.news-card', ['item' => $item])
-                    @endforeach
+                return $date ? mb_strtoupper($date->format('d M Y')) : null;
+            };
+        @endphp
+        <div class="news-wrap">
+            <div class="news-kicker">
+                <span class="news-kicker-dash" aria-hidden="true"></span>
+                <p>{{ $newsContent['label'] }}</p>
+            </div>
+            <h2 class="news-heading">{!! $newsHeadingHtml !!}</h2>
+
+            @if($featuredNews)
+                <div class="news-layout">
+                    <article>
+                        <button type="button" class="news-feature-media" onclick="openNewsDetail({{ $featuredNews->id }})">
+                            @if($featuredNews->image_url)
+                                <img src="{{ $featuredNews->image_url }}" alt="{{ $featuredNews->title }}">
+                            @endif
+                            <span class="news-feature-badge">FEATURED</span>
+                        </button>
+                        <div class="news-feature-meta">
+                            <p class="news-feature-cat">{{ $featuredNews->badgeLabel() }}</p>
+                            @if($newsDate($featuredNews))
+                                <p class="news-feature-date">{{ $newsDate($featuredNews) }}</p>
+                            @endif
+                        </div>
+                        <h3 class="news-feature-title">{{ $featuredNews->title }}</h3>
+                        @if($featuredNews->excerpt)
+                            <p class="news-feature-excerpt">{{ $featuredNews->excerpt }}</p>
+                        @endif
+                        <button type="button" class="news-story-btn" onclick="openNewsDetail({{ $featuredNews->id }})">
+                            Read the story
+                            <span class="news-story-icon" aria-hidden="true">
+                                <img src="{{ asset('images/news-story-arrow-a.svg') }}" alt="" width="11.4333" height="11.4333">
+                                <img src="{{ asset('images/news-story-arrow-b.svg') }}" alt="" width="10.2667" height="10.2667">
+                            </span>
+                        </button>
+                    </article>
+
+                    @if($sideNews->isNotEmpty())
+                        <div class="news-side">
+                            @foreach($sideNews as $item)
+                                <button type="button" class="news-row" onclick="openNewsDetail({{ $item->id }})">
+                                    <span class="news-row-copy">
+                                        <span class="news-row-cat">{{ $item->badgeLabel() }}</span>
+                                        <span class="news-row-titleline">
+                                            <span class="news-row-title">{{ $item->title }}</span>
+                                            <img src="{{ asset('images/news-arrow-up-right.svg') }}" alt="" width="22" height="22">
+                                        </span>
+                                        @if($item->excerpt)
+                                            <span class="news-row-excerpt">{{ $item->excerpt }}</span>
+                                        @endif
+                                        @if($newsDate($item))
+                                            <span class="news-row-date">{{ $newsDate($item) }}</span>
+                                        @endif
+                                    </span>
+                                    @if($item->image_url)
+                                        <img class="news-row-thumb" src="{{ $item->image_url }}" alt="">
+                                    @else
+                                        <span class="news-row-thumb news-row-thumb--empty" aria-hidden="true"></span>
+                                    @endif
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
-                <div class="mt-12 flex justify-center">
+                <div class="news-view">
                     <a href="{{ route('news.index') }}" class="gallery-explore">
-                        View All Updates
+                        View all articles
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                     </a>
                 </div>
             @else
-                <p class="mt-12 text-center font-jakarta text-sm text-[#5f5e5e]">News will appear here once a link is added.</p>
+                <p class="news-empty">News will appear here once a link is added.</p>
             @endif
         </div>
     </section>
@@ -2327,6 +2846,539 @@ document.addEventListener('keydown', function(e) {
 <style>
 #projects {
     overflow: hidden !important;
+}
+
+.initiatives-section {
+    position: relative;
+    isolation: isolate;
+    min-height: 760px;
+    overflow: hidden;
+    padding: 160px 0 112px;
+    background: #f7f7f5;
+    color: #111111;
+}
+
+.initiatives-cubes {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    animation-play-state: paused;
+}
+
+.initiatives-section.is-visible .initiatives-cubes {
+    animation-play-state: running;
+}
+
+.initiatives-section .hero-cubes-b {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.initiatives-content {
+    position: relative;
+    z-index: 1;
+}
+
+.initiatives-heading {
+    max-width: 1548px;
+    margin: 0 auto;
+    padding: 0 24px;
+    transition: opacity 650ms ease, transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.initiatives-kicker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.initiatives-kicker > span {
+    width: 24px;
+    height: 2px;
+    flex: 0 0 auto;
+    background: #89351d;
+}
+
+.initiatives-kicker p {
+    margin: 0;
+    color: #89351d;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+}
+
+.initiatives-heading h2 {
+    margin: 12px 0 0;
+    color: #1b1c1a;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.initiatives-viewport {
+    width: 100%;
+    margin-top: 36px;
+    padding-block: 75px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+    touch-action: pan-x;
+}
+
+.initiatives-viewport::-webkit-scrollbar {
+    display: none;
+}
+
+.initiatives-viewport:focus-visible {
+    outline: 2px solid #89351d;
+    outline-offset: -2px;
+}
+
+.initiatives-track {
+    display: flex;
+    width: max-content;
+    gap: 20px;
+    margin-inline: auto;
+    align-items: flex-start;
+}
+
+.initiative-card {
+    position: relative;
+    flex: 0 0 calc((100vw - 120px) / 5.2);
+    width: calc((100vw - 120px) / 5.2);
+    height: 350px;
+    color: #111111;
+    text-align: center;
+    scroll-snap-align: center;
+    transition: opacity 650ms ease, transform 650ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+    transition-delay: calc(var(--initiative-index, 0) * 70ms);
+    overflow: visible;
+}
+
+.initiative-card:hover {
+    transform: translateY(-4px);
+    z-index: 20;
+}
+
+.project-default {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.25s ease, transform 0.35s ease;
+}
+
+.initiative-card-surface {
+    position: absolute;
+    inset: 38px 0 0;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.3);
+    background: color-mix(in srgb, var(--initiative-bg, #ffffff) 18%, transparent);
+    box-shadow: 0 16px 38px rgba(31, 38, 48, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.62);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
+    backdrop-filter: blur(20px) saturate(145%);
+}
+
+.initiative-card:nth-child(1) .initiative-card-surface,
+.initiative-card:nth-child(5) .initiative-card-surface {
+    inset-block: 38px 0;
+}
+
+.initiative-mark {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    display: flex;
+    width: 92px;
+    height: 92px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    border-radius: 50%;
+    background: #ffffff;
+    transform: translateX(-50%);
+}
+
+.initiative-card:nth-child(1) .initiative-mark,
+.initiative-card:nth-child(5) .initiative-mark {
+    top: 0;
+}
+
+.initiative-mark img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.initiative-mark > span {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #101417;
+    color: #f3c64e;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.initiative-card h3 {
+    position: absolute;
+    top: 128px;
+    right: 12px;
+    left: 12px;
+    margin: 0;
+    color: #111111;
+    font-family: Poppins, "Plus Jakarta Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.initiative-card:nth-child(1) h3,
+.initiative-card:nth-child(5) h3 {
+    top: 128px;
+}
+
+.initiative-card > p,
+.initiative-card .project-default > p {
+    position: absolute;
+    top: 178px;
+    left: 50%;
+    width: calc(100% - 32px);
+    max-width: calc(100% - 44px);
+    max-height: 72px;
+    margin: 0;
+    overflow: hidden;
+    color: #46433f;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    transform: translateX(-50%);
+}
+
+.initiative-card:nth-child(1) > p,
+.initiative-card:nth-child(1) .project-default > p,
+.initiative-card:nth-child(5) > p,
+.initiative-card:nth-child(5) .project-default > p {
+    top: 178px;
+}
+
+.initiative-read-more {
+    position: absolute;
+    top: 267px;
+    left: 50%;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #89351d;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transform: translateX(-50%);
+}
+
+.initiative-card:nth-child(1) .initiative-read-more,
+.initiative-card:nth-child(5) .initiative-read-more {
+    top: 267px;
+}
+
+.tooltip-container .project-default {
+    opacity: 1;
+    transition: opacity 0.25s ease, transform 0.35s ease;
+}
+
+.tooltip-container:hover .project-default,
+.tooltip-container.is-open .project-default {
+    opacity: 0;
+    transform: scale(0.97);
+    pointer-events: none;
+}
+
+.initiative-card:hover,
+.initiative-card.is-open {
+    transition-delay: 0s;
+}
+
+.tooltip-popup {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(350px, calc(100% + 40px));
+    min-height: 280px;
+    padding: 20px 18px 18px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: 18px;
+    box-shadow: 0 22px 45px rgba(17, 17, 17, 0.18);
+    text-align: left;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.84);
+    transition: opacity 0.28s ease, visibility 0.28s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 30;
+}
+
+.tooltip-container:hover .tooltip-popup,
+.tooltip-container.is-open .tooltip-popup {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.project-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.project-popup-content h4 {
+    margin: 0;
+    color: #111111;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.project-popup-content p {
+    margin: 0;
+    color: #46433f;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow: auto;
+}
+
+.project-popup-content a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: fit-content;
+    margin-top: 4px;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #89351d;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.project-popup-content a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.project-popup-content .project-visit-link img {
+    display: block;
+    width: 18px;
+    height: auto;
+}
+
+.popup-image {
+    display: flex;
+    width: 100%;
+    height: 110px;
+    align-items: center;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    background: color-mix(in srgb, var(--initiative-bg, #ffffff) 26%, rgba(255, 255, 255, 0.9));
+    overflow: hidden;
+}
+
+.popup-image img {
+    display: block;
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+}
+
+.popup-image span {
+    display: grid;
+    place-items: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #101417;
+    color: #f3c64e;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.initiative-read-more:hover span {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.initiative-read-more:focus-visible {
+    border-radius: 2px;
+    outline: 2px solid #89351d;
+    outline-offset: 4px;
+}
+
+.initiative-read-more img {
+    display: block;
+}
+
+.initiatives-empty {
+    margin: 0;
+    padding: 40px 24px;
+    color: #5f5e5e;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+}
+
+.initiatives-reveal-ready #projects:not(.is-visible) .initiatives-heading,
+.initiatives-reveal-ready #projects:not(.is-visible) .initiative-card {
+    opacity: 0;
+    transform: translateY(42px);
+}
+
+.initiatives-reveal-ready #projects.is-visible .initiatives-heading,
+.initiatives-reveal-ready #projects.is-visible .initiative-card {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 1919px) {
+    .initiatives-track {
+        margin-inline: 0;
+        padding-inline: 24px;
+    }
+}
+
+@media (max-width: 767px) {
+    .initiatives-section {
+        min-height: 0;
+        padding: 96px 0 72px;
+    }
+
+    .initiatives-heading h2 {
+        font-size: 34px;
+        line-height: 1.15;
+    }
+
+    .initiatives-viewport {
+        margin-top: 28px;
+        scroll-padding-inline: 24px;
+    }
+
+    .initiatives-track {
+        gap: 20px;
+        padding-inline: 24px;
+    }
+
+    .initiative-card {
+        flex-basis: 170px;
+        width: 170px;
+        height: 330px;
+    }
+
+    .initiative-card-surface {
+        inset: 34px 0 0;
+    }
+
+    .initiative-card:nth-child(1) .initiative-card-surface,
+    .initiative-card:nth-child(5) .initiative-card-surface {
+        inset-block: 44px 0;
+    }
+
+    .initiative-mark,
+    .initiative-mark img,
+    .initiative-mark > span {
+        width: 72px;
+        height: 72px;
+    }
+
+    .initiative-card:nth-child(1) .initiative-mark,
+    .initiative-card:nth-child(5) .initiative-mark {
+        top: 0;
+    }
+
+    .initiative-card h3 {
+        top: 125px;
+        font-size: 14px;
+    }
+
+    .initiative-card:nth-child(1) h3,
+    .initiative-card:nth-child(5) h3 {
+        top: 125px;
+    }
+
+    .initiative-card > p,
+    .initiative-card .project-default > p {
+        top: 170px;
+        width: calc(100% - 20px);
+        max-height: 50px;
+        font-size: 11px;
+    }
+
+    .initiative-card:nth-child(1) > p,
+    .initiative-card:nth-child(1) .project-default > p,
+    .initiative-card:nth-child(5) > p,
+    .initiative-card:nth-child(5) .project-default > p {
+        top: 170px;
+    }
+
+    .initiative-read-more {
+        top: 262px;
+        font-size: 11px;
+    }
+
+    .initiative-card:nth-child(1) .initiative-read-more,
+    .initiative-card:nth-child(5) .initiative-read-more {
+        top: 262px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+    .initiative-card {
+        flex-basis: calc((100vw - 88px) / 3);
+        width: calc((100vw - 88px) / 3);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .initiatives-cubes,
+    .initiative-card,
+    .initiatives-heading {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .initiatives-reveal-ready #projects:not(.is-visible) .initiatives-heading,
+    .initiatives-reveal-ready #projects:not(.is-visible) .initiative-card {
+        opacity: 1;
+        transform: none;
+    }
 }
 
 .carousel-container {
@@ -2713,6 +3765,80 @@ document.addEventListener('keydown', function(e) {
     border-radius: 4px;
 }
 
+#projects .tooltip-popup {
+    width: min(460px, calc(100vw - 32px));
+    min-height: 430px;
+    max-height: min(520px, calc(100vh - 32px));
+    padding: 24px;
+    color: #1e1e1a;
+    background: rgba(255, 255, 255, 0.56);
+    border-color: rgba(255, 255, 255, 0.78);
+    border-radius: 16px;
+    box-shadow: 0 22px 48px rgba(31, 38, 48, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(28px) saturate(155%);
+    backdrop-filter: blur(28px) saturate(155%);
+    overflow: auto;
+}
+
+#projects .initiative-card {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+#projects .initiative-card-surface {
+    border-color: rgba(255, 255, 255, 0.68);
+    background: rgba(255, 255, 255, 0.48);
+    background: color-mix(in srgb, var(--initiative-bg, #ffffff) 20%, rgba(255, 255, 255, 0.4));
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
+    backdrop-filter: blur(20px) saturate(145%);
+}
+
+#projects .project-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+#projects .popup-image {
+    flex: 0 0 126px;
+    width: 126px;
+    height: 126px;
+    align-self: center;
+    margin: 0 0 4px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.65);
+    border-radius: 50%;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+#projects .popup-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+#projects .project-popup-content p {
+    max-height: 190px;
+    line-height: 1.65;
+}
+
+@media (max-width: 767px) {
+    .initiatives-viewport {
+        padding-block: 32px;
+    }
+
+    #projects .tooltip-popup {
+        min-height: 390px;
+        padding: 20px;
+    }
+}
+
 .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -2864,7 +3990,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let suppressClick = false;
     let paused = false;
     let direction = 1;
-    const autoSpeed = 30; // pixels per second, matching the existing 30s carousel rhythm
+    const autoSpeed = 18; // slower drift to match the Figma motion cadence more closely
 
     const measure = () => {
         maxPosition = Math.max(0, track.scrollWidth - carousel.clientWidth);
