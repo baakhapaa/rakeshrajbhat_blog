@@ -360,6 +360,7 @@
             nav.style.rowGap = '';
             nav.style.flexWrap = '';
             root.style.setProperty('--site-header-extra', '0px');
+            root.style.setProperty('--site-header-height', Math.round(header.getBoundingClientRect().height) + 'px');
             if (!desktop) {
                 root.dispatchEvent(new CustomEvent('site-header:fit'));
                 return;
@@ -390,6 +391,7 @@
                 extra = 0;
             }
             root.style.setProperty('--site-header-extra', extra + 'px');
+            root.style.setProperty('--site-header-height', Math.round(header.getBoundingClientRect().height) + 'px');
             root.dispatchEvent(new CustomEvent('site-header:fit'));
         }
 

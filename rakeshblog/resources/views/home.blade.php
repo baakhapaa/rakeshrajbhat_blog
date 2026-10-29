@@ -4122,6 +4122,35 @@ document.addEventListener('keydown', function(e) {
         min-height: 390px;
         padding: 20px;
     }
+
+    #projects:has(.initiative-card.is-open) {
+        overflow: visible !important;
+    }
+
+    #projects:has(.initiative-card.is-open) .initiatives-section,
+    #projects:has(.initiative-card.is-open) .initiatives-viewport,
+    #projects:has(.initiative-card.is-open) .carousel-track {
+        overflow: visible;
+    }
+
+    #projects:has(.initiative-card.is-open) .initiatives-viewport,
+    #projects:has(.initiative-card.is-open) .carousel-container {
+        mask-image: none;
+        -webkit-mask-image: none;
+    }
+
+    #projects .initiative-card:first-child .tooltip-popup {
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.85);
+    }
+
+    #projects .initiative-card:first-child.is-open .tooltip-popup {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    html:has(#projects .initiative-card.is-open) {
+        overflow-x: clip;
+    }
 }
 
 .line-clamp-2 {
@@ -4276,7 +4305,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let dragged = false;
     let suppressClick = false;
     let paused = false;
-    let stoppedByTap = false;
+    let ignoreClicksUntil = 0;
     let direction = 1;
     const autoSpeed = 18; // slower drift to match the Figma motion cadence more closely
     const mobileQuery = window.matchMedia('(max-width: 767px)');
@@ -4330,26 +4359,67 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const isProjectLink = (event) => Boolean(event.target.closest('a, button'));
 
+    const projectCards = track.querySelectorAll('.tooltip-container');
+
+    const syncMobilePause = () => {
+        if (!mobileQuery.matches) return;
+        paused = Boolean(track.querySelector('.tooltip-container.is-open'));
+        lastFrame = performance.now();
+    };
+
+    const closeMobilePopups = () => {
+        projectCards.forEach((card) => card.classList.remove('is-open'));
+        syncMobilePause();
+    };
+
+    const centerCard = (card) => {
+        measure();
+        const carouselBox = carousel.getBoundingClientRect();
+        const cardBox = card.getBoundingClientRect();
+        const delta = (cardBox.left + cardBox.width / 2) - (carouselBox.left + carouselBox.width / 2);
+        position = Math.min(Math.max(position + delta, 0), maxPosition);
+        render();
+    };
+
+    const openMobilePopup = (card) => {
+        if (!card.querySelector('.tooltip-popup')) return false;
+        projectCards.forEach((item) => item.classList.remove('is-open'));
+        centerCard(card);
+        card.classList.add('is-open');
+        syncMobilePause();
+        return true;
+    };
+
+    const releaseCard = (event) => {
+        if (!mobileQuery.matches) return;
+        pointerId = null;
+        track.classList.remove('is-dragging');
+        if (!track.querySelector('.tooltip-container.is-open')) paused = false;
+        lastFrame = performance.now();
+    };
+
     carousel.addEventListener('pointerenter', () => {
         if (!mobileQuery.matches) paused = true;
     });
     carousel.addEventListener('pointerleave', () => {
-        if (mobileQuery.matches && stoppedByTap) return;
         if (!mobileQuery.matches) paused = false;
     });
 
-    track.querySelectorAll('.tooltip-container').forEach((card) => {
-        card.addEventListener('mouseenter', () => card.classList.add('is-open'));
-        card.addEventListener('mouseleave', () => card.classList.remove('is-open'));
+    projectCards.forEach((card) => {
+        card.addEventListener('mouseenter', () => {
+            if (mobileQuery.matches) return;
+            card.classList.add('is-open');
+        });
+        card.addEventListener('mouseleave', () => {
+            if (mobileQuery.matches) return;
+            card.classList.remove('is-open');
+        });
     });
 
     track.addEventListener('pointerdown', (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
-        if (mobileQuery.matches && event.target.closest('.initiative-card')) {
-            stoppedByTap = true;
-            paused = true;
-        }
-        if (isProjectLink(event)) return;
+        if (mobileQuery.matches && event.pointerType === 'mouse' && performance.now() < ignoreClicksUntil) return;
+        if (isProjectLink(event) && !(mobileQuery.matches && event.target.closest('.initiative-card'))) return;
 
         measure();
         pointerId = event.pointerId;
@@ -4372,21 +4442,60 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
     });
 
-    track.addEventListener('pointerup', finishDrag);
-    track.addEventListener('pointercancel', finishDrag);
-    track.addEventListener('lostpointercapture', finishDrag);
+    const endPointer = (event) => {
+        finishDrag();
+        releaseCard(event);
+    };
+
+    track.addEventListener('pointerup', endPointer);
+    track.addEventListener('pointercancel', endPointer);
+    track.addEventListener('lostpointercapture', () => {
+        pointerId = null;
+        track.classList.remove('is-dragging');
+    });
+    window.addEventListener('pointerup', endPointer);
+    window.addEventListener('pointercancel', endPointer);
 
     track.addEventListener('click', (event) => {
-        if (isProjectLink(event)) return;
         if (suppressClick) {
             event.preventDefault();
             event.stopPropagation();
+            return;
         }
+        if (!mobileQuery.matches) return;
+
+        if (performance.now() < ignoreClicksUntil) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+
+        const card = event.target.closest('.initiative-card');
+        if (!card || !track.contains(card)) return;
+        if (!card.classList.contains('is-open') && !card.querySelector('.tooltip-popup')) return;
+        if (event.target.closest('.tooltip-popup a[href]')) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        ignoreClicksUntil = performance.now() + 450;
+
+        if (card.classList.contains('is-open')) {
+            closeMobilePopups();
+            return;
+        }
+        openMobilePopup(card);
     }, true);
+
+    document.addEventListener('click', (event) => {
+        if (!mobileQuery.matches || performance.now() < ignoreClicksUntil) return;
+        if (event.target.closest('.initiative-card, .tooltip-popup')) return;
+        if (!track.querySelector('.tooltip-container.is-open')) return;
+        closeMobilePopups();
+    });
 
     window.addEventListener('resize', () => {
         if (!mobileQuery.matches) {
-            stoppedByTap = false;
+            closeMobilePopups();
             paused = carousel.matches(':hover');
         }
         measure();

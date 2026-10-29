@@ -5,8 +5,8 @@
 @section('meta_description', $newsContent['intro'])
 
 @section('content')
-<section class="bg-[#fbf9f6] py-20 text-[#1b1c1a] md:py-28">
-    <div class="max-w-7xl mx-auto px-6">
+<section class="news-page text-[#1b1c1a]">
+    <div class="news-page-inner">
         <div class="mb-16 max-w-xl">
             <div class="flex items-center gap-2">
                 <span class="block h-0.5 w-6 shrink-0 bg-[#89351d]" aria-hidden="true"></span>
@@ -32,14 +32,50 @@
             </div>
         @endif
 
-        <div class="text-center mt-16">
-            <a href="{{ route('home') }}#news" class="inline-flex items-center gap-2 text-[#8a8a82] hover:text-[#D4AF37] transition font-medium">
+        <div class="news-back">
+            <a href="{{ route('home') }}#news">
                 <i class="fas fa-arrow-left text-xs"></i>
                 Back to Home
             </a>
         </div>
     </div>
 </section>
+<style>
+    header ~ main > .news-page { margin-top: 0; }
+    .news-page {
+        background: #fbf9f6;
+        padding: calc(var(--site-header-height, 88px) + clamp(32px, 2.4vw, 56px)) clamp(20px, 3vw, 40px) clamp(72px, 6vw, 112px);
+    }
+    .news-page-inner {
+        width: min(1280px, 100%);
+        margin: 0 auto;
+    }
+    @media (min-width: 1600px) {
+        .news-page {
+            padding-top: calc(var(--site-header-height, 120px) + clamp(48px, 3vw, 88px));
+            padding-left: clamp(32px, 4vw, 80px);
+            padding-right: clamp(32px, 4vw, 80px);
+        }
+        .news-page-inner { width: min(1440px, 100%); }
+    }
+    @media (min-width: 2200px) {
+        .news-page {
+            padding-top: calc(var(--site-header-height, 140px) + 96px);
+        }
+        .news-page-inner { width: min(1600px, calc(100% - 160px)); }
+    }
+    .news-back { margin-top: 64px; text-align: center; }
+    .news-back a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #89351d;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .news-back a:hover { color: #b36855; }
+</style>
 
 @include('partials.news-modal')
 @endsection
