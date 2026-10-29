@@ -63,20 +63,20 @@
     min-height: 100vh;
     background: #fff;
     color: #111;
-    padding: 8rem 0 5rem;
+    padding: var(--page-top) 0 var(--section-y);
 }
 
 .gallery-index-wrap {
-    width: min(1640px, calc(100% - 2rem));
+    width: var(--site-width);
     margin-inline: auto;
 }
 
 .gallery-index-back {
     display: inline-block;
-    margin-bottom: 1.75rem;
+    margin-bottom: clamp(20px, 1vw + 12px, 36px);
     color: #89351d;
     font-family: "Space Grotesk", Inter, sans-serif;
-    font-size: 14px;
+    font-size: var(--kicker-size);
     font-weight: 700;
     letter-spacing: 1.1px;
     line-height: 16px;
@@ -101,21 +101,22 @@
     margin: 0;
     color: #89351d;
     font-family: "Space Grotesk", Inter, sans-serif;
-    font-size: 14px;
+    font-size: var(--kicker-size);
     font-weight: 700;
     letter-spacing: 1.1px;
-    line-height: 16px;
+    line-height: 1.15;
     text-transform: uppercase;
 }
 
 .gallery-index-title {
-    max-width: 760px;
-    margin: 16px 0 0;
+    max-width: 16em;
+    margin: var(--kicker-gap) 0 0;
     color: #111;
-    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
-    font-size: clamp(1.75rem, 3.2vw, 46px);
-    font-weight: 600;
-    line-height: 1.15;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: var(--page-title-size);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
 }
 
 .gallery-index-empty {
@@ -124,23 +125,28 @@
 }
 
 .gallery-index-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(320px, 18vw + 160px, 560px)), 1fr));
+    gap: clamp(20px, 1.4vw + 10px, 40px);
+    margin-top: var(--heading-gap);
 }
 
 .gallery-index-card {
     display: flex;
     gap: 2px;
-    width: min(100%, 480px);
-    height: 292px;
-    border-radius: 8px;
+    min-width: 0;
+    aspect-ratio: 480 / 292;
+    border-radius: clamp(8px, 0.6vw, 14px);
     overflow: hidden;
     background: #f7f4ee;
     text-decoration: none;
     color: inherit;
 }
+
+.gallery-index-card img { transition: scale 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+.gallery-index-card:hover img { scale: 1.05; }
+.gallery-index-count img { transition: none; }
+.gallery-index-card:hover .gallery-index-count img { scale: 1; }
 
 .gallery-index-lead {
     position: relative;
@@ -204,9 +210,9 @@
 .gallery-index-copy h2 {
     margin: 0;
     color: #fff;
-    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
-    font-size: clamp(1.25rem, 1.6vw, 26px);
-    font-weight: 600;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: clamp(19px, 0.5vw + 15px, 28px);
+    font-weight: 700;
     line-height: 1.1;
 }
 
@@ -225,13 +231,4 @@
     min-height: 0;
 }
 
-@media (min-width: 900px) {
-    .gallery-index-wrap {
-        width: min(1640px, calc(100% - 4rem));
-    }
-
-    .gallery-index-grid {
-        gap: 28px;
-    }
-}
 </style>
