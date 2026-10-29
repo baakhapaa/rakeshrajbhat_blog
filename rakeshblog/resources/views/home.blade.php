@@ -2029,7 +2029,7 @@ document.addEventListener('keydown', function(e) {
     <section id="gallery" class="gallery-section scroll-mt-20">
         @php
             $gallerySection = \App\Models\Setting::getGallerySection();
-            $galleryTitle = $gallerySection['title'];
+            $galleryTitle = trim((string) ($gallerySection['title'] ?? ''));
         @endphp
         <div class="gallery-wrap">
             <div class="gallery-marker">
@@ -2037,10 +2037,10 @@ document.addEventListener('keydown', function(e) {
                 <p class="gallery-kicker">{{ $gallerySection['label'] }}</p>
             </div>
             <h2 class="gallery-title">
-                @if(in_array($galleryTitle, ['My work. The projects & moments between.', 'Moments along the way.', 'Moments along the way'], true))
-                    My work. The projects<br>& moments between.
-                @else
+                @if($galleryTitle !== '')
                     {{ $galleryTitle }}
+                @else
+                    My work. The projects<br>& moments between.
                 @endif
             </h2>
         </div>
@@ -2062,6 +2062,7 @@ document.addEventListener('keydown', function(e) {
                                 <span>{{ $collection->images->count() }}</span>
                             </span>
                             <div class="gallery-card-copy">
+                                <time class="gallery-card-date" datetime="{{ $collection->created_at->toDateString() }}">{{ $collection->created_at->format('M Y') }}</time>
                                 <h3>{{ $collection->title }}</h3>
                             </div>
                         </div>
@@ -2338,6 +2339,17 @@ document.addEventListener('keydown', function(e) {
     left: 16px;
     right: 16px;
     bottom: 16px;
+}
+
+.gallery-card-date {
+    display: block;
+    margin: 0 0 4px;
+    color: rgba(255, 255, 255, 0.82);
+    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
 }
 
 .gallery-card-copy h3 {
