@@ -1893,7 +1893,7 @@
             border-radius: 9999px;
             background: #b36855;
             color: #faf7f2;
-            font-family: "Plus Jakarta Sans", sans-serif;
+            font-family: "Plus Jakarta Sans", Inter, sans-serif;
             font-size: 16px;
             font-weight: 700;
             line-height: 21px;
@@ -1962,13 +1962,6 @@
                 letter-spacing: calc(1.32 * var(--fu));
             }
             .studies-cta { margin-top: 0; }
-            .studies-view-all {
-                height: calc(53 * var(--fu));
-                padding: calc(10 * var(--fu)) calc(24 * var(--fu));
-                font-size: calc(16 * var(--fu));
-                line-height: calc(21 * var(--fu));
-            }
-            .studies-view-all img { margin-left: calc(8 * var(--fu)); }
         }
     </style>
     @php
@@ -2038,7 +2031,7 @@
 
     <div class="studies-cta">
         <a class="studies-view-all" href="{{ route('research.featured') }}">
-            View all articles
+            View all Studies
             <img src="{{ asset('images/studies/view-all-arrow.svg') }}" alt="" width="9.46875" height="3.75">
         </a>
     </div>
@@ -2063,14 +2056,12 @@
 <div id="researchModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="min-h-screen px-4 py-8 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResearchDetail()"></div>
-        <div class="relative bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-            <!-- Close Button -->
-            <button onclick="closeResearchDetail()" class="sticky top-4 right-4 float-right z-10 text-gray-400 hover:text-[#D4AF37] bg-white/95 backdrop-blur-sm rounded-full p-2.5 shadow-lg transition-all duration-300 hover:scale-110 ml-4 border border-gray-100">
-                <i class="fas fa-times text-lg"></i>
+        <div class="relative research-modal-panel max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <button type="button" onclick="closeResearchDetail()" class="research-close" aria-label="Close">
+                <i class="fas fa-times"></i>
             </button>
 
-            <!-- Content -->
-            <div class="px-8 pb-8 pt-4" id="researchDetailContent">
+            <div id="researchDetailContent">
                 <div class="text-center py-12">
                     <div class="inline-block">
                         <i class="fas fa-spinner fa-spin text-3xl text-[#D4AF37]"></i>
@@ -2138,22 +2129,6 @@ function openResearchDetail(id) {
         .then(data => {
             if (data.success) {
                 const item = data.data;
-                const categoryIcons = {
-                    'Vision': 'fa-eye',
-                    'Research Papers': 'fa-book',
-                    'Media': 'fa-video'
-                };
-                const categoryColors = {
-                    'Vision': 'bg-amber-50 text-amber-700 border-amber-200',
-                    'Research Papers': 'bg-blue-50 text-blue-700 border-blue-200',
-                    'Media': 'bg-purple-50 text-purple-700 border-purple-200'
-                };
-                const categoryEmojis = {
-                    'Vision': '🌟',
-                    'Research Papers': '📚',
-                    'Media': '🎬'
-                };
-
                 const escapeHtml = (str) => {
                     if (!str) return '';
                     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -2162,67 +2137,45 @@ function openResearchDetail(id) {
                 const formatResearchContent = (value) => {
                     if (!value) return '';
                     if (!/<\/?[a-z][\s\S]*>/i.test(value)) {
-                        return `<div class="text-[#3a3a34] leading-relaxed whitespace-pre-wrap">${escapeHtml(value)}</div>`;
+                        return `<div class="research-detail-copy" style="white-space:pre-wrap">${escapeHtml(value)}</div>`;
                     }
-                    return `<div class="text-[#3a3a34] leading-relaxed [&_h2]:mb-2 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mb-2 [&_h3]:text-xl [&_h3]:font-bold [&_p]:mb-3 [&_strong]:font-bold [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5">${value}</div>`;
+                    return `<div class="research-detail-copy research-rich">${value}</div>`;
                 };
 
+                const categoryLabel = item.category === 'Research Papers' ? 'Research' : (item.category || '');
+                const storyDate = item.created_at ? new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase() : '';
+
                 content.innerHTML = `
-                    <div class="flex items-center gap-3 mb-4 flex-wrap">
-                        <span class="px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 border
-                            ${categoryColors[item.category] || 'bg-gray-50 text-gray-700 border-gray-200'}">
-                            <span>${categoryEmojis[item.category] || '📄'}</span>
-                            ${escapeHtml(item.category)}
-                        </span>
-                        ${item.is_featured ? '<span class="px-3 py-1.5 bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-semibold rounded-full flex items-center gap-1 border border-[#D4AF37]/20"><i class="fas fa-star text-[10px]"></i> Featured</span>' : ''}
-                        ${item.created_at ? `<span class="text-xs text-[#8a8a82] flex items-center gap-1"><i class="far fa-calendar-alt"></i> ${new Date(item.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>` : ''}
+                    <div class="research-detail">
+                        <h2 class="research-detail-title">${escapeHtml(item.title)}</h2>
+                        ${item.image_url ? `<div class="research-detail-media"><img src="${item.image_url}" alt="${escapeHtml(item.title)}"></div>` : ''}
+                        ${item.video_url || item.video_file ? `
+                            <div class="research-detail-media">
+                                ${item.video_file ?
+                                    `<video controls class="w-full"><source src="${item.video_file}" type="video/mp4"></video>` :
+                                    item.video_embed_url ?
+                                    `<iframe src="${item.video_embed_url}" class="w-full aspect-video" allowfullscreen></iframe>` :
+                                    `<div class="aspect-video flex items-center justify-center text-white">No video available</div>`
+                                }
+                            </div>
+                        ` : ''}
+                        <div class="research-detail-meta">
+                            ${categoryLabel ? `<span class="research-chip">${escapeHtml(categoryLabel)}</span>` : ''}
+                            ${item.is_featured ? '<span class="research-chip">Featured</span>' : ''}
+                            ${storyDate ? `<span class="library-date">${storyDate}</span>` : ''}
+                        </div>
+                        <div class="research-block">
+                            <h4 class="research-kicker"><span></span>About</h4>
+                            <p class="research-detail-copy">${escapeHtml(item.description || '')}</p>
+                        </div>
+                        ${item.content ? `
+                            <div class="research-block">
+                                <h4 class="research-kicker"><span></span>Full story</h4>
+                                ${formatResearchContent(item.content)}
+                            </div>
+                        ` : ''}
+                        ${item.link_url ? `<div class="research-link"><a class="library-cta" href="${item.link_url}" target="_blank" rel="noopener noreferrer">Visit link</a></div>` : ''}
                     </div>
-
-                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#1e1e1a] mb-4 leading-tight">${escapeHtml(item.title)}</h2>
-
-                    ${item.image_url ? `
-                        <div class="mb-6 rounded-2xl overflow-hidden shadow-md">
-                            <img src="${item.image_url}" alt="${escapeHtml(item.title)}" class="w-full max-h-96 object-cover">
-                        </div>
-                    ` : ''}
-
-                    ${item.video_url || item.video_file ? `
-                        <div class="mb-6 rounded-2xl overflow-hidden bg-black shadow-md">
-                            ${item.video_file ?
-                                `<video controls class="w-full h-full"><source src="${item.video_file}" type="video/mp4">Your browser does not support the video tag.</video>` :
-                                item.video_embed_url ?
-                                `<iframe src="${item.video_embed_url}" class="w-full h-full aspect-video" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>` :
-                                `<div class="w-full h-full aspect-video flex items-center justify-center text-white"><p>No video available</p></div>`
-                            }
-                        </div>
-                    ` : ''}
-
-                    <div class="mb-6">
-                        <h4 class="text-sm font-semibold text-[#8a8a82] uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <span class="w-6 h-0.5 bg-[#D4AF37]"></span>
-                            About
-                        </h4>
-                        <p class="text-[#3a3a34] leading-relaxed text-base">${escapeHtml(item.description)}</p>
-                    </div>
-
-                    ${item.content ? `
-                        <div class="mb-6">
-                            <h4 class="text-sm font-semibold text-[#8a8a82] uppercase tracking-wider mb-2 flex items-center gap-2">
-                                <span class="w-6 h-0.5 bg-[#D4AF37]"></span>
-                                Full Story
-                            </h4>
-                            ${formatResearchContent(item.content)}
-                        </div>
-                    ` : ''}
-
-                    ${item.link_url ? `
-                        <div class="mt-6 pt-4 border-t border-gray-100">
-                            <a href="${item.link_url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] hover:text-[#c4a030] transition font-medium">
-                                <i class="fas fa-external-link-alt"></i>
-                                Visit Link
-                            </a>
-                        </div>
-                    ` : ''}
                 `;
             } else {
                 content.innerHTML = `
@@ -2806,7 +2759,7 @@ document.addEventListener('keydown', function(e) {
                 </div>
                 <div class="news-view">
                     <a href="{{ route('news.index') }}" class="gallery-explore">
-                        View all articles
+                        View all Articles
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                     </a>
                 </div>

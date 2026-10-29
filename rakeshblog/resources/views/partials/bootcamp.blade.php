@@ -7,14 +7,15 @@
 
 @section('content')
 <!-- Book a Bootcamp Section -->
-<section id="bootcamp" class="py-24 bg-[#fff6e0] text-[#1e1e1a] scroll-mt-20 relative">
+<section id="bootcamp" class="site-theme pt-32 pb-24 text-[#1b1c1a] scroll-mt-20 relative">
     <div class="max-w-7xl mx-auto px-6 relative z-10">
-        
-        <!-- CTA Header (Same styling as your homepage) -->
         <div class="text-center max-w-4xl mx-auto mb-20">
-            <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">Empower Your Youth</p>
-            <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold leading-tight mb-6 text-balance text-[#1e1e1a]">
-                Bring a <span class="text-[#D4AF37]">Bootcamp</span> to Your<br>Municipality
+            <div class="site-kicker center">
+                <span aria-hidden="true"></span>
+                <p>Bootcamp</p>
+            </div>
+            <h2 class="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-6 text-balance text-[#111]">
+                Bring a bootcamp to your municipality
             </h2>
             <p class="text-[#3a3a34] text-lg max-w-3xl mx-auto leading-relaxed">
                 Let's work together to give your municipality's youth the practical AI, coding, and future-ready skills they need to thrive in the modern world.
@@ -167,7 +168,7 @@
                     <!-- Submit Button -->
                     <div class="md:col-span-2 pt-2">
                         <p class="md:col-span-2 text-xs text-[#4a4a42] leading-relaxed">
-                            By submitting this request, you agree that we may use your information to respond to your inquiry. Read our <a href="{{ route('privacy') }}" class="text-[#735A12] underline hover:text-[#4e3d0c]">Privacy Policy</a>.
+                            By submitting this request, you agree that we may use your information to respond to your inquiry. Read our <a href="{{ route('privacy') }}" class="underline">Privacy Policy</a>.
                         </p>
                         <button type="submit" class="w-full bg-[#D4AF37] text-[#0b0e12] px-6 py-4 rounded-xl font-bold hover:brightness-110 transition-all shadow-lg shadow-[#D4AF37]/20 hover:shadow-xl flex items-center justify-center gap-3 group">
                             <span>Send Bootcamp Request</span>
@@ -182,7 +183,7 @@
                 
                 <!-- Simple Process -->
                 <div>
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">Simple Process</p>
+                    <div class="site-kicker"><span aria-hidden="true"></span><p>Simple process</p></div>
                     <h2 class="text-3xl font-serif font-bold text-[#1e1e1a] mb-6">How It Works</h2>
                     
                     <div class="grid grid-cols-2 gap-4">
@@ -218,7 +219,7 @@
 
                 <!-- What We Deliver -->
                 <div>
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">Our Expertise</p>
+                    <div class="site-kicker"><span aria-hidden="true"></span><p>Our expertise</p></div>
                     <h2 class="text-3xl font-serif font-bold text-[#1e1e1a] mb-6">What Can We Deliver?</h2>
 
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
