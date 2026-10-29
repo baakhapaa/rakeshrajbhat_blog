@@ -865,148 +865,140 @@
         </div>
     </section>
 
-     <!-- Projects Section -->
-    <section id="projects" class="py-28 bg-[#fff6e0] scroll-mt-20 overflow-visible">
-        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 mb-8">
-            <div class="flex justify-between items-end">
-                <div>
-                    @php
-                        $projectsSection = \App\Models\Setting::getProjectsSection();
-                    @endphp
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">{{ $projectsSection['label'] }}</p>
-                    <h2 class="text-4xl font-serif font-bold text-[#1e1e1a]">{{ $projectsSection['title'] }}</h2>
+    <!-- Projects Section -->
+    <section id="projects" class="initiatives-section scroll-mt-20" aria-labelledby="initiatives-heading">
+        <div class="initiatives-cubes hero-cubes hero-cubes-a" aria-hidden="true"></div>
+        <div class="initiatives-cubes hero-cubes hero-cubes-b" aria-hidden="true"></div>
+
+        <div class="initiatives-content">
+            @php
+                $projectsSection = \App\Models\Setting::getProjectsSection();
+            @endphp
+
+            <div class="initiatives-heading">
+                <div class="initiatives-heading-inner">
+                    <div class="initiatives-kicker">
+                        <span aria-hidden="true"></span>
+                        <p>{{ $projectsSection["label"] }}</p>
+                    </div>
+                    <h2 id="initiatives-heading">{{ $projectsSection["title"] }}</h2>
+                </div>
+            </div>
+
+            <div class="initiatives-viewport carousel-container" tabindex="0" aria-label="Projects and initiatives">
+                <div class="initiatives-track carousel-track">
+                    @forelse($projects ?? [] as $project)
+                        @php
+                            $projectSlug = strtolower((string) ($project->slug ?? ""));
+                            $initiativeBackground = preg_match('/^#[0-9A-Fa-f]{6}$/', (string) $project->bg_color)
+                                ? $project->bg_color
+                                : '#ffffff';
+                            $initiativeLogoNumber = match (true) {
+                                str_contains($projectSlug, "bootcamp"), str_contains($projectSlug, "ict") => 1,
+                                str_contains($projectSlug, "baakhapaa") => 2,
+                                str_contains($projectSlug, "skill") => 3,
+                                str_contains($projectSlug, "hilly") => 4,
+                                str_contains($projectSlug, "kholso"), str_contains($projectSlug, "resort") => 5,
+                                default => null,
+                            };
+                            $initiativeLogo = $initiativeLogoNumber
+                                ? asset("images/initiatives/initiative-mark-" . $initiativeLogoNumber . ".png")
+                                : $project->image_url;
+                            $initiativeDescription = $project->short_description ?: $project->description;
+                        @endphp
+                        <article class="initiative-card tooltip-container" style="--initiative-index: {{ $loop->index }}; --initiative-bg: {{ $initiativeBackground }};">
+                            <div class="project-default">
+                                <div class="initiative-card-surface" aria-hidden="true"></div>
+                                <div class="initiative-mark">
+                                    @if($initiativeLogo)
+                                        <img src="{{ $initiativeLogo }}" alt="{{ $project->name }}" width="142" height="142" loading="lazy" decoding="async">
+                                    @else
+                                        <span>{{ strtoupper(substr($project->name, 0, 1)) }}</span>
+                                    @endif
+                                </div>
+                                <h3>{{ $project->name }}</h3>
+                                @if(filled($initiativeDescription))
+                                    <p>{{ $initiativeDescription }}</p>
+                                @endif
+                                @if(filled($project->url))
+                                    <a class="initiative-read-more" href="{{ $project->url }}" target="_blank" rel="noopener noreferrer">
+                                        <span>Read more</span>
+                                        <img src="{{ asset("images/initiatives/initiative-arrow.svg") }}" alt="" aria-hidden="true">
+                                    </a>
+                                @endif
+                            </div>
+
+                            @if(filled($project->description))
+                                <div class="tooltip-popup" role="dialog" aria-label="{{ $project->name }} overview">
+                                    <div class="project-popup-content">
+                                        <div class="popup-image">
+                                            @if($initiativeLogo)
+                                                <img src="{{ $initiativeLogo }}" alt="{{ $project->name }}" loading="lazy" decoding="async">
+                                            @else
+                                                <span>{{ strtoupper(substr($project->name, 0, 1)) }}</span>
+                                            @endif
+                                        </div>
+                                        <h4>{{ $project->name }}</h4>
+                                        <p>{{ $project->description }}</p>
+                                        @if(filled($project->url))
+                                            <a class="project-visit-link" href="{{ $project->url }}" target="_blank" rel="noopener noreferrer">
+                                                <span>Visit Website</span>
+                                                <img src="{{ asset('images/initiatives/initiative-arrow.svg') }}" alt="" aria-hidden="true">
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+                        </article>
+                    @empty
+                        <p class="initiatives-empty">No projects available yet.</p>
+                    @endforelse
                 </div>
             </div>
         </div>
 
-        <!-- Infinite Carousel Outer Container -->
-        <div class="carousel-container relative w-full py-16">
-            <!-- Scrolling Track -->
-            <div class="carousel-track flex items-center gap-8 w-max">
+        <script>
+            (function () {
+                var section = document.getElementById("projects");
+                if (!section) return;
 
-                {{-- FIRST SET --}}
-                @forelse($projects ?? [] as $project)
-                    <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
-                        <!-- Normal Card Content -->
-                        <div class="project-default w-full flex flex-col items-center">
-                            <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
-                                @if($project->image)
-                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
-                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                    </div>
-                                @endif
-                            </div>
-                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
-                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
-                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
-                        </div>
+                document.documentElement.classList.add("initiatives-reveal-ready");
+                if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) {
+                    section.classList.add("is-visible");
+                    return;
+                }
 
-                        <!-- Popup Content -->
-                        <div class="tooltip-popup">
-                            <div class="project-popup-content flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="popup-image">
-                                        @if($project->image)
-                                            <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
-                                        @else
-                                            <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                        @endif
-                                    </div>
-                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
+                var observer = new IntersectionObserver(function (entries) {
+                    if (entries.some(function (entry) { return entry.isIntersecting; })) {
+                        section.classList.add("is-visible");
+                        observer.disconnect();
+                    }
+                }, { threshold: 0.15 });
 
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
-                                        {{ $project->description ?? $project->long_description ?? $project->short_description }}
-                                    </p>
-                                </div>
-
-                                @if($project->url)
-                                    <div class="pt-4 mt-2 border-t border-gray-100">
-                                        <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
-                                            Visit Website <span>→</span>
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <p class="text-gray-500">No projects available yet.</p>
-                @endforelse
-
-                {{-- Only one project set is rendered so the homepage DOM remains unique. --}}
-                @if(false)
-                @foreach($projects ?? [] as $project)
-                    <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
-                        <!-- Normal Card Content -->
-                        <div class="project-default w-full flex flex-col items-center">
-                            <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
-                                @if($project->image)
-                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
-                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                    </div>
-                                @endif
-                            </div>
-                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
-                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
-                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
-                        </div>
-
-                        <!-- Popup Content -->
-                        <div class="tooltip-popup">
-                            <div class="project-popup-content flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="popup-image">
-                                        @if($project->image)
-                                            <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
-                                        @else
-                                            <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                        @endif
-                                    </div>
-                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
-
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
-                                        {{ $project->description ?? $project->long_description ?? $project->short_description }}
-                                    </p>
-                                </div>
-
-                                @if($project->url)
-                                    <div class="pt-4 mt-2 border-t border-gray-100">
-                                        <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
-                                            Visit Website <span>→</span>
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-                @endif
-            </div>
-        </div>
+                observer.observe(section);
+            })();
+        </script>
     </section>
-  <!-- About/Mission Section -->
+
     @php
         $missionItems = [
-            ['number' => '01', 'title' => 'Education', 'body' => 'Making learning practical, accessible and future-ready.'],
-            ['number' => '02', 'title' => 'Youth Empowerment', 'body' => 'Equipping young minds with skills, confidence and purpose.'],
-            ['number' => '03', 'title' => 'Technology', 'body' => 'Using technology to solve real problems in communities.'],
-            ['number' => '04', 'title' => 'Local Economy', 'body' => 'Creating opportunities that strengthen local communities.'],
-            ['number' => '05', 'title' => 'Sustainability', 'body' => 'Building projects that respect nature and culture.'],
-            ['number' => '06', 'title' => 'Nation First', 'body' => 'Every step I take is for Nepal and her future.'],
+            ["number" => "01", "title" => "Education", "body" => "Making learning practical, accessible and future-ready."],
+            ["number" => "02", "title" => "Youth Empowerment", "body" => "Equipping young minds with skills, confidence and purpose."],
+            ["number" => "03", "title" => "Technology", "body" => "Using technology to solve real problems in communities."],
+            ["number" => "04", "title" => "Local Economy", "body" => "Creating opportunities that strengthen local communities."],
+            ["number" => "05", "title" => "Sustainability", "body" => "Building projects that respect nature and culture."],
+            ["number" => "06", "title" => "Nation First", "body" => "Every step I take is for Nepal and her future."],
         ];
     @endphp
+
     <section id="about" class="mission-scroll text-[#1e1e1a] scroll-mt-20" aria-labelledby="mission-heading">
         <div class="mission-scroll__list">
             <p class="mission-scroll__kicker">My Mission</p>
             @foreach($missionItems as $item)
                 <div class="mission-scroll__listItem">
-                    <div class="mission-scroll__listNum">{{ $item['number'] }}</div>
-                    <h3 class="mission-scroll__listTitle">{{ $item['title'] }}</h3>
-                    <p class="mission-scroll__listBody">{{ $item['body'] }}</p>
+                    <div class="mission-scroll__listNum">{{ $item["number"] }}</div>
+                    <h3 class="mission-scroll__listTitle">{{ $item["title"] }}</h3>
+                    <p class="mission-scroll__listBody">{{ $item["body"] }}</p>
                 </div>
             @endforeach
         </div>
@@ -1021,19 +1013,20 @@
                         @foreach($missionItems as $item)
                             <div class="mission-scroll__marker">
                                 <div class="mission-scroll__markerContent">
-                                    <span class="mission-scroll__markerNum">{{ $item['number'] }}</span>
+                                    <span class="mission-scroll__markerNum">{{ $item["number"] }}</span>
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 </div>
+
                 <div class="mission-scroll__textZone">
                     <p id="mission-heading" class="mission-scroll__kicker">My Mission</p>
                     <div class="mission-scroll__textViewport" id="missionText">
                         @foreach($missionItems as $item)
                             <article class="mission-scroll__reason">
-                                <h3 class="mission-scroll__headline">{{ $item['title'] }}</h3>
-                                <p class="mission-scroll__body">{{ $item['body'] }}</p>
+                                <h3 class="mission-scroll__headline">{{ $item["title"] }}</h3>
+                                <p class="mission-scroll__body">{{ $item["body"] }}</p>
                             </article>
                         @endforeach
                     </div>
@@ -1041,6 +1034,7 @@
             </div>
         </div>
     </section>
+
     <style>
         .mission-scroll {
             --gold: #D4AF37;
@@ -1054,6 +1048,7 @@
             background: #f2f2f2;
             overflow: clip;
         }
+
         .mission-scroll__kicker {
             margin: 0 0 12px;
             color: #D4AF37;
@@ -1062,12 +1057,47 @@
             letter-spacing: 0.14em;
             text-transform: uppercase;
         }
-        .mission-scroll__list { display: none; max-width: 40rem; margin: 0 auto; padding: 72px 24px 80px; }
-        .mission-scroll__listItem + .mission-scroll__listItem { margin-top: 28px; padding-top: 28px; border-top: 1px solid rgba(30, 30, 26, 0.08); }
-        .mission-scroll__listNum { color: #D4AF37; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; }
-        .mission-scroll__listTitle { margin: 8px 0 0; font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; }
-        .mission-scroll__listBody { margin: 8px 0 0; color: #5a5a52; font-size: 15px; line-height: 1.6; }
-        .mission-scroll__track { position: relative; width: 100%; height: 600vh; }
+
+        .mission-scroll__list {
+            display: none;
+            max-width: 40rem;
+            margin: 0 auto;
+            padding: 72px 24px 80px;
+        }
+
+        .mission-scroll__listItem + .mission-scroll__listItem {
+            margin-top: 28px;
+            padding-top: 28px;
+            border-top: 1px solid rgba(30, 30, 26, 0.08);
+        }
+
+        .mission-scroll__listNum {
+            color: #D4AF37;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+        }
+
+        .mission-scroll__listTitle {
+            margin: 8px 0 0;
+            font-family: "Playfair Display", serif;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .mission-scroll__listBody {
+            margin: 8px 0 0;
+            color: #5a5a52;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .mission-scroll__track {
+            position: relative;
+            width: 100%;
+            height: 600vh;
+        }
+
         .mission-scroll__sticky {
             position: sticky;
             top: 5rem;
@@ -1075,6 +1105,7 @@
             width: 100%;
             overflow: hidden;
         }
+
         .mission-scroll__dialZone {
             position: absolute;
             left: 0;
@@ -1085,6 +1116,7 @@
             -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
             mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
         }
+
         .mission-scroll__dialBaseOuter,
         .mission-scroll__dialBaseInner,
         .mission-scroll__dialBaseCenter {
@@ -1092,6 +1124,7 @@
             top: 50%;
             border-radius: 50%;
         }
+
         .mission-scroll__dialBaseOuter {
             width: var(--dial-size);
             height: var(--dial-size);
@@ -1100,6 +1133,7 @@
             background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f7f4ee 100%);
             box-shadow: 30px 40px 90px rgba(30, 30, 26, 0.08), inset -6px -6px 16px rgba(255, 255, 255, 0.95), inset 6px 6px 16px rgba(30, 30, 26, 0.05);
         }
+
         .mission-scroll__dialBaseInner {
             width: calc(var(--dial-size) * 0.76);
             height: calc(var(--dial-size) * 0.76);
@@ -1108,6 +1142,7 @@
             background: radial-gradient(circle at 35% 35%, #ffffff 0%, #faf8f5 100%);
             box-shadow: 12px 16px 40px rgba(30, 30, 26, 0.05), inset -4px -4px 10px rgba(255, 255, 255, 0.9);
         }
+
         .mission-scroll__dialBaseCenter {
             width: calc(var(--dial-size) * 0.52);
             height: calc(var(--dial-size) * 0.52);
@@ -1116,6 +1151,7 @@
             background: #fff;
             box-shadow: 6px 8px 24px rgba(30, 30, 26, 0.04);
         }
+
         .mission-scroll__dialCanvas {
             position: absolute;
             width: var(--dial-size);
@@ -1126,6 +1162,7 @@
             transform-origin: 50% 50%;
             will-change: transform;
         }
+
         .mission-scroll__marker {
             position: absolute;
             left: 50%;
@@ -1135,21 +1172,24 @@
             transform-origin: 0 0;
             transform: rotate(var(--angle)) translateX(calc(var(--dial-size) * 0.4375 + var(--number-margin)));
         }
+
         .mission-scroll__markerContent {
             position: absolute;
             left: 0;
             top: 50%;
             transform: translateY(-50%);
         }
+
         .mission-scroll__markerNum {
             display: inline-block;
-            font-family: 'Playfair Display', serif;
+            font-family: "Playfair Display", serif;
             font-size: 72px;
             font-weight: 700;
             letter-spacing: -0.03em;
             transform-origin: left center;
             will-change: transform, color, opacity;
         }
+
         .mission-scroll__textZone {
             position: absolute;
             left: 38%;
@@ -1158,7 +1198,14 @@
             transform: translateY(-28px);
             z-index: 2;
         }
-        .mission-scroll__textViewport { position: relative; height: 190px; width: 100%; overflow: hidden; }
+
+        .mission-scroll__textViewport {
+            position: relative;
+            height: 190px;
+            width: 100%;
+            overflow: hidden;
+        }
+
         .mission-scroll__reason {
             position: absolute;
             inset: 0;
@@ -1168,15 +1215,17 @@
             opacity: 0;
             will-change: transform, opacity;
         }
+
         .mission-scroll__headline {
             margin: 0;
-            font-family: 'Playfair Display', serif;
+            font-family: "Playfair Display", serif;
             font-size: clamp(36px, 3.4vw, 56px);
             font-weight: 700;
             line-height: 1.1;
             color: #1e1e1a;
             will-change: transform;
         }
+
         .mission-scroll__body {
             margin: 16px 0 0;
             max-width: 36rem;
@@ -1185,66 +1234,114 @@
             line-height: 1.6;
             will-change: transform;
         }
+
         @media (max-width: 1100px) {
-            .mission-scroll__textZone { left: 42%; width: 52%; }
+            .mission-scroll__textZone {
+                left: 42%;
+                width: 52%;
+            }
         }
+
         @media (max-width: 768px) {
             .mission-scroll {
                 --dial-size: min(72vw, 320px);
                 --dial-center: -0.16;
                 --number-margin: 8px;
             }
+
             .mission-scroll__sticky {
                 top: 5rem;
                 height: calc(100svh - 5rem);
             }
-            .mission-scroll__dialZone { width: 42%; }
-            .mission-scroll__markerNum { font-size: 32px; }
+
+            .mission-scroll__dialZone {
+                width: 42%;
+            }
+
+            .mission-scroll__markerNum {
+                font-size: 32px;
+            }
+
             .mission-scroll__textZone {
                 left: 40%;
                 width: 56%;
                 padding-right: 20px;
             }
-            .mission-scroll__textViewport { height: 160px; }
-            .mission-scroll__headline { font-size: 28px; }
-            .mission-scroll__body { margin-top: 10px; font-size: 15px; line-height: 1.5; }
+
+            .mission-scroll__textViewport {
+                height: 160px;
+            }
+
+            .mission-scroll__headline {
+                font-size: 28px;
+            }
+
+            .mission-scroll__body {
+                margin-top: 10px;
+                font-size: 15px;
+                line-height: 1.5;
+            }
         }
+
         @media (prefers-reduced-motion: reduce) {
-            .mission-scroll__track { display: none !important; height: auto !important; }
-            .mission-scroll__list { display: block !important; }
+            .mission-scroll__track {
+                display: none !important;
+                height: auto !important;
+            }
+
+            .mission-scroll__list {
+                display: block !important;
+            }
         }
     </style>
+
     <script>
         (function () {
-            const section = document.getElementById('about');
-            const track = document.getElementById('missionTrack');
-            const sticky = document.getElementById('missionSticky');
-            const canvas = document.getElementById('missionDial');
-            const viewport = document.getElementById('missionText');
+            const section = document.getElementById("about");
+            const track = document.getElementById("missionTrack");
+            const sticky = document.getElementById("missionSticky");
+            const canvas = document.getElementById("missionDial");
+            const viewport = document.getElementById("missionText");
+
             if (!section || !track || !sticky || !canvas || !viewport) return;
 
-            const CONFIG = { angleStep: 28, exitY: 135, stiffness: 85, damping: 26, mass: 0.3, headlineYOffset: 45, bodyYOffset: 25, scrollPadding: 0 };
+            const CONFIG = {
+                angleStep: 28,
+                exitY: 135,
+                stiffness: 85,
+                damping: 26,
+                mass: 0.3,
+                headlineYOffset: 45,
+                bodyYOffset: 25,
+                scrollPadding: 0
+            };
+
             function applyMotionScale() {
                 const narrow = window.innerWidth <= 768;
                 CONFIG.exitY = narrow ? 64 : 135;
                 CONFIG.headlineYOffset = narrow ? 20 : 45;
                 CONFIG.bodyYOffset = narrow ? 12 : 25;
             }
-            const COLOR_FADED = 'rgba(30, 30, 26, 0.18)';
-            const COLOR_ACTIVE = '#D4AF37';
-            const markers = Array.from(canvas.querySelectorAll('.mission-scroll__marker'));
-            const nums = Array.from(canvas.querySelectorAll('.mission-scroll__markerNum'));
-            const articles = Array.from(viewport.querySelectorAll('.mission-scroll__reason'));
-            const headlines = Array.from(viewport.querySelectorAll('.mission-scroll__headline'));
-            const bodies = Array.from(viewport.querySelectorAll('.mission-scroll__body'));
+
+            const COLOR_FADED = "rgba(30, 30, 26, 0.18)";
+            const COLOR_ACTIVE = "#D4AF37";
+            const markers = Array.from(canvas.querySelectorAll(".mission-scroll__marker"));
+            const nums = Array.from(canvas.querySelectorAll(".mission-scroll__markerNum"));
+            const articles = Array.from(viewport.querySelectorAll(".mission-scroll__reason"));
+            const headlines = Array.from(viewport.querySelectorAll(".mission-scroll__headline"));
+            const bodies = Array.from(viewport.querySelectorAll(".mission-scroll__body"));
             const total = articles.length;
+
             if (total < 2) return;
 
             markers.forEach(function (marker, index) {
-                marker.style.setProperty('--angle', (index * CONFIG.angleStep) + 'deg');
+                marker.style.setProperty("--angle", (index * CONFIG.angleStep) + "deg");
             });
 
-            const clamp = function (value, min, max) { return Math.min(Math.max(value, min), max); };
+            const clamp = function (value, min, max) {
+                return Math.min(Math.max(value, min), max);
+            };
+
             function interpolate(x, input, output) {
                 if (x <= input[0]) return output[0];
                 if (x >= input[input.length - 1]) return output[output.length - 1];
@@ -1256,20 +1353,24 @@
                 }
                 return output[output.length - 1];
             }
+
             function parseColor(str) {
-                if (str[0] === '#') {
+                if (str[0] === "#") {
                     const hex = str.slice(1);
                     return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16), 1];
                 }
-                const parts = str.match(/rgba?\(([^)]+)\)/)[1].split(',').map(Number);
+                const parts = str.match(/rgba?\(([^)]+)\)/)[1].split(",").map(Number);
                 return [parts[0], parts[1], parts[2], parts[3] === undefined ? 1 : parts[3]];
             }
+
             function lerpColor(a, b, t) {
                 const A = parseColor(a);
                 const B = parseColor(b);
-                const ch = function (i) { return Math.sqrt(A[i] * A[i] + (B[i] * B[i] - A[i] * A[i]) * t); };
+                const ch = function (i) {
+                    return Math.sqrt(A[i] * A[i] + (B[i] * B[i] - A[i] * A[i]) * t);
+                };
                 const alpha = A[3] + (B[3] - A[3]) * t;
-                return 'rgba(' + Math.round(ch(0)) + ', ' + Math.round(ch(1)) + ', ' + Math.round(ch(2)) + ', ' + alpha.toFixed(4) + ')';
+                return "rgba(" + Math.round(ch(0)) + ", " + Math.round(ch(1)) + ", " + Math.round(ch(2)) + ", " + alpha.toFixed(4) + ")";
             }
 
             const spring = { value: 0, target: 0, velocity: 0 };
@@ -1279,6 +1380,7 @@
             function readProgress() {
                 return clamp((window.scrollY - trackTop) / travel, 0, 1);
             }
+
             function layout() {
                 applyMotionScale();
                 const rect = track.getBoundingClientRect();
@@ -1286,6 +1388,7 @@
                 travel = Math.max(1, track.offsetHeight - sticky.offsetHeight);
                 spring.value = spring.target = readProgress();
             }
+
             function stepSpring(dt) {
                 const steps = Math.min(12, Math.max(1, Math.ceil(dt / (1 / 240))));
                 const h = dt / steps;
@@ -1299,11 +1402,12 @@
                     spring.velocity = 0;
                 }
             }
+
             function render() {
                 const progress = spring.value;
                 const pad = CONFIG.scrollPadding;
                 const step = (1 - 2 * pad) / (total - 1);
-                canvas.style.transform = 'rotate(' + interpolate(progress, [pad, 1 - pad], [0, -(total - 1) * CONFIG.angleStep]) + 'deg)';
+                canvas.style.transform = "rotate(" + interpolate(progress, [pad, 1 - pad], [0, -(total - 1) * CONFIG.angleStep]) + "deg)";
 
                 for (let i = 0; i < total; i++) {
                     const s = pad + (i / (total - 1)) * (1 - 2 * pad);
@@ -1316,21 +1420,22 @@
                             ? lerpColor(COLOR_FADED, COLOR_ACTIVE, (progress - cRange[0]) / (cRange[1] - cRange[0]))
                             : lerpColor(COLOR_ACTIVE, COLOR_FADED, (progress - cRange[1]) / (cRange[2] - cRange[1]));
                     }
-                    nums[i].style.transform = 'scale(' + scale.toFixed(4) + ')';
+                    nums[i].style.transform = "scale(" + scale.toFixed(4) + ")";
                     nums[i].style.opacity = opacity.toFixed(4);
                     nums[i].style.color = color;
 
                     const y = interpolate(progress, [s - step * 0.8, s, s + step * 0.8], [CONFIG.exitY, 0, -CONFIG.exitY]);
                     const cardOpacity = interpolate(progress, [s - step * 0.6, s - step * 0.2, s + step * 0.2, s + step * 0.6], [0, 1, 1, 0]);
-                    articles[i].style.transform = 'translate3d(0, ' + y.toFixed(2) + 'px, 0)';
+                    articles[i].style.transform = "translate3d(0, " + y.toFixed(2) + "px, 0)";
                     articles[i].style.opacity = cardOpacity.toFixed(4);
-                    articles[i].style.visibility = cardOpacity < 0.002 ? 'hidden' : 'visible';
-                    headlines[i].style.transform = 'translate3d(0, ' + interpolate(progress, [s - step * 0.6, s, s + step * 0.6], [CONFIG.headlineYOffset, 0, -CONFIG.headlineYOffset]).toFixed(2) + 'px, 0)';
-                    bodies[i].style.transform = 'translate3d(0, ' + interpolate(progress, [s - step * 0.5, s, s + step * 0.5], [CONFIG.bodyYOffset, 0, -CONFIG.bodyYOffset]).toFixed(2) + 'px, 0)';
+                    articles[i].style.visibility = cardOpacity < 0.002 ? "hidden" : "visible";
+                    headlines[i].style.transform = "translate3d(0, " + interpolate(progress, [s - step * 0.6, s, s + step * 0.6], [CONFIG.headlineYOffset, 0, -CONFIG.headlineYOffset]).toFixed(2) + "px, 0)";
+                    bodies[i].style.transform = "translate3d(0, " + interpolate(progress, [s - step * 0.5, s, s + step * 0.5], [CONFIG.bodyYOffset, 0, -CONFIG.bodyYOffset]).toFixed(2) + "px, 0)";
                 }
             }
 
             let last = performance.now();
+
             function frame(now) {
                 const dt = Math.min(0.05, (now - last) / 1000);
                 last = now;
@@ -1340,13 +1445,12 @@
                 requestAnimationFrame(frame);
             }
 
-            window.addEventListener('resize', layout);
+            window.addEventListener("resize", layout);
             layout();
             render();
             requestAnimationFrame(frame);
         })();
     </script>
-    <!-- Research Section -->
 <section id="research" class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a] scroll-mt-20">
     <div class="max-w-7xl mx-auto px-6">
         <!-- Section Title -->
@@ -1523,21 +1627,151 @@
                 <div class="text-center py-12">
                     <div class="inline-block">
                         <i class="fas fa-spinner fa-spin text-3xl text-[#D4AF37]"></i>
-                    </div>
-                    <p class="mt-3 text-[#8a8a82]">Loading story...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Video Modal -->
-<div id="videoModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeVideoModal()"></div>
-    <div class="relative max-w-4xl w-full bg-black rounded-2xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
-        <button onclick="closeVideoModal()" class="absolute top-4 right-4 z-10 text-white hover:text-[#D4AF37] bg-black/50 rounded-full p-2 transition-all duration-300 hover:scale-110">
-            <i class="fas fa-times text-xl"></i>
-        </button>
+        <style>
+            .mission-scroll {
+                --gold: #D4AF37;
+                --ink: #1e1e1a;
+                --muted: #5a5a52;
+                --dial-size: min(52vw, 800px);
+                --dial-center: -0.02;
+                --number-margin: min(4vw, 64px);
+                position: relative;
+                width: 100%;
+                background: #f2f2f2;
+                overflow: clip;
+            }
+            .mission-scroll__kicker {
+                margin: 0 0 12px;
+                color: #D4AF37;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+            }
+            .mission-scroll__list { display: none; max-width: 40rem; margin: 0 auto; padding: 72px 24px 80px; }
+            .mission-scroll__listItem + .mission-scroll__listItem { margin-top: 28px; padding-top: 28px; border-top: 1px solid rgba(30, 30, 26, 0.08); }
+            .mission-scroll__listNum { color: #D4AF37; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; }
+            .mission-scroll__listTitle { margin: 8px 0 0; font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; }
+            .mission-scroll__listBody { margin: 8px 0 0; color: #5a5a52; font-size: 15px; line-height: 1.6; }
+            .mission-scroll__track { position: relative; width: 100%; height: 600vh; }
+            .mission-scroll__sticky { position: sticky; top: 5rem; height: calc(100vh - 5rem); width: 100%; overflow: hidden; }
+            .mission-scroll__dialZone {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 40%;
+                height: 100%;
+                pointer-events: none;
+                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+                mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+            }
+            .mission-scroll__dialBaseOuter,
+            .mission-scroll__dialBaseInner,
+            .mission-scroll__dialBaseCenter { position: absolute; top: 50%; border-radius: 50%; }
+            .mission-scroll__dialBaseOuter {
+                width: var(--dial-size);
+                height: var(--dial-size);
+                left: calc(var(--dial-size) * (var(--dial-center) - 0.5));
+                margin-top: calc(var(--dial-size) / -2);
+                background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f7f4ee 100%);
+                box-shadow: 30px 40px 90px rgba(30, 30, 26, 0.08), inset -6px -6px 16px rgba(255, 255, 255, 0.95), inset 6px 6px 16px rgba(30, 30, 26, 0.05);
+            }
+            .mission-scroll__dialBaseInner {
+                width: calc(var(--dial-size) * 0.76);
+                height: calc(var(--dial-size) * 0.76);
+                left: calc(var(--dial-size) * (var(--dial-center) - 0.38));
+                margin-top: calc(var(--dial-size) * 0.76 / -2);
+                background: radial-gradient(circle at 35% 35%, #ffffff 0%, #faf8f5 100%);
+                box-shadow: 12px 16px 40px rgba(30, 30, 26, 0.05), inset -4px -4px 10px rgba(255, 255, 255, 0.9);
+            }
+            .mission-scroll__dialBaseCenter {
+                width: calc(var(--dial-size) * 0.52);
+                height: calc(var(--dial-size) * 0.52);
+                left: calc(var(--dial-size) * (var(--dial-center) - 0.26));
+                margin-top: calc(var(--dial-size) * 0.52 / -2);
+                background: #fff;
+                box-shadow: 6px 8px 24px rgba(30, 30, 26, 0.04);
+            }
+            .mission-scroll__dialCanvas {
+                position: absolute;
+                width: var(--dial-size);
+                height: var(--dial-size);
+                left: calc(var(--dial-size) * (var(--dial-center) - 0.5));
+                top: 50%;
+                margin-top: calc(var(--dial-size) / -2);
+                transform-origin: 50% 50%;
+                will-change: transform;
+            }
+            .mission-scroll__marker {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 0;
+                height: 0;
+                transform-origin: 0 0;
+                transform: rotate(var(--angle)) translateX(calc(var(--dial-size) * 0.4375 + var(--number-margin)));
+            }
+            .mission-scroll__markerContent { position: absolute; left: 0; top: 50%; transform: translateY(-50%); }
+            .mission-scroll__markerNum {
+                display: inline-block;
+                font-family: 'Playfair Display', serif;
+                font-size: 72px;
+                font-weight: 700;
+                letter-spacing: -0.03em;
+                transform-origin: left center;
+                will-change: transform, color, opacity;
+            }
+            .mission-scroll__textZone {
+                position: absolute;
+                left: 38%;
+                width: 54%;
+                top: 50%;
+                transform: translateY(-28px);
+                z-index: 2;
+            }
+            .mission-scroll__textViewport { position: relative; height: 190px; width: 100%; overflow: hidden; }
+            .mission-scroll__reason { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-start; opacity: 0; will-change: transform, opacity; }
+            .mission-scroll__headline {
+                margin: 0;
+                font-family: 'Playfair Display', serif;
+                font-size: clamp(36px, 3.4vw, 56px);
+                font-weight: 700;
+                line-height: 1.1;
+                color: #1e1e1a;
+                will-change: transform;
+            }
+            .mission-scroll__body { margin: 16px 0 0; max-width: 36rem; color: #5a5a52; font-size: 18px; line-height: 1.6; will-change: transform; }
+            @media (max-width: 1100px) { .mission-scroll__textZone { left: 42%; width: 52%; } }
+            @media (max-width: 768px) {
+                .mission-scroll { --dial-size: min(72vw, 320px); --dial-center: -0.16; --number-margin: 8px; }
+                .mission-scroll__sticky { top: 5rem; height: calc(100svh - 5rem); }
+                .mission-scroll__dialZone { width: 42%; }
+                .mission-scroll__markerNum { font-size: 32px; }
+                .mission-scroll__textZone { left: 40%; width: 56%; padding-right: 20px; }
+                .mission-scroll__textViewport { height: 160px; }
+                .mission-scroll__headline { font-size: 28px; }
+                .mission-scroll__body { margin-top: 10px; font-size: 15px; line-height: 1.5; }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .mission-scroll__track { display: none !important; height: auto !important; }
+                .mission-scroll__list { display: block !important; }
+            }
+        </style>
+        {{--
+                    <style>
+                        .mission-scroll {
+                            --gold: #D4AF37;
+                            --ink: #1e1e1a;
+                            --muted: #5a5a52;
+                            --dial-size: min(52vw, 800px);
+                            --dial-center: -0.02;
+                            --number-margin: min(4vw, 64px);
+                            position: relative;
+                            width: 100%;
+                            background: #f2f2f2;
+                            overflow: clip;
+                        }
+                        .mission-scroll__kicker {
         <div id="videoContainer" class="aspect-video">
             <!-- Video will be loaded here -->
         </div>
@@ -2065,6 +2299,539 @@ document.addEventListener('keydown', function(e) {
     overflow: hidden !important;
 }
 
+.initiatives-section {
+    position: relative;
+    isolation: isolate;
+    min-height: 760px;
+    overflow: hidden;
+    padding: 160px 0 112px;
+    background: #f7f7f5;
+    color: #111111;
+}
+
+.initiatives-cubes {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    animation-play-state: paused;
+}
+
+.initiatives-section.is-visible .initiatives-cubes {
+    animation-play-state: running;
+}
+
+.initiatives-section .hero-cubes-b {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.initiatives-content {
+    position: relative;
+    z-index: 1;
+}
+
+.initiatives-heading {
+    max-width: 1548px;
+    margin: 0 auto;
+    padding: 0 24px;
+    transition: opacity 650ms ease, transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.initiatives-kicker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.initiatives-kicker > span {
+    width: 24px;
+    height: 2px;
+    flex: 0 0 auto;
+    background: #89351d;
+}
+
+.initiatives-kicker p {
+    margin: 0;
+    color: #89351d;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+}
+
+.initiatives-heading h2 {
+    margin: 12px 0 0;
+    color: #1b1c1a;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 44px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.initiatives-viewport {
+    width: 100%;
+    margin-top: 36px;
+    padding-block: 75px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+    touch-action: pan-x;
+}
+
+.initiatives-viewport::-webkit-scrollbar {
+    display: none;
+}
+
+.initiatives-viewport:focus-visible {
+    outline: 2px solid #89351d;
+    outline-offset: -2px;
+}
+
+.initiatives-track {
+    display: flex;
+    width: max-content;
+    gap: 20px;
+    margin-inline: auto;
+    align-items: flex-start;
+}
+
+.initiative-card {
+    position: relative;
+    flex: 0 0 calc((100vw - 120px) / 5.2);
+    width: calc((100vw - 120px) / 5.2);
+    height: 350px;
+    color: #111111;
+    text-align: center;
+    scroll-snap-align: center;
+    transition: opacity 650ms ease, transform 650ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+    transition-delay: calc(var(--initiative-index, 0) * 70ms);
+    overflow: visible;
+}
+
+.initiative-card:hover {
+    transform: translateY(-4px);
+    z-index: 20;
+}
+
+.project-default {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: opacity 0.25s ease, transform 0.35s ease;
+}
+
+.initiative-card-surface {
+    position: absolute;
+    inset: 38px 0 0;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    background: rgba(255, 255, 255, 0.3);
+    background: color-mix(in srgb, var(--initiative-bg, #ffffff) 18%, transparent);
+    box-shadow: 0 16px 38px rgba(31, 38, 48, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.62);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
+    backdrop-filter: blur(20px) saturate(145%);
+}
+
+.initiative-card:nth-child(1) .initiative-card-surface,
+.initiative-card:nth-child(5) .initiative-card-surface {
+    inset-block: 38px 0;
+}
+
+.initiative-mark {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    display: flex;
+    width: 92px;
+    height: 92px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.28);
+    border-radius: 50%;
+    background: #ffffff;
+    transform: translateX(-50%);
+}
+
+.initiative-card:nth-child(1) .initiative-mark,
+.initiative-card:nth-child(5) .initiative-mark {
+    top: 0;
+}
+
+.initiative-mark img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+.initiative-mark > span {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #101417;
+    color: #f3c64e;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.initiative-card h3 {
+    position: absolute;
+    top: 128px;
+    right: 12px;
+    left: 12px;
+    margin: 0;
+    color: #111111;
+    font-family: Poppins, "Plus Jakarta Sans", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.initiative-card:nth-child(1) h3,
+.initiative-card:nth-child(5) h3 {
+    top: 128px;
+}
+
+.initiative-card > p,
+.initiative-card .project-default > p {
+    position: absolute;
+    top: 178px;
+    left: 50%;
+    width: calc(100% - 32px);
+    max-width: calc(100% - 44px);
+    max-height: 72px;
+    margin: 0;
+    overflow: hidden;
+    color: #46433f;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    transform: translateX(-50%);
+}
+
+.initiative-card:nth-child(1) > p,
+.initiative-card:nth-child(1) .project-default > p,
+.initiative-card:nth-child(5) > p,
+.initiative-card:nth-child(5) .project-default > p {
+    top: 178px;
+}
+
+.initiative-read-more {
+    position: absolute;
+    top: 267px;
+    left: 50%;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #89351d;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transform: translateX(-50%);
+}
+
+.initiative-card:nth-child(1) .initiative-read-more,
+.initiative-card:nth-child(5) .initiative-read-more {
+    top: 267px;
+}
+
+.tooltip-container .project-default {
+    opacity: 1;
+    transition: opacity 0.25s ease, transform 0.35s ease;
+}
+
+.tooltip-container:hover .project-default,
+.tooltip-container.is-open .project-default {
+    opacity: 0;
+    transform: scale(0.97);
+    pointer-events: none;
+}
+
+.initiative-card:hover,
+.initiative-card.is-open {
+    transition-delay: 0s;
+}
+
+.tooltip-popup {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(350px, calc(100% + 40px));
+    min-height: 280px;
+    padding: 20px 18px 18px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: 18px;
+    box-shadow: 0 22px 45px rgba(17, 17, 17, 0.18);
+    text-align: left;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(0.84);
+    transition: opacity 0.28s ease, visibility 0.28s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 30;
+}
+
+.tooltip-container:hover .tooltip-popup,
+.tooltip-container.is-open .tooltip-popup {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.project-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.project-popup-content h4 {
+    margin: 0;
+    color: #111111;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.project-popup-content p {
+    margin: 0;
+    color: #46433f;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow: auto;
+}
+
+.project-popup-content a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: fit-content;
+    margin-top: 4px;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #89351d;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.project-popup-content a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.project-popup-content .project-visit-link img {
+    display: block;
+    width: 18px;
+    height: auto;
+}
+
+.popup-image {
+    display: flex;
+    width: 100%;
+    height: 110px;
+    align-items: center;
+    border-radius: 12px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    background: color-mix(in srgb, var(--initiative-bg, #ffffff) 26%, rgba(255, 255, 255, 0.9));
+    overflow: hidden;
+}
+
+.popup-image img {
+    display: block;
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+}
+
+.popup-image span {
+    display: grid;
+    place-items: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #101417;
+    color: #f3c64e;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.initiative-read-more:hover span {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.initiative-read-more:focus-visible {
+    border-radius: 2px;
+    outline: 2px solid #89351d;
+    outline-offset: 4px;
+}
+
+.initiative-read-more img {
+    display: block;
+}
+
+.initiatives-empty {
+    margin: 0;
+    padding: 40px 24px;
+    color: #5f5e5e;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+}
+
+.initiatives-reveal-ready #projects:not(.is-visible) .initiatives-heading,
+.initiatives-reveal-ready #projects:not(.is-visible) .initiative-card {
+    opacity: 0;
+    transform: translateY(42px);
+}
+
+.initiatives-reveal-ready #projects.is-visible .initiatives-heading,
+.initiatives-reveal-ready #projects.is-visible .initiative-card {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (max-width: 1919px) {
+    .initiatives-track {
+        margin-inline: 0;
+        padding-inline: 24px;
+    }
+}
+
+@media (max-width: 767px) {
+    .initiatives-section {
+        min-height: 0;
+        padding: 96px 0 72px;
+    }
+
+    .initiatives-heading h2 {
+        font-size: 34px;
+        line-height: 1.15;
+    }
+
+    .initiatives-viewport {
+        margin-top: 28px;
+        scroll-padding-inline: 24px;
+    }
+
+    .initiatives-track {
+        gap: 20px;
+        padding-inline: 24px;
+    }
+
+    .initiative-card {
+        flex-basis: 170px;
+        width: 170px;
+        height: 330px;
+    }
+
+    .initiative-card-surface {
+        inset: 34px 0 0;
+    }
+
+    .initiative-card:nth-child(1) .initiative-card-surface,
+    .initiative-card:nth-child(5) .initiative-card-surface {
+        inset-block: 44px 0;
+    }
+
+    .initiative-mark,
+    .initiative-mark img,
+    .initiative-mark > span {
+        width: 72px;
+        height: 72px;
+    }
+
+    .initiative-card:nth-child(1) .initiative-mark,
+    .initiative-card:nth-child(5) .initiative-mark {
+        top: 0;
+    }
+
+    .initiative-card h3 {
+        top: 125px;
+        font-size: 14px;
+    }
+
+    .initiative-card:nth-child(1) h3,
+    .initiative-card:nth-child(5) h3 {
+        top: 125px;
+    }
+
+    .initiative-card > p,
+    .initiative-card .project-default > p {
+        top: 170px;
+        width: calc(100% - 20px);
+        max-height: 50px;
+        font-size: 11px;
+    }
+
+    .initiative-card:nth-child(1) > p,
+    .initiative-card:nth-child(1) .project-default > p,
+    .initiative-card:nth-child(5) > p,
+    .initiative-card:nth-child(5) .project-default > p {
+        top: 170px;
+    }
+
+    .initiative-read-more {
+        top: 262px;
+        font-size: 11px;
+    }
+
+    .initiative-card:nth-child(1) .initiative-read-more,
+    .initiative-card:nth-child(5) .initiative-read-more {
+        top: 262px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+    .initiative-card {
+        flex-basis: calc((100vw - 88px) / 3);
+        width: calc((100vw - 88px) / 3);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .initiatives-cubes,
+    .initiative-card,
+    .initiatives-heading {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    .initiatives-reveal-ready #projects:not(.is-visible) .initiatives-heading,
+    .initiatives-reveal-ready #projects:not(.is-visible) .initiative-card {
+        opacity: 1;
+        transform: none;
+    }
+}
+
 .carousel-container {
     mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
     -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
@@ -2395,6 +3162,80 @@ document.addEventListener('keydown', function(e) {
     border-radius: 4px;
 }
 
+#projects .tooltip-popup {
+    width: min(460px, calc(100vw - 32px));
+    min-height: 430px;
+    max-height: min(520px, calc(100vh - 32px));
+    padding: 24px;
+    color: #1e1e1a;
+    background: rgba(255, 255, 255, 0.56);
+    border-color: rgba(255, 255, 255, 0.78);
+    border-radius: 16px;
+    box-shadow: 0 22px 48px rgba(31, 38, 48, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    -webkit-backdrop-filter: blur(28px) saturate(155%);
+    backdrop-filter: blur(28px) saturate(155%);
+    overflow: auto;
+}
+
+#projects .initiative-card {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+#projects .initiative-card-surface {
+    border-color: rgba(255, 255, 255, 0.68);
+    background: rgba(255, 255, 255, 0.48);
+    background: color-mix(in srgb, var(--initiative-bg, #ffffff) 20%, rgba(255, 255, 255, 0.4));
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
+    backdrop-filter: blur(20px) saturate(145%);
+}
+
+#projects .project-popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+#projects .popup-image {
+    flex: 0 0 126px;
+    width: 126px;
+    height: 126px;
+    align-self: center;
+    margin: 0 0 4px;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.65);
+    border-radius: 50%;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+#projects .popup-image img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+#projects .project-popup-content p {
+    max-height: 190px;
+    line-height: 1.65;
+}
+
+@media (max-width: 767px) {
+    .initiatives-viewport {
+        padding-block: 32px;
+    }
+
+    #projects .tooltip-popup {
+        min-height: 390px;
+        padding: 20px;
+    }
+}
+
 .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -2546,7 +3387,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let suppressClick = false;
     let paused = false;
     let direction = 1;
-    const autoSpeed = 30; // pixels per second, matching the existing 30s carousel rhythm
+    const autoSpeed = 18; // slower drift to match the Figma motion cadence more closely
 
     const measure = () => {
         maxPosition = Math.max(0, track.scrollWidth - carousel.clientWidth);
