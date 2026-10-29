@@ -148,28 +148,32 @@
                 gap: 12px;
             }
             .hero-btn {
-                height: 58px;
+                box-sizing: border-box;
+                height: calc(36px / var(--hero-scale, 1));
+                padding: 0 calc(14px / var(--hero-scale, 1)) 0 calc(16px / var(--hero-scale, 1));
                 border-radius: 9999px;
                 display: inline-flex;
                 align-items: center;
-                font-size: 16px;
-                line-height: 24px;
+                font-size: calc(12px / var(--hero-scale, 1));
+                font-weight: 700;
+                line-height: 1;
+                letter-spacing: calc(0.2px / var(--hero-scale, 1));
                 text-decoration: none;
                 white-space: nowrap;
+            }
+            .hero-btn img {
+                width: calc(9.46875px / var(--hero-scale, 1));
+                height: calc(3.75px / var(--hero-scale, 1));
+                margin-left: calc(8px / var(--hero-scale, 1));
             }
             .hero-btn-primary {
                 background: #b36855;
                 color: #faf7f2;
-                font-weight: 700;
-                padding: 12px 28px;
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
             }
             .hero-btn-primary:hover { filter: brightness(1.05); }
-            .hero-btn-primary img { margin-left: 8px; }
             .hero-btn-secondary {
                 color: #000000;
-                font-weight: 500;
-                padding: 12px 25px;
                 border: 1px solid #d5cec2;
             }
             .hero-btn-secondary:hover { background: rgba(255, 255, 255, 0.35); }
@@ -311,12 +315,17 @@
                     gap: 10px;
                 }
                 #heroCanvas > .hero-actions .hero-btn {
-                    height: 52px;
-                    font-size: 15px;
-                    line-height: 22px;
+                    height: 36px;
+                    padding: 0 14px 0 16px;
+                    font-size: 12px;
+                    line-height: 1;
+                    letter-spacing: 0.2px;
                 }
-                #heroCanvas > .hero-actions .hero-btn-primary { padding: 11px 23px; }
-                #heroCanvas > .hero-actions .hero-btn-secondary { padding: 12px 21px; }
+                #heroCanvas > .hero-actions .hero-btn img {
+                    width: 9.46875px;
+                    height: 3.75px;
+                    margin-left: 8px;
+                }
                 #heroCanvas > .hero-tag {
                     order: 5;
                     margin-top: 28px;
@@ -353,6 +362,12 @@
             @media (prefers-reduced-motion: reduce) {
                 .hero-cubes,
                 .hero-badge { animation: none; }
+            }
+            @media (max-width: 768px) {
+                #heroCanvas > .hero-actions .hero-btn {
+                    height: 34px;
+                    padding: 0 12px 0 14px;
+                }
             }
         </style>
         @php
@@ -449,11 +464,13 @@
                 function applyHeroScale() {
                     if (stacked.matches) {
                         canvas.style.transform = '';
+                        document.documentElement.style.setProperty('--hero-scale', '1');
                         fit.style.height = '';
                         stage.style.paddingTop = Math.round(header ? header.getBoundingClientRect().height : 0) + 'px';
                         return;
                     }
                     var scale = fit.clientWidth / 2305;
+                    document.documentElement.style.setProperty('--hero-scale', String(scale));
                     canvas.style.transform = 'scale(' + scale + ')';
                     fit.style.height = Math.round(1331 * scale) + 'px';
                     var headerHeight = header ? header.getBoundingClientRect().height : 0;
@@ -588,22 +605,27 @@
         .about-note { margin: 0; font-size: 17px; font-weight: 400; line-height: 1.55; color: #5f5e5e; }
         .about-action { padding-top: 32px; }
         .about-btn {
+            box-sizing: border-box;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 24px;
+            height: 36px;
+            padding: 0 14px 0 16px;
             border-radius: 9999px;
             background: #b36855;
             color: #faf7f2;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 21px;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.2px;
             text-decoration: none;
+            white-space: nowrap;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
             transition: filter 0.2s ease;
         }
         .about-btn:hover { filter: brightness(1.1); }
-        .about-btn img { flex-shrink: 0; }
+        .about-btn img { flex-shrink: 0; width: 9.46875px; height: 3.75px; }
         .about-reveal-media {
             position: relative;
             width: 100%;
@@ -666,13 +688,21 @@
             }
             .about-action { padding-top: calc(80 * var(--fu)); }
             .about-btn {
-                gap: calc(8 * var(--fu));
-                padding: calc(10 * var(--fu)) calc(24 * var(--fu));
-                font-size: max(10px, calc(14 * var(--fu)));
-                line-height: calc(21 * var(--fu));
+                gap: 8px;
+                height: 36px;
+                padding: 0 14px 0 16px;
+                font-size: 12px;
+                line-height: 1;
+                letter-spacing: 0.2px;
             }
-            .about-btn img { width: calc(9.46875 * var(--fu)); height: calc(3.75 * var(--fu)); }
+            .about-btn img { width: 9.46875px; height: 3.75px; }
             .about-reveal-media { height: calc(738 * var(--fu)); aspect-ratio: auto; }
+        }
+        @media (max-width: 768px) {
+            .about-btn {
+                height: 34px;
+                padding: 0 12px 0 14px;
+            }
         }
         .about-reveal-ready .about-card {
             opacity: 0;
