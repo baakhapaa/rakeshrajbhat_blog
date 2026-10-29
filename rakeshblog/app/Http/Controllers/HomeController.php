@@ -157,6 +157,25 @@ class HomeController extends Controller
         ));
     }
 
+    public function galleries()
+    {
+        try {
+            $collections = GalleryCollection::active()
+                ->ordered()
+                ->with('images')
+                ->get()
+                ->filter(fn ($collection) => $collection->images->isNotEmpty())
+                ->values();
+        } catch (\Exception $e) {
+            $collections = collect();
+        }
+
+        return view('gallery.index', [
+            'collections' => $collections,
+            'gallerySection' => \App\Models\Setting::getGallerySection(),
+        ]);
+    }
+
     public function gallery(GalleryCollection $gallery)
     {
         if (! $gallery->is_active) {

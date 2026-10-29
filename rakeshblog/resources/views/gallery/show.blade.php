@@ -15,7 +15,7 @@
 @section('content')
 <section class="collection-page">
     <div class="collection-wrap">
-        <a href="{{ route('home') }}#gallery" class="collection-back">Gallery</a>
+        <a href="{{ route('gallery.index') }}" class="collection-back">Gallery</a>
         <div class="collection-head">
             <h1>{{ $collection->title }}</h1>
             <p>{{ $collection->images->count() }} {{ \Illuminate\Support\Str::plural('photograph', $collection->images->count()) }}</p>

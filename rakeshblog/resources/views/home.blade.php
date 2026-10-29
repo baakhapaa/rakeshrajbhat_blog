@@ -148,12 +148,12 @@
                 gap: 12px;
             }
             .hero-btn {
-                height: 53px;
+                height: 58px;
                 border-radius: 9999px;
                 display: inline-flex;
                 align-items: center;
-                font-size: 14px;
-                line-height: 21px;
+                font-size: 16px;
+                line-height: 24px;
                 text-decoration: none;
                 white-space: nowrap;
             }
@@ -161,7 +161,7 @@
                 background: #b36855;
                 color: #faf7f2;
                 font-weight: 700;
-                padding: 10px 24px;
+                padding: 12px 28px;
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
             }
             .hero-btn-primary:hover { filter: brightness(1.05); }
@@ -169,7 +169,7 @@
             .hero-btn-secondary {
                 color: #000000;
                 font-weight: 500;
-                padding: 11px 21px;
+                padding: 12px 25px;
                 border: 1px solid #d5cec2;
             }
             .hero-btn-secondary:hover { background: rgba(255, 255, 255, 0.35); }
@@ -310,9 +310,13 @@
                     flex-wrap: wrap;
                     gap: 10px;
                 }
-                #heroCanvas > .hero-actions .hero-btn { height: 48px; }
-                #heroCanvas > .hero-actions .hero-btn-primary { padding: 10px 20px; }
-                #heroCanvas > .hero-actions .hero-btn-secondary { padding: 11px 18px; }
+                #heroCanvas > .hero-actions .hero-btn {
+                    height: 52px;
+                    font-size: 15px;
+                    line-height: 22px;
+                }
+                #heroCanvas > .hero-actions .hero-btn-primary { padding: 11px 23px; }
+                #heroCanvas > .hero-actions .hero-btn-secondary { padding: 12px 21px; }
                 #heroCanvas > .hero-tag {
                     order: 5;
                     margin-top: 28px;
@@ -536,23 +540,18 @@
         #about-me {
             position: relative;
             overflow-x: clip;
-            padding: 0 16px 48px;
+            padding: 0 16px 24px;
             background: linear-gradient(to bottom, #e9e9e9 0, #e9e9e9 96px, #f3f3f3 96px, #f3f3f3 100%);
             font-family: "Plus Jakarta Sans", sans-serif;
         }
         .about-card {
-            --about-stack-x: 12px;
-            --about-stack-y: 24px;
             position: relative;
             margin: 0 auto;
             max-width: 1920px;
             padding: 40px 20px 48px;
             background: #fbf9f6;
             border-bottom: 1px solid #efeeeb;
-            box-shadow:
-                var(--about-stack-x) var(--about-stack-y) 0 rgba(255, 255, 255, 0.7),
-                0 18px 50px -12px rgba(0, 0, 0, 0.28),
-                0 4px 14px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.28), 0 4px 14px rgba(0, 0, 0, 0.08);
         }
         .about-grid { display: grid; gap: 40px; }
         .about-label { display: flex; align-items: center; gap: 8px; }
@@ -622,17 +621,13 @@
             #about-me {
                 z-index: 1;
                 margin-top: calc(-212 * var(--fu));
-                padding: 0 0 calc(60 * var(--fu));
+                padding: 0 0 24px;
                 background: linear-gradient(to bottom, transparent 0, transparent calc(212 * var(--fu)), #f3f3f3 calc(212 * var(--fu)), #f3f3f3 100%);
             }
             .about-card {
                 width: calc(1920 * var(--fu));
                 min-height: calc(1065 * var(--fu));
                 padding: calc(160 * var(--fu)) calc(196 * var(--fu)) calc(113 * var(--fu));
-            }
-            .about-card {
-                --about-stack-x: calc(27 * var(--fu));
-                --about-stack-y: calc(52 * var(--fu));
             }
             .about-grid {
                 width: calc(1548 * var(--fu));
@@ -993,7 +988,7 @@
 
     <section id="about" class="mission-scroll text-[#1e1e1a] scroll-mt-20" aria-labelledby="mission-heading">
         <div class="mission-scroll__list">
-            <p class="mission-scroll__kicker">My Mission</p>
+            <p class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>My Missions</p>
             @foreach($missionItems as $item)
                 <div class="mission-scroll__listItem">
                     <div class="mission-scroll__listNum">{{ $item["number"] }}</div>
@@ -1006,9 +1001,11 @@
         <div class="mission-scroll__track" id="missionTrack">
             <div class="mission-scroll__sticky" id="missionSticky">
                 <div class="mission-scroll__dialZone" aria-hidden="true">
-                    <div class="mission-scroll__dialBaseOuter"></div>
-                    <div class="mission-scroll__dialBaseInner"></div>
-                    <div class="mission-scroll__dialBaseCenter"></div>
+                    <div class="mission-scroll__rings">
+                        <div class="mission-scroll__dialBaseOuter"></div>
+                        <div class="mission-scroll__dialBaseInner"></div>
+                        <div class="mission-scroll__dialBaseCenter"></div>
+                    </div>
                     <div class="mission-scroll__dialCanvas" id="missionDial">
                         @foreach($missionItems as $item)
                             <div class="mission-scroll__marker">
@@ -1020,13 +1017,17 @@
                     </div>
                 </div>
 
+                <p id="mission-heading" class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>My Missions</p>
                 <div class="mission-scroll__textZone">
-                    <p id="mission-heading" class="mission-scroll__kicker">My Mission</p>
                     <div class="mission-scroll__textViewport" id="missionText">
                         @foreach($missionItems as $item)
                             <article class="mission-scroll__reason">
                                 <h3 class="mission-scroll__headline">{{ $item["title"] }}</h3>
                                 <p class="mission-scroll__body">{{ $item["body"] }}</p>
+                                <a href="#projects" class="mission-scroll__more">
+                                    Learn More
+                                    <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
+                                </a>
                             </article>
                         @endforeach
                     </div>
@@ -1037,27 +1038,33 @@
 
     <style>
         .mission-scroll {
-            --gold: #D4AF37;
-            --ink: #1e1e1a;
-            --muted: #5a5a52;
-            --dial-size: min(52vw, 800px);
-            --dial-center: -0.02;
-            --number-margin: min(4vw, 64px);
+            --dial-size: min(78vh, 898px);
+            --dial-center: 0.04;
+            --number-margin: 8px;
             position: relative;
             width: 100%;
-            background: #f2f2f2;
+            background: #fbf9f6;
+            border-bottom: 1px solid #efeeeb;
             overflow: clip;
         }
 
         .mission-scroll__kicker {
-            margin: 0 0 12px;
-            color: #D4AF37;
-            font-size: 12px;
+            position: absolute;
+            z-index: 3;
+            left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + var(--number-margin));
+            top: calc(50% - clamp(250px, 32vh, 340px));
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            color: #89351d;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(22px, 2.4vw, 46px);
             font-weight: 700;
-            letter-spacing: 0.14em;
+            letter-spacing: 1.1px;
+            line-height: 1;
             text-transform: uppercase;
         }
-
         .mission-scroll__list {
             display: none;
             max-width: 40rem;
@@ -1073,16 +1080,17 @@
 
         .mission-scroll__listNum {
             color: #D4AF37;
-            font-size: 12px;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 28px;
             font-weight: 700;
-            letter-spacing: 0.14em;
         }
 
         .mission-scroll__listTitle {
             margin: 8px 0 0;
-            font-family: "Playfair Display", serif;
-            font-size: 24px;
-            font-weight: 700;
+            font-family: Poppins, sans-serif;
+            font-size: 32px;
+            font-weight: 600;
+            color: #111111;
         }
 
         .mission-scroll__listBody {
@@ -1098,6 +1106,17 @@
             height: 600vh;
         }
 
+        .mission-scroll__dash {
+            width: 39px;
+            height: 4px;
+            background: #89351d;
+            flex: none;
+        }
+        .mission-scroll__list .mission-scroll__kicker {
+            position: static;
+            margin: 0 0 24px;
+            font-size: 28px;
+        }
         .mission-scroll__sticky {
             position: sticky;
             top: 5rem;
@@ -1110,11 +1129,16 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 40%;
+            width: 100%;
             height: 100%;
             pointer-events: none;
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+        }
+        .mission-scroll__rings {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
         }
 
         .mission-scroll__dialBaseOuter,
@@ -1170,7 +1194,7 @@
             width: 0;
             height: 0;
             transform-origin: 0 0;
-            transform: rotate(var(--angle)) translateX(calc(var(--dial-size) * 0.4375 + var(--number-margin)));
+            transform: rotate(var(--angle)) translateX(calc(var(--dial-size) * 0.5 + var(--number-margin)));
         }
 
         .mission-scroll__markerContent {
@@ -1183,103 +1207,128 @@
         .mission-scroll__markerNum {
             display: inline-block;
             font-family: "Playfair Display", serif;
-            font-size: 72px;
+            font-size: clamp(64px, 7vw, 126px);
             font-weight: 700;
-            letter-spacing: -0.03em;
-            transform-origin: left center;
+            line-height: 0.8;
+            letter-spacing: -0.04em;
+            color: #111111;
             will-change: transform, color, opacity;
         }
 
         .mission-scroll__textZone {
             position: absolute;
-            left: 38%;
-            width: 54%;
+            left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + clamp(150px, 16vw, 230px));
+            right: 20px;
             top: 50%;
-            transform: translateY(-28px);
+            transform: translateY(-50%);
             z-index: 2;
         }
-
-        .mission-scroll__textViewport {
-            position: relative;
-            height: 190px;
-            width: 100%;
-            overflow: hidden;
+        .mission-scroll__textViewport { position: relative; height: 190px; width: min(560px, 54vw); overflow: hidden; }
+        .mission-scroll__more {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            align-self: center;
+            justify-self: start;
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            height: 36px;
+            padding: 0 14px 0 16px;
+            border-radius: 9999px;
+            background: #b36855;
+            color: #faf7f2;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            line-height: 1;
+            letter-spacing: 0.2px;
+            text-decoration: none;
+            white-space: nowrap;
+            box-shadow: 0 8px 18px -10px rgba(137, 53, 29, 0.85);
         }
-
+        .mission-scroll__more img { margin-left: 8px; }
+        .mission-scroll__more:hover { filter: brightness(1.06); }
         .mission-scroll__reason {
             position: absolute;
             inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+            display: grid;
+            grid-template-columns: minmax(0, 400px) max-content;
+            column-gap: 28px;
+            align-content: center;
             opacity: 0;
             will-change: transform, opacity;
         }
-
         .mission-scroll__headline {
+            grid-column: 1;
+            grid-row: 1;
+            min-width: 0;
             margin: 0;
             font-family: "Playfair Display", serif;
             font-size: clamp(36px, 3.4vw, 56px);
             font-weight: 700;
             line-height: 1.1;
+            letter-spacing: 0;
             color: #1e1e1a;
             will-change: transform;
         }
-
         .mission-scroll__body {
-            margin: 16px 0 0;
-            max-width: 36rem;
-            color: #5a5a52;
-            font-size: 18px;
-            line-height: 1.6;
+            grid-column: 1;
+            grid-row: 2;
+            margin: 8px 0 0;
+            max-width: 100%;
+            color: #59554f;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: clamp(13px, 1vw, 15px);
+            font-weight: 500;
+            line-height: 1.45;
+            letter-spacing: 0;
             will-change: transform;
         }
 
         @media (max-width: 1100px) {
             .mission-scroll__textZone {
-                left: 42%;
-                width: 52%;
+                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 112px);
+                right: 12px;
             }
+            .mission-scroll__textViewport { width: min(460px, 58vw); height: 150px; }
+            .mission-scroll__reason { grid-template-columns: minmax(0, 280px) max-content; column-gap: 20px; }
+            .mission-scroll__headline { font-size: 24px; letter-spacing: 0; }
+            .mission-scroll__kicker { top: calc(50% - 230px); font-size: 20px; }
         }
 
         @media (max-width: 768px) {
             .mission-scroll {
-                --dial-size: min(72vw, 320px);
-                --dial-center: -0.16;
-                --number-margin: 8px;
+                --dial-size: min(54vh, 420px);
+                --dial-center: -0.08;
+                --number-margin: 6px;
             }
 
             .mission-scroll__sticky {
                 top: 5rem;
                 height: calc(100svh - 5rem);
             }
-
             .mission-scroll__dialZone {
                 width: 42%;
             }
 
-            .mission-scroll__markerNum {
-                font-size: 32px;
-            }
-
+            .mission-scroll__markerNum { font-size: 48px; }
             .mission-scroll__textZone {
-                left: 40%;
-                width: 56%;
-                padding-right: 20px;
+                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 72px);
+                right: 10px;
+                transform: translateY(-50%);
             }
-
-            .mission-scroll__textViewport {
-                height: 160px;
+            .mission-scroll__textViewport { width: min(320px, 70vw); height: 160px; }
+            .mission-scroll__reason { grid-template-columns: minmax(0, 180px) max-content; column-gap: 12px; }
+            .mission-scroll__headline { font-size: 28px; letter-spacing: 0; }
+            .mission-scroll__body { margin-top: 10px; font-size: 15px; line-height: 1.5; }
+            .mission-scroll__kicker {
+                font-size: 16px;
+                top: calc(50% - 176px);
             }
-
-            .mission-scroll__headline {
-                font-size: 28px;
-            }
-
-            .mission-scroll__body {
-                margin-top: 10px;
-                font-size: 15px;
-                line-height: 1.5;
+            .mission-scroll__dash { width: 28px; height: 3px; }
+            .mission-scroll__more {
+                height: 34px;
+                padding: 0 12px 0 14px;
             }
         }
 
@@ -1307,7 +1356,7 @@
 
             const CONFIG = {
                 angleStep: 28,
-                exitY: 135,
+                exitY: 200,
                 stiffness: 85,
                 damping: 26,
                 mass: 0.3,
@@ -1315,14 +1364,12 @@
                 bodyYOffset: 25,
                 scrollPadding: 0
             };
-
             function applyMotionScale() {
                 const narrow = window.innerWidth <= 768;
-                CONFIG.exitY = narrow ? 64 : 135;
+                CONFIG.exitY = narrow ? 90 : 200;
                 CONFIG.headlineYOffset = narrow ? 20 : 45;
                 CONFIG.bodyYOffset = narrow ? 12 : 25;
             }
-
             const COLOR_FADED = "rgba(30, 30, 26, 0.18)";
             const COLOR_ACTIVE = "#D4AF37";
             const markers = Array.from(canvas.querySelectorAll(".mission-scroll__marker"));
@@ -1407,12 +1454,15 @@
                 const progress = spring.value;
                 const pad = CONFIG.scrollPadding;
                 const step = (1 - 2 * pad) / (total - 1);
-                canvas.style.transform = "rotate(" + interpolate(progress, [pad, 1 - pad], [0, -(total - 1) * CONFIG.angleStep]) + "deg)";
+                const rotation = interpolate(progress, [pad, 1 - pad], [0, -(total - 1) * CONFIG.angleStep]);
+                canvas.style.transform = 'rotate(' + rotation + 'deg)';
 
                 for (let i = 0; i < total; i++) {
                     const s = pad + (i / (total - 1)) * (1 - 2 * pad);
                     const scale = interpolate(progress, [s - step * 0.8, s, s + step * 0.8], [0.5, 1, 0.5]);
-                    const opacity = interpolate(progress, [s - step * 0.9, s, s + step * 0.9], [0.3, 1, 0.3]);
+                    const angle = i * CONFIG.angleStep + rotation;
+                    const above = angle >= -8 ? 1 : (angle <= -26 ? 0 : (angle + 26) / 18);
+                    const opacity = interpolate(progress, [s - step * 0.9, s, s + step * 0.9], [0.3, 1, 0.3]) * above;
                     const cRange = [s - step * 0.6, s, s + step * 0.6];
                     let color = COLOR_FADED;
                     if (progress > cRange[0] && progress < cRange[2]) {
@@ -1422,6 +1472,7 @@
                     }
                     nums[i].style.transform = "scale(" + scale.toFixed(4) + ")";
                     nums[i].style.opacity = opacity.toFixed(4);
+                    nums[i].style.visibility = opacity < 0.02 ? 'hidden' : 'visible';
                     nums[i].style.color = color;
 
                     const y = interpolate(progress, [s - step * 0.8, s, s + step * 0.8], [CONFIG.exitY, 0, -CONFIG.exitY]);
@@ -2170,9 +2221,9 @@ document.addEventListener('keydown', function(e) {
                     @endforeach
                 </div>
                 <div class="mt-12 flex justify-center">
-                    <a href="{{ route('news.index') }}" class="inline-flex items-center gap-2 rounded-full px-8 py-3.5 font-grotesk text-base font-semibold leading-[18px] tracking-[1.04px] text-[#89351d]">
-                        <span>View All Updates</span>
-                        <img src="{{ asset('images/news-all-arrow.svg') }}" alt="" width="15" height="10.5">
+                    <a href="{{ route('news.index') }}" class="gallery-explore">
+                        View All Updates
+                        <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                     </a>
                 </div>
             @else
@@ -2183,55 +2234,67 @@ document.addEventListener('keydown', function(e) {
 
     @include('partials.news-modal')
 
-    <section id="gallery" class="gallery-section py-24 scroll-mt-20">
-        <div class="max-w-7xl mx-auto px-6">
-            @php
-                $gallerySection = \App\Models\Setting::getGallerySection();
-            @endphp
-            <div class="gallery-head">
-                <div>
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-3 uppercase">{{ $gallerySection['label'] }}</p>
-                    <h2 class="gallery-title font-serif font-bold text-[#1e1e1a] leading-tight">{{ $gallerySection['title'] }}</h2>
-                </div>
-                <p class="gallery-intro text-[#5a5a52] leading-relaxed">
-                    {{ $gallerySection['paragraph'] }}
-                </p>
+    <section id="gallery" class="gallery-section scroll-mt-20">
+        @php
+            $gallerySection = \App\Models\Setting::getGallerySection();
+            $galleryTitle = trim((string) ($gallerySection['title'] ?? ''));
+        @endphp
+        <div class="gallery-wrap">
+            <div class="gallery-marker">
+                <span class="gallery-dash" aria-hidden="true"></span>
+                <p class="gallery-kicker">{{ $gallerySection['label'] }}</p>
             </div>
-
-            @if($galleryCollections->isNotEmpty())
-                <div class="gallery-scroller" tabindex="0" aria-label="Photo collections">
-                    @foreach($galleryCollections as $collection)
-                        @php
-                            $previewImages = $collection->images->take(4);
-                            $lead = $previewImages->first();
-                            $sideImages = $previewImages->slice(1, 3);
-                        @endphp
-                        <a href="{{ route('gallery.show', $collection) }}" class="gallery-card {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
-                            <div class="gallery-card-lead">
-                                <img src="{{ $lead->url }}" alt="{{ $collection->title }}" draggable="false">
-                                <span class="gallery-card-count">{{ $collection->images->count() }} {{ \Illuminate\Support\Str::plural('photograph', $collection->images->count()) }}</span>
-                                <div class="gallery-card-lead-copy">
-                                    <span class="gallery-card-date">{{ $collection->created_at->format('M Y') }}</span>
-                                    <h3>{{ $collection->title }}</h3>
-                                </div>
-                            </div>
-                            @if($sideImages->isNotEmpty())
-                                <div class="gallery-card-side">
-                                    @foreach($sideImages as $image)
-                                        <div class="gallery-card-thumb">
-                                            <img src="{{ $image->url }}" alt="" draggable="false">
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
-                        </a>
-                    @endforeach
-                </div>
-                <p class="mt-4 text-xs text-[#8a8a82]">Drag or scroll sideways to move through the collections. Click on a collection to see every photograph.</p>
-            @else
-                <p class="text-sm text-[#8a8a82]">{{ $gallerySection['empty'] }}</p>
-            @endif
+            <h2 class="gallery-title">
+                @if($galleryTitle !== '')
+                    {{ $galleryTitle }}
+                @else
+                    My work. The projects<br>& moments between.
+                @endif
+            </h2>
         </div>
+
+        @if($galleryCollections->isNotEmpty())
+            <div class="gallery-scroller" tabindex="0" aria-label="Photo collections">
+                @foreach($galleryCollections as $collection)
+                    @php
+                        $previewImages = $collection->images->take(4);
+                        $lead = $previewImages->first();
+                        $sideImages = $previewImages->slice(1, 3);
+                    @endphp
+                    <a href="{{ route('gallery.show', $collection) }}" class="gallery-card {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
+                        <div class="gallery-card-lead">
+                            <img src="{{ $lead->url }}" alt="{{ $collection->title }}" draggable="false">
+                            <span class="gallery-card-scrim" aria-hidden="true"></span>
+                            <span class="gallery-card-count">
+                                <img src="{{ asset('images/gallery-count.svg') }}" alt="" width="16" height="16">
+                                <span>{{ $collection->images->count() }}</span>
+                            </span>
+                            <div class="gallery-card-copy">
+                                <time class="gallery-card-date" datetime="{{ $collection->created_at->toDateString() }}">{{ $collection->created_at->format('M Y') }}</time>
+                                <h3>{{ $collection->title }}</h3>
+                            </div>
+                        </div>
+                        @if($sideImages->isNotEmpty())
+                            <div class="gallery-card-side">
+                                @foreach($sideImages as $image)
+                                    <div class="gallery-card-thumb">
+                                        <img src="{{ $image->url }}" alt="" draggable="false">
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </a>
+                @endforeach
+            </div>
+            <div class="gallery-action">
+                <a href="{{ route('gallery.index') }}" class="gallery-explore">
+                    Explore gallery
+                    <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
+                </a>
+            </div>
+        @else
+            <p class="gallery-empty">{{ $gallerySection['empty'] }}</p>
+        @endif
     </section>
 
     {{-- <section class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a]">
@@ -2864,50 +2927,67 @@ document.addEventListener('keydown', function(e) {
 }
 
 .gallery-section {
-    background: #f7f4ee;
-    color: #1e1e1a;
+    background: #fff;
+    color: #111;
+    padding: 3.25rem 0 3.75rem;
 }
 
-.gallery-head {
+.gallery-wrap,
+.gallery-empty {
+    width: min(1640px, calc(100% - 2rem));
+    margin-inline: auto;
+}
+
+.gallery-marker {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 2rem;
-    margin-bottom: 2.5rem;
+    align-items: center;
+    gap: 8px;
 }
 
-.gallery-head > div {
-    flex: 1 0 auto;
+.gallery-dash {
+    display: block;
+    width: 24px;
+    height: 2px;
+    flex: none;
+    background: #89351d;
+}
+
+.gallery-kicker {
+    margin: 0;
+    color: #89351d;
+    font-family: "Space Grotesk", Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    line-height: 16px;
+    text-transform: uppercase;
 }
 
 .gallery-title {
-    font-size: clamp(2rem, 3.1vw, 3.15rem);
+    max-width: 760px;
+    margin: 16px 0 0;
+    color: #111;
+    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: clamp(1.75rem, 3.2vw, 46px);
+    font-weight: 600;
+    line-height: 1.15;
 }
 
-.gallery-intro {
-    flex: 0 1 280px;
-    max-width: 280px;
-    text-align: right;
-}
-
-@media (max-width: 760px) {
-    .gallery-head {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .gallery-intro {
-        flex-basis: auto;
-        max-width: 28rem;
-        text-align: left;
-    }
+.gallery-empty {
+    margin-top: 2rem;
+    color: #5a5a52;
+    font-size: 0.95rem;
 }
 
 .gallery-scroller {
     display: flex;
-    gap: 1.25rem;
+    gap: 16px;
+    margin-top: 32px;
     overflow-x: auto;
-    padding-bottom: 1.35rem;
+    padding-bottom: 8px;
+    padding-left: max(1rem, calc((100% - 1640px) / 2 + 1rem));
+    padding-right: max(1rem, calc((100% - 1640px) / 2 + 1rem));
+    scroll-padding-inline: max(1rem, calc((100% - 1640px) / 2 + 1rem));
     cursor: grab;
     user-select: none;
     touch-action: pan-x;
@@ -2929,13 +3009,12 @@ document.addEventListener('keydown', function(e) {
     scroll-snap-align: start;
     flex: 0 0 auto;
     display: flex;
-    width: min(82vw, 460px);
-    height: 320px;
-    border-radius: 0.75rem;
+    gap: 2px;
+    width: min(78vw, 480px);
+    height: calc(min(78vw, 480px) * 292 / 480);
+    border-radius: 8px;
     overflow: hidden;
-    border: 1px solid rgba(30, 30, 26, 0.08);
-    box-shadow: 0 1px 2px rgba(30, 30, 26, 0.06);
-    background: #e7e1d6;
+    background: #f7f4ee;
     text-decoration: none;
     color: inherit;
     cursor: grab;
@@ -2943,21 +3022,18 @@ document.addEventListener('keydown', function(e) {
     user-select: none;
 }
 
-.gallery-card:hover {
-    box-shadow: 0 10px 24px rgba(30, 30, 26, 0.12);
-}
-
 .gallery-card-single .gallery-card-lead {
-    width: 100%;
+    flex: 1 1 auto;
 }
 
 .gallery-card-lead {
     position: relative;
-    flex: 1 1 auto;
+    flex: 476 1 0;
     min-width: 0;
+    height: 100%;
 }
 
-.gallery-card-lead img,
+.gallery-card-lead > img,
 .gallery-card-thumb img {
     position: absolute;
     inset: 0;
@@ -2967,60 +3043,72 @@ document.addEventListener('keydown', function(e) {
     pointer-events: none;
 }
 
-.gallery-card-lead::after {
-    content: "";
+.gallery-card-scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(30, 30, 26, 0.58), rgba(30, 30, 26, 0.05) 46%, transparent);
+    background: linear-gradient(to bottom, rgba(19, 24, 14, 0) 40%, rgba(19, 24, 14, 0.85) 100%);
+    pointer-events: none;
 }
 
 .gallery-card-count,
-.gallery-card-lead-copy {
+.gallery-card-copy {
     position: absolute;
     z-index: 1;
 }
 
 .gallery-card-count {
-    top: 1rem;
-    left: 1rem;
-    padding: 0.3rem 0.7rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.86);
-    color: #735A12;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 28px;
+    min-width: 58px;
+    padding: 0 10px;
+    border: 1px solid #d5cec2;
+    border-radius: 8px;
+    background: #fff;
+    color: #333;
+    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
 }
 
-.gallery-card-lead-copy {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 1.25rem;
+.gallery-card-copy {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
 }
 
 .gallery-card-date {
-    margin: 0 0 0.3rem;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.8rem;
-    font-weight: 600;
+    display: block;
+    margin: 0 0 4px;
+    color: rgba(255, 255, 255, 0.82);
+    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
     letter-spacing: 0.04em;
+    line-height: 1.2;
 }
 
-.gallery-card-lead-copy h3 {
+.gallery-card-copy h3 {
+    margin: 0;
     color: #fff;
-    font-family: "Playfair Display", serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    line-height: 1.15;
+    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: clamp(1.25rem, 1.6vw, 26px);
+    font-weight: 600;
+    line-height: 1.1;
 }
 
 .gallery-card-side {
     display: flex;
     flex-direction: column;
-    flex: 0 0 124px;
-    width: 124px;
+    gap: 2px;
+    flex: 148 1 0;
+    min-width: 0;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -3028,25 +3116,54 @@ document.addEventListener('keydown', function(e) {
     position: relative;
     flex: 1 1 0;
     min-height: 0;
-    border-left: 1px solid rgba(255, 255, 255, 0.7);
-}
-
-.gallery-card-thumb + .gallery-card-thumb {
-    border-top: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .gallery-scroller::-webkit-scrollbar {
     display: none;
 }
 
-@media (max-width: 640px) {
-    .gallery-card {
-        height: 280px;
+.gallery-action {
+    display: flex;
+    justify-content: center;
+    margin-top: 44px;
+}
+
+.gallery-explore {
+    display: inline-flex;
+    align-items: center;
+    height: 53px;
+    padding: 10px 24px;
+    border-radius: 9999px;
+    background: #b36855;
+    color: #faf7f2;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 21px;
+    text-decoration: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
+}
+
+.gallery-explore img {
+    margin-left: 8px;
+}
+
+@media (min-width: 1100px) {
+    .gallery-scroller {
+        gap: 28px;
+        padding-left: max(2rem, calc((100% - 1640px) / 2 + 2rem));
+        padding-right: max(2rem, calc((100% - 1640px) / 2 + 2rem));
+        scroll-padding-inline: max(2rem, calc((100% - 1640px) / 2 + 2rem));
     }
 
-    .gallery-card-side {
-        flex-basis: 104px;
-        width: 104px;
+    .gallery-wrap,
+    .gallery-empty {
+        width: min(1640px, calc(100% - 4rem));
+    }
+
+    .gallery-card {
+        width: 480px;
+        height: 292px;
     }
 }
 

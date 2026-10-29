@@ -587,13 +587,13 @@ class Setting extends Model
     public static function getGallerySection(): array
     {
         $label = trim((string) static::getValue('gallery_section_label', 'Gallery'));
-        $title = trim((string) static::getValue('gallery_section_title', 'Moments along the way.'));
+        $title = trim((string) static::getValue('gallery_section_title', 'My work. The projects & moments between.'));
         $paragraph = trim((string) static::getValue('gallery_section_paragraph', 'Photographs from community visits, learning programmes, project activities and conversations.'));
         $empty = trim((string) static::getValue('gallery_section_empty', 'Photographs will appear here as collections are added.'));
 
         return [
             'label' => $label !== '' ? $label : 'Gallery',
-            'title' => $title !== '' ? $title : 'Moments along the way.',
+            'title' => $title !== '' ? $title : 'My work. The projects & moments between.',
             'paragraph' => $paragraph !== '' ? $paragraph : 'Photographs from community visits, learning programmes, project activities and conversations.',
             'empty' => $empty !== '' ? $empty : 'Photographs will appear here as collections are added.',
         ];

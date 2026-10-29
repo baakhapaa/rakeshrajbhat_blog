@@ -44,12 +44,14 @@ use App\Models\Blog;
 
 // Home & Blog
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/gallery', [HomeController::class, 'galleries'])->name('gallery.index');
 Route::get('/gallery/{gallery}', [HomeController::class, 'gallery'])->name('gallery.show');
 Route::get('/privacy', [LegalPageController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [LegalPageController::class, 'terms'])->name('terms');
 Route::get('/sitemap.xml', function () {
     $staticUrls = collect([
         ['loc' => route('home'), 'lastmod' => now()->toDateString(), 'changefreq' => 'weekly', 'priority' => '1.0'],
+        ['loc' => route('gallery.index'), 'lastmod' => now()->toDateString(), 'changefreq' => 'weekly', 'priority' => '0.7'],
         ['loc' => route('blog'), 'lastmod' => now()->toDateString(), 'changefreq' => 'weekly', 'priority' => '0.8'],
         ['loc' => route('contact'), 'lastmod' => now()->toDateString(), 'changefreq' => 'monthly', 'priority' => '0.6'],
         ['loc' => route('bootcamp'), 'lastmod' => now()->toDateString(), 'changefreq' => 'monthly', 'priority' => '0.7'],
