@@ -39,7 +39,7 @@
         .site-footer__inner {
             position: relative;
             z-index: 1;
-            width: min(1440px, calc(100% - 120px));
+            width: var(--site-width);
             margin: 0 auto;
         }
         .site-footer__top {
@@ -255,6 +255,18 @@
         @media (min-width: 981px) {
             .site-footer__links { padding-top: 58px; }
         }
+        @media (min-width: 981px) and (max-width: 1849px) {
+            .site-footer__top {
+                grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
+                grid-template-areas: "brand links" "brand card";
+            }
+            .site-footer__top > :first-child { grid-area: brand; }
+            .site-footer__links { grid-area: links; justify-self: start; padding-top: 8px; }
+            .site-footer__card { grid-area: card; }
+        }
+        @media (min-width: 1850px) {
+            .site-footer__top { grid-template-columns: minmax(0, 1fr) auto minmax(320px, 420px); }
+        }
         @media (max-width: 1023px) {
             .site-footer .hero-cubes-a {
                 background-repeat: repeat;
@@ -267,7 +279,6 @@
         }
         @media (max-width: 980px) {
             .site-footer { padding: 40px 0 24px; }
-            .site-footer__inner { width: min(1440px, calc(100% - 40px)); }
             .site-footer__links { justify-self: start; }
             .site-footer__top { grid-template-columns: 1fr; gap: 28px; }
             .site-footer__links { padding-top: 0; gap: 28px; }

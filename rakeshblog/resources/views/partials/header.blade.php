@@ -62,7 +62,7 @@
                     </div>
                 @else
                     <a href="{{ route('login') }}" class="hidden sm:inline text-[#1c1c1c] hover:text-[#9a4e32] text-sm">Login</a>
-                    <a href="{{ route('register') }}" class="hidden sm:inline rounded-full bg-[#c4a484] px-4 py-2 text-xs font-semibold text-white">Sign up</a>
+                    <a href="{{ route('register') }}" class="hidden sm:inline rounded-full bg-[#b36855] px-4 py-2 text-xs font-semibold text-white">Sign up</a>
                 @endauth
             @else
                 <button type="button" data-open-work="education" class="site-cta notranslate" translate="no">
@@ -113,7 +113,82 @@
     </nav>
 </header>
 <style>
-    :root { --fu: calc(min(100vw, 2305px) / 2305); }
+    :root {
+        --fu: calc(min(100vw, 2305px) / 2305);
+        /* Shared content column; percentages resolve against the element that uses it. */
+        --site-gutter: clamp(20px, 5vw, 48px);
+        --site-width: calc(100% - 2 * var(--site-gutter));
+        --site-edge: calc((100% - var(--site-width)) / 2);
+
+        --header-h: 72px;
+        --page-top: calc(var(--header-h) + clamp(40px, 2vw + 28px, 88px));
+        --section-y: clamp(64px, 3.2vw + 40px, 136px);
+        --page-title-size: clamp(36px, 2vw + 26px, 72px);
+        --heading-size: clamp(30px, 1.25vw + 24px, 56px);
+        --heading-gap: clamp(28px, 1.5vw + 16px, 56px);
+        --kicker-size: clamp(12px, 0.15vw + 11px, 15px);
+        --kicker-gap: clamp(8px, 0.4vw + 6px, 16px);
+        --cta-gap: clamp(32px, 2vw + 20px, 64px);
+
+        --btn-h: clamp(46px, 0.6vw + 40px, 58px);
+        --btn-px: clamp(22px, 0.8vw + 16px, 34px);
+        --btn-fs: clamp(14px, 0.2vw + 12.5px, 17px);
+        --btn-sm-h: clamp(38px, 0.4vw + 34px, 46px);
+        --btn-sm-px: clamp(16px, 0.5vw + 12px, 24px);
+        --btn-sm-fs: clamp(13px, 0.12vw + 12px, 15px);
+        --pill-h: clamp(38px, 0.35vw + 34px, 46px);
+        --pill-px: clamp(16px, 0.4vw + 13px, 24px);
+        --pill-fs: clamp(13px, 0.1vw + 12.5px, 15px);
+    }
+    @media (min-width: 1024px) {
+        :root {
+            --site-width: max(calc(1476 * var(--fu)), min(calc(100% - 96px), 960px));
+            --header-h: max(72px, calc(144 * var(--fu)));
+        }
+    }
+    .site-container {
+        width: var(--site-width);
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .site-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        height: var(--btn-h);
+        padding: 0 var(--btn-px);
+        border: 0;
+        border-radius: 9999px;
+        background: #b36855;
+        color: #faf7f2;
+        font-family: "Plus Jakarta Sans", Inter, sans-serif;
+        font-size: var(--btn-fs);
+        font-weight: 700;
+        line-height: 1;
+        white-space: nowrap;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
+        transition: filter 0.2s ease, translate 0.25s ease, box-shadow 0.25s ease;
+    }
+    .site-btn:hover { translate: 0 -2px; filter: brightness(1.06); box-shadow: 0 12px 24px -10px rgba(137, 53, 29, 0.6); }
+    .site-btn img, .site-btn svg { flex: none; transition: translate 0.25s ease; }
+    .site-btn:hover img, .site-btn:hover svg { translate: 4px 0; }
+    .site-btn--sm {
+        gap: 8px;
+        height: var(--btn-sm-h);
+        padding: 0 var(--btn-sm-px);
+        font-size: var(--btn-sm-fs);
+        font-weight: 600;
+    }
+    .site-btn--ghost {
+        background: transparent;
+        color: #1b1c1a;
+        border: 1px solid #d5cec2;
+        box-shadow: none;
+    }
+    .site-btn--ghost:hover { border-color: #b36855; color: #89351d; box-shadow: none; }
     header + main > :first-child { margin-top: var(--site-header-extra, 0px); }
     html { scroll-padding-top: var(--site-header-extra, 0px); }
     .site-header {
@@ -143,7 +218,7 @@
     .site-header.is-overlay.is-scrolled,
     .site-header.is-overlay.is-menu-open { background: rgba(255, 255, 255, 0.96); }
     .site-header-inner {
-        width: calc(100% - 40px);
+        width: var(--site-width);
         min-height: 72px;
         margin: 0 auto;
         display: flex;
@@ -261,20 +336,22 @@
     .site-cta {
         display: none;
         align-items: center;
-        height: 40px;
-        padding: 0 16px;
+        height: var(--btn-sm-h);
+        padding: 0 var(--btn-sm-px);
+        border: 0;
+        cursor: pointer;
         border-radius: 9999px;
         background: #b36855;
         color: #ffffff;
         font-family: "Plus Jakarta Sans", sans-serif;
         font-weight: 600;
-        font-size: 13px;
-        line-height: 1.5;
-        letter-spacing: -0.025em;
+        font-size: var(--btn-sm-fs);
+        line-height: 1;
+        letter-spacing: -0.01em;
         white-space: nowrap;
-        transition: filter 0.2s ease;
+        transition: filter 0.2s ease, translate 0.25s ease;
     }
-    .site-cta:hover { filter: brightness(1.06); }
+    .site-cta:hover { filter: brightness(1.06); translate: 0 -1px; }
     .site-cta-icon {
         position: relative;
         flex-shrink: 0;
@@ -290,7 +367,6 @@
     }
     @media (min-width: 1024px) {
         .site-header-inner {
-            width: max(calc(1476 * var(--fu)), min(calc(100% - 48px), 960px));
             min-height: max(72px, calc(138 * var(--fu)));
             padding-top: calc(6 * var(--fu));
             gap: 0;
@@ -333,12 +409,6 @@
             gap: max(10px, calc(18 * var(--fu)));
         }
         .site-lang { font-size: max(11px, calc(15 * var(--fu))); }
-        .site-cta {
-            height: max(36px, calc(53 * var(--fu)));
-            padding: 0 max(14px, calc(24 * var(--fu)));
-            font-size: max(12px, calc(14 * var(--fu)));
-            letter-spacing: calc(-0.35 * var(--fu));
-        }
     }
 </style>
 <script>
