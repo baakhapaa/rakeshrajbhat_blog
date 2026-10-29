@@ -72,8 +72,9 @@
         function markSiteLang(lang) {
             document.querySelectorAll('.lang-option').forEach(function (button) {
                 const active = button.getAttribute('data-set-lang') === lang;
+                button.classList.toggle('is-active', active);
                 button.setAttribute('aria-pressed', active ? 'true' : 'false');
-                button.style.color = active ? '#1c1c1c' : '#8a8178';
+                button.style.color = '';
             });
         }
 
