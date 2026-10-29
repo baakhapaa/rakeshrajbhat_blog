@@ -219,7 +219,7 @@ class HomeContentController extends Controller
             'mission_title' => 'required|array|min:2|max:12',
             'mission_title.*' => 'required|string|max:80',
             'mission_body' => 'required|array|min:2|max:12',
-            'mission_body.*' => 'required|string|max:90',
+            'mission_body.*' => 'required|string|max:300',
             'mission_description' => 'required|array|min:2|max:12',
             'mission_description.*' => 'nullable|string|max:200000',
         ], [

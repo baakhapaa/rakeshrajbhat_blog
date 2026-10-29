@@ -1021,8 +1021,10 @@
                     <div class="mission-scroll__textViewport" id="missionText">
                         @foreach($missionItems as $index => $item)
                             <article class="mission-scroll__reason">
-                                <h3 class="mission-scroll__headline">{{ $item['title'] }}</h3>
-                                <p class="mission-scroll__body">{{ $item['body'] }}</p>
+                                <div class="mission-scroll__copy">
+                                    <h3 class="mission-scroll__headline">{{ $item['title'] }}</h3>
+                                    <p class="mission-scroll__body">{{ $item['body'] }}</p>
+                                </div>
                                 <button type="button" class="mission-scroll__more" data-mission-open="{{ $index }}">
                                     {{ $missionButtonLabel }}
                                     <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
@@ -1131,7 +1133,19 @@
         .mission-scroll__listItem + .mission-scroll__listItem { margin-top: 28px; padding-top: 28px; border-top: 1px solid #efeeeb; }
         .mission-scroll__listNum { color: #111111; font-family: "Plus Jakarta Sans", sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.04em; }
         .mission-scroll__listTitle { margin: 8px 0 0; font-family: Poppins, sans-serif; font-size: 32px; font-weight: 600; letter-spacing: -0.6px; color: #111111; }
-        .mission-scroll__listBody { margin: 8px 0 0; color: #59554f; font-family: "Plus Jakarta Sans", sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5; }
+        .mission-scroll__listBody {
+            margin: 8px 0 0;
+            max-width: 100%;
+            max-height: 7.5em;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            color: #59554f;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.5;
+        }
         .mission-scroll__more--list { margin-top: 16px; }
         .mission-scroll__track { position: relative; width: 100%; height: 600vh; }
         .mission-scroll__sticky {
@@ -1240,15 +1254,15 @@
             transform: translateY(-50%);
             z-index: 2;
         }
-        .mission-scroll__textViewport { position: relative; height: 150px; width: min(560px, 54vw); overflow: hidden; }
         .mission-scroll__more {
             grid-column: 2;
-            grid-row: 1 / span 2;
+            grid-row: 1;
             align-self: center;
             justify-self: start;
             z-index: 3;
             display: inline-flex;
             align-items: center;
+            flex: none;
             height: 36px;
             padding: 0 14px 0 16px;
             border: 0;
@@ -1365,35 +1379,59 @@
         }
         .mission-modal__body img {
             display: block;
-            width: 100%;
+            /* width: auto; */
             max-width: 100%;
+            justify-self: center;
             height: auto;
             margin: 1.1em 0;
             border-radius: 16px;
-            object-fit: cover;
+            object-fit: contain;
             box-shadow: 0 12px 28px rgba(17, 17, 17, 0.12);
         }
-        .mission-modal__body figure { margin: 1.1em 0; }
+        .mission-modal__body figure {
+            margin: 1.1em 0;
+            max-width: 100%;
+        }
+        .mission-modal__body figure img {
+            margin: 0;
+        }
         .mission-modal__body figcaption {
             margin-top: 0.45em;
             color: #8a8a82;
             font-size: 0.875rem;
             line-height: 1.4;
         }
-        .mission-scroll__textViewport { position: relative; height: 150px; width: min(560px, 54vw); overflow: hidden; }
+        .mission-scroll__textViewport {
+            position: relative;
+            width: min(760px, 100%);
+            height: min(220px, 32vh);
+            min-height: 150px;
+            overflow: hidden;
+        }
         .mission-scroll__reason {
             position: absolute;
             inset: 0;
             display: grid;
-            grid-template-columns: minmax(0, 400px) max-content;
-            column-gap: 28px;
-            align-content: center;
+            grid-template-columns: minmax(0, 1fr) auto;
+            column-gap: 20px;
+            align-items: center;
             opacity: 0;
             will-change: transform, opacity;
         }
-        .mission-scroll__headline {
+        .mission-scroll__copy {
             grid-column: 1;
             grid-row: 1;
+            min-width: 0;
+            max-width: 100%;
+            max-height: 100%;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+        }
+        .mission-scroll__headline {
             min-width: 0;
             margin: 0;
             font-family: Poppins, "Plus Jakarta Sans", sans-serif;
@@ -1405,11 +1443,14 @@
             will-change: transform;
         }
         .mission-scroll__body {
-            grid-column: 1;
-            grid-row: 2;
             min-width: 0;
+            width: 100%;
             margin: 8px 0 0;
-            max-width: 100%;
+            max-height: 6.6em;
+            overflow-x: auto;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
             color: #59554f;
             font-family: "Plus Jakarta Sans", sans-serif;
             font-size: clamp(13px, 1vw, 15px);
@@ -1417,6 +1458,16 @@
             line-height: 1.45;
             letter-spacing: 0;
             will-change: transform;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(179, 104, 85, 0.55) transparent;
+        }
+        .mission-scroll__body::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .mission-scroll__body::-webkit-scrollbar-thumb {
+            background: rgba(179, 104, 85, 0.55);
+            border-radius: 999px;
         }
 
         @media (max-width: 1100px) {
@@ -1424,46 +1475,119 @@
                 left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 112px);
                 right: 12px;
             }
-            .mission-scroll__textViewport { width: min(460px, 58vw); height: 150px; }
-            .mission-scroll__reason { grid-template-columns: minmax(0, 280px) max-content; column-gap: 20px; }
+            .mission-scroll__textViewport {
+                width: min(640px, 100%);
+                height: min(200px, 34vh);
+            }
             .mission-scroll__headline { font-size: 24px; letter-spacing: 0; }
             .mission-scroll__kicker { top: calc(50% - 230px); font-size: 20px; }
         }
 
         @media (max-width: 768px) {
             .mission-scroll {
-                --dial-size: min(54vh, 420px);
-                --dial-center: -0.08;
-                --number-margin: 6px;
+                --dial-size: min(34vh, 250px);
+                --dial-center: -0.22;
+                --number-margin: 4px;
             }
 
             .mission-scroll__sticky {
                 top: 5rem;
                 height: calc(100svh - 5rem);
             }
-            .mission-scroll__dialZone {
-                width: 42%;
+
+            .mission-scroll__rings {
+                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
+                mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 90%, transparent 100%);
             }
 
-            .mission-scroll__markerNum { font-size: 48px; }
+            .mission-scroll__dialBaseOuter,
+            .mission-scroll__dialBaseInner,
+            .mission-scroll__dialBaseCenter {
+                box-shadow: none;
+            }
+
+            .mission-scroll__dialBaseOuter {
+                background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f7f4ee 100%);
+                filter: drop-shadow(8px 12px 28px rgba(30, 30, 26, 0.05));
+            }
+
+            .mission-scroll__markerNum { font-size: clamp(32px, 9vw, 44px); }
+
             .mission-scroll__textZone {
-                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 72px);
-                right: 10px;
+                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 48px);
+                right: 12px;
                 transform: translateY(-50%);
             }
-            .mission-scroll__textViewport { width: min(320px, 70vw); height: 130px; }
-            .mission-scroll__reason { grid-template-columns: minmax(0, 180px) max-content; column-gap: 12px; }
-            .mission-scroll__headline { font-size: 20px; letter-spacing: 0; }
-            .mission-scroll__body { margin-top: 8px; font-size: 13px; line-height: 1.45; }
-            .mission-scroll__kicker {
-                font-size: 16px;
-                top: calc(50% - 176px);
+
+            .mission-scroll__textViewport {
+                width: 100%;
+                min-height: 170px;
+                height: min(260px, 42vh);
             }
-            .mission-scroll__dash { width: 28px; height: 3px; }
+
+            .mission-scroll__reason {
+                grid-template-columns: minmax(0, 1fr);
+                grid-template-rows: minmax(0, 1fr) auto;
+                row-gap: 10px;
+                align-content: center;
+            }
+
+            .mission-scroll__copy {
+                grid-row: 1;
+                mask-image: none;
+                -webkit-mask-image: none;
+            }
+
             .mission-scroll__more {
+                grid-column: 1;
+                grid-row: 2;
+                justify-self: start;
                 height: 34px;
                 padding: 0 12px 0 14px;
             }
+
+            .mission-scroll__headline { font-size: 20px; letter-spacing: 0; }
+
+            .mission-scroll__body {
+                margin-top: 8px;
+                font-size: 13px;
+                line-height: 1.45;
+                max-height: 9.5em;
+                overflow: visible;
+            }
+
+            .mission-scroll__kicker {
+                font-size: 16px;
+                top: calc(50% - 150px);
+                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + var(--number-margin));
+            }
+
+            .mission-scroll__dash { width: 28px; height: 3px; }
+        }
+
+        @media (max-width: 480px) {
+            .mission-scroll {
+                --dial-size: min(30vh, 210px);
+                --dial-center: -0.28;
+            }
+
+            .mission-scroll__textZone {
+                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 40px);
+                right: 10px;
+            }
+
+            .mission-scroll__textViewport {
+                width: 100%;
+                min-height: 180px;
+                height: min(280px, 46vh);
+            }
+
+            .mission-scroll__body {
+                max-height: 11em;
+                overflow: visible;
+            }
+
+            .mission-scroll__markerNum { font-size: clamp(28px, 8.5vw, 38px); }
         }
 
         @media (prefers-reduced-motion: reduce) {
