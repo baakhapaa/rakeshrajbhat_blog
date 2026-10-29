@@ -1939,9 +1939,9 @@ document.addEventListener('keydown', function(e) {
                     @endforeach
                 </div>
                 <div class="mt-12 flex justify-center">
-                    <a href="{{ route('news.index') }}" class="inline-flex items-center gap-2 rounded-full px-8 py-3.5 font-grotesk text-base font-semibold leading-[18px] tracking-[1.04px] text-[#89351d]">
-                        <span>View All Updates</span>
-                        <img src="{{ asset('images/news-all-arrow.svg') }}" alt="" width="15" height="10.5">
+                    <a href="{{ route('news.index') }}" class="gallery-explore">
+                        View All Updates
+                        <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                     </a>
                 </div>
             @else
@@ -1952,55 +1952,66 @@ document.addEventListener('keydown', function(e) {
 
     @include('partials.news-modal')
 
-    <section id="gallery" class="gallery-section py-24 scroll-mt-20">
-        <div class="max-w-7xl mx-auto px-6">
-            @php
-                $gallerySection = \App\Models\Setting::getGallerySection();
-            @endphp
-            <div class="gallery-head">
-                <div>
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-3 uppercase">{{ $gallerySection['label'] }}</p>
-                    <h2 class="gallery-title font-serif font-bold text-[#1e1e1a] leading-tight">{{ $gallerySection['title'] }}</h2>
-                </div>
-                <p class="gallery-intro text-[#5a5a52] leading-relaxed">
-                    {{ $gallerySection['paragraph'] }}
-                </p>
+    <section id="gallery" class="gallery-section scroll-mt-20">
+        @php
+            $gallerySection = \App\Models\Setting::getGallerySection();
+            $galleryTitle = $gallerySection['title'];
+        @endphp
+        <div class="gallery-wrap">
+            <div class="gallery-marker">
+                <span class="gallery-dash" aria-hidden="true"></span>
+                <p class="gallery-kicker">{{ $gallerySection['label'] }}</p>
             </div>
-
-            @if($galleryCollections->isNotEmpty())
-                <div class="gallery-scroller" tabindex="0" aria-label="Photo collections">
-                    @foreach($galleryCollections as $collection)
-                        @php
-                            $previewImages = $collection->images->take(4);
-                            $lead = $previewImages->first();
-                            $sideImages = $previewImages->slice(1, 3);
-                        @endphp
-                        <a href="{{ route('gallery.show', $collection) }}" class="gallery-card {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
-                            <div class="gallery-card-lead">
-                                <img src="{{ $lead->url }}" alt="{{ $collection->title }}" draggable="false">
-                                <span class="gallery-card-count">{{ $collection->images->count() }} {{ \Illuminate\Support\Str::plural('photograph', $collection->images->count()) }}</span>
-                                <div class="gallery-card-lead-copy">
-                                    <span class="gallery-card-date">{{ $collection->created_at->format('M Y') }}</span>
-                                    <h3>{{ $collection->title }}</h3>
-                                </div>
-                            </div>
-                            @if($sideImages->isNotEmpty())
-                                <div class="gallery-card-side">
-                                    @foreach($sideImages as $image)
-                                        <div class="gallery-card-thumb">
-                                            <img src="{{ $image->url }}" alt="" draggable="false">
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
-                        </a>
-                    @endforeach
-                </div>
-                <p class="mt-4 text-xs text-[#8a8a82]">Drag or scroll sideways to move through the collections. Click on a collection to see every photograph.</p>
-            @else
-                <p class="text-sm text-[#8a8a82]">{{ $gallerySection['empty'] }}</p>
-            @endif
+            <h2 class="gallery-title">
+                @if(in_array($galleryTitle, ['My work. The projects & moments between.', 'Moments along the way.', 'Moments along the way'], true))
+                    My work. The projects<br>& moments between.
+                @else
+                    {{ $galleryTitle }}
+                @endif
+            </h2>
         </div>
+
+        @if($galleryCollections->isNotEmpty())
+            <div class="gallery-scroller" tabindex="0" aria-label="Photo collections">
+                @foreach($galleryCollections as $collection)
+                    @php
+                        $previewImages = $collection->images->take(4);
+                        $lead = $previewImages->first();
+                        $sideImages = $previewImages->slice(1, 3);
+                    @endphp
+                    <a href="{{ route('gallery.show', $collection) }}" class="gallery-card {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
+                        <div class="gallery-card-lead">
+                            <img src="{{ $lead->url }}" alt="{{ $collection->title }}" draggable="false">
+                            <span class="gallery-card-scrim" aria-hidden="true"></span>
+                            <span class="gallery-card-count">
+                                <img src="{{ asset('images/gallery-count.svg') }}" alt="" width="16" height="16">
+                                <span>{{ $collection->images->count() }}</span>
+                            </span>
+                            <div class="gallery-card-copy">
+                                <h3>{{ $collection->title }}</h3>
+                            </div>
+                        </div>
+                        @if($sideImages->isNotEmpty())
+                            <div class="gallery-card-side">
+                                @foreach($sideImages as $image)
+                                    <div class="gallery-card-thumb">
+                                        <img src="{{ $image->url }}" alt="" draggable="false">
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    </a>
+                @endforeach
+            </div>
+            <div class="gallery-action">
+                <a href="{{ route('gallery.index') }}" class="gallery-explore">
+                    Explore gallery
+                    <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
+                </a>
+            </div>
+        @else
+            <p class="gallery-empty">{{ $gallerySection['empty'] }}</p>
+        @endif
     </section>
 
     {{-- <section class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a]">
@@ -2100,50 +2111,67 @@ document.addEventListener('keydown', function(e) {
 }
 
 .gallery-section {
-    background: #f7f4ee;
-    color: #1e1e1a;
+    background: #fff;
+    color: #111;
+    padding: 3.25rem 0 3.75rem;
 }
 
-.gallery-head {
+.gallery-wrap,
+.gallery-empty {
+    width: min(1640px, calc(100% - 2rem));
+    margin-inline: auto;
+}
+
+.gallery-marker {
     display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 2rem;
-    margin-bottom: 2.5rem;
+    align-items: center;
+    gap: 8px;
 }
 
-.gallery-head > div {
-    flex: 1 0 auto;
+.gallery-dash {
+    display: block;
+    width: 24px;
+    height: 2px;
+    flex: none;
+    background: #89351d;
+}
+
+.gallery-kicker {
+    margin: 0;
+    color: #89351d;
+    font-family: "Space Grotesk", Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    line-height: 16px;
+    text-transform: uppercase;
 }
 
 .gallery-title {
-    font-size: clamp(2rem, 3.1vw, 3.15rem);
+    max-width: 760px;
+    margin: 16px 0 0;
+    color: #111;
+    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: clamp(1.75rem, 3.2vw, 46px);
+    font-weight: 600;
+    line-height: 1.15;
 }
 
-.gallery-intro {
-    flex: 0 1 280px;
-    max-width: 280px;
-    text-align: right;
-}
-
-@media (max-width: 760px) {
-    .gallery-head {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .gallery-intro {
-        flex-basis: auto;
-        max-width: 28rem;
-        text-align: left;
-    }
+.gallery-empty {
+    margin-top: 2rem;
+    color: #5a5a52;
+    font-size: 0.95rem;
 }
 
 .gallery-scroller {
     display: flex;
-    gap: 1.25rem;
+    gap: 16px;
+    margin-top: 32px;
     overflow-x: auto;
-    padding-bottom: 1.35rem;
+    padding-bottom: 8px;
+    padding-left: max(1rem, calc((100% - 1640px) / 2 + 1rem));
+    padding-right: max(1rem, calc((100% - 1640px) / 2 + 1rem));
+    scroll-padding-inline: max(1rem, calc((100% - 1640px) / 2 + 1rem));
     cursor: grab;
     user-select: none;
     touch-action: pan-x;
@@ -2165,13 +2193,12 @@ document.addEventListener('keydown', function(e) {
     scroll-snap-align: start;
     flex: 0 0 auto;
     display: flex;
-    width: min(82vw, 460px);
-    height: 320px;
-    border-radius: 0.75rem;
+    gap: 2px;
+    width: min(78vw, 480px);
+    height: calc(min(78vw, 480px) * 292 / 480);
+    border-radius: 8px;
     overflow: hidden;
-    border: 1px solid rgba(30, 30, 26, 0.08);
-    box-shadow: 0 1px 2px rgba(30, 30, 26, 0.06);
-    background: #e7e1d6;
+    background: #f7f4ee;
     text-decoration: none;
     color: inherit;
     cursor: grab;
@@ -2179,21 +2206,18 @@ document.addEventListener('keydown', function(e) {
     user-select: none;
 }
 
-.gallery-card:hover {
-    box-shadow: 0 10px 24px rgba(30, 30, 26, 0.12);
-}
-
 .gallery-card-single .gallery-card-lead {
-    width: 100%;
+    flex: 1 1 auto;
 }
 
 .gallery-card-lead {
     position: relative;
-    flex: 1 1 auto;
+    flex: 476 1 0;
     min-width: 0;
+    height: 100%;
 }
 
-.gallery-card-lead img,
+.gallery-card-lead > img,
 .gallery-card-thumb img {
     position: absolute;
     inset: 0;
@@ -2203,60 +2227,61 @@ document.addEventListener('keydown', function(e) {
     pointer-events: none;
 }
 
-.gallery-card-lead::after {
-    content: "";
+.gallery-card-scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(30, 30, 26, 0.58), rgba(30, 30, 26, 0.05) 46%, transparent);
+    background: linear-gradient(to bottom, rgba(19, 24, 14, 0) 40%, rgba(19, 24, 14, 0.85) 100%);
+    pointer-events: none;
 }
 
 .gallery-card-count,
-.gallery-card-lead-copy {
+.gallery-card-copy {
     position: absolute;
     z-index: 1;
 }
 
 .gallery-card-count {
-    top: 1rem;
-    left: 1rem;
-    padding: 0.3rem 0.7rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.86);
-    color: #735A12;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-}
-
-.gallery-card-lead-copy {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 1.25rem;
-}
-
-.gallery-card-date {
-    margin: 0 0 0.3rem;
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 0.8rem;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 28px;
+    min-width: 58px;
+    padding: 0 10px;
+    border: 1px solid #d5cec2;
+    border-radius: 8px;
+    background: #fff;
+    color: #333;
+    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 14px;
     font-weight: 600;
-    letter-spacing: 0.04em;
+    line-height: 1;
 }
 
-.gallery-card-lead-copy h3 {
+.gallery-card-copy {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+}
+
+.gallery-card-copy h3 {
+    margin: 0;
     color: #fff;
-    font-family: "Playfair Display", serif;
-    font-size: 1.6rem;
-    font-weight: 700;
-    line-height: 1.15;
+    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: clamp(1.25rem, 1.6vw, 26px);
+    font-weight: 600;
+    line-height: 1.1;
 }
 
 .gallery-card-side {
     display: flex;
     flex-direction: column;
-    flex: 0 0 124px;
-    width: 124px;
+    gap: 2px;
+    flex: 148 1 0;
+    min-width: 0;
+    height: 100%;
     overflow: hidden;
 }
 
@@ -2264,25 +2289,54 @@ document.addEventListener('keydown', function(e) {
     position: relative;
     flex: 1 1 0;
     min-height: 0;
-    border-left: 1px solid rgba(255, 255, 255, 0.7);
-}
-
-.gallery-card-thumb + .gallery-card-thumb {
-    border-top: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .gallery-scroller::-webkit-scrollbar {
     display: none;
 }
 
-@media (max-width: 640px) {
-    .gallery-card {
-        height: 280px;
+.gallery-action {
+    display: flex;
+    justify-content: center;
+    margin-top: 44px;
+}
+
+.gallery-explore {
+    display: inline-flex;
+    align-items: center;
+    height: 53px;
+    padding: 10px 24px;
+    border-radius: 9999px;
+    background: #b36855;
+    color: #faf7f2;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 21px;
+    text-decoration: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
+}
+
+.gallery-explore img {
+    margin-left: 8px;
+}
+
+@media (min-width: 1100px) {
+    .gallery-scroller {
+        gap: 28px;
+        padding-left: max(2rem, calc((100% - 1640px) / 2 + 2rem));
+        padding-right: max(2rem, calc((100% - 1640px) / 2 + 2rem));
+        scroll-padding-inline: max(2rem, calc((100% - 1640px) / 2 + 2rem));
     }
 
-    .gallery-card-side {
-        flex-basis: 104px;
-        width: 104px;
+    .gallery-wrap,
+    .gallery-empty {
+        width: min(1640px, calc(100% - 4rem));
+    }
+
+    .gallery-card {
+        width: 480px;
+        height: 292px;
     }
 }
 
