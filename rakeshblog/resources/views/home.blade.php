@@ -1808,6 +1808,13 @@
                 .mission-scroll__list { display: block !important; }
             }
         </style>
+                    </div>
+                    <p class="mt-3 text-[#8a8a82]">Loading story...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
         {{--
                     <style>
                         .mission-scroll {
