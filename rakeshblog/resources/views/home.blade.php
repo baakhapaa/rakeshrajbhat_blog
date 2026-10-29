@@ -814,8 +814,181 @@
             });
         })();
     </script>
+    <!-- Impact Stats -->
+    <section id="impact" class="scroll-mt-20 bg-[#010a19] py-16">
+        <div class="mx-auto flex w-full max-w-[1640px] flex-col items-center gap-10 px-4 sm:px-6 lg:flex-row lg:items-center lg:gap-8 xl:px-8">
+            <div class="w-full shrink-0 lg:w-[250px]">
+                <div class="flex items-center gap-2">
+                    <span class="block h-0.5 w-6 shrink-0 bg-[#b36855]" aria-hidden="true"></span>
+                    @php $statsSection = \App\Models\Setting::getStatsSection(); @endphp
+                    <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#b36855]">{{ $statsSection['title'] }}</p>
+                </div>
+                <h2 class="mt-3 font-poppins text-[2.4rem] font-bold leading-[1.2] tracking-[-1px] text-white sm:text-[50px] sm:leading-[62px] sm:tracking-[-1.15px]">
+                    {{ $statsSection['description'] }}
+                </h2>
+            </div>
+            <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#1e2530] bg-[#12161e] shadow-[0px_25px_50px_-12px_rgba(0,0,0,0.25)]">
+                <div class="grid grid-cols-2 gap-px bg-[#1c232d] md:grid-cols-3 xl:grid-cols-6">
+                    @forelse($stats ?? [] as $stat)
+                        @php
+                            $number = trim((string) $stat->number);
+                            preg_match('/^([0-9]+(?:\\.[0-9]+)?)(.*)$/', $number, $numberParts);
+                            $numericValue = $numberParts[1] ?? '0';
+                            $numberSuffix = trim($numberParts[2] ?? '');
+                            $accentSuffix = '';
+                            $inlineSuffix = '';
+                            if (preg_match('/lakh/i', $numberSuffix)) {
+                                $accentSuffix = $numberSuffix;
+                            } elseif ($numberSuffix !== '') {
+                                $inlineSuffix = $numberSuffix;
+                            }
+                        @endphp
+                        <div class="flex min-h-[220px] flex-col items-center justify-between bg-[#12161e] px-4 py-10 text-center">
+                            <img src="{{ asset('images/metric-arrow.svg') }}" alt="" width="32" height="32">
+                            <div class="flex flex-col items-center py-3">
+                                <p class="font-inter text-[34px] font-extrabold leading-[34px] tracking-[-0.85px] text-white">
+                                    <span class="counter" data-target="{{ $numericValue }}">{{ $numericValue }}</span>@if($inlineSuffix !== '') {{ $inlineSuffix }}@endif
+                                </p>
+                                @if($accentSuffix !== '')
+                                    <p class="font-playfair text-[28px] font-extrabold leading-8 text-[#d4a034]">{{ $accentSuffix }}</p>
+                                @endif
+                            </div>
+                            <p class="font-inter text-[11px] font-semibold uppercase leading-[1.35] tracking-[1.54px] text-[#9ca3af]">
+                                {{ $stat->label }}@if(filled($stat->sub_label))<br>{{ $stat->sub_label }}@endif
+                            </p>
+                        </div>
+                    @empty
+                        <div class="col-span-full bg-[#12161e] px-8 py-10 text-center text-[#9ca3af]">No impact stats available.</div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <!-- About/Mission Section -->
+     <!-- Projects Section -->
+    <section id="projects" class="py-28 bg-[#fff6e0] scroll-mt-20 overflow-visible">
+        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 mb-8">
+            <div class="flex justify-between items-end">
+                <div>
+                    @php
+                        $projectsSection = \App\Models\Setting::getProjectsSection();
+                    @endphp
+                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">{{ $projectsSection['label'] }}</p>
+                    <h2 class="text-4xl font-serif font-bold text-[#1e1e1a]">{{ $projectsSection['title'] }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Infinite Carousel Outer Container -->
+        <div class="carousel-container relative w-full py-16">
+            <!-- Scrolling Track -->
+            <div class="carousel-track flex items-center gap-8 w-max">
+
+                {{-- FIRST SET --}}
+                @forelse($projects ?? [] as $project)
+                    <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
+                        <!-- Normal Card Content -->
+                        <div class="project-default w-full flex flex-col items-center">
+                            <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
+                                @if($project->image)
+                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
+                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
+                                    </div>
+                                @endif
+                            </div>
+                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
+                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
+                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
+                        </div>
+
+                        <!-- Popup Content -->
+                        <div class="tooltip-popup">
+                            <div class="project-popup-content flex flex-col justify-between h-full">
+                                <div>
+                                    <div class="popup-image">
+                                        @if($project->image)
+                                            <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
+                                        @else
+                                            <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
+                                        @endif
+                                    </div>
+                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
+
+                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
+                                        {{ $project->description ?? $project->long_description ?? $project->short_description }}
+                                    </p>
+                                </div>
+
+                                @if($project->url)
+                                    <div class="pt-4 mt-2 border-t border-gray-100">
+                                        <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
+                                            Visit Website <span>→</span>
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-gray-500">No projects available yet.</p>
+                @endforelse
+
+                {{-- Only one project set is rendered so the homepage DOM remains unique. --}}
+                @if(false)
+                @foreach($projects ?? [] as $project)
+                    <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
+                        <!-- Normal Card Content -->
+                        <div class="project-default w-full flex flex-col items-center">
+                            <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
+                                @if($project->image)
+                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
+                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
+                                    </div>
+                                @endif
+                            </div>
+                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
+                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
+                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
+                        </div>
+
+                        <!-- Popup Content -->
+                        <div class="tooltip-popup">
+                            <div class="project-popup-content flex flex-col justify-between h-full">
+                                <div>
+                                    <div class="popup-image">
+                                        @if($project->image)
+                                            <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
+                                        @else
+                                            <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
+                                        @endif
+                                    </div>
+                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
+
+                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
+                                        {{ $project->description ?? $project->long_description ?? $project->short_description }}
+                                    </p>
+                                </div>
+
+                                @if($project->url)
+                                    <div class="pt-4 mt-2 border-t border-gray-100">
+                                        <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
+                                            Visit Website <span>→</span>
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+                @endif
+            </div>
+        </div>
+    </section>
+  <!-- About/Mission Section -->
     @php
         $missionItems = [
             ['number' => '01', 'title' => 'Education', 'body' => 'Making learning practical, accessible and future-ready.'],
@@ -1173,182 +1346,6 @@
             requestAnimationFrame(frame);
         })();
     </script>
-
-    <!-- Projects Section -->
-    <section id="projects" class="py-28 bg-[#fff6e0] scroll-mt-20 overflow-visible">
-        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 mb-8">
-            <div class="flex justify-between items-end">
-                <div>
-                    @php
-                        $projectsSection = \App\Models\Setting::getProjectsSection();
-                    @endphp
-                    <p class="text-[#D4AF37] font-bold text-xs tracking-widest mb-2 uppercase">{{ $projectsSection['label'] }}</p>
-                    <h2 class="text-4xl font-serif font-bold text-[#1e1e1a]">{{ $projectsSection['title'] }}</h2>
-                </div>
-            </div>
-        </div>
-
-        <!-- Infinite Carousel Outer Container -->
-        <div class="carousel-container relative w-full py-16">
-            <!-- Scrolling Track -->
-            <div class="carousel-track flex items-center gap-8 w-max">
-
-                {{-- FIRST SET --}}
-                @forelse($projects ?? [] as $project)
-                    <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
-                        <!-- Normal Card Content -->
-                        <div class="project-default w-full flex flex-col items-center">
-                            <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
-                                @if($project->image)
-                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
-                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                    </div>
-                                @endif
-                            </div>
-                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
-                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
-                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
-                        </div>
-
-                        <!-- Popup Content -->
-                        <div class="tooltip-popup">
-                            <div class="project-popup-content flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="popup-image">
-                                        @if($project->image)
-                                            <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
-                                        @else
-                                            <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                        @endif
-                                    </div>
-                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
-
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
-                                        {{ $project->description ?? $project->long_description ?? $project->short_description }}
-                                    </p>
-                                </div>
-
-                                @if($project->url)
-                                    <div class="pt-4 mt-2 border-t border-gray-100">
-                                        <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
-                                            Visit Website <span>→</span>
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                    <p class="text-gray-500">No projects available yet.</p>
-                @endforelse
-
-                {{-- Only one project set is rendered so the homepage DOM remains unique. --}}
-                @if(false)
-                @foreach($projects ?? [] as $project)
-                    <div class="tooltip-container w-[300px] shrink-0 bg-white/80 p-8 text-center rounded-xl shadow-gold-sm flex flex-col items-center border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all">
-                        <!-- Normal Card Content -->
-                        <div class="project-default w-full flex flex-col items-center">
-                            <div class="project-image w-20 h-20 rounded-full flex items-center justify-center mb-5 overflow-hidden border-2 border-[#D4AF37]/20 bg-white">
-                                @if($project->image)
-                                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center" style="background-color: {{ $project->color ?? '#D4AF37' }}20;">
-                                        <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                    </div>
-                                @endif
-                            </div>
-                            <h4 class="font-bold text-[#1e1e1a] mb-2 text-lg"> {{ $project->name }} </h4>
-                            <p class="text-xs text-gray-600 mb-4 flex-grow line-clamp-2"> {{ $project->short_description ?? 'Hover to learn more' }} </p>
-                            <span class="text-[#D4AF37] text-xs font-bold flex items-center gap-1"> Learn More →</span>
-                        </div>
-
-                        <!-- Popup Content -->
-                        <div class="tooltip-popup">
-                            <div class="project-popup-content flex flex-col justify-between h-full">
-                                <div>
-                                    <div class="popup-image">
-                                        @if($project->image)
-                                            <img src="{{ $project->image_url }}" alt="{{ $project->name }}">
-                                        @else
-                                            <span style="color: {{ $project->color ?? '#D4AF37' }};" class="text-3xl font-bold">📦</span>
-                                        @endif
-                                    </div>
-                                    <h5 class="font-bold text-xl text-[#1e1e1a] mb-2"> {{ $project->name }} </h5>
-
-                                    <p class="text-sm text-gray-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
-                                        {{ $project->description ?? $project->long_description ?? $project->short_description }}
-                                    </p>
-                                </div>
-
-                                @if($project->url)
-                                    <div class="pt-4 mt-2 border-t border-gray-100">
-                                        <a href="{{ $project->url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] font-semibold text-sm hover:underline">
-                                            Visit Website <span>→</span>
-                                        </a>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-                @endif
-            </div>
-        </div>
-    </section>
-
-    <!-- Impact Stats -->
-    <section id="impact" class="scroll-mt-20 bg-[#010a19] py-16">
-        <div class="mx-auto flex w-full max-w-[1640px] flex-col items-center gap-10 px-4 sm:px-6 lg:flex-row lg:items-center lg:gap-8 xl:px-8">
-            <div class="w-full shrink-0 lg:w-[250px]">
-                <div class="flex items-center gap-2">
-                    <span class="block h-0.5 w-6 shrink-0 bg-[#b36855]" aria-hidden="true"></span>
-                    @php $statsSection = \App\Models\Setting::getStatsSection(); @endphp
-                    <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#b36855]">{{ $statsSection['title'] }}</p>
-                </div>
-                <h2 class="mt-3 font-poppins text-[2.4rem] font-bold leading-[1.2] tracking-[-1px] text-white sm:text-[50px] sm:leading-[62px] sm:tracking-[-1.15px]">
-                    {{ $statsSection['description'] }}
-                </h2>
-            </div>
-            <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#1e2530] bg-[#12161e] shadow-[0px_25px_50px_-12px_rgba(0,0,0,0.25)]">
-                <div class="grid grid-cols-2 gap-px bg-[#1c232d] md:grid-cols-3 xl:grid-cols-6">
-                    @forelse($stats ?? [] as $stat)
-                        @php
-                            $number = trim((string) $stat->number);
-                            preg_match('/^([0-9]+(?:\\.[0-9]+)?)(.*)$/', $number, $numberParts);
-                            $numericValue = $numberParts[1] ?? '0';
-                            $numberSuffix = trim($numberParts[2] ?? '');
-                            $accentSuffix = '';
-                            $inlineSuffix = '';
-                            if (preg_match('/lakh/i', $numberSuffix)) {
-                                $accentSuffix = $numberSuffix;
-                            } elseif ($numberSuffix !== '') {
-                                $inlineSuffix = $numberSuffix;
-                            }
-                        @endphp
-                        <div class="flex min-h-[220px] flex-col items-center justify-between bg-[#12161e] px-4 py-10 text-center">
-                            <img src="{{ asset('images/metric-arrow.svg') }}" alt="" width="32" height="32">
-                            <div class="flex flex-col items-center py-3">
-                                <p class="font-inter text-[34px] font-extrabold leading-[34px] tracking-[-0.85px] text-white">
-                                    <span class="counter" data-target="{{ $numericValue }}">{{ $numericValue }}</span>@if($inlineSuffix !== '') {{ $inlineSuffix }}@endif
-                                </p>
-                                @if($accentSuffix !== '')
-                                    <p class="font-playfair text-[28px] font-extrabold leading-8 text-[#d4a034]">{{ $accentSuffix }}</p>
-                                @endif
-                            </div>
-                            <p class="font-inter text-[11px] font-semibold uppercase leading-[1.35] tracking-[1.54px] text-[#9ca3af]">
-                                {{ $stat->label }}@if(filled($stat->sub_label))<br>{{ $stat->sub_label }}@endif
-                            </p>
-                        </div>
-                    @empty
-                        <div class="col-span-full bg-[#12161e] px-8 py-10 text-center text-[#9ca3af]">No impact stats available.</div>
-                    @endforelse
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Research Section -->
 <section id="research" class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a] scroll-mt-20">
     <div class="max-w-7xl mx-auto px-6">

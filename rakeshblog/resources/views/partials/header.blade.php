@@ -256,7 +256,7 @@
             column-gap: clamp(14px, calc(26 * var(--fu)), 26px);
             font-family: "Plus Jakarta Sans", sans-serif;
             font-weight: 500;
-            font-size: max(12px, calc(18 * var(--fu)));
+            font-size: max(14px, calc(20 * var(--fu)));
             line-height: 1.25;
             color: #000000;
         }
