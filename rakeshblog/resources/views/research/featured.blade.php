@@ -46,7 +46,7 @@
                         };
                         $cardText = trim(preg_replace('/\s+/', ' ', strip_tags((string) ($item->description ?: $item->content ?: ''))));
                     @endphp
-                    <article class="library-card research-card" data-category="{{ $category }}">
+                    <article class="library-card research-card" data-kind="research" data-category="{{ $category }}">
                         <div class="library-media" @unless($item->video_url || $item->video_file) onclick="openResearchDetail({{ $item->id }})" @endunless>
                             <p class="library-chip">{{ $cardLabel }}</p>
                             @if($item->is_featured)
@@ -94,6 +94,29 @@
                     <p>No research items yet. Check back soon for new stories and insights.</p>
                 </div>
             @endforelse
+            @foreach(($featuredBlogs ?? collect()) as $blog)
+                <a href="{{ route('blog.show', $blog->slug) }}" class="library-card research-card is-hidden" data-kind="blog" data-category="Blog">
+                    <div class="library-media">
+                        @if($blog->featured_image)
+                            <img src="{{ $blog->featured_image_url }}" alt="{{ $blog->title }}">
+                        @endif
+                        @if($blog->is_featured)
+                            <span class="library-flag">Featured</span>
+                        @endif
+                        <p class="library-chip">{{ $blog->category ?: 'Blog' }}</p>
+                    </div>
+                    <div class="library-body">
+                        <p class="library-date">{{ $blog->short_date ? strtoupper($blog->short_date) : '' }}@if($blog->reading_time) · {{ $blog->reading_time }}@endif</p>
+                        <h3>{{ $blog->title }}</h3>
+                        <p class="library-excerpt">{{ $blog->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($blog->content ?? ''), 140) }}</p>
+                        <span class="library-read">
+                            Read more
+                            <img src="{{ asset('images/studies/read-more-arrow.svg') }}" alt="" width="10.6667" height="10.6667">
+                        </span>
+                    </div>
+                </a>
+            @endforeach
+            <p id="libraryFilterEmpty" class="library-empty is-hidden">Nothing in this category yet.</p>
         </div>
 
         <div class="library-back">
@@ -147,19 +170,29 @@ document.addEventListener('DOMContentLoaded', function() {
             filterButtons.forEach(btn => btn.classList.remove('is-active'));
             this.classList.add('is-active');
 
-            const filter = this.dataset.filter;
+            const filter = this.dataset.filter || '';
+            const blogMode = filter.toLowerCase() === 'blog';
+            let shown = 0;
 
             researchCards.forEach(card => {
-                const show = filter === 'all' || card.dataset.category === filter;
+                const isBlogCard = card.dataset.kind === 'blog';
+                const show = blogMode
+                    ? isBlogCard
+                    : !isBlogCard && (filter === 'all' || card.dataset.category === filter);
                 card.classList.toggle('is-hidden', !show);
+                card.style.display = show ? '' : 'none';
                 if (show) {
-                    card.style.display = '';
                     card.style.opacity = '1';
                     card.style.transform = 'none';
-                } else {
-                    card.style.display = 'none';
+                    shown++;
                 }
             });
+
+            const empty = document.getElementById('libraryFilterEmpty');
+            if (empty) {
+                empty.textContent = blogMode ? 'No blog posts yet.' : 'Nothing in this category yet.';
+                empty.classList.toggle('is-hidden', shown > 0);
+            }
         });
     });
 });

@@ -443,6 +443,7 @@
     .library-back { margin-top: 48px; text-align: center; color: #5f5e5e; }
     .library-back a { color: #89351d; font-weight: 700; text-decoration: none; }
     .library-empty { grid-column: 1 / -1; padding: 48px 16px; text-align: center; color: #5f5e5e; }
+    .library-empty.is-hidden { display: none !important; }
     .research-card.is-hidden { display: none !important; }
     .library-page .pagination { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 40px; }
     .library-page .pagination .page-link {
@@ -574,4 +575,58 @@
     .research-link { margin-top: 22px; }
     #researchDetailContent::-webkit-scrollbar { width: 6px; }
     #researchDetailContent::-webkit-scrollbar-thumb { background: #b36855; border-radius: 999px; }
+
+    .auth-page {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 128px 24px 80px;
+        background: #fff !important;
+        color: #111;
+        font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    }
+    .auth-page h1,
+    .auth-page .font-serif {
+        font-family: Poppins, "Plus Jakarta Sans", sans-serif !important;
+        font-weight: 600;
+        color: #111;
+        letter-spacing: -0.02em;
+    }
+    .auth-page .bg-white {
+        background: #fbf9f6 !important;
+        border-radius: 24px !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    }
+    .auth-page .text-\[\#D4AF37\],
+    .auth-page .bg-\[\#D4AF37\]\/10 {
+        color: #89351d;
+    }
+    .auth-page .bg-\[\#D4AF37\]\/10 {
+        background: rgba(137, 53, 29, 0.08) !important;
+    }
+    .auth-page input:not([type="checkbox"]):not([type="hidden"]),
+    .auth-page textarea {
+        background: #fff !important;
+        border: 1px solid #d5cec2 !important;
+        border-radius: 12px !important;
+        color: #1b1c1a;
+        font-family: "Plus Jakarta Sans", Inter, sans-serif;
+        box-shadow: none;
+    }
+    .auth-page input:not([type="checkbox"]):not([type="hidden"]):focus,
+    .auth-page textarea:focus {
+        outline: none;
+        border-color: #b36855 !important;
+        box-shadow: 0 0 0 3px rgba(179, 104, 85, 0.18) !important;
+    }
+    .auth-page input[type="checkbox"] { accent-color: #b36855; }
+    .auth-page button[type="submit"] {
+        background: #b36855 !important;
+        color: #faf7f2 !important;
+        border-radius: 9999px !important;
+        font-family: "Plus Jakarta Sans", Inter, sans-serif;
+        font-weight: 700;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43) !important;
+    }
+    .auth-page button[type="submit"]:hover { filter: brightness(1.05); }
 </style>
