@@ -44,7 +44,7 @@
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
-            <div>
+            <div class="hidden">
                 <label for="gallery_section_paragraph" class="block text-sm text-white/70 mb-2">Short paragraph</label>
                 <textarea id="gallery_section_paragraph" name="gallery_section_paragraph" rows="3" maxlength="400" required class="w-full h-24 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none resize-y">{{ old('gallery_section_paragraph', $gallerySection['paragraph']) }}</textarea>
                 @error('gallery_section_paragraph')
