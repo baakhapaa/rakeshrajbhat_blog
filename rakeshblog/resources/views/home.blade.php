@@ -1223,7 +1223,7 @@
 
         .mission-scroll__markerNum {
             display: inline-block;
-            font-family: "Playfair Display", serif;
+            font-family: "Plus Jakarta Sans", sans-serif;
             font-size: clamp(64px, 7vw, 126px);
             font-weight: 700;
             line-height: 0.8;
@@ -1240,7 +1240,7 @@
             transform: translateY(-50%);
             z-index: 2;
         }
-        .mission-scroll__textViewport { position: relative; height: 190px; width: min(560px, 54vw); overflow: hidden; }
+        .mission-scroll__textViewport { position: relative; height: 150px; width: min(560px, 54vw); overflow: hidden; }
         .mission-scroll__more {
             grid-column: 2;
             grid-row: 1 / span 2;
@@ -1396,17 +1396,18 @@
             grid-row: 1;
             min-width: 0;
             margin: 0;
-            font-family: "Playfair Display", serif;
-            font-size: clamp(36px, 3.4vw, 56px);
-            font-weight: 700;
-            line-height: 1.1;
+            font-family: Poppins, "Plus Jakarta Sans", sans-serif;
+            font-size: clamp(22px, 2.1vw, 34px);
+            font-weight: 600;
+            line-height: 1.2;
             letter-spacing: 0;
-            color: #1e1e1a;
+            color: #111111;
             will-change: transform;
         }
         .mission-scroll__body {
             grid-column: 1;
             grid-row: 2;
+            min-width: 0;
             margin: 8px 0 0;
             max-width: 100%;
             color: #59554f;
@@ -1450,10 +1451,10 @@
                 right: 10px;
                 transform: translateY(-50%);
             }
-            .mission-scroll__textViewport { width: min(320px, 70vw); height: 160px; }
+            .mission-scroll__textViewport { width: min(320px, 70vw); height: 130px; }
             .mission-scroll__reason { grid-template-columns: minmax(0, 180px) max-content; column-gap: 12px; }
-            .mission-scroll__headline { font-size: 28px; letter-spacing: 0; }
-            .mission-scroll__body { margin-top: 10px; font-size: 15px; line-height: 1.5; }
+            .mission-scroll__headline { font-size: 20px; letter-spacing: 0; }
+            .mission-scroll__body { margin-top: 8px; font-size: 13px; line-height: 1.45; }
             .mission-scroll__kicker {
                 font-size: 16px;
                 top: calc(50% - 176px);
@@ -1549,8 +1550,8 @@
                 CONFIG.headlineYOffset = narrow ? 20 : 45;
                 CONFIG.bodyYOffset = narrow ? 12 : 25;
             }
-            const COLOR_FADED = "rgba(30, 30, 26, 0.18)";
-            const COLOR_ACTIVE = "#D4AF37";
+            const COLOR_FADED = "rgba(0, 0, 0, 0.26)";
+            const COLOR_ACTIVE = "#111111";
             const markers = Array.from(canvas.querySelectorAll(".mission-scroll__marker"));
             const nums = Array.from(canvas.querySelectorAll(".mission-scroll__markerNum"));
             const articles = Array.from(viewport.querySelectorAll(".mission-scroll__reason"));
@@ -1857,136 +1858,6 @@
                 <div class="text-center py-12">
                     <div class="inline-block">
                         <i class="fas fa-spinner fa-spin text-3xl text-[#D4AF37]"></i>
-        <style>
-            .mission-scroll {
-                --gold: #D4AF37;
-                --ink: #1e1e1a;
-                --muted: #5a5a52;
-                --dial-size: min(52vw, 800px);
-                --dial-center: -0.02;
-                --number-margin: min(4vw, 64px);
-                position: relative;
-                width: 100%;
-                background: #f2f2f2;
-                overflow: clip;
-            }
-            .mission-scroll__kicker {
-                margin: 0 0 12px;
-                color: #D4AF37;
-                font-size: 12px;
-                font-weight: 700;
-                letter-spacing: 0.14em;
-                text-transform: uppercase;
-            }
-            .mission-scroll__list { display: none; max-width: 40rem; margin: 0 auto; padding: 72px 24px 80px; }
-            .mission-scroll__listItem + .mission-scroll__listItem { margin-top: 28px; padding-top: 28px; border-top: 1px solid rgba(30, 30, 26, 0.08); }
-            .mission-scroll__listNum { color: #D4AF37; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; }
-            .mission-scroll__listTitle { margin: 8px 0 0; font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; }
-            .mission-scroll__listBody { margin: 8px 0 0; color: #5a5a52; font-size: 15px; line-height: 1.6; }
-            .mission-scroll__track { position: relative; width: 100%; height: 600vh; }
-            .mission-scroll__sticky { position: sticky; top: 5rem; height: calc(100vh - 5rem); width: 100%; overflow: hidden; }
-            .mission-scroll__dialZone {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 40%;
-                height: 100%;
-                pointer-events: none;
-                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
-                mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
-            }
-            .mission-scroll__dialBaseOuter,
-            .mission-scroll__dialBaseInner,
-            .mission-scroll__dialBaseCenter { position: absolute; top: 50%; border-radius: 50%; }
-            .mission-scroll__dialBaseOuter {
-                width: var(--dial-size);
-                height: var(--dial-size);
-                left: calc(var(--dial-size) * (var(--dial-center) - 0.5));
-                margin-top: calc(var(--dial-size) / -2);
-                background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f7f4ee 100%);
-                box-shadow: 30px 40px 90px rgba(30, 30, 26, 0.08), inset -6px -6px 16px rgba(255, 255, 255, 0.95), inset 6px 6px 16px rgba(30, 30, 26, 0.05);
-            }
-            .mission-scroll__dialBaseInner {
-                width: calc(var(--dial-size) * 0.76);
-                height: calc(var(--dial-size) * 0.76);
-                left: calc(var(--dial-size) * (var(--dial-center) - 0.38));
-                margin-top: calc(var(--dial-size) * 0.76 / -2);
-                background: radial-gradient(circle at 35% 35%, #ffffff 0%, #faf8f5 100%);
-                box-shadow: 12px 16px 40px rgba(30, 30, 26, 0.05), inset -4px -4px 10px rgba(255, 255, 255, 0.9);
-            }
-            .mission-scroll__dialBaseCenter {
-                width: calc(var(--dial-size) * 0.52);
-                height: calc(var(--dial-size) * 0.52);
-                left: calc(var(--dial-size) * (var(--dial-center) - 0.26));
-                margin-top: calc(var(--dial-size) * 0.52 / -2);
-                background: #fff;
-                box-shadow: 6px 8px 24px rgba(30, 30, 26, 0.04);
-            }
-            .mission-scroll__dialCanvas {
-                position: absolute;
-                width: var(--dial-size);
-                height: var(--dial-size);
-                left: calc(var(--dial-size) * (var(--dial-center) - 0.5));
-                top: 50%;
-                margin-top: calc(var(--dial-size) / -2);
-                transform-origin: 50% 50%;
-                will-change: transform;
-            }
-            .mission-scroll__marker {
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                width: 0;
-                height: 0;
-                transform-origin: 0 0;
-                transform: rotate(var(--angle)) translateX(calc(var(--dial-size) * 0.4375 + var(--number-margin)));
-            }
-            .mission-scroll__markerContent { position: absolute; left: 0; top: 50%; transform: translateY(-50%); }
-            .mission-scroll__markerNum {
-                display: inline-block;
-                font-family: 'Playfair Display', serif;
-                font-size: 72px;
-                font-weight: 700;
-                letter-spacing: -0.03em;
-                transform-origin: left center;
-                will-change: transform, color, opacity;
-            }
-            .mission-scroll__textZone {
-                position: absolute;
-                left: 38%;
-                width: 54%;
-                top: 50%;
-                transform: translateY(-28px);
-                z-index: 2;
-            }
-            .mission-scroll__textViewport { position: relative; height: 190px; width: 100%; overflow: hidden; }
-            .mission-scroll__reason { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-start; opacity: 0; will-change: transform, opacity; }
-            .mission-scroll__headline {
-                margin: 0;
-                font-family: 'Playfair Display', serif;
-                font-size: clamp(36px, 3.4vw, 56px);
-                font-weight: 700;
-                line-height: 1.1;
-                color: #1e1e1a;
-                will-change: transform;
-            }
-            .mission-scroll__body { margin: 16px 0 0; max-width: 36rem; color: #5a5a52; font-size: 18px; line-height: 1.6; will-change: transform; }
-            @media (max-width: 1100px) { .mission-scroll__textZone { left: 42%; width: 52%; } }
-            @media (max-width: 768px) {
-                .mission-scroll { --dial-size: min(72vw, 320px); --dial-center: -0.16; --number-margin: 8px; }
-                .mission-scroll__sticky { top: 5rem; height: calc(100svh - 5rem); }
-                .mission-scroll__dialZone { width: 42%; }
-                .mission-scroll__markerNum { font-size: 32px; }
-                .mission-scroll__textZone { left: 40%; width: 56%; padding-right: 20px; }
-                .mission-scroll__textViewport { height: 160px; }
-                .mission-scroll__headline { font-size: 28px; }
-                .mission-scroll__body { margin-top: 10px; font-size: 15px; line-height: 1.5; }
-            }
-            @media (prefers-reduced-motion: reduce) {
-                .mission-scroll__track { display: none !important; height: auto !important; }
-                .mission-scroll__list { display: block !important; }
-            }
-        </style>
                     </div>
                     <p class="mt-3 text-[#8a8a82]">Loading story...</p>
                 </div>
