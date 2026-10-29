@@ -988,7 +988,7 @@
             </div>
         </div>
     </section>
-  <!-- About/Mission Section -->
+  <!-- Mission Section -->
     @php
         $missionItems = [
             ['number' => '01', 'title' => 'Education', 'body' => 'Making learning practical, accessible and future-ready.'],
