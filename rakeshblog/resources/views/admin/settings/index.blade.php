@@ -236,7 +236,7 @@
 <div id="navbarTab" class="navbar-tab {{ $settingsTab === 'navbar' ? '' : 'hidden' }}">
     <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
         <h2 class="text-xl font-semibold text-white mb-2">Navbar</h2>
-        <p class="text-sm text-white/50 mb-6">Change the public menu label and link. You can add up to 12 items, and the public menu wraps to fit them. Use a section like <span class="text-[#D4AF37]">#projects</span>, a page like <span class="text-[#D4AF37]">/contact</span>, or a full https link. <span class="text-[#D4AF37]">#work-with-me</span> opens the Work With Me popup.</p>
+        <p class="text-sm text-white/50 mb-6">Change the public menu label and link. You can add up to 12 items, and the public menu wraps to fit them. Use the row controls to put an item at the top, bottom, or any position in the list. Use a section like <span class="text-[#D4AF37]">#projects</span>, a page like <span class="text-[#D4AF37]">/contact</span>, or a full https link. <span class="text-[#D4AF37]">#work-with-me</span> opens the Work With Me popup.</p>
 
         @error('nav_label')
             <p class="mb-4 text-sm text-red-400">{{ $message }}</p>
@@ -251,7 +251,13 @@
                     <div class="nav-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-center">
                         <input type="text" name="nav_label[]" value="{{ $item['label'] }}" maxlength="40" placeholder="Label" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
                         <input type="text" name="nav_url[]" value="{{ $item['url'] }}" maxlength="255" placeholder="#section or /page" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
-                        <button type="button" class="remove-nav-row px-3 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+                        <div class="flex flex-wrap items-center gap-1">
+                            <button type="button" class="move-nav-top px-2 py-2 text-xs text-white/60 hover:text-white" title="Move to top">Top</button>
+                            <button type="button" class="move-nav-up px-2 py-2 text-xs text-white/60 hover:text-white" title="Move up">Up</button>
+                            <button type="button" class="move-nav-down px-2 py-2 text-xs text-white/60 hover:text-white" title="Move down">Down</button>
+                            <button type="button" class="move-nav-bottom px-2 py-2 text-xs text-white/60 hover:text-white" title="Move to bottom">Bottom</button>
+                            <button type="button" class="remove-nav-row px-2 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+                        </div>
                     </div>
                 @endforeach
             </div>
@@ -398,7 +404,13 @@
     <div class="nav-row grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-center">
         <input type="text" name="nav_label[]" value="" maxlength="40" placeholder="Label" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
         <input type="text" name="nav_url[]" value="" maxlength="255" placeholder="#section or /page" class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
-        <button type="button" class="remove-nav-row px-3 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+        <div class="flex flex-wrap items-center gap-1">
+            <button type="button" class="move-nav-top px-2 py-2 text-xs text-white/60 hover:text-white" title="Move to top">Top</button>
+            <button type="button" class="move-nav-up px-2 py-2 text-xs text-white/60 hover:text-white" title="Move up">Up</button>
+            <button type="button" class="move-nav-down px-2 py-2 text-xs text-white/60 hover:text-white" title="Move down">Down</button>
+            <button type="button" class="move-nav-bottom px-2 py-2 text-xs text-white/60 hover:text-white" title="Move to bottom">Bottom</button>
+            <button type="button" class="remove-nav-row px-2 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+        </div>
     </div>
 </template>
 
@@ -462,6 +474,31 @@
                     return;
                 }
                 row.remove();
+            });
+
+            row.querySelector('.move-nav-top').addEventListener('click', function () {
+                const first = navRows.firstElementChild;
+                if (first && first !== row) {
+                    navRows.insertBefore(row, first);
+                }
+            });
+            row.querySelector('.move-nav-up').addEventListener('click', function () {
+                const previous = row.previousElementSibling;
+                if (previous) {
+                    navRows.insertBefore(row, previous);
+                }
+            });
+            row.querySelector('.move-nav-down').addEventListener('click', function () {
+                const next = row.nextElementSibling;
+                if (next) {
+                    navRows.insertBefore(next, row);
+                }
+            });
+            row.querySelector('.move-nav-bottom').addEventListener('click', function () {
+                const last = navRows.lastElementChild;
+                if (last && last !== row) {
+                    navRows.appendChild(row);
+                }
             });
         }
 
