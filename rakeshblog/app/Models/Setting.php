@@ -768,6 +768,7 @@ class Setting extends Model
                 ['label' => 'Contact Me', 'url' => '/contact'],
                 ['label' => 'Privacy Policy', 'url' => '/privacy'],
                 ['label' => 'Terms & Conditions', 'url' => '/terms'],
+                ['label' => 'Book a Bootcamp', 'url' => '/bootcamp'],
             ],
         ];
     }

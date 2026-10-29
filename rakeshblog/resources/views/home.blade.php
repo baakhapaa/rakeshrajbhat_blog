@@ -436,7 +436,7 @@
                             {{ $homeContent['text_link_label'] }}
                         </a>
                     @endif
-                </div>
+                    </div>
                 </div>
                 <div class="hero-badge hero-badge-baakhapaa" aria-hidden="true"><span><img src="{{ asset('images/hero/figma/badge-baakhapaa.png') }}" alt="" width="545" height="545"></span></div>
                 <div class="hero-badge hero-badge-hillychilly" aria-hidden="true"><span><img src="{{ asset('images/hero/figma/badge-hillychilly.png') }}" alt="" width="545" height="545"></span></div>
@@ -450,7 +450,7 @@
                 @endif
                 <img class="hero-haze hero-haze-b" src="{{ asset('images/hero/figma/ellipse8.svg') }}" alt="" width="1281" height="1281">
                 </div>
-                </div>
+            </div>
         <script>
             (function () {
                 var stage = document.querySelector('.hero-stage');
@@ -1010,17 +1010,17 @@
                                 <div class="mission-scroll__copy">
                                     <h3 class="mission-scroll__headline">{{ $item['title'] }}</h3>
                                     <p class="mission-scroll__body">{{ $item['body'] }}</p>
-                                </div>
+            </div>
                                 <button type="button" class="mission-scroll__more site-btn site-btn--sm" data-mission-open="{{ $index }}">
                                     {{ $missionButtonLabel }}
                                     <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                                 </button>
                             </article>
                         @endforeach
-            </div>
                         </div>
                         </div>
                     </div>
+            </div>
 
         <div id="missionModal" class="mission-modal" hidden>
             <div class="mission-modal__backdrop" data-mission-close></div>
@@ -2044,9 +2044,9 @@
         <div class="studies-kicker">
             <span class="reveal-line" aria-hidden="true"></span>
             <p>Studies</p>
-                                    </div>
+                                        </div>
         <h2 id="studies-heading" class="studies-title">{{ $researchSection['title'] }}</h2>
-                                </div>
+                                    </div>
                                 
     @php
         $homeFilters = \App\Models\Setting::getResearchHomeFilters();
@@ -2055,8 +2055,8 @@
         @foreach($homeFilters as $filter)
             <button type="button" data-research-filter="{{ $filter['key'] }}" class="studies-pill {{ $filter['key'] === 'all' ? 'is-active' : '' }}" aria-pressed="{{ $filter['key'] === 'all' ? 'true' : 'false' }}">{{ $filter['label'] }}</button>
         @endforeach
-    </div>
-    </div>
+                                </div>
+                            </div>
 
     @php
         $homeBlogs = isset($featuredBlogs) ? $featuredBlogs->take(3) : collect();
@@ -2080,12 +2080,12 @@
                     @php $allSlotShown = true; @endphp
                     @include('partials.home-research-card', ['item' => $spotlightResearch[$slotKey]->first(), 'studyCategory' => $slotKey === 'vision' ? 'Vision' : 'Research'])
                 @endif
-            @endforeach
+                        @endforeach
             @if(! $allSlotShown)
                 <p class="studies-empty">Nothing added to home yet.</p>
             @endif
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
 
     @foreach(['vision' => 'Vision', 'research' => 'Research', 'media' => 'Media'] as $key => $studyCategory)
         <div data-research-panel="{{ $key }}" class="hidden">
@@ -4231,9 +4231,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (progress < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
-    };
+        };
 
-    // Keep the real value in server-rendered HTML, then animate in the browser.
+        // Keep the real value in server-rendered HTML, then animate in the browser.
     counters.forEach((counter) => { counter.textContent = '0'; });
 
     const observer = new IntersectionObserver((entries) => {

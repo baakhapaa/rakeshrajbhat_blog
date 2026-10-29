@@ -284,8 +284,32 @@
             .site-footer__links { padding-top: 0; gap: 28px; }
         }
         @media (max-width: 640px) {
-            .site-footer__links { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+            .site-footer__links {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 28px 36px;
+                align-items: start;
+            }
+            .site-footer__col h2 {
+                margin-bottom: 16px;
+                font-size: 14px;
+                letter-spacing: 0.6px;
+            }
+            .site-footer__col a {
+                padding: 7px 0;
+            }
             .site-footer__row { flex-direction: column; align-items: stretch; }
+            .site-footer__row input[type="email"] {
+                flex: none;
+                width: 100%;
+                height: 52px;
+                min-height: 52px;
+                padding: 0 16px;
+                border: 1px solid rgba(17, 17, 17, 0.12);
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.72);
+                font-size: 16px;
+            }
             .site-footer__row button { height: 42px; }
         }
         @keyframes heroCubesA { to { background-position: -1467px 11342px; } }
