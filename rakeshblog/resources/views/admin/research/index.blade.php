@@ -70,6 +70,51 @@
     </div>
 
     <div class="bg-[#1a1f26] rounded-2xl border border-white/5 p-6 mb-6">
+        <h2 class="text-xl font-semibold text-white mb-1">Homepage filters</h2>
+        <p class="text-sm text-gray-400 mb-5">The All, Vision, Research, Media, and Blog buttons on the Studies section. Use the arrows to set their order.</p>
+        <form action="{{ route('admin.research.update-home-filters') }}" method="POST">
+            @csrf
+            @method('PUT')
+            @error('home_filter_key')
+                <p class="mb-4 text-sm text-red-400">{{ $message }}</p>
+            @enderror
+            @error('home_filter_key.*')
+                <p class="mb-4 text-sm text-red-400">{{ $message }}</p>
+            @enderror
+            <div id="homeFilterRows" class="space-y-3">
+                @foreach($homeFilters as $filter)
+                    <div class="home-filter-row grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3 items-center">
+                        <input type="hidden" name="home_filter_key[]" value="{{ $filter['key'] }}">
+                        <p class="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white">{{ $filter['label'] }}</p>
+                        <div class="flex gap-2">
+                            <button type="button" class="move-home-filter-up px-3 py-2 text-white/60 hover:text-white" title="Move up">↑</button>
+                            <button type="button" class="move-home-filter-down px-3 py-2 text-white/60 hover:text-white" title="Move down">↓</button>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition">Save filter order</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        (function () {
+            const list = document.getElementById('homeFilterRows');
+            if (!list) return;
+            list.addEventListener('click', function (event) {
+                const row = event.target.closest('.home-filter-row');
+                if (!row) return;
+                if (event.target.closest('.move-home-filter-up') && row.previousElementSibling) {
+                    list.insertBefore(row, row.previousElementSibling);
+                } else if (event.target.closest('.move-home-filter-down') && row.nextElementSibling) {
+                    list.insertBefore(row.nextElementSibling, row);
+                }
+            });
+        })();
+    </script>
+
+    <div class="bg-[#1a1f26] rounded-2xl border border-white/5 p-6 mb-6">
         <h2 class="text-xl font-semibold text-white mb-1">Featured page</h2>
         <p class="text-sm text-gray-400 mb-5">Heading and category buttons on the All Research page. Use the arrows to set the category order.</p>
         @error('filter_label')

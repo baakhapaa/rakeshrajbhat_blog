@@ -48,7 +48,7 @@
                 inset: 0;
                 background-size: 5239px 11342px;
                 background-position: -1467px 0;
-                animation: heroCubesA 360s linear infinite;
+                animation: heroCubesA 180s linear infinite;
             }
             .hero-cubes-b {
                 left: 7px;
@@ -57,7 +57,7 @@
                 height: 1331px;
                 background-size: 2298px 5802px;
                 background-position: 0 -2292px;
-                animation: heroCubesB 190s linear infinite;
+                animation: heroCubesB 95s linear infinite;
             }
             @keyframes heroCubesA { to { background-position: -1467px 11342px; } }
             @keyframes heroCubesB { to { background-position: 0 3510px; } }
@@ -148,28 +148,32 @@
                 gap: 12px;
             }
             .hero-btn {
-                height: 58px;
+                box-sizing: border-box;
+                height: calc(36px / var(--hero-scale, 1));
+                padding: 0 calc(14px / var(--hero-scale, 1)) 0 calc(16px / var(--hero-scale, 1));
                 border-radius: 9999px;
                 display: inline-flex;
                 align-items: center;
-                font-size: 16px;
-                line-height: 24px;
+                font-size: calc(12px / var(--hero-scale, 1));
+                font-weight: 700;
+                line-height: 1;
+                letter-spacing: calc(0.2px / var(--hero-scale, 1));
                 text-decoration: none;
                 white-space: nowrap;
+            }
+            .hero-btn img {
+                width: calc(9.46875px / var(--hero-scale, 1));
+                height: calc(3.75px / var(--hero-scale, 1));
+                margin-left: calc(8px / var(--hero-scale, 1));
             }
             .hero-btn-primary {
                 background: #b36855;
                 color: #faf7f2;
-                font-weight: 700;
-                padding: 12px 28px;
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
             }
             .hero-btn-primary:hover { filter: brightness(1.05); }
-            .hero-btn-primary img { margin-left: 8px; }
             .hero-btn-secondary {
                 color: #000000;
-                font-weight: 500;
-                padding: 12px 25px;
                 border: 1px solid #d5cec2;
             }
             .hero-btn-secondary:hover { background: rgba(255, 255, 255, 0.35); }
@@ -270,7 +274,7 @@
                     background-size: 780px 1688px;
                     background-position: 50% 0;
                     animation-name: heroCubesM;
-                    animation-duration: 120s;
+                    animation-duration: 60s;
                 }
                 #heroCanvas > .hero-cubes-b,
                 #heroCanvas > .hero-glow,
@@ -311,12 +315,17 @@
                     gap: 10px;
                 }
                 #heroCanvas > .hero-actions .hero-btn {
-                    height: 52px;
-                    font-size: 15px;
-                    line-height: 22px;
+                    height: 36px;
+                    padding: 0 14px 0 16px;
+                    font-size: 12px;
+                    line-height: 1;
+                    letter-spacing: 0.2px;
                 }
-                #heroCanvas > .hero-actions .hero-btn-primary { padding: 11px 23px; }
-                #heroCanvas > .hero-actions .hero-btn-secondary { padding: 12px 21px; }
+                #heroCanvas > .hero-actions .hero-btn img {
+                    width: 9.46875px;
+                    height: 3.75px;
+                    margin-left: 8px;
+                }
                 #heroCanvas > .hero-tag {
                     order: 5;
                     margin-top: 28px;
@@ -354,6 +363,12 @@
                 .hero-cubes,
                 .hero-badge { animation: none; }
             }
+            @media (max-width: 768px) {
+                #heroCanvas > .hero-actions .hero-btn {
+                    height: 34px;
+                    padding: 0 12px 0 14px;
+                }
+            }
         </style>
         @php
             $heroLead = trim((string) ($homeContent['headline_line_1'] ?? ''));
@@ -385,7 +400,7 @@
                 <img class="hero-glow" src="{{ asset('images/hero/figma/ellipse9.svg') }}" alt="" width="1769" height="1692">
                 <div class="hero-portrait">
                     <img src="{{ asset('images/hero/hero-portrait.png') }}" alt="{{ $homeContent['name'] }}">
-                </div>
+        </div>
                 @if($heroLine2 !== '' || $heroLine3 !== '')
                     <h1 class="hero-title">
                         @if($heroLine2 !== '')
@@ -420,7 +435,7 @@
                             {{ $homeContent['text_link_label'] }}
                         </a>
                     @endif
-                </div>
+                    </div>
                 @if($heroLead !== '')
                     <p class="hero-lead">{{ $heroLead }}</p>
                 @endif
@@ -436,8 +451,8 @@
                     <p class="hero-tag">{{ $heroTagline }}</p>
                 @endif
                 <img class="hero-haze hero-haze-b" src="{{ asset('images/hero/figma/ellipse8.svg') }}" alt="" width="1281" height="1281">
-            </div>
-        </div>
+                </div>
+                </div>
         <script>
             (function () {
                 var stage = document.querySelector('.hero-stage');
@@ -449,11 +464,13 @@
                 function applyHeroScale() {
                     if (stacked.matches) {
                         canvas.style.transform = '';
+                        document.documentElement.style.setProperty('--hero-scale', '1');
                         fit.style.height = '';
                         stage.style.paddingTop = Math.round(header ? header.getBoundingClientRect().height : 0) + 'px';
                         return;
                     }
                     var scale = fit.clientWidth / 2305;
+                    document.documentElement.style.setProperty('--hero-scale', String(scale));
                     canvas.style.transform = 'scale(' + scale + ')';
                     fit.style.height = Math.round(1331 * scale) + 'px';
                     var headerHeight = header ? header.getBoundingClientRect().height : 0;
@@ -465,7 +482,7 @@
             })();
         </script>
     </section>
-
+    
     <!-- About Me -->
     <section id="about-me" class="about-reveal scroll-mt-20 text-[#1b1c1a]">
         <div class="about-card">
@@ -474,7 +491,7 @@
                     <div class="about-label">
                         <span class="about-label-rule" aria-hidden="true"></span>
                         <p>{{ $aboutContent['label'] }}</p>
-                    </div>
+                </div>
                     <h2 class="about-heading">
                         {{ $aboutContent['heading_line_1'] }}@if(filled($aboutContent['heading_line_2'])) {{ $aboutContent['heading_line_2'] }}@endif
                     </h2>
@@ -495,16 +512,16 @@
                         @if($aboutThird !== '')
                             <p class="about-note">{{ $aboutThird }}</p>
                         @endif
-                    </div>
+                        </div>
                     @if(filled($aboutContent['button_label']))
                         <div class="about-action">
                             <a href="{{ \App\Models\Setting::linkHref($aboutContent['button_url'] ?: '#projects') }}" @if(str_starts_with((string) $aboutContent['button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="about-btn">
                                 <span>{{ $aboutContent['button_label'] }}</span>
                                 <img src="{{ asset('images/about-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                             </a>
-                        </div>
+                    </div>
                     @endif
-                </div>
+                        </div>
                 <div class="about-reveal-media">
                     @php
                         $aboutMediaClass = 'about-photo';
@@ -532,9 +549,9 @@
                             class="{{ $aboutMediaClass }}"
                         >
                     @endif
-                </div>
-            </div>
-        </div>
+                    </div>
+                        </div>
+                        </div>
     </section>
     <style>
         #about-me {
@@ -559,19 +576,20 @@
         .about-label p {
             margin: 0;
             font-family: "Space Grotesk", sans-serif;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: 1.2px;
+            line-height: 16px;
+            letter-spacing: 1.1px;
             text-transform: uppercase;
             color: #89351d;
         }
         .about-heading {
             margin: 0;
             padding-top: 12px;
-            font-size: 32px;
+            font-family: "Plus Jakarta Sans", Inter, sans-serif;
+            font-size: clamp(34px, 3.2vw, 44px);
             font-weight: 700;
-            line-height: 1.15;
+            line-height: 1.1;
             letter-spacing: -0.6px;
             color: #1b1c1a;
         }
@@ -587,22 +605,27 @@
         .about-note { margin: 0; font-size: 17px; font-weight: 400; line-height: 1.55; color: #5f5e5e; }
         .about-action { padding-top: 32px; }
         .about-btn {
+            box-sizing: border-box;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 24px;
+            height: 36px;
+            padding: 0 14px 0 16px;
             border-radius: 9999px;
             background: #b36855;
             color: #faf7f2;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 21px;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.2px;
             text-decoration: none;
+            white-space: nowrap;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
             transition: filter 0.2s ease;
         }
         .about-btn:hover { filter: brightness(1.1); }
-        .about-btn img { flex-shrink: 0; }
+        .about-btn img { flex-shrink: 0; width: 9.46875px; height: 3.75px; }
         .about-reveal-media {
             position: relative;
             width: 100%;
@@ -637,18 +660,13 @@
                 min-height: calc(777 * var(--fu));
             }
             .about-reveal-text { align-self: start; padding-top: calc(39 * var(--fu)); }
-            .about-label { gap: calc(8 * var(--fu)); }
-            .about-label-rule { width: max(28px, calc(32 * var(--fu))); height: 2px; }
-            .about-label p {
-                font-size: clamp(15px, 1.15vw, 18px);
-                line-height: 1.2;
-                letter-spacing: 1.2px;
-            }
+            .about-label { gap: 8px; }
+            .about-label-rule { width: 24px; height: 2px; }
             .about-heading {
                 padding-top: calc(12 * var(--fu));
-                font-size: calc(44 * var(--fu));
-                line-height: calc(48 * var(--fu));
-                letter-spacing: calc(-1.1 * var(--fu));
+                font-size: clamp(34px, 3.2vw, 44px);
+                line-height: 1.1;
+                letter-spacing: -0.6px;
             }
             .about-copy { gap: calc(50 * var(--fu)); padding-top: calc(51 * var(--fu)); }
             .about-quote-box {
@@ -670,13 +688,21 @@
             }
             .about-action { padding-top: calc(80 * var(--fu)); }
             .about-btn {
-                gap: calc(8 * var(--fu));
-                padding: calc(10 * var(--fu)) calc(24 * var(--fu));
-                font-size: max(10px, calc(14 * var(--fu)));
-                line-height: calc(21 * var(--fu));
+                gap: 8px;
+                height: 36px;
+                padding: 0 14px 0 16px;
+                font-size: 12px;
+                line-height: 1;
+                letter-spacing: 0.2px;
             }
-            .about-btn img { width: calc(9.46875 * var(--fu)); height: calc(3.75 * var(--fu)); }
+            .about-btn img { width: 9.46875px; height: 3.75px; }
             .about-reveal-media { height: calc(738 * var(--fu)); aspect-ratio: auto; }
+        }
+        @media (max-width: 768px) {
+            .about-btn {
+                height: 34px;
+                padding: 0 12px 0 14px;
+            }
         }
         .about-reveal-ready .about-card {
             opacity: 0;
@@ -817,11 +843,11 @@
                     <span class="block h-0.5 w-6 shrink-0 bg-[#b36855]" aria-hidden="true"></span>
                     @php $statsSection = \App\Models\Setting::getStatsSection(); @endphp
                     <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#b36855]">{{ $statsSection['title'] }}</p>
-                </div>
+                    </div>
                 <h2 class="mt-3 font-poppins text-[2.4rem] font-bold leading-[1.2] tracking-[-1px] text-white sm:text-[50px] sm:leading-[62px] sm:tracking-[-1.15px]">
                     {{ $statsSection['description'] }}
                 </h2>
-            </div>
+                        </div>
             <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#1e2530] bg-[#12161e] shadow-[0px_25px_50px_-12px_rgba(0,0,0,0.25)]">
                 <div class="grid grid-cols-2 gap-px bg-[#1c232d] md:grid-cols-3 xl:grid-cols-6">
                     @forelse($stats ?? [] as $stat)
@@ -847,11 +873,11 @@
                                 @if($accentSuffix !== '')
                                     <p class="font-playfair text-[28px] font-extrabold leading-8 text-[#d4a034]">{{ $accentSuffix }}</p>
                                 @endif
-                            </div>
+                        </div>
                             <p class="font-inter text-[11px] font-semibold uppercase leading-[1.35] tracking-[1.54px] text-[#9ca3af]">
                                 {{ $stat->label }}@if(filled($stat->sub_label))<br>{{ $stat->sub_label }}@endif
                             </p>
-                        </div>
+                    </div>
                     @empty
                         <div class="col-span-full bg-[#12161e] px-8 py-10 text-center text-[#9ca3af]">No impact stats available.</div>
                     @endforelse
@@ -875,14 +901,14 @@
                     <div class="initiatives-kicker">
                         <span aria-hidden="true"></span>
                         <p>{{ $projectsSection["label"] }}</p>
-                    </div>
-                    <h2 id="initiatives-heading">{{ $projectsSection["title"] }}</h2>
                 </div>
+                    <h2 id="initiatives-heading">{{ $projectsSection["title"] }}</h2>
             </div>
+        </div>
 
             <div class="initiatives-viewport carousel-container" tabindex="0" aria-label="Projects and initiatives">
                 <div class="initiatives-track carousel-track">
-                    @forelse($projects ?? [] as $project)
+                @forelse($projects ?? [] as $project)
                         @php
                             $projectSlug = strtolower((string) ($project->slug ?? ""));
                             $initiativeBackground = preg_match('/^#[0-9A-Fa-f]{6}$/', (string) $project->bg_color)
@@ -907,10 +933,10 @@
                                 <div class="initiative-mark">
                                     @if($initiativeLogo)
                                         <img src="{{ $initiativeLogo }}" alt="{{ $project->name }}" width="142" height="142" loading="lazy" decoding="async">
-                                    @else
+                                @else
                                         <span>{{ strtoupper(substr($project->name, 0, 1)) }}</span>
                                     @endif
-                                </div>
+                                    </div>
                                 <h3>{{ $project->name }}</h3>
                                 @if(filled($initiativeDescription))
                                     <p>{{ $initiativeDescription }}</p>
@@ -921,18 +947,18 @@
                                         <img src="{{ asset("images/initiatives/initiative-arrow.svg") }}" alt="" aria-hidden="true">
                                     </a>
                                 @endif
-                            </div>
+                        </div>
 
                             @if(filled($project->description))
                                 <div class="tooltip-popup" role="dialog" aria-label="{{ $project->name }} overview">
                                     <div class="project-popup-content">
-                                        <div class="popup-image">
+                                    <div class="popup-image">
                                             @if($initiativeLogo)
                                                 <img src="{{ $initiativeLogo }}" alt="{{ $project->name }}" loading="lazy" decoding="async">
-                                            @else
+                                        @else
                                                 <span>{{ strtoupper(substr($project->name, 0, 1)) }}</span>
-                                            @endif
-                                        </div>
+                                        @endif
+                                    </div>
                                         <h4>{{ $project->name }}</h4>
                                         <p>{{ $project->description }}</p>
                                         @if(filled($project->url))
@@ -940,17 +966,17 @@
                                                 <span>Visit Website</span>
                                                 <img src="{{ asset('images/initiatives/initiative-arrow.svg') }}" alt="" aria-hidden="true">
                                             </a>
-                                        @endif
-                                    </div>
-                                </div>
+                                @endif
+                            </div>
+                        </div>
                             @endif
                         </article>
-                    @empty
+                @empty
                         <p class="initiatives-empty">No projects available yet.</p>
-                    @endforelse
-                </div>
-            </div>
-        </div>
+                @endforelse
+                                    </div>
+                            </div>
+                        </div>
 
         <script>
             (function () {
@@ -994,9 +1020,9 @@
                         {{ $missionButtonLabel }}
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                     </button>
-                </div>
+                                    </div>
             @endforeach
-        </div>
+                            </div>
 
         <div class="mission-scroll__track" id="missionTrack">
             <div class="mission-scroll__sticky" id="missionSticky">
@@ -1011,11 +1037,11 @@
                             <div class="mission-scroll__marker">
                                 <div class="mission-scroll__markerContent">
                                     <span class="mission-scroll__markerNum">{{ $item["number"] }}</span>
-                                </div>
-                            </div>
-                        @endforeach
+                        </div>
                     </div>
-                </div>
+                @endforeach
+            </div>
+        </div>
                 <p id="mission-heading" class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>{{ $missionLabel }}</p>
                 <div class="mission-scroll__textZone">
                     <div class="mission-scroll__textViewport" id="missionText">
@@ -1031,10 +1057,10 @@
                                 </button>
                             </article>
                         @endforeach
-                    </div>
-                </div>
             </div>
-        </div>
+                        </div>
+                        </div>
+                    </div>
 
         <div id="missionModal" class="mission-modal" hidden>
             <div class="mission-modal__backdrop" data-mission-close></div>
@@ -1810,7 +1836,7 @@
             requestAnimationFrame(frame);
         })();
     </script>
-<section id="research" class="studies-section scroll-mt-20" aria-labelledby="studies-heading">
+<section id="research" class="studies-section rise-section scroll-mt-20" aria-labelledby="studies-heading">
     <style>
         .studies-section {
             background: #fff;
@@ -1834,10 +1860,11 @@
             max-width: 1000px;
             margin: 0;
             color: #111;
-            font-family: Poppins, "Plus Jakarta Sans", sans-serif;
-            font-size: 40px;
-            font-weight: 600;
+            font-family: "Plus Jakarta Sans", Inter, sans-serif;
+            font-size: clamp(34px, 3.2vw, 44px);
+            font-weight: 700;
             line-height: 1.1;
+            letter-spacing: -0.6px;
         }
         .studies-filters {
             display: flex;
@@ -2037,17 +2064,12 @@
                 padding: calc(150 * var(--fu)) calc(300 * var(--fu)) calc(72 * var(--fu));
             }
             .studies-intro { gap: calc(7 * var(--fu)); }
-            .studies-kicker { gap: calc(8 * var(--fu)); }
-            .studies-kicker span { width: calc(24 * var(--fu)); height: max(1px, calc(2 * var(--fu))); }
-            .studies-kicker p {
-                font-size: calc(14 * var(--fu));
-                line-height: calc(16 * var(--fu));
-                letter-spacing: calc(1.1 * var(--fu));
-            }
             .studies-title {
                 width: calc(1000 * var(--fu));
                 max-width: 100%;
-                font-size: calc(76 * var(--fu));
+                font-size: clamp(34px, 3.2vw, 44px);
+                line-height: 1.1;
+                letter-spacing: -0.6px;
             }
             .studies-filters {
                 justify-content: flex-end;
@@ -2095,20 +2117,21 @@
     @php
         $researchSection = \App\Models\Setting::getResearchSection();
     @endphp
-    <div class="studies-intro">
+    <div class="studies-intro rise-item">
         <div class="studies-kicker">
             <span aria-hidden="true"></span>
             <p>Studies</p>
-        </div>
+                                    </div>
         <h2 id="studies-heading" class="studies-title">{{ $researchSection['title'] }}</h2>
-    </div>
-
-    <div class="studies-filters" id="researchFilters">
-        <button type="button" data-research-filter="all" class="studies-pill is-active" aria-pressed="true">All</button>
-        <button type="button" data-research-filter="vision" class="studies-pill" aria-pressed="false">Vision</button>
-        <button type="button" data-research-filter="research" class="studies-pill" aria-pressed="false">Research</button>
-        <button type="button" data-research-filter="media" class="studies-pill" aria-pressed="false">Media</button>
-        <button type="button" data-research-filter="blog" class="studies-pill" aria-pressed="false">Blog</button>
+                                </div>
+                                
+    @php
+        $homeFilters = \App\Models\Setting::getResearchHomeFilters();
+    @endphp
+    <div class="studies-filters rise-item" id="researchFilters">
+        @foreach($homeFilters as $filter)
+            <button type="button" data-research-filter="{{ $filter['key'] }}" class="studies-pill {{ $filter['key'] === 'all' ? 'is-active' : '' }}" aria-pressed="{{ $filter['key'] === 'all' ? 'true' : 'false' }}">{{ $filter['label'] }}</button>
+        @endforeach
     </div>
 
     @php
@@ -2119,19 +2142,26 @@
 
     <div data-research-panel="all">
         <div class="studies-grid">
-            @foreach(['vision' => 'Vision', 'research' => 'Research'] as $key => $studyCategory)
-                @if(isset($spotlightResearch[$key]) && $spotlightResearch[$key]->isNotEmpty())
-                    @include('partials.home-research-card', ['item' => $spotlightResearch[$key]->first(), 'studyCategory' => $studyCategory])
+            @php
+                $allSlotOrder = collect($homeFilters)->pluck('key')->filter(fn ($key) => in_array($key, ['vision', 'research', 'blog'], true))->values();
+                $allSlotShown = false;
+            @endphp
+            @foreach($allSlotOrder as $slotKey)
+                @if($slotKey === 'blog')
+                    @if($homeBlogs->isNotEmpty())
+                        @php $allSlotShown = true; @endphp
+                        @include('partials.home-blog-card', ['blog' => $homeBlogs->first(), 'studyCategory' => 'Blog'])
+                    @endif
+                @elseif(isset($spotlightResearch[$slotKey]) && $spotlightResearch[$slotKey]->isNotEmpty())
+                    @php $allSlotShown = true; @endphp
+                    @include('partials.home-research-card', ['item' => $spotlightResearch[$slotKey]->first(), 'studyCategory' => $slotKey === 'vision' ? 'Vision' : 'Research'])
                 @endif
             @endforeach
-            @if($homeBlogs->isNotEmpty())
-                @include('partials.home-blog-card', ['blog' => $homeBlogs->first(), 'studyCategory' => 'Blog'])
-            @endif
-            @if((!isset($spotlightResearch['vision']) || $spotlightResearch['vision']->isEmpty()) && (!isset($spotlightResearch['research']) || $spotlightResearch['research']->isEmpty()) && $homeBlogs->isEmpty())
+            @if(! $allSlotShown)
                 <p class="studies-empty">Nothing added to home yet.</p>
             @endif
-        </div>
-    </div>
+                                        </div>
+                                    </div>
 
     @foreach(['vision' => 'Vision', 'research' => 'Research', 'media' => 'Media'] as $key => $studyCategory)
         <div data-research-panel="{{ $key }}" class="hidden">
@@ -2139,13 +2169,13 @@
                 @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
                     @foreach($featuredResearch[$key]->take(3) as $item)
                         @include('partials.home-research-card', ['item' => $item, 'studyCategory' => $studyCategory])
-                    @endforeach
-                @else
+                        @endforeach
+                    @else
                     <p class="studies-empty">Nothing added to home yet.</p>
-                @endif
+                    @endif
             </div>
-        </div>
-    @endforeach
+                </div>
+            @endforeach
 
     <div data-research-panel="blog" class="hidden">
         <div class="studies-grid">
@@ -2155,14 +2185,14 @@
                 <p class="studies-empty">No featured blogs yet.</p>
             @endforelse
         </div>
-    </div>
-
-    <div class="studies-cta">
+        </div>
+        
+    <div class="studies-cta rise-item">
         <a class="studies-view-all" href="{{ route('research.featured') }}">
             View all Studies
             <img src="{{ asset('images/studies/view-all-arrow.svg') }}" alt="" width="9.46875" height="3.75">
         </a>
-    </div>
+        </div>
     <script>
         document.querySelectorAll('[data-research-filter]').forEach(function (button) {
             button.addEventListener('click', function () {
@@ -2182,7 +2212,7 @@
 
 <!-- Research Detail Modal -->
 <div id="researchModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="min-h-screen px-4 py-8 flex items-center justify-center">
+    <div class="min-h-screen px-4 py-8 flex items-center justify-center">   
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResearchDetail()"></div>
         <div class="relative research-modal-panel max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
             <button type="button" onclick="closeResearchDetail()" class="research-close" aria-label="Close">
@@ -2235,7 +2265,7 @@
 function openResearchDetail(id) {
     const modal = document.getElementById('researchModal');
     const content = document.getElementById('researchDetailContent');
-
+    
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     document.body.style.paddingRight = '0px';
@@ -2277,33 +2307,33 @@ function openResearchDetail(id) {
                     <div class="research-detail">
                         <h2 class="research-detail-title">${escapeHtml(item.title)}</h2>
                         ${item.image_url ? `<div class="research-detail-media"><img src="${item.image_url}" alt="${escapeHtml(item.title)}"></div>` : ''}
-                        ${item.video_url || item.video_file ? `
+                    ${item.video_url || item.video_file ? `
                             <div class="research-detail-media">
-                                ${item.video_file ?
+                            ${item.video_file ? 
                                     `<video controls class="w-full"><source src="${item.video_file}" type="video/mp4"></video>` :
-                                    item.video_embed_url ?
+                                item.video_embed_url ? 
                                     `<iframe src="${item.video_embed_url}" class="w-full aspect-video" allowfullscreen></iframe>` :
                                     `<div class="aspect-video flex items-center justify-center text-white">No video available</div>`
-                                }
-                            </div>
-                        ` : ''}
+                            }
+                        </div>
+                    ` : ''}
                         <div class="research-detail-meta">
                             ${categoryLabel ? `<span class="research-chip">${escapeHtml(categoryLabel)}</span>` : ''}
                             ${item.is_featured ? '<span class="research-chip">Featured</span>' : ''}
                             ${storyDate ? `<span class="library-date">${storyDate}</span>` : ''}
-                        </div>
+                    </div>
                         <div class="research-block">
                             <h4 class="research-kicker"><span></span>About</h4>
                             <p class="research-detail-copy">${escapeHtml(item.description || '')}</p>
                         </div>
-                        ${item.content ? `
+                    ${item.content ? `
                             <div class="research-block">
                                 <h4 class="research-kicker"><span></span>Full story</h4>
                                 ${formatResearchContent(item.content)}
-                            </div>
-                        ` : ''}
+                        </div>
+                    ` : ''}
                         ${item.link_url ? `<div class="research-link"><a class="library-cta" href="${item.link_url}" target="_blank" rel="noopener noreferrer">Visit link</a></div>` : ''}
-                    </div>
+                        </div>
                 `;
             } else {
                 content.innerHTML = `
@@ -2335,7 +2365,7 @@ function closeResearchDetail() {
 function playVideo(element, researchId) {
     const modal = document.getElementById('videoModal');
     const container = document.getElementById('videoContainer');
-
+    
     container.innerHTML = `
         <div class="w-full h-full flex items-center justify-center text-white">
             <div class="text-center">
@@ -2488,12 +2518,12 @@ document.addEventListener('keydown', function(e) {
             @if(isset($featuredBlogs) && $featuredBlogs->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($featuredBlogs as $blog)
-                        <a href="{{ route('blog.show', $blog->slug) }}"
+                        <a href="{{ route('blog.show', $blog->slug) }}" 
                         class="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <div class="relative overflow-hidden h-52">
                                 @if($blog->featured_image_url)
-                                    <img src="{{ $blog->featured_image_url }}"
-                                        alt="{{ $blog->title }}"
+                                    <img src="{{ $blog->featured_image_url }}" 
+                                        alt="{{ $blog->title }}" 
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center">
@@ -2533,7 +2563,7 @@ document.addEventListener('keydown', function(e) {
                                     {{ $blog->excerpt ?? Str::limit(strip_tags($blog->content ?? ''), 120) }}
                                 </p>
                                 <div class="mt-4 flex items-center gap-2 text-sm text-[#D4AF37] font-medium">
-                                    Read More
+                                    Read More 
                                     <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
@@ -2544,7 +2574,7 @@ document.addEventListener('keydown', function(e) {
                 </div>
 
                 <div class="text-center mt-12">
-                    <a href="{{ route('blog') }}"
+                    <a href="{{ route('blog') }}" 
                     class="inline-flex items-center gap-2 px-8 py-3 bg-[#D4AF37] text-[#0b0e12] font-bold rounded-lg hover:bg-[#c4a030] transition-all shadow-lg shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/40 hover:-translate-y-0.5">
                         View All Blogs
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2564,7 +2594,7 @@ document.addEventListener('keydown', function(e) {
     </section>
     --}}
 
-    <section id="news" class="news-section scroll-mt-20">
+    <section id="news" class="news-section rise-section scroll-mt-20">
         <style>
             .news-section {
                 background: #fbf9f6;
@@ -2824,15 +2854,17 @@ document.addEventListener('keydown', function(e) {
             };
         @endphp
         <div class="news-wrap">
-            <div class="news-kicker">
-                <span class="news-kicker-dash" aria-hidden="true"></span>
-                <p>{{ $newsContent['label'] }}</p>
+            <div class="rise-item">
+                <div class="news-kicker">
+                    <span class="news-kicker-dash" aria-hidden="true"></span>
+                    <p>{{ $newsContent['label'] }}</p>
+                </div>
+                <h2 class="news-heading">{!! $newsHeadingHtml !!}</h2>
             </div>
-            <h2 class="news-heading">{!! $newsHeadingHtml !!}</h2>
 
             @if($featuredNews)
                 <div class="news-layout">
-                    <article>
+                    <article class="rise-item">
                         <button type="button" class="news-feature-media" onclick="openNewsDetail({{ $featuredNews->id }})">
                             @if($featuredNews->image_url)
                                 <img src="{{ $featuredNews->image_url }}" alt="{{ $featuredNews->title }}">
@@ -2861,7 +2893,7 @@ document.addEventListener('keydown', function(e) {
                     @if($sideNews->isNotEmpty())
                         <div class="news-side">
                             @foreach($sideNews as $item)
-                                <button type="button" class="news-row" onclick="openNewsDetail({{ $item->id }})">
+                                <button type="button" class="news-row rise-item" onclick="openNewsDetail({{ $item->id }})">
                                     <span class="news-row-copy">
                                         <span class="news-row-cat">{{ $item->badgeLabel() }}</span>
                                         <span class="news-row-titleline">
@@ -2885,7 +2917,7 @@ document.addEventListener('keydown', function(e) {
                         </div>
                     @endif
                 </div>
-                <div class="news-view">
+                <div class="news-view rise-item">
                     <a href="{{ route('news.index') }}" class="gallery-explore">
                         View all Articles
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
@@ -2899,12 +2931,12 @@ document.addEventListener('keydown', function(e) {
 
     @include('partials.news-modal')
 
-    <section id="gallery" class="gallery-section scroll-mt-20">
+    <section id="gallery" class="gallery-section rise-section scroll-mt-20">
         @php
             $gallerySection = \App\Models\Setting::getGallerySection();
             $galleryTitle = trim((string) ($gallerySection['title'] ?? ''));
         @endphp
-        <div class="gallery-wrap">
+        <div class="gallery-wrap rise-item">
             <div class="gallery-marker">
                 <span class="gallery-dash" aria-hidden="true"></span>
                 <p class="gallery-kicker">{{ $gallerySection['label'] }}</p>
@@ -2926,7 +2958,7 @@ document.addEventListener('keydown', function(e) {
                         $lead = $previewImages->first();
                         $sideImages = $previewImages->slice(1, 3);
                     @endphp
-                    <a href="{{ route('gallery.show', $collection) }}" class="gallery-card {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
+                    <a href="{{ route('gallery.show', $collection) }}" class="gallery-card rise-item {{ $sideImages->isEmpty() ? 'gallery-card-single' : '' }}" aria-label="View {{ $collection->title }}">
                         <div class="gallery-card-lead">
                             <img src="{{ $lead->url }}" alt="{{ $collection->title }}" draggable="false">
                             <span class="gallery-card-scrim" aria-hidden="true"></span>
@@ -2951,7 +2983,7 @@ document.addEventListener('keydown', function(e) {
                     </a>
                 @endforeach
             </div>
-            <div class="gallery-action">
+            <div class="gallery-action rise-item">
                 <a href="{{ route('gallery.index') }}" class="gallery-explore">
                     Explore gallery
                     <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
@@ -3020,6 +3052,42 @@ document.addEventListener('keydown', function(e) {
             </div>
         </div>
     </section> --}}
+        <script>
+            (function () {
+                var sections = document.querySelectorAll(".rise-section");
+                if (!sections.length) return;
+
+                document.documentElement.classList.add("rise-ready");
+
+                var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window);
+
+                sections.forEach(function (section) {
+                    var index = 0;
+                    section.querySelectorAll(".rise-item").forEach(function (item) {
+                        if (item.closest(".hidden")) {
+                            item.style.setProperty("--rise-index", "0");
+                            return;
+                        }
+                        item.style.setProperty("--rise-index", String(index));
+                        index += 1;
+                    });
+
+                    if (reduce) {
+                        section.classList.add("is-visible");
+                        return;
+                    }
+
+                    var observer = new IntersectionObserver(function (entries) {
+                        if (entries.some(function (entry) { return entry.isIntersecting; })) {
+                            section.classList.add("is-visible");
+                            observer.disconnect();
+                        }
+                    }, { threshold: 0.15 });
+
+                    observer.observe(section);
+                });
+            })();
+        </script>
 @endsection
 
 <style>
@@ -3447,6 +3515,27 @@ document.addEventListener('keydown', function(e) {
     transform: translateY(0);
 }
 
+.rise-ready .rise-section .rise-item {
+    transition: opacity 650ms ease, transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--rise-index, 0) * 70ms);
+}
+
+.rise-ready .rise-section:not(.is-visible) .rise-item {
+    opacity: 0;
+    transform: translateY(42px);
+}
+
+.rise-ready .rise-section.is-visible .rise-item {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.rise-ready .rise-section.is-visible .hidden .rise-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+}
+
 @media (max-width: 1919px) {
     .initiatives-track {
         margin-inline: 0;
@@ -3554,9 +3643,14 @@ document.addEventListener('keydown', function(e) {
     }
 
     .initiatives-reveal-ready #projects:not(.is-visible) .initiatives-heading,
-    .initiatives-reveal-ready #projects:not(.is-visible) .initiative-card {
+    .initiatives-reveal-ready #projects:not(.is-visible) .initiative-card,
+    .rise-ready .rise-section:not(.is-visible) .rise-item {
         opacity: 1;
         transform: none;
+    }
+
+    .rise-ready .rise-section .rise-item {
+        transition: none;
     }
 }
 
@@ -4085,7 +4179,7 @@ function playVideo(element, researchId) {
     const modal = document.getElementById('videoModal');
     const container = document.getElementById('videoContainer');
     if (!modal || !container) return;
-
+    
     // Get video data from server
     fetch(`/research/${researchId}/video`)
         .then(response => response.json())
@@ -4151,7 +4245,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const target = parseInt(counter.getAttribute('data-target'));
             const current = parseInt(counter.innerText);
             const increment = Math.ceil(target / speed);
-
+            
             if (current < target) {
                 counter.innerText = Math.min(current + increment, target);
                 setTimeout(updateCounter, 1);
@@ -4186,8 +4280,10 @@ document.addEventListener('DOMContentLoaded', function () {
     let dragged = false;
     let suppressClick = false;
     let paused = false;
+    let stoppedByTap = false;
     let direction = 1;
     const autoSpeed = 18; // slower drift to match the Figma motion cadence more closely
+    const mobileQuery = window.matchMedia('(max-width: 767px)');
 
     const measure = () => {
         maxPosition = Math.max(0, track.scrollWidth - carousel.clientWidth);
@@ -4238,8 +4334,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const isProjectLink = (event) => Boolean(event.target.closest('a, button'));
 
-    carousel.addEventListener('pointerenter', () => { paused = true; });
-    carousel.addEventListener('pointerleave', () => { paused = false; });
+    carousel.addEventListener('pointerenter', () => {
+        if (!mobileQuery.matches) paused = true;
+    });
+    carousel.addEventListener('pointerleave', () => {
+        if (mobileQuery.matches && stoppedByTap) return;
+        if (!mobileQuery.matches) paused = false;
+    });
 
     track.querySelectorAll('.tooltip-container').forEach((card) => {
         card.addEventListener('mouseenter', () => card.classList.add('is-open'));
@@ -4248,6 +4349,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     track.addEventListener('pointerdown', (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
+        if (mobileQuery.matches && event.target.closest('.initiative-card')) {
+            stoppedByTap = true;
+            paused = true;
+        }
         if (isProjectLink(event)) return;
 
         measure();
@@ -4284,6 +4389,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }, true);
 
     window.addEventListener('resize', () => {
+        if (!mobileQuery.matches) {
+            stoppedByTap = false;
+            paused = carousel.matches(':hover');
+        }
         measure();
         render();
     });
