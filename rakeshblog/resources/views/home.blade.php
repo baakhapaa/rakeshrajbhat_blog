@@ -1446,7 +1446,7 @@
             min-width: 0;
             width: 100%;
             margin: 8px 0 0;
-            max-height: 6.6em;
+            height: fit-content;
             overflow-x: auto;
             overflow-y: auto;
             overscroll-behavior: contain;
@@ -1527,12 +1527,14 @@
 
             .mission-scroll__reason {
                 grid-template-columns: minmax(0, 1fr);
-                grid-template-rows: minmax(0, 1fr) auto;
+                /* grid-template-rows: minmax(0, 1fr) auto; */
                 row-gap: 10px;
                 align-content: center;
+                padding-left:10px;
             }
 
             .mission-scroll__copy {
+                padding-left: 10px;
                 grid-row: 1;
                 mask-image: none;
                 -webkit-mask-image: none;
@@ -1540,6 +1542,7 @@
 
             .mission-scroll__more {
                 grid-column: 1;
+                margin-left: 0.6rem;
                 grid-row: 2;
                 justify-self: start;
                 height: 34px;
@@ -1552,7 +1555,7 @@
                 margin-top: 8px;
                 font-size: 13px;
                 line-height: 1.45;
-                max-height: 9.5em;
+                max-height: fit-content;
                 overflow: visible;
             }
 
@@ -1583,7 +1586,8 @@
             }
 
             .mission-scroll__body {
-                max-height: 11em;
+                font-size: 10px;
+                max-height: fit-content;
                 overflow: visible;
             }
 
