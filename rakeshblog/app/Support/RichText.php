@@ -110,13 +110,15 @@ class RichText
         }
 
         if ($tag === 'img') {
-            $src = trim($element->getAttribute('src'));
-            $safeSrc = (str_starts_with($src, '/') && ! str_starts_with($src, '//'))
-                || (bool) preg_match('#^https?://#i', $src);
+            $src = self::normalizeMediaSrc(trim($element->getAttribute('src')));
 
-            if (! $safeSrc) {
+            if ($src === null) {
                 $element->parentNode?->removeChild($element);
+
+                return;
             }
+
+            $element->setAttribute('src', $src);
 
             return;
         }
@@ -179,5 +181,36 @@ class RichText
         }
 
         return implode(';', $kept);
+    }
+
+    /**
+     * Keep site/media image URLs and rewrite TinyMCE relative paths back to /storage/...
+     */
+    private static function normalizeMediaSrc(string $src): ?string
+    {
+        if ($src === '' || str_starts_with(strtolower($src), 'blob:') || str_starts_with(strtolower($src), 'data:')) {
+            return null;
+        }
+
+        if ((bool) preg_match('#^https?://#i', $src)) {
+            $path = parse_url($src, PHP_URL_PATH);
+
+            if (is_string($path) && str_starts_with($path, '/storage/')) {
+                return $path;
+            }
+
+            return $src;
+        }
+
+        if (str_starts_with($src, '/') && ! str_starts_with($src, '//')) {
+            return $src;
+        }
+
+        // TinyMCE often turns /storage/... into ../storage/... from /admin pages.
+        if (preg_match('#(?:^|/)storage/(.+)$#', str_replace('\\', '/', $src), $matches)) {
+            return '/storage/'.$matches[1];
+        }
+
+        return null;
     }
 }

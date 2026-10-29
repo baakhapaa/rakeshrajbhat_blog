@@ -432,8 +432,8 @@
                             </div>
                             <div>
                                 <label class="block text-white/70 text-sm font-medium mb-2">Short description</label>
-                                <textarea name="mission_body[]" rows="4" maxlength="90" placeholder="Shown on the homepage dial" class="mission-item-body-input min-h-[6.5rem] w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">{{ $item['body'] }}</textarea>
-                                <p class="mt-1 text-xs text-white/40">Keep this short for the dial. Best around <span class="text-white/60">60 characters</span>. Maximum <span class="text-white/60">90 characters</span> so it still fits on phones. Longer text belongs in the long description. <span class="mission-body-count text-white/50">0/90</span></p>
+                                <textarea name="mission_body[]" rows="4" maxlength="300" placeholder="Shown on the homepage dial" class="mission-item-body-input min-h-[6.5rem] w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">{{ $item['body'] }}</textarea>
+                                <p class="mt-1 text-xs text-white/40">Keep this short for the dial. Maximum <span class="text-white/60">203 characters</span>. Longer text belongs in the long description. <span class="mission-body-count text-white/50">0/203</span></p>
                             </div>
                             <div>
                                 <label class="block text-white/70 text-sm font-medium mb-2">Long description</label>
@@ -500,8 +500,8 @@
             </div>
             <div>
                 <label class="block text-white/70 text-sm font-medium mb-2">Short description</label>
-                <textarea name="mission_body[]" rows="4" maxlength="90" placeholder="Shown on the homepage dial" class="mission-item-body-input min-h-[6.5rem] w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none"></textarea>
-                <p class="mt-1 text-xs text-white/40">Keep this short for the dial. Best around <span class="text-white/60">60 characters</span>. Maximum <span class="text-white/60">90 characters</span> so it still fits on phones. Longer text belongs in the long description. <span class="mission-body-count text-white/50">0/90</span></p>
+                <textarea name="mission_body[]" rows="4" maxlength="300" placeholder="Shown on the homepage dial" class="mission-item-body-input min-h-[6.5rem] w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none"></textarea>
+                <p class="mt-1 text-xs text-white/40">Keep this short for the dial. Maximum <span class="text-white/60">203 characters</span>. Longer text belongs in the long description. <span class="mission-body-count text-white/50">0/203</span></p>
             </div>
             <div>
                 <label class="block text-white/70 text-sm font-medium mb-2">Long description</label>
@@ -592,7 +592,7 @@
             if (!bodyInput || !count) {
                 return;
             }
-            count.textContent = bodyInput.value.length + '/90';
+            count.textContent = bodyInput.value.length + '/203';
         }
 
         function missionDescriptionField(row) {
@@ -661,6 +661,11 @@
                 font_size_formats: '14px 16px 18px 20px 24px 28px',
                 automatic_uploads: true,
                 images_reuse_filename: false,
+                convert_urls: false,
+                relative_urls: false,
+                remove_script_host: false,
+                image_uploadtab: true,
+                images_file_types: 'jpg,jpeg,png,gif,webp',
                 images_upload_handler: function (blobInfo) {
                     return new Promise(function (resolve, reject) {
                         const formData = new FormData();
@@ -685,7 +690,7 @@
                             })
                             .then(resolve)
                             .catch(function (error) {
-                                reject(error.message || 'Image upload failed');
+                                reject(error && error.message ? error.message : 'Image upload failed');
                             });
                     });
                 },
@@ -714,7 +719,8 @@
             if (open) {
                 initMissionEditor(row);
             } else {
-                destroyMissionEditor(row);
+                // Keep the editor instance so uploaded image URLs are not lost.
+                saveMissionEditor(row);
             }
         }
 
@@ -842,11 +848,47 @@
         });
 
         if (missionForm) {
-            missionForm.addEventListener('submit', function () {
-                missionRows.querySelectorAll('.mission-item-row').forEach(saveMissionEditor);
-                if (typeof tinymce !== 'undefined') {
-                    tinymce.triggerSave();
+            missionForm.addEventListener('submit', function (event) {
+                if (missionForm.dataset.missionReady === '1') {
+                    return;
                 }
+
+                event.preventDefault();
+
+                const editors = [];
+                missionRows.querySelectorAll('.mission-item-row').forEach(function (row) {
+                    const field = missionDescriptionField(row);
+                    if (!field || typeof tinymce === 'undefined') {
+                        return;
+                    }
+                    const editor = tinymce.get(field.id);
+                    if (editor) {
+                        editors.push(editor);
+                    }
+                });
+
+                const uploads = editors.map(function (editor) {
+                    return editor.uploadImages();
+                });
+
+                Promise.all(uploads)
+                    .catch(function () {
+                        // Still save whatever URLs TinyMCE already resolved.
+                    })
+                    .then(function () {
+                        editors.forEach(function (editor) {
+                            editor.save();
+                        });
+                        if (typeof tinymce !== 'undefined') {
+                            tinymce.triggerSave();
+                        }
+                        missionForm.dataset.missionReady = '1';
+                        if (typeof missionForm.requestSubmit === 'function') {
+                            missionForm.requestSubmit();
+                        } else {
+                            missionForm.submit();
+                        }
+                    });
             });
         }
 
