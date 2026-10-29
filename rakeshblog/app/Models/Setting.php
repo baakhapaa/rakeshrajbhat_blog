@@ -219,6 +219,111 @@ class Setting extends Model
         return array_slice($facts, 0, 12);
     }
 
+    public static function defaultMissionContent(): array
+    {
+        return [
+            'label' => 'My Missions',
+            'button_label' => 'Learn More',
+            'items' => [
+                [
+                    'title' => 'Education',
+                    'body' => 'Making learning practical, accessible and future-ready.',
+                    'description' => 'Education sits at the centre of the work I care about. I want learning that is practical, open to more people, and ready for the skills young Nepalis will need next. Through programmes, partnerships and community work, the aim is simple: help people learn something they can use.',
+                ],
+                [
+                    'title' => 'Youth Empowerment',
+                    'body' => 'Equipping young minds with skills, confidence and purpose.',
+                    'description' => 'Young people need more than inspiration. They need skills, confidence and a clear sense of purpose. Youth empowerment means creating spaces where they can try, build, lead and stay connected to opportunity in their own communities.',
+                ],
+                [
+                    'title' => 'Technology',
+                    'body' => 'Using technology to solve real problems in communities.',
+                    'description' => 'Technology matters when it solves a real problem. I look for tools that make learning, enterprise and local services clearer and more useful, not more complicated. The measure is whether people can use them.',
+                ],
+                [
+                    'title' => 'Local Economy',
+                    'body' => 'Creating opportunities that strengthen local communities.',
+                    'description' => 'A strong local economy gives people a reason to stay, return and invest in the places they belong to. Supporting enterprise, skills and local products is one way to keep opportunity closer to home.',
+                ],
+                [
+                    'title' => 'Sustainability',
+                    'body' => 'Building projects that respect nature and culture.',
+                    'description' => 'Projects should last beyond a launch day. Sustainability means respecting nature, culture and the people who will live with the work long after the first announcement.',
+                ],
+                [
+                    'title' => 'Nation First',
+                    'body' => 'Every step I take is for Nepal and her future.',
+                    'description' => 'Every initiative is rooted in Nepal first. The goal is practical progress for communities, young people and the places that shape the country’s future.',
+                ],
+            ],
+        ];
+    }
+
+    public static function getMissionContent(): array
+    {
+        $defaults = static::defaultMissionContent();
+        $defaults['items'] = static::missionItemsFrom(['items' => $defaults['items']]);
+        $decoded = static::decodeJson(static::getValue('mission_content'));
+
+        if (! is_array($decoded)) {
+            return $defaults;
+        }
+
+        $content = $defaults;
+
+        foreach (['label', 'button_label'] as $key) {
+            if (isset($decoded[$key]) && is_string($decoded[$key]) && trim($decoded[$key]) !== '') {
+                $content[$key] = trim($decoded[$key]);
+            }
+        }
+
+        $items = static::missionItemsFrom($decoded);
+
+        if ($items !== []) {
+            $content['items'] = $items;
+        }
+
+        return $content;
+    }
+
+    public static function missionItemsFrom(array $decoded): array
+    {
+        $items = [];
+        $rows = $decoded['items'] ?? null;
+
+        if (! is_array($rows)) {
+            return [];
+        }
+
+        foreach ($rows as $index => $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+
+            $title = trim(strip_tags((string) ($row['title'] ?? '')));
+            $body = trim(strip_tags((string) ($row['body'] ?? '')));
+            $rawDescription = (string) ($row['description'] ?? '');
+            $description = \App\Support\RichText::clean($rawDescription);
+
+            if ($description === '' && trim(strip_tags($rawDescription)) !== '') {
+                $description = e(trim(strip_tags($rawDescription)));
+            }
+
+            if ($title === '' && $body === '' && $description === '') {
+                continue;
+            }
+
+            $items[] = [
+                'number' => str_pad((string) (count($items) + 1), 2, '0', STR_PAD_LEFT),
+                'title' => $title,
+                'body' => $body,
+                'description' => $description,
+            ];
+        }
+
+        return array_slice($items, 0, 12);
+    }
+
     public static function defaultNewsContent(): array
     {
         return [

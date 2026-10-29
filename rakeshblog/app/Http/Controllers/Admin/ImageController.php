@@ -18,11 +18,13 @@ class ImageController extends Controller
 
             $request->validate([
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+                'folder' => 'nullable|string|in:blog-images,mission',
             ]);
 
             $image = $request->file('image');
+            $folder = $request->input('folder', 'blog-images');
             $filename = Str::random(40) . '.' . $image->getClientOriginalExtension();
-            $path = $image->storeAs('blog-images', $filename, 'media');
+            $path = $image->storeAs($folder, $filename, 'media');
 
             Log::info('Image uploaded successfully: ' . $path);
 
