@@ -29,7 +29,7 @@
         @keydown.escape.window="open = false"
         role="presentation"
     >
-        <div class="relative mx-auto w-full max-w-4xl rounded-2xl bg-[#fff6e0] p-5 text-[#1e1e1a] shadow-2xl sm:p-8 md:p-10" role="dialog" aria-modal="true" aria-labelledby="work-together-title">
+        <div class="site-theme relative mx-auto w-full max-w-4xl rounded-2xl p-5 text-[#1b1c1a] shadow-2xl sm:p-8 md:p-10" role="dialog" aria-modal="true" aria-labelledby="work-together-title">
             <button type="button" @click="open = false" class="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full text-[#3a3a34] hover:bg-black/5" aria-label="Close">
                 <i class="fas fa-times"></i>
             </button>
@@ -53,11 +53,15 @@
             @endif
 
             <div class="px-8 text-center">
-                <h2 id="work-together-title" class="mb-4 font-serif text-3xl font-bold">How Can We Work Together?</h2>
+                <div class="site-kicker center">
+                    <span aria-hidden="true"></span>
+                    <p>Work with me</p>
+                </div>
+                <h2 id="work-together-title" class="mb-4 text-3xl font-semibold">How Can We Work Together?</h2>
                 
                 <div class="relative inline-block w-full max-w-md text-left mt-4">
                     <div>
-                        <button type="button" @click="menuOpen = !menuOpen" class="inline-flex justify-between w-full rounded-xl border border-gray-300 bg-white px-6 py-4 text-sm font-medium text-[#1e1e1a] hover:border-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all shadow-sm">
+                        <button type="button" @click="menuOpen = !menuOpen" class="site-menu-btn inline-flex justify-between w-full px-6 py-4 text-sm font-medium transition-all">
                             <span class="flex items-center gap-2" x-html="'<i class=\'fas ' + options.find(opt => opt.id === selected).icon + '\'></i> ' + options.find(opt => opt.id === selected).label"></span>
                             <svg class="-mr-1 ml-2 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
@@ -69,7 +73,7 @@
                     <div x-show="menuOpen" @click.away="menuOpen = false" class="absolute z-50 mt-2 w-full rounded-xl bg-white shadow-xl ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none origin-top-right transition ease-out duration-100" style="display: none;">
                         <div class="py-1">
                             <template x-for="option in options" :key="option.id">
-                                <div @click="selected = option.id; menuOpen = false" class="cursor-pointer px-6 py-4 hover:bg-[#D4AF37]/10 transition-colors flex items-start gap-4 group">
+                                <div @click="selected = option.id; menuOpen = false" class="site-option cursor-pointer px-6 py-4 transition-colors flex items-start gap-4 group">
                                     <div class="text-xl text-[#D4AF37] shrink-0 pt-1">
                                         <i :class="'fas ' + option.icon"></i>
                                     </div>

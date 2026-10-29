@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use App\Models\Research;
 use App\Models\Setting;
 use Illuminate\Http\Request;
@@ -515,12 +516,14 @@ class ResearchController extends Controller
             ->get()
             ->groupBy('category');
 
-        return view('research.featured', compact('featuredResearch'));
+        $featuredBlogs = Blog::published()->orderByDesc('published_at')->get();
+
+        return view('research.featured', compact('featuredResearch', 'featuredBlogs'));
         } 
         catch (\Exception $e) 
         {
         Log::error('Research Page Error: ' . $e->getMessage());
-        return view('research.featured', ['featuredResearch' => collect()]);
+        return view('research.featured', ['featuredResearch' => collect(), 'featuredBlogs' => collect()]);
         }
     }
 

@@ -6,14 +6,14 @@
 @section('meta_description', 'Contact Rakesh Rajbhat and his team about partnerships, municipal programs, education, technology, tourism or media inquiries.')
 
 @section('content')
-<section class="min-h-screen pt-32 pb-20 bg-[#f8f6f0] text-[#1e1e1a]">
+<section class="site-theme min-h-screen pt-32 pb-20 text-[#1b1c1a]">
     <div class="max-w-5xl mx-auto px-6">
-        <!-- Page Header -->
         <div class="text-center mb-16">
-            <span class="inline-block px-4 py-1 bg-[#D4AF37]/10 text-[#D4AF37] text-sm font-semibold rounded-full mb-4">
-                <i class="fas fa-heart mr-1"></i> We'd Love to Hear From You
-            </span>
-            <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4 text-[#1e1e1a]">Let's Connect</h1>
+            <div class="site-kicker center">
+                <span aria-hidden="true"></span>
+                <p>Contact</p>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-semibold mb-4 text-[#111]">Let's Connect</h1>
             <p class="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
                 Have a question, idea, or just want to say hello? Reach out and we'll get back to you as soon as possible.
             </p>
@@ -106,7 +106,7 @@
                         </div>
 
                         <p class="text-xs text-gray-500 leading-relaxed">
-                            By submitting this form, you agree that we may use your information to respond to your inquiry. Read our <a href="{{ route('privacy') }}" class="text-[#735A12] underline hover:text-[#4e3d0c]">Privacy Policy</a>.
+                            By submitting this form, you agree that we may use your information to respond to your inquiry. Read our <a href="{{ route('privacy') }}" class="underline">Privacy Policy</a>.
                         </p>
                         <button type="submit" class="w-full bg-gradient-to-r from-[#D4AF37] to-[#c4a030] text-[#0b0e12] px-6 py-4 rounded-xl font-semibold hover:from-[#c4a030] hover:to-[#b8922a] transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3 group">
                             <span>Send Message</span>

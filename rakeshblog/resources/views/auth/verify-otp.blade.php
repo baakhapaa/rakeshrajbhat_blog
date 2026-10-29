@@ -6,7 +6,7 @@
 @section('robots', 'noindex,nofollow')
 
 @section('content')
-<section class="min-h-screen pt-32 pb-20 bg-[#f2f2f2] flex items-center">
+<section class="auth-page">
     <div class="max-w-md mx-auto w-full px-6">
         <div class="bg-white rounded-2xl shadow-xl p-8">
             <div class="text-center mb-8">
@@ -228,7 +228,7 @@
 <style>
     input[name="otp_parts[]"]:focus {
         outline: none;
-        border-color: #D4AF37;
+        border-color: #b36855;
         box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
     }
     input[name="otp_parts[]"] {

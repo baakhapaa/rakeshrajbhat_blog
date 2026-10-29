@@ -1806,158 +1806,367 @@
             requestAnimationFrame(frame);
         })();
     </script>
-<section id="research" class="py-24 bg-gradient-to-b from-[#f2efe8] to-[#faf8f5] text-[#1e1e1a] scroll-mt-20">
-    <div class="max-w-7xl mx-auto px-6">
-        <!-- Section Title -->
-        @php
-            $researchSection = \App\Models\Setting::getResearchSection();
-        @endphp
-        <div class="text-center mb-10">
-            <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#1e1e1a] leading-tight">{{ $researchSection['title'] }}</h2>
-            <p class="text-[#5a5a52] mt-4 max-w-2xl mx-auto text-lg leading-relaxed">{{ $researchSection['paragraph'] }}</p>
+<section id="research" class="studies-section scroll-mt-20" aria-labelledby="studies-heading">
+    <style>
+        .studies-section {
+            background: #fff;
+            color: #111;
+            padding: 72px 20px 56px;
+        }
+        .studies-intro { display: flex; flex-direction: column; gap: 7px; }
+        .studies-kicker { display: flex; align-items: center; gap: 8px; }
+        .studies-kicker span { width: 24px; height: 2px; background: #89351d; flex: none; }
+        .studies-kicker p {
+            margin: 0;
+            color: #89351d;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 16px;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+        }
+        .studies-title {
+            max-width: 1000px;
+            margin: 0;
+            color: #111;
+            font-family: Poppins, "Plus Jakarta Sans", sans-serif;
+            font-size: 40px;
+            font-weight: 600;
+            line-height: 1.1;
+        }
+        .studies-filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .studies-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            padding: 0 18px;
+            border: 1px solid #d5cec2;
+            border-radius: 9999px;
+            background: transparent;
+            color: #59554f;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 21px;
+            cursor: pointer;
+        }
+        .studies-pill.is-active {
+            border-color: #2a2929;
+            background: #2a2929;
+            color: #faf7f2;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
+        }
+        .studies-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 25px;
+        }
+        .study-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            overflow: hidden;
+            border-radius: 24px;
+            background: #fbf9f6;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .study-card-media {
+            position: relative;
+            display: block;
+            aspect-ratio: 563.333 / 253.424;
+            background: #eae8e5;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .study-card-media img,
+        .study-card-media video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+        .study-play {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0;
+            padding: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.12));
+            cursor: pointer;
+        }
+        .study-play span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #d4af37;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+        }
+        .study-play i {
+            margin-left: 3px;
+            color: #fff;
+            font-size: 18px;
+        }
+        .study-card-category {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 3;
+            margin: 0;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            background: rgba(251, 249, 246, 0.9);
+            color: #89351d;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 14px;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            pointer-events: none;
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+        }
+        .study-card-body {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 28px;
+            padding: 24px;
+        }
+        .study-card-date {
+            margin: 0 0 11px;
+            color: #5f5e5e;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            line-height: 14px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .study-card h3,
+        .study-card h3 a {
+            margin: 0;
+            color: #1b1c1a;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 28px;
+            text-decoration: none;
+        }
+        .study-card-excerpt {
+            display: -webkit-box;
+            margin: 11px 0 0;
+            overflow: hidden;
+            color: #5f5e5e;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 22px;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+        }
+        .study-read {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+            margin-top: auto;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #89351d;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 16px;
+            letter-spacing: 1.32px;
+            text-decoration: none;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        .studies-empty {
+            margin: 0;
+            color: #5f5e5e;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 16px;
+        }
+        .studies-cta { display: flex; justify-content: center; margin-top: 25px; }
+        .studies-view-all {
+            display: inline-flex;
+            align-items: center;
+            height: 53px;
+            padding: 10px 24px;
+            border-radius: 9999px;
+            background: #b36855;
+            color: #faf7f2;
+            font-family: "Plus Jakarta Sans", Inter, sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 21px;
+            text-decoration: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
+        }
+        .studies-view-all img { display: block; margin-left: 8px; }
+        @media (min-width: 1024px) {
+            .studies-section {
+                display: flex;
+                flex-direction: column;
+                gap: calc(25 * var(--fu));
+                padding: calc(150 * var(--fu)) calc(300 * var(--fu)) calc(72 * var(--fu));
+            }
+            .studies-intro { gap: calc(7 * var(--fu)); }
+            .studies-kicker { gap: calc(8 * var(--fu)); }
+            .studies-kicker span { width: calc(24 * var(--fu)); height: max(1px, calc(2 * var(--fu))); }
+            .studies-kicker p {
+                font-size: calc(14 * var(--fu));
+                line-height: calc(16 * var(--fu));
+                letter-spacing: calc(1.1 * var(--fu));
+            }
+            .studies-title {
+                width: calc(1000 * var(--fu));
+                max-width: 100%;
+                font-size: calc(76 * var(--fu));
+            }
+            .studies-filters {
+                justify-content: flex-end;
+                gap: calc(12 * var(--fu));
+                margin-top: 0;
+            }
+            .studies-pill {
+                height: calc(43 * var(--fu));
+                padding: 0 calc(21 * var(--fu));
+                font-size: calc(14 * var(--fu));
+                line-height: calc(21 * var(--fu));
+            }
+            .studies-pill.is-active { padding: 0 calc(24 * var(--fu)); }
+            .studies-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: calc(46 * var(--fu));
+                margin-top: 0;
+            }
+            .study-card { min-height: calc(597 * var(--fu)); border-radius: calc(24 * var(--fu)); }
+            .study-card-body { gap: calc(28 * var(--fu)); padding: calc(24 * var(--fu)); }
+            .study-card-date {
+                margin-bottom: calc(11.1 * var(--fu));
+                font-size: calc(10 * var(--fu));
+                line-height: calc(14 * var(--fu));
+                letter-spacing: calc(0.5 * var(--fu));
+            }
+            .study-card h3,
+            .study-card h3 a {
+                font-size: calc(26 * var(--fu));
+                line-height: calc(32 * var(--fu));
+            }
+            .study-card-excerpt {
+                margin-top: calc(11.1 * var(--fu));
+                font-size: calc(21 * var(--fu));
+                line-height: calc(26.1 * var(--fu));
+            }
+            .study-read {
+                gap: calc(8 * var(--fu));
+                font-size: calc(21 * var(--fu));
+                letter-spacing: calc(1.32 * var(--fu));
+            }
+            .studies-cta { margin-top: 0; }
+        }
+    </style>
+    @php
+        $researchSection = \App\Models\Setting::getResearchSection();
+    @endphp
+    <div class="studies-intro">
+        <div class="studies-kicker">
+            <span aria-hidden="true"></span>
+            <p>Studies</p>
         </div>
+        <h2 id="studies-heading" class="studies-title">{{ $researchSection['title'] }}</h2>
+    </div>
 
-        <div class="mb-12 flex flex-wrap items-center justify-center gap-3" id="researchFilters">
-            <button type="button" data-research-filter="all" class="research-pill inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-4 py-2 text-sm font-semibold text-[#1e1e1a] shadow-sm transition" aria-pressed="true">
-                <i class="fa-solid fa-table-cells text-[#1e1e1a]" aria-hidden="true"></i>
-                All
-            </button>
-            <button type="button" data-research-filter="vision" class="research-pill inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#4a4a42] shadow-sm transition" aria-pressed="false">
-                <i class="fa-solid fa-eye text-[#D4AF37]" aria-hidden="true"></i>
-                Vision
-            </button>
-            <button type="button" data-research-filter="research" class="research-pill inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#4a4a42] shadow-sm transition" aria-pressed="false">
-                <i class="fa-solid fa-file-lines text-[#D4AF37]" aria-hidden="true"></i>
-                Research
-            </button>
-            <button type="button" data-research-filter="media" class="research-pill inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#4a4a42] shadow-sm transition" aria-pressed="false">
-                <i class="fa-solid fa-video text-[#D4AF37]" aria-hidden="true"></i>
-                Media
-            </button>
-            <button type="button" data-research-filter="blog" class="research-pill inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#4a4a42] shadow-sm transition" aria-pressed="false">
-                <i class="fa-solid fa-newspaper text-[#D4AF37]" aria-hidden="true"></i>
-                Blog
-            </button>
-        </div>
+    <div class="studies-filters" id="researchFilters">
+        <button type="button" data-research-filter="all" class="studies-pill is-active" aria-pressed="true">All</button>
+        <button type="button" data-research-filter="vision" class="studies-pill" aria-pressed="false">Vision</button>
+        <button type="button" data-research-filter="research" class="studies-pill" aria-pressed="false">Research</button>
+        <button type="button" data-research-filter="media" class="studies-pill" aria-pressed="false">Media</button>
+        <button type="button" data-research-filter="blog" class="studies-pill" aria-pressed="false">Blog</button>
+    </div>
 
-        @php
-            $categories = [
-                'vision' => [
-                    'label' => 'Vision for Nepal',
-                    'icon' => 'fa-eye',
-                    'emoji' => '🌟',
-                    'description' => 'Big ideas for a better tomorrow',
-                ],
-                'research' => [
-                    'label' => 'Research & Papers',
-                    'icon' => 'fa-book',
-                    'emoji' => '📚',
-                    'description' => 'Evidence-based insights',
-                ],
-                'media' => [
-                    'label' => 'Media & Stories',
-                    'icon' => 'fa-video',
-                    'emoji' => '🎬',
-                    'description' => 'Inspiring stories from the field',
-                ],
-                'blog' => [
-                    'label' => 'Blog',
-                    'icon' => 'fa-newspaper',
-                    'emoji' => '📰',
-                    'description' => 'Three featured stories',
-                ],
-            ];
-            $homeBlogs = isset($featuredBlogs) ? $featuredBlogs->take(3) : collect();
-            $spotlightResearch = $spotlightResearch ?? collect();
-        @endphp
+    @php
+        $homeBlogs = isset($featuredBlogs) ? $featuredBlogs->take(3) : collect();
+        $spotlightResearch = $spotlightResearch ?? collect();
+        $featuredResearch = $featuredResearch ?? collect();
+    @endphp
 
-        <div data-research-panel="all" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            @foreach(['vision', 'research'] as $key)
-                @php $category = $categories[$key]; @endphp
-                <div class="space-y-5">
-                    @include('partials.home-study-heading', ['category' => $category])
-                    @if(isset($spotlightResearch[$key]) && $spotlightResearch[$key]->isNotEmpty())
-                        @include('partials.home-research-card', ['item' => $spotlightResearch[$key]->first(), 'category' => $category])
-                    @else
-                        <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100/50">
-                            <p class="text-sm text-[#5a5a52] font-medium">No featured item yet</p>
-                        </div>
-                    @endif
-                </div>
+    <div data-research-panel="all">
+        <div class="studies-grid">
+            @foreach(['vision' => 'Vision', 'research' => 'Research'] as $key => $studyCategory)
+                @if(isset($spotlightResearch[$key]) && $spotlightResearch[$key]->isNotEmpty())
+                    @include('partials.home-research-card', ['item' => $spotlightResearch[$key]->first(), 'studyCategory' => $studyCategory])
+                @endif
             @endforeach
-            <div class="space-y-5">
-                @include('partials.home-study-heading', ['category' => $categories['blog']])
-                @if($homeBlogs->isNotEmpty())
-                    @include('partials.home-blog-card', ['blog' => $homeBlogs->first()])
+            @if($homeBlogs->isNotEmpty())
+                @include('partials.home-blog-card', ['blog' => $homeBlogs->first(), 'studyCategory' => 'Blog'])
+            @endif
+            @if((!isset($spotlightResearch['vision']) || $spotlightResearch['vision']->isEmpty()) && (!isset($spotlightResearch['research']) || $spotlightResearch['research']->isEmpty()) && $homeBlogs->isEmpty())
+                <p class="studies-empty">Nothing added to home yet.</p>
+            @endif
+        </div>
+    </div>
+
+    @foreach(['vision' => 'Vision', 'research' => 'Research', 'media' => 'Media'] as $key => $studyCategory)
+        <div data-research-panel="{{ $key }}" class="hidden">
+            <div class="studies-grid">
+                @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
+                    @foreach($featuredResearch[$key]->take(3) as $item)
+                        @include('partials.home-research-card', ['item' => $item, 'studyCategory' => $studyCategory])
+                    @endforeach
                 @else
-                    <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100/50">
-                        <p class="text-sm text-[#5a5a52] font-medium">No featured blogs yet</p>
-                    </div>
+                    <p class="studies-empty">Nothing added to home yet.</p>
                 @endif
             </div>
         </div>
+    @endforeach
 
-        @foreach(['vision', 'research', 'media'] as $key)
-            @php $category = $categories[$key]; @endphp
-            <div data-research-panel="{{ $key }}" class="hidden">
-                <div class="mb-5">
-                    @include('partials.home-study-heading', ['category' => $category])
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
-                        @foreach($featuredResearch[$key]->take(3) as $item)
-                            @include('partials.home-research-card', ['item' => $item, 'category' => $category])
-                        @endforeach
-                    @else
-                        <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100/50">
-                            <p class="text-sm text-[#5a5a52] font-medium">Nothing added to home yet</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        @endforeach
-
-        <div data-research-panel="blog" class="hidden">
-            <div class="mb-5">
-                @include('partials.home-study-heading', ['category' => $categories['blog']])
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                @forelse($homeBlogs as $blog)
-                    @include('partials.home-blog-card', ['blog' => $blog])
-                @empty
-                    <div class="bg-white rounded-2xl p-8 text-center shadow-sm border border-gray-100/50">
-                        <p class="text-sm text-[#5a5a52] font-medium">No featured blogs yet</p>
-                    </div>
-                @endforelse
-            </div>
+    <div data-research-panel="blog" class="hidden">
+        <div class="studies-grid">
+            @forelse($homeBlogs as $blog)
+                @include('partials.home-blog-card', ['blog' => $blog, 'studyCategory' => 'Blog'])
+            @empty
+                <p class="studies-empty">No featured blogs yet.</p>
+            @endforelse
         </div>
+    </div>
 
-        <!-- View All Button -->
-        <div class="text-center mt-16">
-            <a href="{{ route('research.featured') }}"
-                class="inline-flex items-center gap-3 px-8 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#c4a030] text-[#0b0e12] font-medium rounded-2xl hover:shadow-xl hover:shadow-[#D4AF37]/25 transition-all duration-300 hover:-translate-y-0.5 group">
-                    <span>Explore All Research</span>
-                    <span class="group-hover:translate-x-1 transition-transform">→</span>
-            </a>
-            <p class="text-xs text-[#8a8a82] mt-3">Discover insights, stories, and ideas that inspire change</p>
-        </div>
+    <div class="studies-cta">
+        <a class="studies-view-all" href="{{ route('research.featured') }}">
+            View all Studies
+            <img src="{{ asset('images/studies/view-all-arrow.svg') }}" alt="" width="9.46875" height="3.75">
+        </a>
     </div>
     <script>
         document.querySelectorAll('[data-research-filter]').forEach(function (button) {
             button.addEventListener('click', function () {
-                const filter = button.getAttribute('data-research-filter');
+                var filter = button.getAttribute('data-research-filter');
                 document.querySelectorAll('[data-research-filter]').forEach(function (item) {
-                    const active = item === button;
-                    item.classList.toggle('bg-[#D4AF37]', active);
-                    item.classList.toggle('text-[#1e1e1a]', active);
-                    item.classList.toggle('bg-white', !active);
-                    item.classList.toggle('text-[#4a4a42]', !active);
+                    var active = item === button;
+                    item.classList.toggle('is-active', active);
                     item.setAttribute('aria-pressed', active ? 'true' : 'false');
-                    const icon = item.querySelector('i');
-                    if (icon) {
-                        icon.classList.toggle('text-[#1e1e1a]', active);
-                        icon.classList.toggle('text-[#D4AF37]', !active);
-                    }
                 });
                 document.querySelectorAll('[data-research-panel]').forEach(function (panel) {
                     panel.classList.toggle('hidden', panel.getAttribute('data-research-panel') !== filter);
@@ -1971,14 +2180,12 @@
 <div id="researchModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="min-h-screen px-4 py-8 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResearchDetail()"></div>
-        <div class="relative bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-            <!-- Close Button -->
-            <button onclick="closeResearchDetail()" class="sticky top-4 right-4 float-right z-10 text-gray-400 hover:text-[#D4AF37] bg-white/95 backdrop-blur-sm rounded-full p-2.5 shadow-lg transition-all duration-300 hover:scale-110 ml-4 border border-gray-100">
-                <i class="fas fa-times text-lg"></i>
+        <div class="relative research-modal-panel max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <button type="button" onclick="closeResearchDetail()" class="research-close" aria-label="Close">
+                <i class="fas fa-times"></i>
             </button>
 
-            <!-- Content -->
-            <div class="px-8 pb-8 pt-4" id="researchDetailContent">
+            <div id="researchDetailContent">
                 <div class="text-center py-12">
                     <div class="inline-block">
                         <i class="fas fa-spinner fa-spin text-3xl text-[#D4AF37]"></i>
@@ -1987,6 +2194,16 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="videoModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeVideoModal()"></div>
+    <div class="relative max-w-4xl w-full bg-black rounded-2xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+        <button type="button" onclick="closeVideoModal()" class="absolute top-4 right-4 z-10 text-white/70 hover:text-[#D4AF37] bg-black/50 rounded-full p-2 transition-all duration-300 hover:scale-110" aria-label="Close video">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+        <div id="videoContainer" class="aspect-video"></div>
     </div>
 </div>
         {{--
@@ -2009,7 +2226,7 @@
         </div>
     </div>
 </div>
-
+--}}
 <script>
 function openResearchDetail(id) {
     const modal = document.getElementById('researchModal');
@@ -2036,22 +2253,6 @@ function openResearchDetail(id) {
         .then(data => {
             if (data.success) {
                 const item = data.data;
-                const categoryIcons = {
-                    'Vision': 'fa-eye',
-                    'Research Papers': 'fa-book',
-                    'Media': 'fa-video'
-                };
-                const categoryColors = {
-                    'Vision': 'bg-amber-50 text-amber-700 border-amber-200',
-                    'Research Papers': 'bg-blue-50 text-blue-700 border-blue-200',
-                    'Media': 'bg-purple-50 text-purple-700 border-purple-200'
-                };
-                const categoryEmojis = {
-                    'Vision': '🌟',
-                    'Research Papers': '📚',
-                    'Media': '🎬'
-                };
-
                 const escapeHtml = (str) => {
                     if (!str) return '';
                     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -2060,67 +2261,45 @@ function openResearchDetail(id) {
                 const formatResearchContent = (value) => {
                     if (!value) return '';
                     if (!/<\/?[a-z][\s\S]*>/i.test(value)) {
-                        return `<div class="text-[#3a3a34] leading-relaxed whitespace-pre-wrap">${escapeHtml(value)}</div>`;
+                        return `<div class="research-detail-copy" style="white-space:pre-wrap">${escapeHtml(value)}</div>`;
                     }
-                    return `<div class="text-[#3a3a34] leading-relaxed [&_h2]:mb-2 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mb-2 [&_h3]:text-xl [&_h3]:font-bold [&_p]:mb-3 [&_strong]:font-bold [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5">${value}</div>`;
+                    return `<div class="research-detail-copy research-rich">${value}</div>`;
                 };
 
+                const categoryLabel = item.category === 'Research Papers' ? 'Research' : (item.category || '');
+                const storyDate = item.created_at ? new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase() : '';
+
                 content.innerHTML = `
-                    <div class="flex items-center gap-3 mb-4 flex-wrap">
-                        <span class="px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 border
-                            ${categoryColors[item.category] || 'bg-gray-50 text-gray-700 border-gray-200'}">
-                            <span>${categoryEmojis[item.category] || '📄'}</span>
-                            ${escapeHtml(item.category)}
-                        </span>
-                        ${item.is_featured ? '<span class="px-3 py-1.5 bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-semibold rounded-full flex items-center gap-1 border border-[#D4AF37]/20"><i class="fas fa-star text-[10px]"></i> Featured</span>' : ''}
-                        ${item.created_at ? `<span class="text-xs text-[#8a8a82] flex items-center gap-1"><i class="far fa-calendar-alt"></i> ${new Date(item.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>` : ''}
+                    <div class="research-detail">
+                        <h2 class="research-detail-title">${escapeHtml(item.title)}</h2>
+                        ${item.image_url ? `<div class="research-detail-media"><img src="${item.image_url}" alt="${escapeHtml(item.title)}"></div>` : ''}
+                        ${item.video_url || item.video_file ? `
+                            <div class="research-detail-media">
+                                ${item.video_file ?
+                                    `<video controls class="w-full"><source src="${item.video_file}" type="video/mp4"></video>` :
+                                    item.video_embed_url ?
+                                    `<iframe src="${item.video_embed_url}" class="w-full aspect-video" allowfullscreen></iframe>` :
+                                    `<div class="aspect-video flex items-center justify-center text-white">No video available</div>`
+                                }
+                            </div>
+                        ` : ''}
+                        <div class="research-detail-meta">
+                            ${categoryLabel ? `<span class="research-chip">${escapeHtml(categoryLabel)}</span>` : ''}
+                            ${item.is_featured ? '<span class="research-chip">Featured</span>' : ''}
+                            ${storyDate ? `<span class="library-date">${storyDate}</span>` : ''}
+                        </div>
+                        <div class="research-block">
+                            <h4 class="research-kicker"><span></span>About</h4>
+                            <p class="research-detail-copy">${escapeHtml(item.description || '')}</p>
+                        </div>
+                        ${item.content ? `
+                            <div class="research-block">
+                                <h4 class="research-kicker"><span></span>Full story</h4>
+                                ${formatResearchContent(item.content)}
+                            </div>
+                        ` : ''}
+                        ${item.link_url ? `<div class="research-link"><a class="library-cta" href="${item.link_url}" target="_blank" rel="noopener noreferrer">Visit link</a></div>` : ''}
                     </div>
-
-                    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#1e1e1a] mb-4 leading-tight">${escapeHtml(item.title)}</h2>
-
-                    ${item.image_url ? `
-                        <div class="mb-6 rounded-2xl overflow-hidden shadow-md">
-                            <img src="${item.image_url}" alt="${escapeHtml(item.title)}" class="w-full max-h-96 object-cover">
-                        </div>
-                    ` : ''}
-
-                    ${item.video_url || item.video_file ? `
-                        <div class="mb-6 rounded-2xl overflow-hidden bg-black shadow-md">
-                            ${item.video_file ?
-                                `<video controls class="w-full h-full"><source src="${item.video_file}" type="video/mp4">Your browser does not support the video tag.</video>` :
-                                item.video_embed_url ?
-                                `<iframe src="${item.video_embed_url}" class="w-full h-full aspect-video" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>` :
-                                `<div class="w-full h-full aspect-video flex items-center justify-center text-white"><p>No video available</p></div>`
-                            }
-                        </div>
-                    ` : ''}
-
-                    <div class="mb-6">
-                        <h4 class="text-sm font-semibold text-[#8a8a82] uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <span class="w-6 h-0.5 bg-[#D4AF37]"></span>
-                            About
-                        </h4>
-                        <p class="text-[#3a3a34] leading-relaxed text-base">${escapeHtml(item.description)}</p>
-                    </div>
-
-                    ${item.content ? `
-                        <div class="mb-6">
-                            <h4 class="text-sm font-semibold text-[#8a8a82] uppercase tracking-wider mb-2 flex items-center gap-2">
-                                <span class="w-6 h-0.5 bg-[#D4AF37]"></span>
-                                Full Story
-                            </h4>
-                            ${formatResearchContent(item.content)}
-                        </div>
-                    ` : ''}
-
-                    ${item.link_url ? `
-                        <div class="mt-6 pt-4 border-t border-gray-100">
-                            <a href="${item.link_url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] hover:text-[#c4a030] transition font-medium">
-                                <i class="fas fa-external-link-alt"></i>
-                                Visit Link
-                            </a>
-                        </div>
-                    ` : ''}
                 `;
             } else {
                 content.innerHTML = `
@@ -2213,6 +2392,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 </script>
+{{--
 
 <style>
 .line-clamp-2 {
@@ -2703,7 +2883,7 @@ document.addEventListener('keydown', function(e) {
                 </div>
                 <div class="news-view">
                     <a href="{{ route('news.index') }}" class="gallery-explore">
-                        View all articles
+                        View all Articles
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                     </a>
                 </div>
@@ -3900,6 +4080,7 @@ document.addEventListener('keydown', function(e) {
 function playVideo(element, researchId) {
     const modal = document.getElementById('videoModal');
     const container = document.getElementById('videoContainer');
+    if (!modal || !container) return;
 
     // Get video data from server
     fetch(`/research/${researchId}/video`)
@@ -3943,6 +4124,7 @@ function closeVideoModal(event) {
     if (event && event.target !== event.currentTarget) return;
     const modal = document.getElementById('videoModal');
     const container = document.getElementById('videoContainer');
+    if (!modal || !container) return;
     modal.classList.add('hidden');
     container.innerHTML = '';
     document.body.style.overflow = 'auto';

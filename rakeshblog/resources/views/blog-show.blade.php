@@ -18,47 +18,36 @@
 @endpush
 
 @section('content')
-<section class="min-h-screen pt-32 pb-20 bg-[#f2f2f2] text-[#1e1e1a]">
-    <div class="max-w-4xl mx-auto px-6">
-        <!-- Back to Blog -->
-        <a href="{{ route('blog') }}" class="inline-flex items-center text-[#D4AF37] hover:underline mb-6 group">
-            <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i>
-            Back to Blog
-        </a>
+<section class="library-page">
+    <div class="library-article">
+        <a href="{{ route('blog') }}" class="library-read" style="margin-bottom:24px">Back to blog</a>
 
-        <!-- Blog Header -->
-        <div class="mb-8">
-            <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">{{ $blog->title }}</h1>
-            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                <span><i class="far fa-calendar-alt mr-1"></i>{{ $blog->short_date }}</span>
-                <span>•</span>
-                <span class="text-[#D4AF37] font-semibold"><i class="fas fa-tag mr-1"></i>{{ $blog->category ?? 'General' }}</span>
-                <span>•</span>
-                <span><i class="far fa-clock mr-1"></i>{{ $blog->reading_time ?? '3 min read' }}</span>
-                <span>•</span>
-                <span>
-                    <i class="far fa-comment mr-1"></i> {{ $blog->comments->count() }} Comments
-                </span>
-            </div>
+        <div class="site-kicker" style="margin-top:28px">
+            <span aria-hidden="true"></span>
+            <p>{{ $blog->category ?? 'Blog' }}</p>
         </div>
+        <h1>{{ $blog->title }}</h1>
+        <p class="library-meta" style="margin:14px 0 28px">
+            {{ $blog->short_date }}
+            · {{ $blog->reading_time ?? '3 min read' }}
+            · {{ $blog->comments->count() }} comments
+        </p>
 
-        <!-- Featured Image -->
         @if($blog->featured_image)
-            <img src="{{ $blog->featured_image_url }}" alt="{{ $blog->title }}" class="w-full rounded-xl mb-8" decoding="async">
+            <img src="{{ $blog->featured_image_url }}" alt="{{ $blog->title }}" class="research-detail-media" style="width:100%;margin-bottom:28px" decoding="async">
         @endif
 
-        <!-- Blog Content -->
-        <div class="bg-white rounded-xl p-8 shadow-md">
-            <div class="blog-content prose prose-lg max-w-none">
+        <div class="library-panel">
+            <div class="blog-content">
                 {!! $blog->content !!}
             </div>
         </div>
 
         <!-- Tags -->
         @if($blog->tags && count($blog->tags) > 0)
-            <div class="flex flex-wrap gap-2 mt-8">
+            <div class="library-tags">
                 @foreach($blog->tags as $tag)
-                    <span class="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm"><i class="fas fa-hashtag mr-1"></i>{{ $tag }}</span>
+                    <span>{{ $tag }}</span>
                 @endforeach
             </div>
         @endif
@@ -67,7 +56,7 @@
         <!-- QUIZ SECTION - FIXED -->
         <!-- ========================================== -->
         <div class="mt-12 pt-8 border-t border-gray-200">
-            <h2 class="text-2xl font-serif font-bold mb-6"><i class="fas fa-question-circle text-[#D4AF37] mr-2"></i>Quiz</h2>
+            <h2 class="text-2xl font-semibold mb-6">Quiz</h2>
             
             @php
                 // Get the first active quiz with questions from DATABASE
@@ -106,12 +95,11 @@
             
             @if($activeQuiz && $activeQuiz->questions->count() > 0)
                 <!-- Quiz Dropdown Button -->
-                <button onclick="toggleQuiz()" 
-                        class="w-full bg-[#D4AF37] text-[#0b0e12] px-6 py-4 rounded-xl font-semibold hover:bg-[#c4a030] transition-all shadow-lg flex items-center justify-between">
+                <button type="button" onclick="toggleQuiz()" class="library-cta block">
                     <span class="flex items-center gap-3">
                         <i class="fas fa-puzzle-piece"></i>
                         Take Quiz: {{ $activeQuiz->title }}
-                        <span class="text-sm font-normal text-[#0b0e12]/70">({{ $activeQuiz->questions->count() }} questions)</span>
+                        <span class="text-sm font-normal" style="opacity:.85">({{ $activeQuiz->questions->count() }} questions)</span>
                     </span>
                     <i id="quizArrow" class="fas fa-chevron-down transform transition-transform duration-300"></i>
                 </button>
@@ -171,7 +159,7 @@
                                 @foreach($activeQuiz->questions as $index => $question)
                                     <div class="bg-gray-50 rounded-lg p-4 question-item" data-question="{{ $index }}">
                                         <p class="font-medium text-gray-800 mb-3">
-                                            <span class="text-[#D4AF37] font-bold">{{ $index + 1 }}.</span> {{ $question->question }}
+                                            <span style="color:#89351d;font-weight:700">{{ $index + 1 }}.</span> {{ $question->question }}
                                             <span class="text-xs text-gray-400 ml-2">({{ $question->points }} points)</span>
                                         </p>
                                         <div class="space-y-2">
@@ -184,7 +172,7 @@
                                                 ];
                                             @endphp
                                             @foreach($options as $optIndex => $option)
-                                                <label class="flex items-center p-3 bg-white rounded-lg border border-gray-200 hover:border-[#D4AF37] cursor-pointer transition-all quiz-option">
+                                                <label class="quiz-option">
                                                     <input type="radio" 
                                                            name="answers[{{ $question->id }}]" 
                                                            value="{{ $optIndex - 1 }}" 
@@ -200,9 +188,7 @@
                                 @endforeach
 
                                 <div class="flex gap-3">
-                                    <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition-all">
-                                        <i class="fas fa-paper-plane mr-2"></i>Submit Quiz
-                                    </button>
+                                    <button type="submit" class="library-cta">Submit quiz</button>
                                     <button type="reset" class="text-gray-500 hover:text-gray-700 text-sm transition px-4 py-2">
                                         <i class="fas fa-undo mr-1"></i>Reset
                                     </button>
@@ -222,7 +208,7 @@
         <!-- COMMENTS SECTION -->
         <!-- ========================================== -->
         <div class="mt-12 pt-8 border-t border-gray-200">
-            <h2 class="text-2xl font-serif font-bold mb-6"><i class="far fa-comments text-[#D4AF37] mr-2"></i>Comments</h2>
+            <h2 class="text-2xl font-semibold mb-6">Comments</h2>
 
             <!-- Comment Form -->
             @auth
@@ -247,26 +233,22 @@
                         
                         <div class="mb-4">
                             <label for="content" class="block text-sm font-medium text-gray-700 mb-2">Your Comment</label>
-                            <textarea id="content" name="content" rows="4" required
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition"
-                                placeholder="Write your comment here...">{{ old('content') }}</textarea>
+                            <textarea id="content" name="content" rows="4" required class="library-field" placeholder="Write your comment here...">{{ old('content') }}</textarea>
                             @error('content')
                                 <p class="text-red-500 text-sm mt-1"><i class="fas fa-exclamation-triangle mr-1"></i>{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition-all">
-                            <i class="fas fa-paper-plane mr-2"></i>Post Comment
-                        </button>
+                        <button type="submit" class="library-cta">Post comment</button>
                     </form>
                 </div>
             @else
                 <div class="bg-gray-50 rounded-xl p-6 text-center mb-8 border border-gray-200">
                     <p class="text-gray-600">
                         <i class="fas fa-lock mr-2"></i>
-                        <a href="{{ route('login') }}" class="text-[#D4AF37] font-semibold hover:underline">Login</a> 
-                        or 
-                        <a href="{{ route('register') }}" class="text-[#D4AF37] font-semibold hover:underline">Register</a> 
+                        <a href="{{ route('login') }}" style="color:#89351d;font-weight:700">Login</a>
+                        or
+                        <a href="{{ route('register') }}" style="color:#89351d;font-weight:700">Register</a> 
                         to leave a comment.
                     </p>
                 </div>
@@ -278,7 +260,7 @@
                     @foreach($blog->comments as $comment)
                         <div class="bg-white rounded-xl p-6 shadow-md comment-item" id="comment-{{ $comment->id }}">
                             <div class="flex items-start gap-4">
-                                <div class="w-10 h-10 rounded-full bg-[#D4AF37] text-[#0b0e12] flex items-center justify-center font-bold flex-shrink-0">
+                                <div class="library-avatar">
                                     {{ strtoupper(substr($comment->user->name ?? 'Anonymous', 0, 1)) }}
                                 </div>
                                 
@@ -327,20 +309,16 @@
         <!-- Related Posts -->
         @if(isset($relatedBlogs) && $relatedBlogs->count() > 0)
             <div class="mt-12 pt-8 border-t border-gray-200">
-                <h2 class="text-2xl font-serif font-bold mb-6"><i class="fas fa-link text-[#D4AF37] mr-2"></i>Related Posts</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <h2 class="text-2xl font-semibold mb-6">Related posts</h2>
+                <div class="library-grid cols-3">
                     @foreach($relatedBlogs as $related)
-                        <article class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all group">
-                            <div class="p-4">
-                                <h3 class="font-bold text-lg mb-2 group-hover:text-[#D4AF37] transition-colors">
-                                    <a href="{{ route('blog.show', $related->slug) }}">{{ $related->title }}</a>
-                                </h3>
-                                <p class="text-gray-600 text-sm">{!! Str::limit(strip_tags($related->content), 100) !!}</p>
-                                <a href="{{ route('blog.show', $related->slug) }}" class="inline-block mt-2 text-sm text-[#D4AF37] hover:underline">
-                                    Read More <i class="fas fa-arrow-right ml-1"></i>
-                                </a>
+                        <a href="{{ route('blog.show', $related->slug) }}" class="library-card">
+                            <div class="library-body">
+                                <h3>{{ $related->title }}</h3>
+                                <p class="library-excerpt">{!! Str::limit(strip_tags($related->content), 100) !!}</p>
+                                <span class="library-read">Read more</span>
                             </div>
-                        </article>
+                        </a>
                     @endforeach
                 </div>
             </div>
@@ -364,13 +342,10 @@
             @method('PUT')
             <div class="mb-4">
                 <label for="edit_content" class="block text-sm font-medium text-gray-700 mb-2">Your Comment</label>
-                <textarea id="edit_content" name="content" rows="4" required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition"></textarea>
+                <textarea id="edit_content" name="content" rows="4" required class="library-field"></textarea>
             </div>
             <div class="flex gap-3">
-                <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition-all flex-1">
-                    <i class="fas fa-save mr-2"></i>Update Comment
-                </button>
+                <button type="submit" class="library-cta" style="flex:1">Update comment</button>
                 <button type="button" onclick="closeEditModal()" class="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg font-semibold hover:bg-gray-50 transition-all">
                     Cancel
                 </button>
@@ -432,15 +407,8 @@
             const radio = this.querySelector('.quiz-radio');
             const parent = this.closest('.question-item');
             
-            parent.querySelectorAll('.quiz-option').forEach(opt => {
-                opt.classList.remove('border-[#D4AF37]', 'bg-[#D4AF37]/10');
-                opt.querySelector('.option-letter span').style.color = '';
-                opt.querySelector('.option-letter').style.borderColor = '';
-            });
-            
-            this.classList.add('border-[#D4AF37]', 'bg-[#D4AF37]/10');
-            this.querySelector('.option-letter span').style.color = '#D4AF37';
-            this.querySelector('.option-letter').style.borderColor = '#D4AF37';
+            parent.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('is-picked'));
+            this.classList.add('is-picked');
             radio.checked = true;
         });
     });
@@ -505,33 +473,36 @@
 <!-- Styles -->
 <style>
     .blog-content {
-        font-family: 'Inter', sans-serif;
-        line-height: 1.8;
-        color: #1e1e1a;
+        font-family: "Plus Jakarta Sans", Inter, sans-serif;
+        line-height: 1.75;
+        color: #1b1c1a;
     }
     
+    .blog-content h1,
+    .blog-content h2,
+    .blog-content h3 {
+        font-family: Poppins, "Plus Jakarta Sans", sans-serif;
+        font-weight: 600;
+        color: #111;
+        letter-spacing: -0.02em;
+    }
+
     .blog-content h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-size: 2.2rem;
         margin-top: 2rem;
         margin-bottom: 1rem;
-        font-family: 'Playfair Display', serif;
     }
     
     .blog-content h2 {
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: 1.7rem;
         margin-top: 1.8rem;
         margin-bottom: 0.8rem;
-        font-family: 'Playfair Display', serif;
     }
     
     .blog-content h3 {
-        font-size: 1.5rem;
-        font-weight: 600;
+        font-size: 1.3rem;
         margin-top: 1.5rem;
         margin-bottom: 0.6rem;
-        font-family: 'Playfair Display', serif;
     }
     
     .blog-content h4 {
@@ -565,22 +536,22 @@
     }
     
     .blog-content a {
-        color: #D4AF37;
+        color: #89351d;
         text-decoration: underline;
     }
     
     .blog-content a:hover {
-        color: #b8922a;
+        color: #b36855;
     }
     
     .blog-content blockquote {
-        border-left: 4px solid #D4AF37;
+        border-left: 3px solid #b36855;
         padding: 0.5rem 1.5rem;
         margin: 1.5rem 0;
-        background: #f8f6f0;
+        background: #fbf9f6;
         border-radius: 0 8px 8px 0;
-        font-style: italic;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
+        color: #5f5e5e;
     }
     
     .blog-content blockquote p {
@@ -639,13 +610,25 @@
         padding: 0;
     }
     
-    .quiz-option:hover {
-        border-color: #D4AF37 !important;
-        background: rgba(212, 175, 55, 0.05) !important;
-    }
-    
     .quiz-option {
-        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 12px;
+        border: 1px solid #d5cec2;
+        border-radius: 12px;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .quiz-option:hover,
+    .quiz-option.is-picked {
+        border-color: #b36855;
+        background: rgba(179, 104, 85, 0.08);
+    }
+    .quiz-option.is-picked .option-letter {
+        border-color: #b36855;
+        color: #89351d;
     }
     
     .comment-item {

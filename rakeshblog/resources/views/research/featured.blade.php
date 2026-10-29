@@ -10,177 +10,117 @@
         return $categoryOrder->has($category) ? $categoryOrder[$category] : 100;
     });
 @endphp
-<section class="py-20 md:py-28 bg-gradient-to-b from-[#f8f6f1] to-[#f2efe8]">
-    <div class="max-w-7xl mx-auto px-6">
-        <!-- Hero Header -->
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <!-- this div is hidden because we don't want to show the Knowledge Hub text on the featured page -->
-            <div class="hidden">
-                <!-- <i class="fas fa-sparkles text-[#D4AF37] text-sm"></i>
-                <span class="text-xs font-medium text-[#8a8a82] tracking-widest uppercase">Knowledge Hub</span> -->
+<section class="library-page">
+    <div class="library-wrap">
+        <div class="text-center">
+            <div class="site-kicker center">
+                <span aria-hidden="true"></span>
+                <p>Studies</p>
             </div>
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-[#1e1e1a] leading-tight">
+            <h1>
                 {{ $featuredPage['title_line'] }}
                 @if($featuredPage['title_accent'] !== '')
-                    <br class="hidden sm:block">
-                    <span class="text-[#D4AF37]">{{ $featuredPage['title_accent'] }}</span>
+                    <br>{{ $featuredPage['title_accent'] }}
                 @endif
             </h1>
-            <p class="text-[#5a5a52] mt-4 text-lg leading-relaxed max-w-2xl mx-auto">
-                {{ $featuredPage['paragraph'] }}
-            </p>
+            <p class="library-lead">{{ $featuredPage['paragraph'] }}</p>
         </div>
 
-        <!-- Filter Tabs -->
-        <div class="flex flex-wrap justify-center gap-2 md:gap-3 mb-12">
+        <div class="library-pills">
             @foreach($featuredPage['filters'] as $filter)
                 @if($filter['key'] === 'blog')
-                    <a href="{{ route('blog') }}" class="px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 bg-white/70 text-[#4a4a42] hover:bg-[#D4AF37] hover:text-[#0b0e12] hover:shadow-lg hover:shadow-[#D4AF37]/20">
-                        <i class="fas {{ $filter['icon'] }} mr-2"></i> {{ $filter['label'] }}
-                    </a>
+                    <a href="{{ route('blog') }}" class="library-pill">{{ $filter['label'] }}</a>
                 @else
-                    <button class="filter-btn px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 {{ $filter['key'] === 'all' ? 'bg-[#D4AF37] text-[#0b0e12] shadow-lg shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30' : 'bg-white/70 text-[#4a4a42] hover:bg-[#D4AF37] hover:text-[#0b0e12] hover:shadow-lg hover:shadow-[#D4AF37]/20' }}" data-filter="{{ $filter['key'] }}">
-                        <i class="fas {{ $filter['icon'] }} mr-2"></i> {{ $filter['label'] }}
-                    </button>
+                    <button type="button" class="library-pill filter-btn {{ $filter['key'] === 'all' ? 'is-active' : '' }}" data-filter="{{ $filter['key'] }}">{{ $filter['label'] }}</button>
                 @endif
             @endforeach
         </div>
 
-        <!-- Research Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8" id="researchGrid">
+        <div class="library-grid cols-3" id="researchGrid">
             @forelse($featuredResearch as $category => $items)
                 @foreach($items as $item)
-                    <div class="research-card group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1.5 border border-gray-100/60 hover:border-[#D4AF37]/20" data-category="{{ $category }}">
-                        
-                        <!-- Card Image -->
-                        <div class="relative aspect-[4/3] overflow-hidden bg-gray-100 cursor-pointer" onclick="openResearchDetail({{ $item->id }})">
+                    @php
+                        $cardLabel = match ($category) {
+                            'Research Papers' => 'Research',
+                            default => $category,
+                        };
+                        $cardText = trim(preg_replace('/\s+/', ' ', strip_tags((string) ($item->description ?: $item->content ?: ''))));
+                    @endphp
+                    <article class="library-card research-card" data-kind="research" data-category="{{ $category }}">
+                        <div class="library-media" @unless($item->video_url || $item->video_file) onclick="openResearchDetail({{ $item->id }})" @endunless>
+                            <p class="library-chip">{{ $cardLabel }}</p>
+                            @if($item->is_featured)
+                                <span class="library-flag">Featured</span>
+                            @endif
                             @if($item->video_url || $item->video_file)
-                                <!-- Video Play Overlay -->
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex items-center justify-center z-10 group-hover:bg-black/40 transition-all duration-500" onclick="event.stopPropagation(); playVideo(this, '{{ $item->id }}')">
-                                    <div class="w-14 h-14 bg-[#D4AF37] rounded-full flex items-center justify-center shadow-2xl transform group-hover:scale-110 group-hover:shadow-[#D4AF37]/30 transition-all duration-300">
-                                        <i class="fas fa-play text-white text-xl ml-1"></i>
-                                    </div>
-                                </div>
+                                <button type="button" class="library-play" onclick="playVideo(this, '{{ $item->id }}')" aria-label="Play {{ $item->title }}">
+                                    <span aria-hidden="true"><i class="fas fa-play"></i></span>
+                                </button>
                                 @if($item->video_file)
-                                    <video class="w-full h-full object-cover" preload="metadata">
+                                    <video muted playsinline preload="metadata">
                                         <source src="{{ $item->video_file }}#t=0.1" type="video/mp4">
                                     </video>
-                                @elseif($item->video_url)
-                                    <img src="{{ $item->video_thumbnail ?: $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                                @else
+                                    <img src="{{ $item->video_thumbnail ?: $item->image_url }}" alt="{{ $item->title }}">
                                 @endif
                             @elseif($item->image_url)
-                                <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#D4AF37]/5 to-[#D4AF37]/10">
-                                    <i class="fas 
-                                        @if($category == 'Vision') fa-eye
-                                        @elseif($category == 'Research Papers') fa-book-open
-                                        @else fa-film
-                                        @endif 
-                                        text-6xl text-[#D4AF37]/20"></i>
-                                </div>
-                            @endif
-
-                            <!-- Category Badge -->
-                            <div class="absolute bottom-3 left-3 z-10">
-                                <span class="px-3 py-1.5 bg-black/60 backdrop-blur-sm text-white text-[11px] font-medium rounded-full flex items-center gap-1.5 border border-white/10">
-                                    <i class="fas 
-                                        @if($category == 'Vision') fa-eye
-                                        @elseif($category == 'Research Papers') fa-book
-                                        @else fa-video
-                                        @endif 
-                                        text-[10px]"></i>
-                                    {{ $category }}
-                                </span>
-                            </div>
-
-                            <!-- Featured Badge -->
-                            @if($item->is_featured)
-                                <div class="absolute top-3 right-3 z-10">
-                                    <span class="px-2.5 py-1 bg-[#D4AF37] text-[#0b0e12] text-[10px] font-bold rounded-full flex items-center gap-1 shadow-lg shadow-[#D4AF37]/20">
-                                        <i class="fas fa-star text-[9px]"></i> Featured
-                                    </span>
-                                </div>
+                                <img src="{{ $item->image_url }}" alt="{{ $item->title }}">
                             @endif
                         </div>
-
-                        <!-- Card Content -->
-                        <div class="p-5">
-                            <div class="flex items-center gap-2 mb-2">
-                                <span class="text-xs text-[#8a8a82] flex items-center gap-1">
-                                    <i class="far fa-calendar-alt text-[10px]"></i>
-                                    {{ $item->created_at ? $item->created_at->format('M d, Y') : 'Recent' }}
-                                </span>
-                                <span class="w-1 h-1 rounded-full bg-[#8a8a82]/30"></span>
-                                <span class="text-xs text-[#8a8a82] flex items-center gap-1">
-                                    <i class="far fa-clock text-[10px]"></i>
-                                    {{ rand(3, 8) }} min read
-                                </span>
-                                @if($item->is_featured)
-                                    <span class="ml-auto text-[10px] text-[#D4AF37] font-medium">
-                                        <i class="fas fa-star text-[8px]"></i> Featured
-                                    </span>
-                                @endif
-                            </div>
-
-                            <h3 class="text-lg font-serif font-bold text-[#1e1e1a] mb-2 group-hover:text-[#D4AF37] transition-colors duration-300 line-clamp-2 cursor-pointer" onclick="openResearchDetail({{ $item->id }})">
-                                {{ $item->title }}
-                            </h3>
-
-                            <p class="text-sm text-[#5a5a52] leading-relaxed line-clamp-2">
-                                {{ $item->description }}
-                            </p>
-
-                            <div class="mt-4 pt-4 border-t border-gray-100/80 flex items-center justify-between">
-                                <button onclick="openResearchDetail({{ $item->id }})" 
-                                        class="text-[#D4AF37] text-sm font-medium hover:text-[#c4a030] transition flex items-center gap-2 group/btn">
-                                    <span>Read story</span>
-                                    <i class="fas fa-arrow-right text-xs group-hover/btn:translate-x-1 transition-transform"></i>
+                        <div class="library-body">
+                            <p class="library-date">{{ $item->created_at ? strtoupper($item->created_at->format('M d, Y')) : 'Recent' }}</p>
+                            <h3 onclick="openResearchDetail({{ $item->id }})" style="cursor:pointer">{{ $item->title }}</h3>
+                            @if($cardText !== '')
+                                <p class="library-excerpt">{{ $cardText }}</p>
+                            @endif
+                            <div class="library-actions">
+                                <button type="button" class="library-read" onclick="openResearchDetail({{ $item->id }})">
+                                    Read more
+                                    <img src="{{ asset('images/studies/read-more-arrow.svg') }}" alt="" width="10.6667" height="10.6667">
                                 </button>
-                                
-                                <div class="flex items-center gap-1.5">
+                                <span>
                                     @if($item->link_url)
-                                        <a href="{{ $item->link_url }}" target="_blank" rel="noopener noreferrer" 
-                                           class="w-8 h-8 rounded-full bg-gray-100/70 hover:bg-[#D4AF37]/10 flex items-center justify-center text-[#8a8a82] hover:text-[#D4AF37] transition-all duration-300 hover:scale-110" 
-                                           title="Visit link">
+                                        <a href="{{ $item->link_url }}" target="_blank" rel="noopener noreferrer" class="library-icon" title="Visit link">
                                             <i class="fas fa-external-link-alt text-xs"></i>
                                         </a>
                                     @endif
-                                    @if($item->video_url || $item->video_file)
-                                        <button onclick="event.stopPropagation(); playVideo(this, '{{ $item->id }}')" 
-                                                class="w-8 h-8 rounded-full bg-gray-100/70 hover:bg-[#D4AF37]/10 flex items-center justify-center text-[#8a8a82] hover:text-[#D4AF37] transition-all duration-300 hover:scale-110" 
-                                                title="Watch video">
-                                            <i class="fas fa-play text-xs"></i>
-                                        </button>
-                                    @endif
-                                </div>
+                                </span>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 @endforeach
             @empty
-                <div class="col-span-3 text-center py-16">
-                    <div class="w-24 h-24 rounded-full bg-white/80 flex items-center justify-center mx-auto mb-4 shadow-sm">
-                        <i class="fas fa-flask text-4xl text-[#D4AF37]/30"></i>
-                    </div>
-                    <p class="text-lg font-medium text-[#1e1e1a]">No research items yet</p>
-                    <p class="text-sm text-[#8a8a82] mt-1">Check back soon for new stories and insights.</p>
+                <div class="library-empty">
+                    <p>No research items yet. Check back soon for new stories and insights.</p>
                 </div>
             @endforelse
+            @foreach(($featuredBlogs ?? collect()) as $blog)
+                <a href="{{ route('blog.show', $blog->slug) }}" class="library-card research-card is-hidden" data-kind="blog" data-category="Blog">
+                    <div class="library-media">
+                        @if($blog->featured_image)
+                            <img src="{{ $blog->featured_image_url }}" alt="{{ $blog->title }}">
+                        @endif
+                        @if($blog->is_featured)
+                            <span class="library-flag">Featured</span>
+                        @endif
+                        <p class="library-chip">{{ $blog->category ?: 'Blog' }}</p>
+                    </div>
+                    <div class="library-body">
+                        <p class="library-date">{{ $blog->short_date ? strtoupper($blog->short_date) : '' }}@if($blog->reading_time) · {{ $blog->reading_time }}@endif</p>
+                        <h3>{{ $blog->title }}</h3>
+                        <p class="library-excerpt">{{ $blog->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($blog->content ?? ''), 140) }}</p>
+                        <span class="library-read">
+                            Read more
+                            <img src="{{ asset('images/studies/read-more-arrow.svg') }}" alt="" width="10.6667" height="10.6667">
+                        </span>
+                    </div>
+                </a>
+            @endforeach
+            <p id="libraryFilterEmpty" class="library-empty is-hidden">Nothing in this category yet.</p>
         </div>
 
-        <!-- Back to Home -->
-        <div class="text-center mt-16">
-            <a href="{{ route('home') }}#research" 
-               class="inline-flex items-center gap-2 text-[#8a8a82] hover:text-[#D4AF37] transition font-medium">
-                <i class="fas fa-arrow-left text-xs"></i>
-                Back to Home
-            </a>
-            <p class="text-xs text-[#8a8a82] mt-2 flex items-center justify-center gap-2">
-                <i class="fas fa-heart text-[#D4AF37] text-[10px]"></i>
-                Made with care for Nepal's future
-                <i class="fas fa-heart text-[#D4AF37] text-[10px]"></i>
-            </p>
+        <div class="library-back">
+            <a href="{{ route('home') }}#research">Back to home</a>
         </div>
     </div>
 </section>
@@ -189,15 +129,15 @@
 <div id="researchModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
     <div class="min-h-screen px-4 py-8 flex items-center justify-center">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeResearchDetail()"></div>
-        <div class="relative bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
-            <button onclick="closeResearchDetail()" class="sticky top-4 right-4 float-right z-10 text-[#8a8a82] hover:text-[#D4AF37] bg-white/95 backdrop-blur-sm rounded-full p-2.5 shadow-lg transition-all duration-300 hover:scale-110 ml-4 border border-gray-100/80">
-                <i class="fas fa-times text-lg"></i>
+        <div class="relative research-modal-panel max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
+            <button type="button" onclick="closeResearchDetail()" class="research-close" aria-label="Close">
+                <i class="fas fa-times"></i>
             </button>
 
-            <div class="px-6 md:px-8 pb-8 pt-4" id="researchDetailContent">
+            <div id="researchDetailContent">
                 <div class="text-center py-12">
                     <div class="inline-block">
-                        <i class="fas fa-spinner fa-spin text-3xl text-[#D4AF37]"></i>
+                        <i class="fas fa-spinner fa-spin text-3xl" style="color:#b36855"></i>
                     </div>
                     <p class="mt-3 text-[#8a8a82]">Loading story...</p>
                 </div>
@@ -227,30 +167,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
-            filterButtons.forEach(btn => {
-                btn.classList.remove('bg-[#D4AF37]', 'text-[#0b0e12]', 'shadow-lg', 'shadow-[#D4AF37]/20');
-                btn.classList.add('bg-white/70', 'text-[#4a4a42]');
-            });
-            this.classList.remove('bg-white/70', 'text-[#4a4a42]');
-            this.classList.add('bg-[#D4AF37]', 'text-[#0b0e12]', 'shadow-lg', 'shadow-[#D4AF37]/20');
+            filterButtons.forEach(btn => btn.classList.remove('is-active'));
+            this.classList.add('is-active');
 
-            const filter = this.dataset.filter;
+            const filter = this.dataset.filter || '';
+            const blogMode = filter.toLowerCase() === 'blog';
+            let shown = 0;
 
             researchCards.forEach(card => {
-                if (filter === 'all' || card.dataset.category === filter) {
-                    card.style.display = 'block';
-                    setTimeout(() => {
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }, 50);
-                } else {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    setTimeout(() => {
-                        card.style.display = 'none';
-                    }, 300);
+                const isBlogCard = card.dataset.kind === 'blog';
+                const show = blogMode
+                    ? isBlogCard
+                    : !isBlogCard && (filter === 'all' || card.dataset.category === filter);
+                card.classList.toggle('is-hidden', !show);
+                card.style.display = show ? '' : 'none';
+                if (show) {
+                    card.style.opacity = '1';
+                    card.style.transform = 'none';
+                    shown++;
                 }
             });
+
+            const empty = document.getElementById('libraryFilterEmpty');
+            if (empty) {
+                empty.textContent = blogMode ? 'No blog posts yet.' : 'Nothing in this category yet.';
+                empty.classList.toggle('is-hidden', shown > 0);
+            }
         });
     });
 });
@@ -280,17 +222,6 @@ function openResearchDetail(id) {
         .then(data => {
             if (data.success) {
                 const item = data.data;
-                const categoryIcons = {
-                    'Vision': 'fa-eye',
-                    'Research Papers': 'fa-book',
-                    'Media': 'fa-video'
-                };
-                const categoryColors = {
-                    'Vision': 'bg-amber-50 text-amber-700 border-amber-200',
-                    'Research Papers': 'bg-blue-50 text-blue-700 border-blue-200',
-                    'Media': 'bg-purple-50 text-purple-700 border-purple-200'
-                };
-
                 const escapeHtml = (str) => {
                     if (!str) return '';
                     return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -299,67 +230,45 @@ function openResearchDetail(id) {
                 const formatResearchContent = (value) => {
                     if (!value) return '';
                     if (!/<\/?[a-z][\s\S]*>/i.test(value)) {
-                        return `<div class="text-[#3a3a34] leading-relaxed whitespace-pre-wrap">${escapeHtml(value)}</div>`;
+                        return `<div class="research-detail-copy" style="white-space:pre-wrap">${escapeHtml(value)}</div>`;
                     }
-                    return `<div class="text-[#3a3a34] leading-relaxed [&_h2]:mb-2 [&_h2]:font-serif [&_h2]:text-2xl [&_h2]:font-bold [&_h3]:mb-2 [&_h3]:text-xl [&_h3]:font-bold [&_p]:mb-3 [&_strong]:font-bold [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5">${value}</div>`;
+                    return `<div class="research-detail-copy research-rich">${value}</div>`;
                 };
 
+                const categoryLabel = item.category === 'Research Papers' ? 'Research' : (item.category || '');
+                const storyDate = item.created_at ? new Date(item.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase() : '';
+
                 content.innerHTML = `
-                    <div class="flex flex-wrap items-center gap-2 mb-4">
-                        <span class="px-3 py-1.5 rounded-full text-xs font-medium inline-flex items-center gap-1.5 border
-                            ${categoryColors[item.category] || 'bg-gray-50 text-gray-700 border-gray-200'}">
-                            <i class="fas ${categoryIcons[item.category] || 'fa-file-alt'} text-[10px]"></i>
-                            ${escapeHtml(item.category)}
-                        </span>
-                        ${item.is_featured ? '<span class="px-3 py-1.5 bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-medium rounded-full flex items-center gap-1 border border-[#D4AF37]/20"><i class="fas fa-star text-[9px]"></i> Featured</span>' : ''}
-                        ${item.created_at ? `<span class="text-xs text-[#8a8a82] flex items-center gap-1"><i class="far fa-calendar-alt text-[10px]"></i> ${new Date(item.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>` : ''}
+                    <div class="research-detail">
+                        <h2 class="research-detail-title">${escapeHtml(item.title)}</h2>
+                        ${item.image_url ? `<div class="research-detail-media"><img src="${item.image_url}" alt="${escapeHtml(item.title)}"></div>` : ''}
+                        ${item.video_url || item.video_file ? `
+                            <div class="research-detail-media">
+                                ${item.video_file ?
+                                    `<video controls class="w-full"><source src="${item.video_file}" type="video/mp4"></video>` :
+                                    item.video_embed_url ?
+                                    `<iframe src="${item.video_embed_url}" class="w-full aspect-video" allowfullscreen></iframe>` :
+                                    `<div class="aspect-video flex items-center justify-center text-white">No video available</div>`
+                                }
+                            </div>
+                        ` : ''}
+                        <div class="research-detail-meta">
+                            ${categoryLabel ? `<span class="research-chip">${escapeHtml(categoryLabel)}</span>` : ''}
+                            ${item.is_featured ? '<span class="research-chip">Featured</span>' : ''}
+                            ${storyDate ? `<span class="library-date">${storyDate}</span>` : ''}
+                        </div>
+                        <div class="research-block">
+                            <h4 class="research-kicker"><span></span>About</h4>
+                            <p class="research-detail-copy">${escapeHtml(item.description || '')}</p>
+                        </div>
+                        ${item.content ? `
+                            <div class="research-block">
+                                <h4 class="research-kicker"><span></span>Full story</h4>
+                                ${formatResearchContent(item.content)}
+                            </div>
+                        ` : ''}
+                        ${item.link_url ? `<div class="research-link"><a class="library-cta" href="${item.link_url}" target="_blank" rel="noopener noreferrer">Visit link</a></div>` : ''}
                     </div>
-
-                    <h2 class="text-2xl md:text-3xl font-serif font-bold text-[#1e1e1a] mb-4 leading-tight">${escapeHtml(item.title)}</h2>
-
-                    ${item.image_url ? `
-                        <div class="mb-6 rounded-2xl overflow-hidden shadow-md">
-                            <img src="${item.image_url}" alt="${escapeHtml(item.title)}" class="w-full max-h-80 object-cover">
-                        </div>
-                    ` : ''}
-
-                    ${item.video_url || item.video_file ? `
-                        <div class="mb-6 rounded-2xl overflow-hidden bg-black shadow-md">
-                            ${item.video_file ? 
-                                `<video controls class="w-full h-full"><source src="${item.video_file}" type="video/mp4">Your browser does not support the video tag.</video>` :
-                                item.video_embed_url ? 
-                                `<iframe src="${item.video_embed_url}" class="w-full h-full aspect-video" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>` :
-                                `<div class="w-full h-full aspect-video flex items-center justify-center text-white"><p>No video available</p></div>`
-                            }
-                        </div>
-                    ` : ''}
-
-                    <div class="mb-5">
-                        <h4 class="text-xs font-semibold text-[#8a8a82] uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <span class="w-8 h-0.5 bg-[#D4AF37]"></span>
-                            About
-                        </h4>
-                        <p class="text-[#3a3a34] leading-relaxed text-base">${escapeHtml(item.description)}</p>
-                    </div>
-
-                    ${item.content ? `
-                        <div class="mb-5">
-                            <h4 class="text-xs font-semibold text-[#8a8a82] uppercase tracking-wider mb-2 flex items-center gap-2">
-                                <span class="w-8 h-0.5 bg-[#D4AF37]"></span>
-                                Full Story
-                            </h4>
-                            ${formatResearchContent(item.content)}
-                        </div>
-                    ` : ''}
-
-                    ${item.link_url ? `
-                        <div class="mt-5 pt-4 border-t border-gray-100">
-                            <a href="${item.link_url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-[#D4AF37] hover:text-[#c4a030] transition font-medium">
-                                <i class="fas fa-external-link-alt text-xs"></i>
-                                Visit Link
-                            </a>
-                        </div>
-                    ` : ''}
                 `;
             } else {
                 content.innerHTML = `
@@ -528,12 +437,12 @@ document.addEventListener('keydown', function(e) {
 }
 
 #researchDetailContent::-webkit-scrollbar-thumb {
-    background: #D4AF37;
+    background: #b36855;
     border-radius: 10px;
 }
 
 #researchDetailContent::-webkit-scrollbar-thumb:hover {
-    background: #c4a030;
+    background: #89351d;
 }
 
 .filter-btn {

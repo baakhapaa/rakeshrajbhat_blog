@@ -1,25 +1,29 @@
-<a href="{{ route('blog.show', $blog->slug) }}" class="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-gray-100/50 hover:border-[#D4AF37]/20 block">
-    <div class="relative aspect-video bg-gradient-to-br from-gray-100 to-gray-50 overflow-hidden">
-        @if($blog->featured_image_url)
-            <img src="{{ $blog->featured_image_url }}" alt="{{ $blog->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-        @else
-            <div class="w-full h-full flex items-center justify-center">
-                <i class="fas fa-newspaper text-5xl text-[#D4AF37]/20"></i>
-            </div>
+@php
+    $studyImage = $blog->featured_image_url;
+    $studyDate = $blog->published_at ? strtoupper($blog->published_at->format('M d, Y')) : ($blog->created_at ? strtoupper($blog->created_at->format('M d, Y')) : null);
+    $studyText = trim(preg_replace('/\s+/', ' ', strip_tags((string) ($blog->excerpt ?: $blog->content ?: ''))));
+    $studyUrl = route('blog.show', $blog->slug);
+@endphp
+<article class="study-card">
+    <a class="study-card-media" href="{{ $studyUrl }}">
+        <p class="study-card-category">{{ $studyCategory ?? 'Blog' }}</p>
+        @if($studyImage)
+            <img src="{{ $studyImage }}" alt="{{ $blog->title }}">
         @endif
-        <div class="absolute top-3 right-3 z-10">
-            <span class="px-2.5 py-1 bg-[#D4AF37] text-[#0b0e12] text-[10px] font-bold rounded-full">Featured</span>
+    </a>
+    <div class="study-card-body">
+        <div class="study-card-copy">
+            @if($studyDate)
+                <p class="study-card-date">{{ $studyDate }}</p>
+            @endif
+            <h3><a href="{{ $studyUrl }}">{{ $blog->title }}</a></h3>
+            @if($studyText !== '')
+                <p class="study-card-excerpt">{{ $studyText }}</p>
+            @endif
         </div>
-        <div class="absolute bottom-3 left-3 z-10">
-            <span class="px-2.5 py-1 bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium rounded-full flex items-center gap-1 border border-white/10">
-                <i class="fas fa-newspaper text-[8px]"></i>
-                Blog
-            </span>
-        </div>
+        <a class="study-read" href="{{ $studyUrl }}">
+            <span>Read more</span>
+            <img src="{{ asset('images/studies/read-more-arrow.svg') }}" alt="" width="10.6667" height="10.6667">
+        </a>
     </div>
-    <div class="p-5">
-        <h3 class="text-lg font-serif font-bold text-[#1e1e1a] mb-2 group-hover:text-[#D4AF37] transition-colors duration-300 line-clamp-2">{{ $blog->title }}</h3>
-        <p class="text-sm text-[#5a5a52] leading-relaxed line-clamp-2">{{ $blog->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($blog->content ?? ''), 120) }}</p>
-        <div class="mt-4 pt-4 border-t border-gray-100 text-[#D4AF37] text-sm font-medium">Read the story →</div>
-    </div>
-</a>
+</article>
