@@ -35,9 +35,9 @@
 
         <div class="site-header-actions">
             <div id="langSwitch" class="site-lang notranslate relative hidden lg:flex shrink-0 items-center gap-1" translate="no">
-                <button type="button" data-set-lang="en" class="lang-option rounded-sm px-1.5 py-1 text-[#1c1c1c]" style="color:#1c1c1c" aria-pressed="true">EN</button>
-                <span class="text-[#8a8178]" aria-hidden="true">|</span>
-                <button type="button" data-set-lang="ne" class="lang-option rounded-sm px-1.5 py-1 text-[#8a8178]" style="color:#8a8178" aria-pressed="false">NP</button>
+                <button type="button" data-set-lang="en" class="lang-option is-active" aria-pressed="true">EN</button>
+                <span class="lang-divider" aria-hidden="true">|</span>
+                <button type="button" data-set-lang="ne" class="lang-option" aria-pressed="false">NP</button>
             </div>
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
@@ -87,9 +87,9 @@
                 <a href="{{ \App\Models\Setting::navHref($item['url']) }}" class="mobile-nav-link rounded-md px-3 py-3 text-[#1c1c1c] hover:bg-black/5 hover:text-[#9a4e32]">{{ $item['label'] }}</a>
             @endforeach
             <div class="notranslate mt-2 flex items-center gap-2 px-3 py-3 text-xs font-semibold tracking-[0.16em] text-[#1c1c1c]" translate="no">
-                <button type="button" data-set-lang="en" class="lang-option text-[#1c1c1c]" style="color:#1c1c1c">EN</button>
-                <span class="text-[#8a8178]">|</span>
-                <button type="button" data-set-lang="ne" class="lang-option text-[#8a8178]" style="color:#8a8178">NP</button>
+                <button type="button" data-set-lang="en" class="lang-option is-active" aria-pressed="true">EN</button>
+                <span class="lang-divider">|</span>
+                <button type="button" data-set-lang="ne" class="lang-option" aria-pressed="false">NP</button>
             </div>
             @if(request()->routeIs('blog') || request()->routeIs('blog.show'))
                 @auth
@@ -104,9 +104,9 @@
                     <a href="{{ route('register') }}" class="mobile-nav-link rounded-md px-3 py-3 text-[#1c1c1c] hover:bg-black/5 hover:text-[#9a4e32]">Sign Up</a>
                 @endauth
             @else
-                <button type="button" data-open-work="education" class="mobile-nav-link notranslate mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-[#b36855] px-4 py-3 text-sm font-semibold text-white" translate="no">
-                    {{ $workLabel }}
-                    <svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M11.5 4.5H6.5M11.5 4.5V9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <button type="button" data-open-work="education" class="mobile-work notranslate" translate="no">
+                    <span>{{ $workLabel }}</span>
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4.5 11.5 11.5 4.5M11.5 4.5H6.5M11.5 4.5V9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </button>
             @endif
         </div>
@@ -202,6 +202,62 @@
         letter-spacing: 0.16em;
         color: #000000;
     }
+    .lang-option {
+        appearance: none;
+        -webkit-appearance: none;
+        border: 0;
+        background: transparent;
+        color: #8a8178;
+        font: inherit;
+        letter-spacing: inherit;
+        line-height: 1;
+        cursor: pointer;
+        border-radius: 999px;
+        padding: 6px 9px;
+        transition: color 0.15s ease, background-color 0.15s ease, transform 0.12s ease;
+    }
+    .lang-option:hover { color: #1c1c1c; }
+    .lang-option:active { transform: scale(0.94); }
+    .lang-option:focus-visible {
+        outline: 2px solid #b36855;
+        outline-offset: 2px;
+    }
+    .lang-option.is-active,
+    .lang-option.is-active:hover {
+        color: #ffffff;
+        font-weight: 800;
+        background: #b36855;
+    }
+    .lang-divider { color: #8a8178; }
+    .mobile-work {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        align-self: flex-start;
+        gap: 8px;
+        width: auto;
+        max-width: 100%;
+        height: 44px;
+        margin-top: 12px;
+        padding: 0 18px;
+        border: 0;
+        border-radius: 999px;
+        background: #b36855;
+        color: #ffffff;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+    .mobile-work svg {
+        display: block;
+        width: 14px;
+        height: 14px;
+        flex: none;
+    }
+    .mobile-work:hover { filter: brightness(1.06); }
     .site-cta {
         align-items: center;
         height: 40px;

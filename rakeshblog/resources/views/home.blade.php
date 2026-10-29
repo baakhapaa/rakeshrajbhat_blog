@@ -536,23 +536,18 @@
         #about-me {
             position: relative;
             overflow-x: clip;
-            padding: 0 16px 48px;
+            padding: 0 16px 24px;
             background: linear-gradient(to bottom, #e9e9e9 0, #e9e9e9 96px, #f3f3f3 96px, #f3f3f3 100%);
             font-family: "Plus Jakarta Sans", sans-serif;
         }
         .about-card {
-            --about-stack-x: 12px;
-            --about-stack-y: 24px;
             position: relative;
             margin: 0 auto;
             max-width: 1920px;
             padding: 40px 20px 48px;
             background: #fbf9f6;
             border-bottom: 1px solid #efeeeb;
-            box-shadow:
-                var(--about-stack-x) var(--about-stack-y) 0 rgba(255, 255, 255, 0.7),
-                0 18px 50px -12px rgba(0, 0, 0, 0.28),
-                0 4px 14px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.28), 0 4px 14px rgba(0, 0, 0, 0.08);
         }
         .about-grid { display: grid; gap: 40px; }
         .about-label { display: flex; align-items: center; gap: 8px; }
@@ -622,17 +617,13 @@
             #about-me {
                 z-index: 1;
                 margin-top: calc(-212 * var(--fu));
-                padding: 0 0 calc(60 * var(--fu));
+                padding: 0 0 24px;
                 background: linear-gradient(to bottom, transparent 0, transparent calc(212 * var(--fu)), #f3f3f3 calc(212 * var(--fu)), #f3f3f3 100%);
             }
             .about-card {
                 width: calc(1920 * var(--fu));
                 min-height: calc(1065 * var(--fu));
                 padding: calc(160 * var(--fu)) calc(196 * var(--fu)) calc(113 * var(--fu));
-            }
-            .about-card {
-                --about-stack-x: calc(27 * var(--fu));
-                --about-stack-y: calc(52 * var(--fu));
             }
             .about-grid {
                 width: calc(1548 * var(--fu));
@@ -1001,7 +992,7 @@
     @endphp
     <section id="about" class="mission-scroll text-[#1e1e1a] scroll-mt-20" aria-labelledby="mission-heading">
         <div class="mission-scroll__list">
-            <p class="mission-scroll__kicker">My Mission</p>
+            <p class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>My Missions</p>
             @foreach($missionItems as $item)
                 <div class="mission-scroll__listItem">
                     <div class="mission-scroll__listNum">{{ $item['number'] }}</div>
@@ -1014,9 +1005,11 @@
         <div class="mission-scroll__track" id="missionTrack">
             <div class="mission-scroll__sticky" id="missionSticky">
                 <div class="mission-scroll__dialZone" aria-hidden="true">
-                    <div class="mission-scroll__dialBaseOuter"></div>
-                    <div class="mission-scroll__dialBaseInner"></div>
-                    <div class="mission-scroll__dialBaseCenter"></div>
+                    <div class="mission-scroll__rings">
+                        <div class="mission-scroll__dialBaseOuter"></div>
+                        <div class="mission-scroll__dialBaseInner"></div>
+                        <div class="mission-scroll__dialBaseCenter"></div>
+                    </div>
                     <div class="mission-scroll__dialCanvas" id="missionDial">
                         @foreach($missionItems as $item)
                             <div class="mission-scroll__marker">
@@ -1027,13 +1020,17 @@
                         @endforeach
                     </div>
                 </div>
+                <p id="mission-heading" class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>My Missions</p>
                 <div class="mission-scroll__textZone">
-                    <p id="mission-heading" class="mission-scroll__kicker">My Mission</p>
                     <div class="mission-scroll__textViewport" id="missionText">
                         @foreach($missionItems as $item)
                             <article class="mission-scroll__reason">
                                 <h3 class="mission-scroll__headline">{{ $item['title'] }}</h3>
                                 <p class="mission-scroll__body">{{ $item['body'] }}</p>
+                                <a href="#projects" class="mission-scroll__more">
+                                    Learn More
+                                    <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
+                                </a>
                             </article>
                         @endforeach
                     </div>
@@ -1043,30 +1040,48 @@
     </section>
     <style>
         .mission-scroll {
-            --gold: #D4AF37;
-            --ink: #1e1e1a;
-            --muted: #5a5a52;
-            --dial-size: min(52vw, 800px);
-            --dial-center: -0.02;
-            --number-margin: min(4vw, 64px);
+            --dial-size: min(78vh, 898px);
+            --dial-center: 0.04;
+            --number-margin: 8px;
             position: relative;
             width: 100%;
-            background: #f2f2f2;
+            background: #fbf9f6;
+            border-bottom: 1px solid #efeeeb;
             overflow: clip;
         }
         .mission-scroll__kicker {
-            margin: 0 0 12px;
-            color: #D4AF37;
-            font-size: 12px;
+            position: absolute;
+            z-index: 3;
+            left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + var(--number-margin));
+            top: calc(50% - clamp(250px, 32vh, 340px));
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            color: #89351d;
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(22px, 2.4vw, 46px);
             font-weight: 700;
-            letter-spacing: 0.14em;
+            letter-spacing: 1.1px;
+            line-height: 1;
             text-transform: uppercase;
         }
+        .mission-scroll__dash {
+            width: 39px;
+            height: 4px;
+            background: #89351d;
+            flex: none;
+        }
         .mission-scroll__list { display: none; max-width: 40rem; margin: 0 auto; padding: 72px 24px 80px; }
-        .mission-scroll__listItem + .mission-scroll__listItem { margin-top: 28px; padding-top: 28px; border-top: 1px solid rgba(30, 30, 26, 0.08); }
-        .mission-scroll__listNum { color: #D4AF37; font-size: 12px; font-weight: 700; letter-spacing: 0.14em; }
-        .mission-scroll__listTitle { margin: 8px 0 0; font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; }
-        .mission-scroll__listBody { margin: 8px 0 0; color: #5a5a52; font-size: 15px; line-height: 1.6; }
+        .mission-scroll__list .mission-scroll__kicker {
+            position: static;
+            margin: 0 0 24px;
+            font-size: 28px;
+        }
+        .mission-scroll__listItem + .mission-scroll__listItem { margin-top: 28px; padding-top: 28px; border-top: 1px solid #efeeeb; }
+        .mission-scroll__listNum { color: #111111; font-family: "Plus Jakarta Sans", sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.04em; }
+        .mission-scroll__listTitle { margin: 8px 0 0; font-family: Poppins, sans-serif; font-size: 32px; font-weight: 600; letter-spacing: -0.6px; color: #111111; }
+        .mission-scroll__listBody { margin: 8px 0 0; color: #59554f; font-family: "Plus Jakarta Sans", sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5; }
         .mission-scroll__track { position: relative; width: 100%; height: 600vh; }
         .mission-scroll__sticky {
             position: sticky;
@@ -1079,11 +1094,16 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 40%;
+            width: 100%;
             height: 100%;
             pointer-events: none;
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 88%, transparent 100%);
+        }
+        .mission-scroll__rings {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%);
         }
         .mission-scroll__dialBaseOuter,
         .mission-scroll__dialBaseInner,
@@ -1133,7 +1153,7 @@
             width: 0;
             height: 0;
             transform-origin: 0 0;
-            transform: rotate(var(--angle)) translateX(calc(var(--dial-size) * 0.4375 + var(--number-margin)));
+            transform: rotate(var(--angle)) translateX(calc(var(--dial-size) * 0.5 + var(--number-margin)));
         }
         .mission-scroll__markerContent {
             position: absolute;
@@ -1143,71 +1163,124 @@
         }
         .mission-scroll__markerNum {
             display: inline-block;
-            font-family: 'Playfair Display', serif;
-            font-size: 72px;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: clamp(64px, 7vw, 126px);
             font-weight: 700;
-            letter-spacing: -0.03em;
+            line-height: 0.8;
+            letter-spacing: -0.04em;
+            color: #111111;
             transform-origin: left center;
             will-change: transform, color, opacity;
         }
         .mission-scroll__textZone {
             position: absolute;
-            left: 38%;
-            width: 54%;
+            left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + clamp(150px, 16vw, 230px));
+            right: 20px;
             top: 50%;
-            transform: translateY(-28px);
+            transform: translateY(-50%);
             z-index: 2;
         }
-        .mission-scroll__textViewport { position: relative; height: 190px; width: 100%; overflow: hidden; }
+        .mission-scroll__more {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            align-self: center;
+            justify-self: start;
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            height: 36px;
+            padding: 0 14px 0 16px;
+            border-radius: 9999px;
+            background: #b36855;
+            color: #faf7f2;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            line-height: 1;
+            letter-spacing: 0.2px;
+            text-decoration: none;
+            white-space: nowrap;
+            box-shadow: 0 8px 18px -10px rgba(137, 53, 29, 0.85);
+        }
+        .mission-scroll__more img { margin-left: 8px; }
+        .mission-scroll__more:hover { filter: brightness(1.06); }
+        .mission-scroll__textViewport { position: relative; height: 150px; width: min(560px, 54vw); overflow: hidden; }
         .mission-scroll__reason {
             position: absolute;
             inset: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+            display: grid;
+            grid-template-columns: minmax(0, 400px) max-content;
+            column-gap: 28px;
+            align-content: center;
             opacity: 0;
             will-change: transform, opacity;
         }
         .mission-scroll__headline {
+            grid-column: 1;
+            grid-row: 1;
+            min-width: 0;
             margin: 0;
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(36px, 3.4vw, 56px);
-            font-weight: 700;
-            line-height: 1.1;
-            color: #1e1e1a;
+            font-family: Poppins, sans-serif;
+            font-size: clamp(22px, 2.1vw, 34px);
+            font-weight: 600;
+            line-height: 1.15;
+            letter-spacing: -0.6px;
+            color: #111111;
             will-change: transform;
         }
         .mission-scroll__body {
-            margin: 16px 0 0;
-            max-width: 36rem;
-            color: #5a5a52;
-            font-size: 18px;
-            line-height: 1.6;
+            grid-column: 1;
+            grid-row: 2;
+            min-width: 0;
+            margin: 8px 0 0;
+            max-width: 100%;
+            color: #59554f;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: clamp(13px, 1vw, 15px);
+            font-weight: 500;
+            line-height: 1.45;
+            letter-spacing: 0;
             will-change: transform;
         }
         @media (max-width: 1100px) {
-            .mission-scroll__textZone { left: 42%; width: 52%; }
+            .mission-scroll__textZone {
+                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 112px);
+                right: 12px;
+            }
+            .mission-scroll__textViewport { width: min(460px, 58vw); height: 150px; }
+            .mission-scroll__reason { grid-template-columns: minmax(0, 280px) max-content; column-gap: 20px; }
+            .mission-scroll__headline { font-size: 24px; letter-spacing: -0.4px; }
+            .mission-scroll__kicker { top: calc(50% - 230px); font-size: 20px; }
         }
         @media (max-width: 768px) {
             .mission-scroll {
-                --dial-size: min(72vw, 320px);
-                --dial-center: -0.16;
-                --number-margin: 8px;
+                --dial-size: min(54vh, 420px);
+                --dial-center: -0.08;
+                --number-margin: 6px;
             }
             .mission-scroll__sticky {
                 top: 5rem;
                 height: calc(100svh - 5rem);
             }
-            .mission-scroll__dialZone { width: 42%; }
-            .mission-scroll__markerNum { font-size: 32px; }
+            .mission-scroll__markerNum { font-size: 48px; }
             .mission-scroll__textZone {
-                left: 40%;
-                width: 56%;
-                padding-right: 20px;
+                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 72px);
+                right: 10px;
+                transform: translateY(-50%);
             }
-            .mission-scroll__textViewport { height: 160px; }
-            .mission-scroll__headline { font-size: 28px; }
-            .mission-scroll__body { margin-top: 10px; font-size: 15px; line-height: 1.5; }
+            .mission-scroll__textViewport { width: min(320px, 70vw); height: 130px; }
+            .mission-scroll__reason { grid-template-columns: minmax(0, 180px) max-content; column-gap: 12px; }
+            .mission-scroll__headline { font-size: 20px; letter-spacing: -0.4px; }
+            .mission-scroll__body { margin-top: 6px; font-size: 13px; line-height: 1.4; }
+            .mission-scroll__kicker {
+                font-size: 16px;
+                top: calc(50% - 176px);
+            }
+            .mission-scroll__dash { width: 28px; height: 3px; }
+            .mission-scroll__more {
+                height: 34px;
+                padding: 0 12px 0 14px;
+            }
         }
         @media (prefers-reduced-motion: reduce) {
             .mission-scroll__track { display: none !important; height: auto !important; }
@@ -1223,15 +1296,15 @@
             const viewport = document.getElementById('missionText');
             if (!section || !track || !sticky || !canvas || !viewport) return;
 
-            const CONFIG = { angleStep: 28, exitY: 135, stiffness: 85, damping: 26, mass: 0.3, headlineYOffset: 45, bodyYOffset: 25, scrollPadding: 0 };
+            const CONFIG = { angleStep: 28, exitY: 200, stiffness: 85, damping: 26, mass: 0.3, headlineYOffset: 45, bodyYOffset: 25, scrollPadding: 0 };
             function applyMotionScale() {
                 const narrow = window.innerWidth <= 768;
-                CONFIG.exitY = narrow ? 64 : 135;
+                CONFIG.exitY = narrow ? 90 : 200;
                 CONFIG.headlineYOffset = narrow ? 20 : 45;
                 CONFIG.bodyYOffset = narrow ? 12 : 25;
             }
-            const COLOR_FADED = 'rgba(30, 30, 26, 0.18)';
-            const COLOR_ACTIVE = '#D4AF37';
+            const COLOR_FADED = 'rgba(0, 0, 0, 0.26)';
+            const COLOR_ACTIVE = '#111111';
             const markers = Array.from(canvas.querySelectorAll('.mission-scroll__marker'));
             const nums = Array.from(canvas.querySelectorAll('.mission-scroll__markerNum'));
             const articles = Array.from(viewport.querySelectorAll('.mission-scroll__reason'));
@@ -1303,12 +1376,15 @@
                 const progress = spring.value;
                 const pad = CONFIG.scrollPadding;
                 const step = (1 - 2 * pad) / (total - 1);
-                canvas.style.transform = 'rotate(' + interpolate(progress, [pad, 1 - pad], [0, -(total - 1) * CONFIG.angleStep]) + 'deg)';
+                const rotation = interpolate(progress, [pad, 1 - pad], [0, -(total - 1) * CONFIG.angleStep]);
+                canvas.style.transform = 'rotate(' + rotation + 'deg)';
 
                 for (let i = 0; i < total; i++) {
                     const s = pad + (i / (total - 1)) * (1 - 2 * pad);
                     const scale = interpolate(progress, [s - step * 0.8, s, s + step * 0.8], [0.5, 1, 0.5]);
-                    const opacity = interpolate(progress, [s - step * 0.9, s, s + step * 0.9], [0.3, 1, 0.3]);
+                    const angle = i * CONFIG.angleStep + rotation;
+                    const above = angle >= -8 ? 1 : (angle <= -26 ? 0 : (angle + 26) / 18);
+                    const opacity = interpolate(progress, [s - step * 0.9, s, s + step * 0.9], [0.3, 1, 0.3]) * above;
                     const cRange = [s - step * 0.6, s, s + step * 0.6];
                     let color = COLOR_FADED;
                     if (progress > cRange[0] && progress < cRange[2]) {
@@ -1318,6 +1394,7 @@
                     }
                     nums[i].style.transform = 'scale(' + scale.toFixed(4) + ')';
                     nums[i].style.opacity = opacity.toFixed(4);
+                    nums[i].style.visibility = opacity < 0.02 ? 'hidden' : 'visible';
                     nums[i].style.color = color;
 
                     const y = interpolate(progress, [s - step * 0.8, s, s + step * 0.8], [CONFIG.exitY, 0, -CONFIG.exitY]);
