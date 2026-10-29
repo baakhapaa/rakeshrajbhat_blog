@@ -216,6 +216,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/research/{id}/toggle-home', [ResearchController::class, 'toggleHome'])->name('research.toggle-home');
         Route::post('/research/reorder', [ResearchController::class, 'reorder'])->name('research.reorder');
         Route::put('/research/section', [ResearchController::class, 'updateSection'])->name('research.update-section');
+        Route::put('/research/home-filters', [ResearchController::class, 'updateHomeFilters'])->name('research.update-home-filters');
         Route::put('/research/featured-page', [ResearchController::class, 'updateFeaturedPage'])->name('research.update-featured-page');
         
         // Then the resource route

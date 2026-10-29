@@ -72,8 +72,21 @@ class ResearchController extends Controller
         }
 
         $researchCategories = $this->categoryChoices();
+        $homeFilters = Setting::getResearchHomeFilters();
+        if (is_array(old('home_filter_key'))) {
+            $byKey = collect(Setting::defaultResearchHomeFilters())->keyBy('key');
+            $reordered = [];
+            foreach (old('home_filter_key') as $key) {
+                if (isset($byKey[$key]) && ! collect($reordered)->contains('key', $key)) {
+                    $reordered[] = $byKey[$key];
+                }
+            }
+            if ($reordered !== []) {
+                $homeFilters = $reordered;
+            }
+        }
 
-        return view('admin.research.index', compact('researchItems', 'researchSection', 'featuredPage', 'researchCategories'));
+        return view('admin.research.index', compact('researchItems', 'researchSection', 'featuredPage', 'researchCategories', 'homeFilters'));
     }
 
     public function updateSection(Request $request)
@@ -87,6 +100,24 @@ class ResearchController extends Controller
         Setting::setValue('research_section_paragraph', trim(strip_tags($validated['research_section_paragraph'])));
 
         return redirect()->route('admin.research.index')->with('success', 'Research section heading updated.');
+    }
+
+    public function updateHomeFilters(Request $request)
+    {
+        $validated = $request->validate([
+            'home_filter_key' => 'required|array|size:5',
+            'home_filter_key.*' => 'required|string|in:all,vision,research,media,blog|distinct',
+        ]);
+
+        $byKey = collect(Setting::defaultResearchHomeFilters())->keyBy('key');
+        $filters = [];
+        foreach ($validated['home_filter_key'] as $key) {
+            $filters[] = $byKey[$key];
+        }
+
+        Setting::setValue('research_home_filters', Setting::encodeJson($filters));
+
+        return redirect()->route('admin.research.index')->with('success', 'Homepage filter order updated.');
     }
 
     public function updateFeaturedPage(Request $request)

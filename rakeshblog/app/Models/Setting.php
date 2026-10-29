@@ -504,6 +504,50 @@ class Setting extends Model
         ];
     }
 
+    public static function defaultResearchHomeFilters(): array
+    {
+        return [
+            ['key' => 'all', 'label' => 'All'],
+            ['key' => 'vision', 'label' => 'Vision'],
+            ['key' => 'research', 'label' => 'Research'],
+            ['key' => 'media', 'label' => 'Media'],
+            ['key' => 'blog', 'label' => 'Blog'],
+        ];
+    }
+
+    public static function getResearchHomeFilters(): array
+    {
+        $defaults = static::defaultResearchHomeFilters();
+        $byKey = [];
+        foreach ($defaults as $filter) {
+            $byKey[$filter['key']] = $filter;
+        }
+
+        $decoded = static::decodeJson(static::getValue('research_home_filters'));
+        if (! is_array($decoded)) {
+            return $defaults;
+        }
+
+        $filters = [];
+        $seen = [];
+        foreach ($decoded as $row) {
+            $key = is_array($row) ? (string) ($row['key'] ?? '') : (string) $row;
+            if (! isset($byKey[$key]) || isset($seen[$key])) {
+                continue;
+            }
+            $filters[] = $byKey[$key];
+            $seen[$key] = true;
+        }
+
+        foreach ($defaults as $filter) {
+            if (! isset($seen[$filter['key']])) {
+                $filters[] = $filter;
+            }
+        }
+
+        return $filters;
+    }
+
     public static function defaultResearchFeaturedPage(): array
     {
         return [

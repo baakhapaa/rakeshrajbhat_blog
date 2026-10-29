@@ -385,7 +385,7 @@
                 <img class="hero-glow" src="{{ asset('images/hero/figma/ellipse9.svg') }}" alt="" width="1769" height="1692">
                 <div class="hero-portrait">
                     <img src="{{ asset('images/hero/hero-portrait.png') }}" alt="{{ $homeContent['name'] }}">
-                </div>
+        </div>
                 @if($heroLine2 !== '' || $heroLine3 !== '')
                     <h1 class="hero-title">
                         @if($heroLine2 !== '')
@@ -420,7 +420,7 @@
                             {{ $homeContent['text_link_label'] }}
                         </a>
                     @endif
-                </div>
+                    </div>
                 @if($heroLead !== '')
                     <p class="hero-lead">{{ $heroLead }}</p>
                 @endif
@@ -436,8 +436,8 @@
                     <p class="hero-tag">{{ $heroTagline }}</p>
                 @endif
                 <img class="hero-haze hero-haze-b" src="{{ asset('images/hero/figma/ellipse8.svg') }}" alt="" width="1281" height="1281">
-            </div>
-        </div>
+                </div>
+                </div>
         <script>
             (function () {
                 var stage = document.querySelector('.hero-stage');
@@ -465,7 +465,7 @@
             })();
         </script>
     </section>
-
+    
     <!-- About Me -->
     <section id="about-me" class="about-reveal scroll-mt-20 text-[#1b1c1a]">
         <div class="about-card">
@@ -474,7 +474,7 @@
                     <div class="about-label">
                         <span class="about-label-rule" aria-hidden="true"></span>
                         <p>{{ $aboutContent['label'] }}</p>
-                    </div>
+                </div>
                     <h2 class="about-heading">
                         {{ $aboutContent['heading_line_1'] }}@if(filled($aboutContent['heading_line_2'])) {{ $aboutContent['heading_line_2'] }}@endif
                     </h2>
@@ -495,16 +495,16 @@
                         @if($aboutThird !== '')
                             <p class="about-note">{{ $aboutThird }}</p>
                         @endif
-                    </div>
+                        </div>
                     @if(filled($aboutContent['button_label']))
                         <div class="about-action">
                             <a href="{{ \App\Models\Setting::linkHref($aboutContent['button_url'] ?: '#projects') }}" @if(str_starts_with((string) $aboutContent['button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="about-btn">
                                 <span>{{ $aboutContent['button_label'] }}</span>
                                 <img src="{{ asset('images/about-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                             </a>
-                        </div>
+                    </div>
                     @endif
-                </div>
+                        </div>
                 <div class="about-reveal-media">
                     @php
                         $aboutMediaClass = 'about-photo';
@@ -532,9 +532,9 @@
                             class="{{ $aboutMediaClass }}"
                         >
                     @endif
-                </div>
-            </div>
-        </div>
+                    </div>
+                        </div>
+                        </div>
     </section>
     <style>
         #about-me {
@@ -559,19 +559,20 @@
         .about-label p {
             margin: 0;
             font-family: "Space Grotesk", sans-serif;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: 1.2px;
+            line-height: 16px;
+            letter-spacing: 1.1px;
             text-transform: uppercase;
             color: #89351d;
         }
         .about-heading {
             margin: 0;
             padding-top: 12px;
-            font-size: 32px;
+            font-family: "Plus Jakarta Sans", Inter, sans-serif;
+            font-size: clamp(34px, 3.2vw, 44px);
             font-weight: 700;
-            line-height: 1.15;
+            line-height: 1.1;
             letter-spacing: -0.6px;
             color: #1b1c1a;
         }
@@ -637,18 +638,13 @@
                 min-height: calc(777 * var(--fu));
             }
             .about-reveal-text { align-self: start; padding-top: calc(39 * var(--fu)); }
-            .about-label { gap: calc(8 * var(--fu)); }
-            .about-label-rule { width: max(28px, calc(32 * var(--fu))); height: 2px; }
-            .about-label p {
-                font-size: clamp(15px, 1.15vw, 18px);
-                line-height: 1.2;
-                letter-spacing: 1.2px;
-            }
+            .about-label { gap: 8px; }
+            .about-label-rule { width: 24px; height: 2px; }
             .about-heading {
                 padding-top: calc(12 * var(--fu));
-                font-size: calc(44 * var(--fu));
-                line-height: calc(48 * var(--fu));
-                letter-spacing: calc(-1.1 * var(--fu));
+                font-size: clamp(34px, 3.2vw, 44px);
+                line-height: 1.1;
+                letter-spacing: -0.6px;
             }
             .about-copy { gap: calc(50 * var(--fu)); padding-top: calc(51 * var(--fu)); }
             .about-quote-box {
@@ -817,11 +813,11 @@
                     <span class="block h-0.5 w-6 shrink-0 bg-[#b36855]" aria-hidden="true"></span>
                     @php $statsSection = \App\Models\Setting::getStatsSection(); @endphp
                     <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#b36855]">{{ $statsSection['title'] }}</p>
-                </div>
+                    </div>
                 <h2 class="mt-3 font-poppins text-[2.4rem] font-bold leading-[1.2] tracking-[-1px] text-white sm:text-[50px] sm:leading-[62px] sm:tracking-[-1.15px]">
                     {{ $statsSection['description'] }}
                 </h2>
-            </div>
+                        </div>
             <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#1e2530] bg-[#12161e] shadow-[0px_25px_50px_-12px_rgba(0,0,0,0.25)]">
                 <div class="grid grid-cols-2 gap-px bg-[#1c232d] md:grid-cols-3 xl:grid-cols-6">
                     @forelse($stats ?? [] as $stat)
@@ -847,11 +843,11 @@
                                 @if($accentSuffix !== '')
                                     <p class="font-playfair text-[28px] font-extrabold leading-8 text-[#d4a034]">{{ $accentSuffix }}</p>
                                 @endif
-                            </div>
+                        </div>
                             <p class="font-inter text-[11px] font-semibold uppercase leading-[1.35] tracking-[1.54px] text-[#9ca3af]">
                                 {{ $stat->label }}@if(filled($stat->sub_label))<br>{{ $stat->sub_label }}@endif
                             </p>
-                        </div>
+                    </div>
                     @empty
                         <div class="col-span-full bg-[#12161e] px-8 py-10 text-center text-[#9ca3af]">No impact stats available.</div>
                     @endforelse
@@ -875,14 +871,14 @@
                     <div class="initiatives-kicker">
                         <span aria-hidden="true"></span>
                         <p>{{ $projectsSection["label"] }}</p>
-                    </div>
-                    <h2 id="initiatives-heading">{{ $projectsSection["title"] }}</h2>
                 </div>
+                    <h2 id="initiatives-heading">{{ $projectsSection["title"] }}</h2>
             </div>
+        </div>
 
             <div class="initiatives-viewport carousel-container" tabindex="0" aria-label="Projects and initiatives">
                 <div class="initiatives-track carousel-track">
-                    @forelse($projects ?? [] as $project)
+                @forelse($projects ?? [] as $project)
                         @php
                             $projectSlug = strtolower((string) ($project->slug ?? ""));
                             $initiativeBackground = preg_match('/^#[0-9A-Fa-f]{6}$/', (string) $project->bg_color)
@@ -907,10 +903,10 @@
                                 <div class="initiative-mark">
                                     @if($initiativeLogo)
                                         <img src="{{ $initiativeLogo }}" alt="{{ $project->name }}" width="142" height="142" loading="lazy" decoding="async">
-                                    @else
+                                @else
                                         <span>{{ strtoupper(substr($project->name, 0, 1)) }}</span>
                                     @endif
-                                </div>
+                                    </div>
                                 <h3>{{ $project->name }}</h3>
                                 @if(filled($initiativeDescription))
                                     <p>{{ $initiativeDescription }}</p>
@@ -921,18 +917,18 @@
                                         <img src="{{ asset("images/initiatives/initiative-arrow.svg") }}" alt="" aria-hidden="true">
                                     </a>
                                 @endif
-                            </div>
+                        </div>
 
                             @if(filled($project->description))
                                 <div class="tooltip-popup" role="dialog" aria-label="{{ $project->name }} overview">
                                     <div class="project-popup-content">
-                                        <div class="popup-image">
+                                    <div class="popup-image">
                                             @if($initiativeLogo)
                                                 <img src="{{ $initiativeLogo }}" alt="{{ $project->name }}" loading="lazy" decoding="async">
-                                            @else
+                                        @else
                                                 <span>{{ strtoupper(substr($project->name, 0, 1)) }}</span>
-                                            @endif
-                                        </div>
+                                        @endif
+                                    </div>
                                         <h4>{{ $project->name }}</h4>
                                         <p>{{ $project->description }}</p>
                                         @if(filled($project->url))
@@ -940,17 +936,17 @@
                                                 <span>Visit Website</span>
                                                 <img src="{{ asset('images/initiatives/initiative-arrow.svg') }}" alt="" aria-hidden="true">
                                             </a>
-                                        @endif
-                                    </div>
-                                </div>
+                                @endif
+                            </div>
+                        </div>
                             @endif
                         </article>
-                    @empty
+                @empty
                         <p class="initiatives-empty">No projects available yet.</p>
-                    @endforelse
-                </div>
-            </div>
-        </div>
+                @endforelse
+                                    </div>
+                            </div>
+                        </div>
 
         <script>
             (function () {
@@ -994,9 +990,9 @@
                         {{ $missionButtonLabel }}
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                     </button>
-                </div>
+                                    </div>
             @endforeach
-        </div>
+                            </div>
 
         <div class="mission-scroll__track" id="missionTrack">
             <div class="mission-scroll__sticky" id="missionSticky">
@@ -1011,11 +1007,11 @@
                             <div class="mission-scroll__marker">
                                 <div class="mission-scroll__markerContent">
                                     <span class="mission-scroll__markerNum">{{ $item["number"] }}</span>
-                                </div>
-                            </div>
-                        @endforeach
+                        </div>
                     </div>
-                </div>
+                @endforeach
+            </div>
+        </div>
                 <p id="mission-heading" class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>{{ $missionLabel }}</p>
                 <div class="mission-scroll__textZone">
                     <div class="mission-scroll__textViewport" id="missionText">
@@ -1029,10 +1025,10 @@
                                 </button>
                             </article>
                         @endforeach
-                    </div>
-                </div>
             </div>
-        </div>
+                        </div>
+                        </div>
+                    </div>
 
         <div id="missionModal" class="mission-modal" hidden>
             <div class="mission-modal__backdrop" data-mission-close></div>
@@ -1706,10 +1702,11 @@
             max-width: 1000px;
             margin: 0;
             color: #111;
-            font-family: Poppins, "Plus Jakarta Sans", sans-serif;
-            font-size: 40px;
-            font-weight: 600;
+            font-family: "Plus Jakarta Sans", Inter, sans-serif;
+            font-size: clamp(34px, 3.2vw, 44px);
+            font-weight: 700;
             line-height: 1.1;
+            letter-spacing: -0.6px;
         }
         .studies-filters {
             display: flex;
@@ -1909,17 +1906,12 @@
                 padding: calc(150 * var(--fu)) calc(300 * var(--fu)) calc(72 * var(--fu));
             }
             .studies-intro { gap: calc(7 * var(--fu)); }
-            .studies-kicker { gap: calc(8 * var(--fu)); }
-            .studies-kicker span { width: calc(24 * var(--fu)); height: max(1px, calc(2 * var(--fu))); }
-            .studies-kicker p {
-                font-size: calc(14 * var(--fu));
-                line-height: calc(16 * var(--fu));
-                letter-spacing: calc(1.1 * var(--fu));
-            }
             .studies-title {
                 width: calc(1000 * var(--fu));
                 max-width: 100%;
-                font-size: calc(76 * var(--fu));
+                font-size: clamp(34px, 3.2vw, 44px);
+                line-height: 1.1;
+                letter-spacing: -0.6px;
             }
             .studies-filters {
                 justify-content: flex-end;
@@ -1971,16 +1963,17 @@
         <div class="studies-kicker">
             <span aria-hidden="true"></span>
             <p>Studies</p>
-        </div>
+                                    </div>
         <h2 id="studies-heading" class="studies-title">{{ $researchSection['title'] }}</h2>
-    </div>
-
+                                </div>
+                                
+    @php
+        $homeFilters = \App\Models\Setting::getResearchHomeFilters();
+    @endphp
     <div class="studies-filters" id="researchFilters">
-        <button type="button" data-research-filter="all" class="studies-pill is-active" aria-pressed="true">All</button>
-        <button type="button" data-research-filter="vision" class="studies-pill" aria-pressed="false">Vision</button>
-        <button type="button" data-research-filter="research" class="studies-pill" aria-pressed="false">Research</button>
-        <button type="button" data-research-filter="media" class="studies-pill" aria-pressed="false">Media</button>
-        <button type="button" data-research-filter="blog" class="studies-pill" aria-pressed="false">Blog</button>
+        @foreach($homeFilters as $filter)
+            <button type="button" data-research-filter="{{ $filter['key'] }}" class="studies-pill {{ $filter['key'] === 'all' ? 'is-active' : '' }}" aria-pressed="{{ $filter['key'] === 'all' ? 'true' : 'false' }}">{{ $filter['label'] }}</button>
+        @endforeach
     </div>
 
     @php
@@ -1991,19 +1984,26 @@
 
     <div data-research-panel="all">
         <div class="studies-grid">
-            @foreach(['vision' => 'Vision', 'research' => 'Research'] as $key => $studyCategory)
-                @if(isset($spotlightResearch[$key]) && $spotlightResearch[$key]->isNotEmpty())
-                    @include('partials.home-research-card', ['item' => $spotlightResearch[$key]->first(), 'studyCategory' => $studyCategory])
+            @php
+                $allSlotOrder = collect($homeFilters)->pluck('key')->filter(fn ($key) => in_array($key, ['vision', 'research', 'blog'], true))->values();
+                $allSlotShown = false;
+            @endphp
+            @foreach($allSlotOrder as $slotKey)
+                @if($slotKey === 'blog')
+                    @if($homeBlogs->isNotEmpty())
+                        @php $allSlotShown = true; @endphp
+                        @include('partials.home-blog-card', ['blog' => $homeBlogs->first(), 'studyCategory' => 'Blog'])
+                    @endif
+                @elseif(isset($spotlightResearch[$slotKey]) && $spotlightResearch[$slotKey]->isNotEmpty())
+                    @php $allSlotShown = true; @endphp
+                    @include('partials.home-research-card', ['item' => $spotlightResearch[$slotKey]->first(), 'studyCategory' => $slotKey === 'vision' ? 'Vision' : 'Research'])
                 @endif
             @endforeach
-            @if($homeBlogs->isNotEmpty())
-                @include('partials.home-blog-card', ['blog' => $homeBlogs->first(), 'studyCategory' => 'Blog'])
-            @endif
-            @if((!isset($spotlightResearch['vision']) || $spotlightResearch['vision']->isEmpty()) && (!isset($spotlightResearch['research']) || $spotlightResearch['research']->isEmpty()) && $homeBlogs->isEmpty())
+            @if(! $allSlotShown)
                 <p class="studies-empty">Nothing added to home yet.</p>
             @endif
-        </div>
-    </div>
+                                        </div>
+                                    </div>
 
     @foreach(['vision' => 'Vision', 'research' => 'Research', 'media' => 'Media'] as $key => $studyCategory)
         <div data-research-panel="{{ $key }}" class="hidden">
@@ -2011,13 +2011,13 @@
                 @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
                     @foreach($featuredResearch[$key]->take(3) as $item)
                         @include('partials.home-research-card', ['item' => $item, 'studyCategory' => $studyCategory])
-                    @endforeach
-                @else
+                        @endforeach
+                    @else
                     <p class="studies-empty">Nothing added to home yet.</p>
-                @endif
+                    @endif
             </div>
-        </div>
-    @endforeach
+                </div>
+            @endforeach
 
     <div data-research-panel="blog" class="hidden">
         <div class="studies-grid">
@@ -2027,14 +2027,14 @@
                 <p class="studies-empty">No featured blogs yet.</p>
             @endforelse
         </div>
-    </div>
-
+        </div>
+        
     <div class="studies-cta">
         <a class="studies-view-all" href="{{ route('research.featured') }}">
             View all Studies
             <img src="{{ asset('images/studies/view-all-arrow.svg') }}" alt="" width="9.46875" height="3.75">
         </a>
-    </div>
+        </div>
     <script>
         document.querySelectorAll('[data-research-filter]').forEach(function (button) {
             button.addEventListener('click', function () {
@@ -2054,7 +2054,7 @@
 
 <!-- Research Detail Modal -->
 <div id="researchModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-    <div class="min-h-screen px-4 py-8 flex items-center justify-center">
+    <div class="min-h-screen px-4 py-8 flex items-center justify-center">   
         <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeResearchDetail()"></div>
         <div class="relative research-modal-panel max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl" onclick="event.stopPropagation()">
             <button type="button" onclick="closeResearchDetail()" class="research-close" aria-label="Close">
@@ -2107,7 +2107,7 @@
 function openResearchDetail(id) {
     const modal = document.getElementById('researchModal');
     const content = document.getElementById('researchDetailContent');
-
+    
     modal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
     document.body.style.paddingRight = '0px';
@@ -2149,33 +2149,33 @@ function openResearchDetail(id) {
                     <div class="research-detail">
                         <h2 class="research-detail-title">${escapeHtml(item.title)}</h2>
                         ${item.image_url ? `<div class="research-detail-media"><img src="${item.image_url}" alt="${escapeHtml(item.title)}"></div>` : ''}
-                        ${item.video_url || item.video_file ? `
+                    ${item.video_url || item.video_file ? `
                             <div class="research-detail-media">
-                                ${item.video_file ?
+                            ${item.video_file ? 
                                     `<video controls class="w-full"><source src="${item.video_file}" type="video/mp4"></video>` :
-                                    item.video_embed_url ?
+                                item.video_embed_url ? 
                                     `<iframe src="${item.video_embed_url}" class="w-full aspect-video" allowfullscreen></iframe>` :
                                     `<div class="aspect-video flex items-center justify-center text-white">No video available</div>`
-                                }
-                            </div>
-                        ` : ''}
+                            }
+                        </div>
+                    ` : ''}
                         <div class="research-detail-meta">
                             ${categoryLabel ? `<span class="research-chip">${escapeHtml(categoryLabel)}</span>` : ''}
                             ${item.is_featured ? '<span class="research-chip">Featured</span>' : ''}
                             ${storyDate ? `<span class="library-date">${storyDate}</span>` : ''}
-                        </div>
+                    </div>
                         <div class="research-block">
                             <h4 class="research-kicker"><span></span>About</h4>
                             <p class="research-detail-copy">${escapeHtml(item.description || '')}</p>
                         </div>
-                        ${item.content ? `
+                    ${item.content ? `
                             <div class="research-block">
                                 <h4 class="research-kicker"><span></span>Full story</h4>
                                 ${formatResearchContent(item.content)}
-                            </div>
-                        ` : ''}
+                        </div>
+                    ` : ''}
                         ${item.link_url ? `<div class="research-link"><a class="library-cta" href="${item.link_url}" target="_blank" rel="noopener noreferrer">Visit link</a></div>` : ''}
-                    </div>
+                        </div>
                 `;
             } else {
                 content.innerHTML = `
@@ -2207,7 +2207,7 @@ function closeResearchDetail() {
 function playVideo(element, researchId) {
     const modal = document.getElementById('videoModal');
     const container = document.getElementById('videoContainer');
-
+    
     container.innerHTML = `
         <div class="w-full h-full flex items-center justify-center text-white">
             <div class="text-center">
@@ -2360,12 +2360,12 @@ document.addEventListener('keydown', function(e) {
             @if(isset($featuredBlogs) && $featuredBlogs->count() > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     @foreach($featuredBlogs as $blog)
-                        <a href="{{ route('blog.show', $blog->slug) }}"
+                        <a href="{{ route('blog.show', $blog->slug) }}" 
                         class="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                             <div class="relative overflow-hidden h-52">
                                 @if($blog->featured_image_url)
-                                    <img src="{{ $blog->featured_image_url }}"
-                                        alt="{{ $blog->title }}"
+                                    <img src="{{ $blog->featured_image_url }}" 
+                                        alt="{{ $blog->title }}" 
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @else
                                     <div class="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 flex items-center justify-center">
@@ -2405,7 +2405,7 @@ document.addEventListener('keydown', function(e) {
                                     {{ $blog->excerpt ?? Str::limit(strip_tags($blog->content ?? ''), 120) }}
                                 </p>
                                 <div class="mt-4 flex items-center gap-2 text-sm text-[#D4AF37] font-medium">
-                                    Read More
+                                    Read More 
                                     <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                                     </svg>
@@ -2416,7 +2416,7 @@ document.addEventListener('keydown', function(e) {
                 </div>
 
                 <div class="text-center mt-12">
-                    <a href="{{ route('blog') }}"
+                    <a href="{{ route('blog') }}" 
                     class="inline-flex items-center gap-2 px-8 py-3 bg-[#D4AF37] text-[#0b0e12] font-bold rounded-lg hover:bg-[#c4a030] transition-all shadow-lg shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/40 hover:-translate-y-0.5">
                         View All Blogs
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -3957,7 +3957,7 @@ function playVideo(element, researchId) {
     const modal = document.getElementById('videoModal');
     const container = document.getElementById('videoContainer');
     if (!modal || !container) return;
-
+    
     // Get video data from server
     fetch(`/research/${researchId}/video`)
         .then(response => response.json())
@@ -4023,7 +4023,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const target = parseInt(counter.getAttribute('data-target'));
             const current = parseInt(counter.innerText);
             const increment = Math.ceil(target / speed);
-
+            
             if (current < target) {
                 counter.innerText = Math.min(current + increment, target);
                 setTimeout(updateCounter, 1);
