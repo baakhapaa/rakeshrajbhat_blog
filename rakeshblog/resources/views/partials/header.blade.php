@@ -65,7 +65,7 @@
                     <a href="{{ route('register') }}" class="hidden sm:inline rounded-full bg-[#c4a484] px-4 py-2 text-xs font-semibold text-white">Sign up</a>
                 @endauth
             @else
-                <button type="button" data-open-work="education" class="site-cta notranslate hidden sm:inline-flex" translate="no">
+                <button type="button" data-open-work="education" class="site-cta notranslate" translate="no">
                     <span>{{ $workLabel }}</span>
                     <span class="site-cta-icon" aria-hidden="true">
                         <img class="site-cta-icon-a" src="{{ asset('images/hero/figma/nav-arrow-a.svg') }}" alt="">
@@ -259,6 +259,7 @@
     }
     .mobile-work:hover { filter: brightness(1.06); }
     .site-cta {
+        display: none;
         align-items: center;
         height: 40px;
         padding: 0 16px;
@@ -284,6 +285,9 @@
     .site-cta-icon img { position: absolute; max-width: none; }
     .site-cta-icon-a { left: 9.17%; top: 9.17%; width: 81.67%; height: 81.67%; }
     .site-cta-icon-b { left: 17.5%; top: 9.17%; width: 73.33%; height: 73.33%; }
+    @media (min-width: 640px) {
+        .site-cta { display: inline-flex; }
+    }
     @media (min-width: 1024px) {
         .site-header-inner {
             width: max(calc(1476 * var(--fu)), min(calc(100% - 48px), 960px));

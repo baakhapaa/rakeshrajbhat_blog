@@ -1991,35 +1991,335 @@ document.addEventListener('keydown', function(e) {
     </section>
     --}}
 
-    <section id="news" class="scroll-mt-20 bg-[#fbf9f6] pb-16 pt-16 text-[#1b1c1a] lg:pb-28 lg:pt-24">
+    <section id="news" class="news-section scroll-mt-20">
+        <style>
+            .news-section {
+                background: #fbf9f6;
+                color: #1b1c1a;
+                padding: 56px 0 64px;
+            }
+            .news-wrap {
+                width: min(1690px, calc(100% - 48px));
+                margin: 0 auto;
+            }
+            .news-kicker {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .news-kicker-dash {
+                width: 24px;
+                height: 2px;
+                background: #89351d;
+                flex: none;
+            }
+            .news-kicker p {
+                margin: 0;
+                font-family: "Space Grotesk", Inter, sans-serif;
+                font-size: 14px;
+                font-weight: 700;
+                line-height: 16px;
+                letter-spacing: 1.1px;
+                text-transform: uppercase;
+                color: #89351d;
+            }
+            .news-heading {
+                margin: 4px 0 0;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: clamp(32px, 3.2vw, 48px);
+                font-weight: 700;
+                line-height: 1.12;
+                letter-spacing: -0.6px;
+                color: #1b1c1a;
+            }
+            .news-layout {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr);
+                gap: 28px;
+                margin-top: 28px;
+            }
+            .news-feature-media {
+                position: relative;
+                display: block;
+                width: 100%;
+                padding: 0;
+                border: 0;
+                background: #efeae3;
+                border-radius: 8px;
+                overflow: hidden;
+                aspect-ratio: 16 / 7;
+                cursor: pointer;
+            }
+            .news-feature-media img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+            .news-feature-badge {
+                position: absolute;
+                top: 12px;
+                left: 12px;
+                padding: 6px 12px;
+                border-radius: 999px;
+                background: #fbf9f6;
+                color: #7f2f1a;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: 11px;
+                font-weight: 700;
+                line-height: 1;
+                letter-spacing: 0.4px;
+            }
+            .news-feature-meta {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 16px;
+                margin-top: 12px;
+            }
+            .news-feature-cat,
+            .news-row-cat {
+                margin: 0;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-weight: 700;
+                color: #7f2f1a;
+                letter-spacing: 0.4px;
+                text-transform: uppercase;
+            }
+            .news-feature-cat { font-size: 12px; line-height: 16px; }
+            .news-feature-date,
+            .news-row-date {
+                margin: 0;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-weight: 400;
+                color: #59554f;
+            }
+            .news-feature-date { font-size: 12px; line-height: 16px; }
+            .news-feature-title {
+                margin: 8px 0 0;
+                max-width: 640px;
+                font-family: Poppins, Inter, sans-serif;
+                font-size: clamp(22px, 1.9vw, 28px);
+                font-weight: 600;
+                line-height: 1.25;
+                color: #2f2f2f;
+            }
+            .news-feature-excerpt {
+                margin: 8px 0 0;
+                max-width: 640px;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: 14px;
+                font-weight: 400;
+                line-height: 1.55;
+                color: #59554f;
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .news-story-btn {
+                display: inline-flex;
+                align-items: center;
+                margin-top: 14px;
+                padding: 8px 18px;
+                border: 0;
+                border-radius: 9999px;
+                background: #b36855;
+                color: #fff;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: 13px;
+                font-weight: 600;
+                line-height: 18px;
+                letter-spacing: -0.35px;
+                cursor: pointer;
+            }
+            .news-story-btn:hover { background: #a35b49; }
+            .news-story-icon {
+                position: relative;
+                width: 14px;
+                height: 14px;
+                margin-left: 13px;
+                flex: none;
+            }
+            .news-story-icon img {
+                position: absolute;
+                max-width: none;
+            }
+            .news-story-icon img:first-child { left: 1.28px; top: 1.28px; }
+            .news-story-icon img:last-child { left: 2.45px; top: 1.28px; }
+            .news-side { min-width: 0; }
+            .news-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 16px;
+                width: 100%;
+                margin: 0;
+                padding: 16px 0;
+                border: 0;
+                border-top: 1px solid #d5cec2;
+                background: transparent;
+                color: inherit;
+                text-align: left;
+                cursor: pointer;
+                font: inherit;
+            }
+            .news-row-copy { min-width: 0; flex: 1; }
+            .news-row-cat, .news-row-date { display: block; }
+            .news-row-cat { font-size: 11px; line-height: 14px; }
+            .news-row-titleline {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                margin-top: 8px;
+            }
+            .news-row-title {
+                margin: 0;
+                flex: 1;
+                min-width: 0;
+                font-family: Poppins, Inter, sans-serif;
+                font-size: clamp(16px, 1.25vw, 18px);
+                font-weight: 600;
+                line-height: 1.25;
+                color: #2f2f2f;
+            }
+            .news-row-titleline img { flex: none; margin-top: 2px; max-width: none; }
+            .news-row-excerpt {
+                margin: 8px 0 0;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: 14px;
+                font-weight: 500;
+                line-height: 1.6;
+                color: #59554f;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .news-row-date { margin-top: 10px; font-size: 11px; line-height: 14px; }
+            .news-row-thumb {
+                width: 128px;
+                height: 112px;
+                border-radius: 8px;
+                object-fit: cover;
+                flex: none;
+                background: #efeae3;
+            }
+            .news-row-thumb--empty { display: block; }
+            .news-view {
+                display: flex;
+                justify-content: center;
+                margin-top: 28px;
+            }
+            .news-empty {
+                margin-top: 48px;
+                text-align: center;
+                font-family: "Plus Jakarta Sans", Inter, sans-serif;
+                font-size: 14px;
+                color: #5f5e5e;
+            }
+            @media (max-width: 720px) {
+                .news-section { padding: 40px 0 48px; }
+                .news-wrap { width: min(1690px, calc(100% - 32px)); }
+                .news-row { gap: 12px; padding: 14px 0; }
+                .news-row-thumb,
+                .news-row-thumb--empty { width: 96px; height: 84px; }
+            }
+            @media (min-width: 1024px) {
+                .news-section { padding: 72px 0 80px; }
+                .news-layout {
+                    grid-template-columns: minmax(0, 784fr) minmax(0, 771fr);
+                    column-gap: clamp(28px, 4vw, 64px);
+                    margin-top: 40px;
+                    align-items: start;
+                }
+            }
+        </style>
         @php
             $newsContent = \App\Models\Setting::getNewsContent();
             $newsItems = $newsItems ?? collect();
-        @endphp
-        <div class="mx-auto w-full max-w-[1648px] px-6 lg:px-12">
-            <div class="max-w-xl">
-                <div class="flex items-center gap-2">
-                    <span class="block h-0.5 w-6 shrink-0 bg-[#89351d]" aria-hidden="true"></span>
-                    <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#89351d]">{{ $newsContent['label'] }}</p>
-                </div>
-                <h2 class="pt-1 font-jakarta text-[2rem] font-bold leading-tight tracking-[-0.6px] text-[#1b1c1a] sm:text-[40px] sm:leading-[48px] sm:tracking-[-1px]">{{ $newsContent['heading'] }}</h2>
-                <p class="max-w-xl pt-2 font-jakarta text-base leading-6 text-[#5f5e5e]">{{ $newsContent['intro'] }}</p>
-            </div>
+            $featuredNews = $newsItems->first();
+            $sideNews = $newsItems->slice(1)->values();
+            $newsHeading = trim((string) ($newsContent['heading'] ?? 'Latest News and Activities'));
+            $newsHeadingHtml = e($newsHeading);
+            if (preg_match('/^(Latest News)\s+(and Activities)$/i', $newsHeading, $newsHeadingParts)) {
+                $newsHeadingHtml = e($newsHeadingParts[1]).'<br>'.e($newsHeadingParts[2]);
+            }
+            $newsDate = function ($item) {
+                $date = $item->published_at ?? $item->created_at;
 
-            @if($newsItems->isNotEmpty())
-                <div class="mt-12 grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-[46px]">
-                    @foreach($newsItems as $item)
-                        @include('partials.news-card', ['item' => $item])
-                    @endforeach
+                return $date ? mb_strtoupper($date->format('d M Y')) : null;
+            };
+        @endphp
+        <div class="news-wrap">
+            <div class="news-kicker">
+                <span class="news-kicker-dash" aria-hidden="true"></span>
+                <p>{{ $newsContent['label'] }}</p>
+            </div>
+            <h2 class="news-heading">{!! $newsHeadingHtml !!}</h2>
+
+            @if($featuredNews)
+                <div class="news-layout">
+                    <article>
+                        <button type="button" class="news-feature-media" onclick="openNewsDetail({{ $featuredNews->id }})">
+                            @if($featuredNews->image_url)
+                                <img src="{{ $featuredNews->image_url }}" alt="{{ $featuredNews->title }}">
+                            @endif
+                            <span class="news-feature-badge">FEATURED</span>
+                        </button>
+                        <div class="news-feature-meta">
+                            <p class="news-feature-cat">{{ $featuredNews->badgeLabel() }}</p>
+                            @if($newsDate($featuredNews))
+                                <p class="news-feature-date">{{ $newsDate($featuredNews) }}</p>
+                            @endif
+                        </div>
+                        <h3 class="news-feature-title">{{ $featuredNews->title }}</h3>
+                        @if($featuredNews->excerpt)
+                            <p class="news-feature-excerpt">{{ $featuredNews->excerpt }}</p>
+                        @endif
+                        <button type="button" class="news-story-btn" onclick="openNewsDetail({{ $featuredNews->id }})">
+                            Read the story
+                            <span class="news-story-icon" aria-hidden="true">
+                                <img src="{{ asset('images/news-story-arrow-a.svg') }}" alt="" width="11.4333" height="11.4333">
+                                <img src="{{ asset('images/news-story-arrow-b.svg') }}" alt="" width="10.2667" height="10.2667">
+                            </span>
+                        </button>
+                    </article>
+
+                    @if($sideNews->isNotEmpty())
+                        <div class="news-side">
+                            @foreach($sideNews as $item)
+                                <button type="button" class="news-row" onclick="openNewsDetail({{ $item->id }})">
+                                    <span class="news-row-copy">
+                                        <span class="news-row-cat">{{ $item->badgeLabel() }}</span>
+                                        <span class="news-row-titleline">
+                                            <span class="news-row-title">{{ $item->title }}</span>
+                                            <img src="{{ asset('images/news-arrow-up-right.svg') }}" alt="" width="22" height="22">
+                                        </span>
+                                        @if($item->excerpt)
+                                            <span class="news-row-excerpt">{{ $item->excerpt }}</span>
+                                        @endif
+                                        @if($newsDate($item))
+                                            <span class="news-row-date">{{ $newsDate($item) }}</span>
+                                        @endif
+                                    </span>
+                                    @if($item->image_url)
+                                        <img class="news-row-thumb" src="{{ $item->image_url }}" alt="">
+                                    @else
+                                        <span class="news-row-thumb news-row-thumb--empty" aria-hidden="true"></span>
+                                    @endif
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
-                <div class="mt-12 flex justify-center">
+                <div class="news-view">
                     <a href="{{ route('news.index') }}" class="gallery-explore">
-                        View All Updates
+                        View all articles
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                     </a>
                 </div>
             @else
-                <p class="mt-12 text-center font-jakarta text-sm text-[#5f5e5e]">News will appear here once a link is added.</p>
+                <p class="news-empty">News will appear here once a link is added.</p>
             @endif
         </div>
     </section>

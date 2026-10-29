@@ -121,8 +121,8 @@ class HomeController extends Controller
 
         try {
             $activeNews = NewsItem::query()->where('is_active', true);
-            $newsHasMore = (clone $activeNews)->count() > 3;
-            $newsItems = (clone $activeNews)->latestFirst()->take(3)->get();
+            $newsHasMore = (clone $activeNews)->count() > 4;
+            $newsItems = (clone $activeNews)->latestFirst()->take(4)->get();
         } catch (\Exception $e) {
             $newsItems = collect();
             $newsHasMore = false;
