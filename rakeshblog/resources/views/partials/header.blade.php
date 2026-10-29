@@ -62,7 +62,7 @@
                     </div>
                 @else
                     <a href="{{ route('login') }}" class="hidden sm:inline text-[#1c1c1c] hover:text-[#9a4e32] text-sm">Login</a>
-                    <a href="{{ route('register') }}" class="hidden sm:inline rounded-full bg-[#c4a484] px-4 py-2 text-xs font-semibold text-white">Sign up</a>
+                    <a href="{{ route('register') }}" class="hidden sm:inline rounded-full bg-[#b36855] px-4 py-2 text-xs font-semibold text-white">Sign up</a>
                 @endauth
             @else
                 <button type="button" data-open-work="education" class="site-cta notranslate" translate="no">
