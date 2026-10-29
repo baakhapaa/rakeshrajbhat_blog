@@ -5,19 +5,19 @@
 @section('meta_description', $newsContent['intro'])
 
 @section('content')
-<section class="bg-[#fbf9f6] py-20 text-[#1b1c1a] md:py-28">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="mb-16 max-w-xl">
-            <div class="flex items-center gap-2">
-                <span class="block h-0.5 w-6 shrink-0 bg-[#89351d]" aria-hidden="true"></span>
-                <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#89351d]">{{ $newsContent['label'] }}</p>
+<section class="news-index text-[#1b1c1a]">
+    <div class="news-index-wrap">
+        <div class="news-index-head">
+            <div class="site-kicker">
+                <span aria-hidden="true"></span>
+                <p>{{ $newsContent['label'] }}</p>
             </div>
-            <h1 class="pt-1 font-jakarta text-[2rem] font-bold leading-tight tracking-[-0.6px] text-[#1b1c1a] sm:text-[40px] sm:leading-[48px] sm:tracking-[-1px]">{{ $newsContent['heading'] }}</h1>
-            <p class="max-w-xl pt-2 font-jakarta text-base leading-6 text-[#5f5e5e]">{{ $newsContent['intro'] }}</p>
+            <h1 class="news-index-title">{{ $newsContent['heading'] }}</h1>
+            <p class="news-index-lead">{{ $newsContent['intro'] }}</p>
         </div>
 
         @if($newsItems->isNotEmpty())
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <div class="news-index-grid">
                 @foreach($newsItems as $item)
                     @include('partials.news-card', ['item' => $item])
                 @endforeach
@@ -32,8 +32,8 @@
             </div>
         @endif
 
-        <div class="text-center mt-16">
-            <a href="{{ route('home') }}#news" class="inline-flex items-center gap-2 text-[#8a8a82] hover:text-[#D4AF37] transition font-medium">
+        <div class="news-index-back">
+            <a href="{{ route('home') }}#news" class="site-btn site-btn--ghost">
                 <i class="fas fa-arrow-left text-xs"></i>
                 Back to Home
             </a>
@@ -43,3 +43,58 @@
 
 @include('partials.news-modal')
 @endsection
+
+<style>
+.news-index {
+    background: #fbf9f6;
+    padding: var(--page-top) 0 var(--section-y);
+}
+
+.news-index-wrap {
+    width: var(--site-width);
+    margin: 0 auto;
+}
+
+.news-index-head {
+    max-width: 44em;
+}
+
+.news-index-title {
+    margin: 0;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: var(--page-title-size);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: #1b1c1a;
+}
+
+.news-index-lead {
+    max-width: 40em;
+    margin: clamp(14px, 0.5vw + 10px, 22px) 0 0;
+    color: #5f5e5e;
+    font-size: clamp(16px, 0.25vw + 14px, 19px);
+    line-height: 1.65;
+}
+
+.news-index-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(20px, 1.4vw + 10px, 40px);
+    margin-top: var(--heading-gap);
+}
+
+@media (min-width: 768px) {
+    .news-index-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+    .news-index-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.news-index-back {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--cta-gap);
+}
+</style>

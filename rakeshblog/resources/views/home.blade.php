@@ -98,62 +98,64 @@
                 max-width: none;
                 user-select: none;
             }
+            /* Canvas units scale with the hero; dividing by --hero-scale gives real-pixel sizes and minimums. */
+            .hero-copy {
+                left: calc(415px + var(--hero-shift, 0px));
+                top: 254px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
             .hero-lead {
-                left: 415px;
-                top: 233px;
-                width: 539px;
-                margin: 0;
+                margin: 0 0 0.3em;
                 font-family: Poppins, "Plus Jakarta Sans", sans-serif;
-                font-size: 38px;
+                font-size: max(38px, calc(16px / var(--hero-scale, 1)));
                 font-weight: 500;
-                line-height: 92px;
-                letter-spacing: -1.26px;
+                line-height: 1.3;
+                letter-spacing: -0.033em;
                 color: #111111;
                 white-space: nowrap;
             }
             .hero-title {
-                left: 419px;
-                top: 314px;
-                margin: 0;
+                margin: 0 0 0 4px;
                 font-family: Poppins, "Plus Jakarta Sans", sans-serif;
-                font-size: 81px;
+                font-size: max(81px, calc(34px / var(--hero-scale, 1)));
                 font-weight: 600;
-                line-height: 81px;
-                letter-spacing: -1.26px;
+                line-height: 1;
+                letter-spacing: -0.016em;
                 color: #111111;
                 white-space: nowrap;
             }
             .hero-title span { display: block; }
             .hero-body {
-                left: 418px;
-                top: 512px;
-                margin: 0;
-                font-size: 21px;
+                max-width: calc(1200px - 415px - var(--hero-shift, 0px));
+                margin: max(36px, calc(16px / var(--hero-scale, 1))) 0 0 3px;
+                font-size: max(21px, calc(13.5px / var(--hero-scale, 1)));
                 font-weight: 400;
-                line-height: 36px;
-                letter-spacing: 2px;
+                line-height: 1.7;
+                letter-spacing: 0.095em;
                 color: #59554f;
-                white-space: nowrap;
             }
             .hero-body span { display: block; }
             .hero-body .hero-body-lead { font-weight: 500; }
             .hero-body strong { font-weight: 700; }
             .hero-body .hero-body-note { font-style: italic; color: #46433f; }
-            .hero-body.is-plain { width: 900px; white-space: normal; }
             .hero-actions {
-                left: 419px;
-                top: 628px;
+                margin: max(44px, calc(22px / var(--hero-scale, 1))) 0 0 4px;
                 display: flex;
-                align-items: flex-start;
-                gap: 12px;
+                align-items: center;
+                gap: calc(12px / var(--hero-scale, 1));
             }
             .hero-btn {
-                height: 58px;
+                height: calc(var(--btn-h) / var(--hero-scale, 1));
+                padding: 0 calc(var(--btn-px) / var(--hero-scale, 1));
                 border-radius: 9999px;
                 display: inline-flex;
                 align-items: center;
-                font-size: 16px;
-                line-height: 24px;
+                justify-content: center;
+                gap: calc(10px / var(--hero-scale, 1));
+                font-size: calc(var(--btn-fs) / var(--hero-scale, 1));
+                line-height: 1;
                 text-decoration: none;
                 white-space: nowrap;
             }
@@ -161,16 +163,14 @@
                 background: #b36855;
                 color: #faf7f2;
                 font-weight: 700;
-                padding: 12px 28px;
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
             }
             .hero-btn-primary:hover { filter: brightness(1.05); }
-            .hero-btn-primary img { margin-left: 8px; }
+            .hero-btn-primary img { width: calc(10px / var(--hero-scale, 1)); height: auto; }
             .hero-btn-secondary {
                 color: #000000;
-                font-weight: 500;
-                padding: 12px 25px;
-                border: 1px solid #d5cec2;
+                font-weight: 600;
+                border: calc(1px / var(--hero-scale, 1)) solid #d5cec2;
             }
             .hero-btn-secondary:hover { background: rgba(255, 255, 255, 0.35); }
             .hero-glass {
@@ -181,24 +181,18 @@
                     inset -1px -1px 1px rgba(255, 255, 255, 0.45),
                     0 6px 20px -8px rgba(0, 0, 0, 0.12);
             }
-            .hero-pill {
-                left: 368px;
-                top: 941px;
-                width: 563px;
-                height: 54px;
-                border-radius: 52px;
-                background: rgba(217, 217, 217, 0.2);
-            }
             .hero-tag {
-                left: 402px;
-                top: 951px;
-                width: 515px;
+                left: calc(415px + var(--hero-shift, 0px));
+                top: 941px;
                 margin: 0;
+                padding: 0.6em 1.9em;
+                border-radius: 9999px;
+                background: rgba(217, 217, 217, 0.2);
                 font-family: Poppins, "Plus Jakarta Sans", sans-serif;
-                font-size: 18px;
+                font-size: max(18px, calc(11px / var(--hero-scale, 1)));
                 font-weight: 500;
-                line-height: 31px;
-                letter-spacing: 1px;
+                line-height: 1.7;
+                letter-spacing: 0.055em;
                 text-transform: uppercase;
                 white-space: pre;
                 color: #000000;
@@ -251,7 +245,7 @@
                     display: flex;
                     flex-direction: column;
                     align-items: flex-start;
-                    padding: 40px 20px 0;
+                    padding: clamp(32px, 6vw, 56px) var(--site-edge) 0;
                     overflow: hidden;
                 }
                 #heroCanvas > * {
@@ -277,58 +271,39 @@
                 #heroCanvas > .hero-haze,
                 #heroCanvas > .hero-arc,
                 #heroCanvas > .hero-badge,
-                #heroCanvas > .hero-pill,
                 #heroCanvas > .hero-warm { display: none; }
-                #heroCanvas > .hero-lead {
-                    order: 1;
-                    font-size: 20px;
+                #heroCanvas > .hero-copy { order: 1; }
+                #heroCanvas .hero-lead {
+                    margin: 0;
+                    font-size: clamp(18px, 2.4vw + 9px, 24px);
                     line-height: 1.35;
                     letter-spacing: -0.4px;
                     white-space: normal;
                 }
-                #heroCanvas > .hero-title {
-                    order: 2;
-                    margin-top: 8px;
-                    font-size: clamp(34px, 8.6vw, 56px);
+                #heroCanvas .hero-title {
+                    margin: 8px 0 0;
+                    font-size: clamp(34px, 8.6vw, 64px);
                     line-height: 1.08;
                     letter-spacing: -0.8px;
                     white-space: normal;
                 }
-                #heroCanvas > .hero-body {
-                    order: 3;
-                    margin-top: 18px;
+                #heroCanvas .hero-body {
+                    margin: 18px 0 0;
                     max-width: 640px;
-                    font-size: 15px;
+                    font-size: clamp(15px, 0.5vw + 13px, 17px);
                     line-height: 1.7;
                     letter-spacing: 0.5px;
-                    white-space: normal;
                 }
-                #heroCanvas > .hero-body .hero-body-note { margin-top: 4px; }
-                #heroCanvas > .hero-actions {
-                    order: 4;
-                    margin-top: 24px;
+                #heroCanvas .hero-body .hero-body-note { margin-top: 4px; }
+                #heroCanvas .hero-actions {
+                    margin: 28px 0 0;
                     flex-wrap: wrap;
-                    gap: 10px;
+                    gap: 12px;
                 }
-                #heroCanvas > .hero-actions .hero-btn {
-                    height: 52px;
-                    font-size: 15px;
-                    line-height: 22px;
-                }
-                #heroCanvas > .hero-actions .hero-btn-primary { padding: 11px 23px; }
-                #heroCanvas > .hero-actions .hero-btn-secondary { padding: 12px 21px; }
                 #heroCanvas > .hero-tag {
                     order: 5;
                     margin-top: 28px;
                     padding: 11px 20px;
-                    border-radius: 52px;
-                    background: rgba(217, 217, 217, 0.2);
-                    -webkit-backdrop-filter: blur(4px);
-                    backdrop-filter: blur(4px);
-                    box-shadow:
-                        inset 1.5px 1.5px 1px rgba(255, 255, 255, 0.85),
-                        inset -1px -1px 1px rgba(255, 255, 255, 0.45),
-                        0 6px 20px -8px rgba(0, 0, 0, 0.12);
                     font-size: 11px;
                     line-height: 1.6;
                     letter-spacing: 0.6px;
@@ -342,17 +317,49 @@
                 #heroCanvas > .hero-portrait {
                     order: 6;
                     align-self: center;
-                    width: calc(100% + 40px);
+                    width: calc(100% + 2 * var(--site-gutter));
                     max-width: 760px;
                     height: auto;
                     aspect-ratio: 1154.061 / 930.639;
-                    margin: 28px -20px 0;
+                    margin: 28px calc(-1 * var(--site-gutter)) 0;
                     transform: none;
                 }
             }
+            .hero-lead,
+            .hero-title span,
+            .hero-body,
+            .hero-actions,
+            .hero-tag {
+                animation: heroRise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+            }
+            .hero-lead { animation-delay: 0.05s; }
+            .hero-title span:nth-child(1) { animation-delay: 0.15s; }
+            .hero-title span:nth-child(2) { animation-delay: 0.25s; }
+            .hero-body { animation-delay: 0.4s; }
+            .hero-actions { animation-delay: 0.5s; }
+            .hero-tag { animation-delay: 0.65s; }
+            .hero-portrait { animation: heroPortraitIn 1.3s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+            .hero-btn { transition: filter 0.2s ease, background-color 0.2s ease, translate 0.25s ease; }
+            .hero-btn:hover { translate: 0 -2px; }
+            .hero-btn-primary img { transition: translate 0.25s ease; }
+            .hero-btn-primary:hover img { translate: 4px 0; }
+            @keyframes heroRise {
+                from { opacity: 0; translate: 0 32px; }
+                to { opacity: 1; translate: 0 0; }
+            }
+            @keyframes heroPortraitIn {
+                from { opacity: 0; scale: 1.05; }
+                to { opacity: 1; scale: 1; }
+            }
             @media (prefers-reduced-motion: reduce) {
                 .hero-cubes,
-                .hero-badge { animation: none; }
+                .hero-badge,
+                .hero-lead,
+                .hero-title span,
+                .hero-body,
+                .hero-actions,
+                .hero-tag,
+                .hero-portrait { animation: none; }
             }
         </style>
         @php
@@ -377,6 +384,7 @@
             }
             $heroTagline = preg_replace('/\.\s+/', '.    ', trim((string) ($homeContent['tagline'] ?? '')));
         @endphp
+        <div id="heroAlign" class="site-container" aria-hidden="true"></div>
         <div id="heroFit" class="hero-fit">
             <div id="heroCanvas" class="hero-canvas">
                 <div class="hero-cubes hero-cubes-a" aria-hidden="true"></div>
@@ -386,6 +394,10 @@
                 <div class="hero-portrait">
                     <img src="{{ asset('images/hero/hero-portrait.png') }}" alt="{{ $homeContent['name'] }}">
         </div>
+                <div class="hero-copy">
+                @if($heroLead !== '')
+                    <p class="hero-lead">{{ $heroLead }}</p>
+                @endif
                 @if($heroLine2 !== '' || $heroLine3 !== '')
                     <h1 class="hero-title">
                         @if($heroLine2 !== '')
@@ -420,10 +432,8 @@
                             {{ $homeContent['text_link_label'] }}
                         </a>
                     @endif
-                    </div>
-                @if($heroLead !== '')
-                    <p class="hero-lead">{{ $heroLead }}</p>
-                @endif
+                </div>
+                </div>
                 <div class="hero-badge hero-badge-baakhapaa" aria-hidden="true"><span><img src="{{ asset('images/hero/figma/badge-baakhapaa.png') }}" alt="" width="545" height="545"></span></div>
                 <div class="hero-badge hero-badge-hillychilly" aria-hidden="true"><span><img src="{{ asset('images/hero/figma/badge-hillychilly.png') }}" alt="" width="545" height="545"></span></div>
                 <div class="hero-badge hero-badge-skillsikka" aria-hidden="true"><span><img src="{{ asset('images/hero/figma/badge-skillsikka.png') }}" alt="" width="547" height="547"></span></div>
@@ -432,8 +442,7 @@
                 <div class="hero-arc hero-arc-3" aria-hidden="true"><img src="{{ asset('images/hero/figma/arc-3.svg') }}" alt="" width="843.457" height="321.101"></div>
                 <img class="hero-haze hero-haze-a" src="{{ asset('images/hero/figma/ellipse8.svg') }}" alt="" width="1281" height="1281">
                 @if($heroTagline !== '')
-                    <div class="hero-pill hero-glass" aria-hidden="true"></div>
-                    <p class="hero-tag">{{ $heroTagline }}</p>
+                    <p class="hero-tag hero-glass">{{ $heroTagline }}</p>
                 @endif
                 <img class="hero-haze hero-haze-b" src="{{ asset('images/hero/figma/ellipse8.svg') }}" alt="" width="1281" height="1281">
                 </div>
@@ -444,17 +453,25 @@
                 var fit = document.getElementById('heroFit');
                 var canvas = document.getElementById('heroCanvas');
                 var header = document.getElementById('siteHeader');
+                var align = document.getElementById('heroAlign');
                 if (!stage || !fit || !canvas) return;
                 var stacked = window.matchMedia('(max-width: 1023px)');
                 function applyHeroScale() {
                     if (stacked.matches) {
                         canvas.style.transform = '';
+                        canvas.style.removeProperty('--hero-scale');
+                        canvas.style.removeProperty('--hero-shift');
                         fit.style.height = '';
                         stage.style.paddingTop = Math.round(header ? header.getBoundingClientRect().height : 0) + 'px';
                         return;
                     }
                     var scale = fit.clientWidth / 2305;
                     canvas.style.transform = 'scale(' + scale + ')';
+                    canvas.style.setProperty('--hero-scale', scale.toFixed(4));
+                    if (align) {
+                        var columnLeft = (align.getBoundingClientRect().left - fit.getBoundingClientRect().left) / scale;
+                        canvas.style.setProperty('--hero-shift', (columnLeft - 415).toFixed(2) + 'px');
+                    }
                     fit.style.height = Math.round(1331 * scale) + 'px';
                     var headerHeight = header ? header.getBoundingClientRect().height : 0;
                     stage.style.paddingTop = Math.max(0, Math.round(headerHeight - 138 * scale)) + 'px';
@@ -498,7 +515,7 @@
                         </div>
                     @if(filled($aboutContent['button_label']))
                         <div class="about-action">
-                            <a href="{{ \App\Models\Setting::linkHref($aboutContent['button_url'] ?: '#projects') }}" @if(str_starts_with((string) $aboutContent['button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="about-btn">
+                            <a href="{{ \App\Models\Setting::linkHref($aboutContent['button_url'] ?: '#projects') }}" @if(str_starts_with((string) $aboutContent['button_url'], 'http')) target="_blank" rel="noopener noreferrer" @endif class="about-btn site-btn">
                                 <span>{{ $aboutContent['button_label'] }}</span>
                                 <img src="{{ asset('images/about-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                             </a>
@@ -540,15 +557,14 @@
         #about-me {
             position: relative;
             overflow-x: clip;
-            padding: 0 16px 24px;
+            padding: 0 0 24px;
             background: linear-gradient(to bottom, #e9e9e9 0, #e9e9e9 96px, #f3f3f3 96px, #f3f3f3 100%);
             font-family: "Plus Jakarta Sans", sans-serif;
         }
         .about-card {
             position: relative;
             margin: 0 auto;
-            max-width: 1920px;
-            padding: 40px 20px 48px;
+            padding: 40px var(--site-edge) 48px;
             background: #fbf9f6;
             border-bottom: 1px solid #efeeeb;
             box-shadow: 0 18px 50px -12px rgba(0, 0, 0, 0.28), 0 4px 14px rgba(0, 0, 0, 0.08);
@@ -559,21 +575,21 @@
         .about-label p {
             margin: 0;
             font-family: "Space Grotesk", sans-serif;
-            font-size: 14px;
+            font-size: var(--kicker-size);
             font-weight: 700;
-            line-height: 16px;
+            line-height: 1.15;
             letter-spacing: 1.1px;
             text-transform: uppercase;
             color: #89351d;
         }
         .about-heading {
             margin: 0;
-            padding-top: 12px;
+            padding-top: var(--kicker-gap);
             font-family: "Plus Jakarta Sans", Inter, sans-serif;
-            font-size: clamp(34px, 3.2vw, 44px);
+            font-size: var(--heading-size);
             font-weight: 700;
             line-height: 1.1;
-            letter-spacing: -0.6px;
+            letter-spacing: -0.02em;
             color: #1b1c1a;
         }
         .about-copy { display: flex; flex-direction: column; gap: 32px; padding-top: 32px; }
@@ -587,23 +603,6 @@
         .about-body { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.75; color: #5f5e5e; }
         .about-note { margin: 0; font-size: 17px; font-weight: 400; line-height: 1.55; color: #5f5e5e; }
         .about-action { padding-top: 32px; }
-        .about-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 24px;
-            border-radius: 9999px;
-            background: #b36855;
-            color: #faf7f2;
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 21px;
-            text-decoration: none;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
-            transition: filter 0.2s ease;
-        }
-        .about-btn:hover { filter: brightness(1.1); }
-        .about-btn img { flex-shrink: 0; }
         .about-reveal-media {
             position: relative;
             width: 100%;
@@ -626,34 +625,26 @@
                 background: linear-gradient(to bottom, transparent 0, transparent calc(212 * var(--fu)), #f3f3f3 calc(212 * var(--fu)), #f3f3f3 100%);
             }
             .about-card {
-                width: calc(1920 * var(--fu));
-                min-height: calc(1065 * var(--fu));
-                padding: calc(160 * var(--fu)) calc(196 * var(--fu)) calc(113 * var(--fu));
+                --about-pad: max(0px, min(calc(120 * var(--fu)), calc(var(--site-edge) - 16px)));
+                width: calc(var(--site-width) + 2 * var(--about-pad));
+                padding: calc(160 * var(--fu)) var(--about-pad) calc(113 * var(--fu));
+                border-radius: max(12px, calc(20 * var(--fu)));
             }
             .about-grid {
-                width: calc(1548 * var(--fu));
-                grid-template-columns: minmax(0, 1fr) calc(665.333 * var(--fu));
-                column-gap: calc(64 * var(--fu));
-                align-items: end;
-                min-height: calc(777 * var(--fu));
+                width: 100%;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 42%);
+                column-gap: clamp(32px, calc(80 * var(--fu)), 80px);
+                align-items: center;
             }
             .about-reveal-text { align-self: start; padding-top: calc(39 * var(--fu)); }
-            .about-label { gap: 8px; }
-            .about-label-rule { width: 24px; height: 2px; }
-            .about-heading {
-                padding-top: calc(12 * var(--fu));
-                font-size: clamp(34px, 3.2vw, 44px);
-                line-height: 1.1;
-                letter-spacing: -0.6px;
-            }
             .about-copy { gap: calc(50 * var(--fu)); padding-top: calc(51 * var(--fu)); }
             .about-quote-box {
-                width: calc(840 * var(--fu));
+                max-width: 100%;
                 border-left-width: max(2px, calc(4 * var(--fu)));
                 border-radius: calc(16 * var(--fu));
                 padding: calc(24 * var(--fu)) calc(24 * var(--fu)) calc(24 * var(--fu)) calc(28 * var(--fu));
             }
-            .about-quote { font-size: calc(31 * var(--fu)); line-height: calc(40 * var(--fu)); }
+            .about-quote { font-size: clamp(19px, calc(31 * var(--fu)), 31px); line-height: 1.3; }
             .about-body {
                 max-width: 100%;
                 font-size: clamp(16px, 1.2vw, 18px);
@@ -664,16 +655,11 @@
                 font-size: clamp(16px, 1.2vw, 18px);
                 line-height: 1.55;
             }
-            .about-action { padding-top: calc(80 * var(--fu)); }
-            .about-btn {
-                gap: calc(8 * var(--fu));
-                padding: calc(10 * var(--fu)) calc(24 * var(--fu));
-                font-size: max(10px, calc(14 * var(--fu)));
-                line-height: calc(21 * var(--fu));
-            }
-            .about-btn img { width: calc(9.46875 * var(--fu)); height: calc(3.75 * var(--fu)); }
-            .about-reveal-media { height: calc(738 * var(--fu)); aspect-ratio: auto; }
+            .about-action { padding-top: clamp(32px, calc(64 * var(--fu)), 64px); }
+            .about-reveal-media { border-radius: max(10px, calc(16 * var(--fu))); }
         }
+        .about-photo { transition: scale 1.2s cubic-bezier(0.22, 1, 0.36, 1); }
+        .about-reveal-media:hover .about-photo { scale: 1.04; }
         .about-reveal-ready .about-card {
             opacity: 0;
             transform: translateY(160px);
@@ -806,20 +792,20 @@
         })();
     </script>
     <!-- Impact Stats -->
-    <section id="impact" class="scroll-mt-20 bg-[#010a19] py-16">
-        <div class="mx-auto flex w-full max-w-[1640px] flex-col items-center gap-10 px-4 sm:px-6 lg:flex-row lg:items-center lg:gap-8 xl:px-8">
-            <div class="w-full shrink-0 lg:w-[250px]">
+    <section id="impact" class="impact-section scroll-mt-20 bg-[#010a19]">
+        <div class="site-container impact-layout">
+            <div class="impact-intro" data-reveal>
                 <div class="flex items-center gap-2">
-                    <span class="block h-0.5 w-6 shrink-0 bg-[#b36855]" aria-hidden="true"></span>
+                    <span class="reveal-line block h-0.5 w-6 shrink-0 bg-[#b36855]" aria-hidden="true"></span>
                     @php $statsSection = \App\Models\Setting::getStatsSection(); @endphp
-                    <p class="font-grotesk text-sm font-bold uppercase leading-4 tracking-[1.1px] text-[#b36855]">{{ $statsSection['title'] }}</p>
+                    <p class="impact-kicker font-grotesk font-bold uppercase tracking-[1.1px] text-[#b36855]">{{ $statsSection['title'] }}</p>
                     </div>
-                <h2 class="mt-3 font-poppins text-[2.4rem] font-bold leading-[1.2] tracking-[-1px] text-white sm:text-[50px] sm:leading-[62px] sm:tracking-[-1.15px]">
+                <h2 class="impact-heading text-white">
                     {{ $statsSection['description'] }}
                 </h2>
                         </div>
-            <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#1e2530] bg-[#12161e] shadow-[0px_25px_50px_-12px_rgba(0,0,0,0.25)]">
-                <div class="grid grid-cols-2 gap-px bg-[#1c232d] md:grid-cols-3 xl:grid-cols-6">
+            <div class="w-full min-w-0 flex-1 overflow-hidden rounded-2xl border border-[#1e2530] bg-[#12161e] shadow-[0px_25px_50px_-12px_rgba(0,0,0,0.25)]" data-reveal>
+                <div class="grid grid-cols-2 gap-px bg-[#1c232d] md:grid-cols-3 xl:grid-cols-6" data-reveal-stagger>
                     @forelse($stats ?? [] as $stat)
                         @php
                             $number = trim((string) $stat->number);
@@ -834,7 +820,7 @@
                                 $inlineSuffix = $numberSuffix;
                             }
                         @endphp
-                        <div class="flex min-h-[220px] flex-col items-center justify-between bg-[#12161e] px-4 py-10 text-center">
+                        <div class="impact-stat flex min-h-[220px] flex-col items-center justify-between bg-[#12161e] px-4 py-10 text-center">
                             <img src="{{ asset('images/metric-arrow.svg') }}" alt="" width="32" height="32">
                             <div class="flex flex-col items-center py-3">
                                 <p class="font-inter text-[34px] font-extrabold leading-[34px] tracking-[-0.85px] text-white">
@@ -866,7 +852,7 @@
                 $projectsSection = \App\Models\Setting::getProjectsSection();
             @endphp
 
-            <div class="initiatives-heading">
+            <div class="initiatives-heading site-container">
                 <div class="initiatives-heading-inner">
                     <div class="initiatives-kicker">
                         <span aria-hidden="true"></span>
@@ -986,7 +972,7 @@
                     <div class="mission-scroll__listNum">{{ $item['number'] }}</div>
                     <h3 class="mission-scroll__listTitle">{{ $item['title'] }}</h3>
                     <p class="mission-scroll__listBody">{{ $item['body'] }}</p>
-                    <button type="button" class="mission-scroll__more mission-scroll__more--list" data-mission-open="{{ $index }}">
+                    <button type="button" class="mission-scroll__more mission-scroll__more--list site-btn site-btn--sm" data-mission-open="{{ $index }}">
                         {{ $missionButtonLabel }}
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                     </button>
@@ -1021,7 +1007,7 @@
                                     <h3 class="mission-scroll__headline">{{ $item['title'] }}</h3>
                                     <p class="mission-scroll__body">{{ $item['body'] }}</p>
                                 </div>
-                                <button type="button" class="mission-scroll__more" data-mission-open="{{ $index }}">
+                                <button type="button" class="mission-scroll__more site-btn site-btn--sm" data-mission-open="{{ $index }}">
                                     {{ $missionButtonLabel }}
                                     <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                                 </button>
@@ -1245,7 +1231,7 @@
         .mission-scroll__textZone {
             position: absolute;
             left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + clamp(150px, 16vw, 230px));
-            right: 20px;
+            right: var(--site-edge);
             top: 50%;
             transform: translateY(-50%);
             z-index: 2;
@@ -1256,27 +1242,8 @@
             align-self: center;
             justify-self: start;
             z-index: 3;
-            display: inline-flex;
-            align-items: center;
             flex: none;
-            height: 36px;
-            padding: 0 14px 0 16px;
-            border: 0;
-            border-radius: 9999px;
-            background: #b36855;
-            color: #faf7f2;
-            font-family: "Plus Jakarta Sans", sans-serif;
-            font-weight: 700;
-            font-size: 12px;
-            line-height: 1;
-            letter-spacing: 0.2px;
-            text-decoration: none;
-            white-space: nowrap;
-            cursor: pointer;
-            box-shadow: 0 8px 18px -10px rgba(137, 53, 29, 0.85);
         }
-        .mission-scroll__more img { margin-left: 8px; }
-        .mission-scroll__more:hover { filter: brightness(1.06); }
         .mission-modal {
             position: fixed;
             inset: 0;
@@ -1538,8 +1505,6 @@
                 grid-column: 1;
                 grid-row: 2;
                 justify-self: start;
-                height: 34px;
-                padding: 0 12px 0 14px;
             }
 
             .mission-scroll__headline { font-size: 20px; letter-spacing: 0; }
@@ -1807,52 +1772,58 @@
         .studies-section {
             background: #fff;
             color: #111;
-            padding: 72px 20px 56px;
+            padding: var(--section-y) var(--site-edge);
         }
-        .studies-intro { display: flex; flex-direction: column; gap: 7px; }
+        .studies-intro { display: flex; flex-direction: column; gap: var(--kicker-gap); }
         .studies-kicker { display: flex; align-items: center; gap: 8px; }
         .studies-kicker span { width: 24px; height: 2px; background: #89351d; flex: none; }
         .studies-kicker p {
             margin: 0;
             color: #89351d;
             font-family: "Space Grotesk", sans-serif;
-            font-size: 14px;
+            font-size: var(--kicker-size);
             font-weight: 700;
-            line-height: 16px;
+            line-height: 1.15;
             letter-spacing: 1.1px;
             text-transform: uppercase;
         }
         .studies-title {
-            max-width: 1000px;
+            max-width: 14em;
             margin: 0;
             color: #111;
             font-family: "Plus Jakarta Sans", Inter, sans-serif;
-            font-size: clamp(34px, 3.2vw, 44px);
+            font-size: var(--heading-size);
             font-weight: 700;
             line-height: 1.1;
-            letter-spacing: -0.6px;
+            letter-spacing: -0.02em;
         }
         .studies-filters {
             display: flex;
             flex-wrap: wrap;
             justify-content: flex-start;
             gap: 12px;
-            margin-top: 20px;
+        }
+        .studies-head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px 40px;
         }
         .studies-pill {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            height: 40px;
-            padding: 0 18px;
+            height: var(--pill-h);
+            padding: 0 var(--pill-px);
             border: 1px solid #d5cec2;
             border-radius: 9999px;
             background: transparent;
             color: #59554f;
             font-family: "Plus Jakarta Sans", sans-serif;
-            font-size: 14px;
+            font-size: var(--pill-fs);
             font-weight: 500;
-            line-height: 21px;
+            line-height: 1;
             cursor: pointer;
         }
         .studies-pill.is-active {
@@ -1866,7 +1837,10 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
-            margin-top: 25px;
+            margin-top: var(--heading-gap);
+        }
+        @media (min-width: 640px) {
+            .studies-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
         .study-card {
             display: flex;
@@ -2005,87 +1979,62 @@
             font-family: "Plus Jakarta Sans", sans-serif;
             font-size: 16px;
         }
-        .studies-cta { display: flex; justify-content: center; margin-top: 25px; }
-        .studies-view-all {
-            display: inline-flex;
-            align-items: center;
-            height: 53px;
-            padding: 10px 24px;
-            border-radius: 9999px;
-            background: #b36855;
-            color: #faf7f2;
-            font-family: "Plus Jakarta Sans", Inter, sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            line-height: 21px;
-            text-decoration: none;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
+        .studies-cta { display: flex; justify-content: center; margin-top: var(--cta-gap); }
+        .study-card {
+            transition: translate 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
         }
-        .studies-view-all img { display: block; margin-left: 8px; }
+        .study-card:hover {
+            translate: 0 -6px;
+            box-shadow: 0 28px 50px -24px rgba(27, 28, 26, 0.35);
+        }
+        .study-card-media img,
+        .study-card-media video { transition: scale 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+        .study-card:hover .study-card-media img,
+        .study-card:hover .study-card-media video { scale: 1.06; }
+        .study-read img { transition: translate 0.25s ease; }
+        .study-read:hover img { translate: 4px 0; }
+        .study-card h3 a { transition: color 0.2s ease; }
+        .study-card h3 a:hover { color: #89351d; }
+        .studies-pill { transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, padding 0.25s ease; }
+        .studies-pill:not(.is-active):hover { border-color: #b36855; color: #89351d; }
         @media (min-width: 1024px) {
-            .studies-section {
-                display: flex;
-                flex-direction: column;
-                gap: calc(25 * var(--fu));
-                padding: calc(150 * var(--fu)) calc(300 * var(--fu)) calc(72 * var(--fu));
-            }
-            .studies-intro { gap: calc(7 * var(--fu)); }
-            .studies-title {
-                width: calc(1000 * var(--fu));
-                max-width: 100%;
-                font-size: clamp(34px, 3.2vw, 44px);
-                line-height: 1.1;
-                letter-spacing: -0.6px;
-            }
-            .studies-filters {
-                justify-content: flex-end;
-                gap: calc(12 * var(--fu));
-                margin-top: 0;
-            }
-            .studies-pill {
-                height: calc(43 * var(--fu));
-                padding: 0 calc(21 * var(--fu));
-                font-size: calc(14 * var(--fu));
-                line-height: calc(21 * var(--fu));
-            }
-            .studies-pill.is-active { padding: 0 calc(24 * var(--fu)); }
+            .studies-filters { justify-content: flex-end; }
             .studies-grid {
                 grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: calc(46 * var(--fu));
-                margin-top: 0;
+                gap: clamp(20px, calc(46 * var(--fu)), 46px);
             }
-            .study-card { min-height: calc(597 * var(--fu)); border-radius: calc(24 * var(--fu)); }
-            .study-card-body { gap: calc(28 * var(--fu)); padding: calc(24 * var(--fu)); }
+            .study-card { min-height: clamp(440px, calc(597 * var(--fu)), 597px); border-radius: clamp(16px, calc(24 * var(--fu)), 24px); }
+            .study-card-body { gap: clamp(20px, calc(28 * var(--fu)), 28px); padding: clamp(20px, calc(24 * var(--fu)), 24px); }
             .study-card-date {
-                margin-bottom: calc(11.1 * var(--fu));
-                font-size: calc(10 * var(--fu));
-                line-height: calc(14 * var(--fu));
-                letter-spacing: calc(0.5 * var(--fu));
+                margin-bottom: 10px;
+                font-size: clamp(10px, calc(12 * var(--fu)), 12px);
+                line-height: 1.4;
+                letter-spacing: 0.5px;
             }
             .study-card h3,
             .study-card h3 a {
-                font-size: calc(26 * var(--fu));
-                line-height: calc(32 * var(--fu));
+                font-size: clamp(18px, calc(26 * var(--fu)), 26px);
+                line-height: 1.25;
             }
             .study-card-excerpt {
-                margin-top: calc(11.1 * var(--fu));
-                font-size: calc(21 * var(--fu));
-                line-height: calc(26.1 * var(--fu));
+                margin-top: 10px;
+                font-size: clamp(14px, calc(18 * var(--fu)), 18px);
+                line-height: 1.5;
             }
             .study-read {
-                gap: calc(8 * var(--fu));
-                font-size: calc(21 * var(--fu));
-                letter-spacing: calc(1.32 * var(--fu));
+                gap: 8px;
+                font-size: clamp(13px, calc(16 * var(--fu)), 16px);
+                letter-spacing: 1.32px;
             }
-            .studies-cta { margin-top: 0; }
         }
     </style>
     @php
         $researchSection = \App\Models\Setting::getResearchSection();
     @endphp
-    <div class="studies-intro">
+    <div class="studies-head">
+    <div class="studies-intro" data-reveal>
         <div class="studies-kicker">
-            <span aria-hidden="true"></span>
+            <span class="reveal-line" aria-hidden="true"></span>
             <p>Studies</p>
                                     </div>
         <h2 id="studies-heading" class="studies-title">{{ $researchSection['title'] }}</h2>
@@ -2094,10 +2043,11 @@
     @php
         $homeFilters = \App\Models\Setting::getResearchHomeFilters();
     @endphp
-    <div class="studies-filters" id="researchFilters">
+    <div class="studies-filters" id="researchFilters" data-reveal>
         @foreach($homeFilters as $filter)
             <button type="button" data-research-filter="{{ $filter['key'] }}" class="studies-pill {{ $filter['key'] === 'all' ? 'is-active' : '' }}" aria-pressed="{{ $filter['key'] === 'all' ? 'true' : 'false' }}">{{ $filter['label'] }}</button>
         @endforeach
+    </div>
     </div>
 
     @php
@@ -2107,7 +2057,7 @@
     @endphp
 
     <div data-research-panel="all">
-        <div class="studies-grid">
+        <div class="studies-grid" data-reveal-stagger>
             @php
                 $allSlotOrder = collect($homeFilters)->pluck('key')->filter(fn ($key) => in_array($key, ['vision', 'research', 'blog'], true))->values();
                 $allSlotShown = false;
@@ -2131,7 +2081,7 @@
 
     @foreach(['vision' => 'Vision', 'research' => 'Research', 'media' => 'Media'] as $key => $studyCategory)
         <div data-research-panel="{{ $key }}" class="hidden">
-            <div class="studies-grid">
+            <div class="studies-grid" data-reveal-stagger>
                 @if(isset($featuredResearch[$key]) && $featuredResearch[$key]->isNotEmpty())
                     @foreach($featuredResearch[$key]->take(3) as $item)
                         @include('partials.home-research-card', ['item' => $item, 'studyCategory' => $studyCategory])
@@ -2144,7 +2094,7 @@
             @endforeach
 
     <div data-research-panel="blog" class="hidden">
-        <div class="studies-grid">
+        <div class="studies-grid" data-reveal-stagger>
             @forelse($homeBlogs as $blog)
                 @include('partials.home-blog-card', ['blog' => $blog, 'studyCategory' => 'Blog'])
             @empty
@@ -2153,8 +2103,8 @@
         </div>
         </div>
         
-    <div class="studies-cta">
-        <a class="studies-view-all" href="{{ route('research.featured') }}">
+    <div class="studies-cta" data-reveal>
+        <a class="studies-view-all site-btn" href="{{ route('research.featured') }}">
             View all Studies
             <img src="{{ asset('images/studies/view-all-arrow.svg') }}" alt="" width="9.46875" height="3.75">
         </a>
@@ -2565,10 +2515,10 @@ document.addEventListener('keydown', function(e) {
             .news-section {
                 background: #fbf9f6;
                 color: #1b1c1a;
-                padding: 56px 0 64px;
+                padding: var(--section-y) 0;
             }
             .news-wrap {
-                width: min(1690px, calc(100% - 48px));
+                width: var(--site-width);
                 margin: 0 auto;
             }
             .news-kicker {
@@ -2585,27 +2535,27 @@ document.addEventListener('keydown', function(e) {
             .news-kicker p {
                 margin: 0;
                 font-family: "Space Grotesk", Inter, sans-serif;
-                font-size: 14px;
+                font-size: var(--kicker-size);
                 font-weight: 700;
-                line-height: 16px;
+                line-height: 1.15;
                 letter-spacing: 1.1px;
                 text-transform: uppercase;
                 color: #89351d;
             }
             .news-heading {
-                margin: 4px 0 0;
+                margin: var(--kicker-gap) 0 0;
                 font-family: "Plus Jakarta Sans", Inter, sans-serif;
-                font-size: clamp(32px, 3.2vw, 48px);
+                font-size: var(--heading-size);
                 font-weight: 700;
-                line-height: 1.12;
-                letter-spacing: -0.6px;
+                line-height: 1.1;
+                letter-spacing: -0.02em;
                 color: #1b1c1a;
             }
             .news-layout {
                 display: grid;
                 grid-template-columns: minmax(0, 1fr);
                 gap: 28px;
-                margin-top: 28px;
+                margin-top: var(--heading-gap);
             }
             .news-feature-media {
                 position: relative;
@@ -2686,28 +2636,11 @@ document.addEventListener('keydown', function(e) {
                 -webkit-box-orient: vertical;
                 overflow: hidden;
             }
-            .news-story-btn {
-                display: inline-flex;
-                align-items: center;
-                margin-top: 14px;
-                padding: 8px 18px;
-                border: 0;
-                border-radius: 9999px;
-                background: #b36855;
-                color: #fff;
-                font-family: "Plus Jakarta Sans", Inter, sans-serif;
-                font-size: 13px;
-                font-weight: 600;
-                line-height: 18px;
-                letter-spacing: -0.35px;
-                cursor: pointer;
-            }
-            .news-story-btn:hover { background: #a35b49; }
+            .news-story-btn { margin-top: 18px; }
             .news-story-icon {
                 position: relative;
                 width: 14px;
                 height: 14px;
-                margin-left: 13px;
                 flex: none;
             }
             .news-story-icon img {
@@ -2774,10 +2707,18 @@ document.addEventListener('keydown', function(e) {
                 background: #efeae3;
             }
             .news-row-thumb--empty { display: block; }
+            .news-feature-media img,
+            .news-row-thumb { transition: scale 0.9s cubic-bezier(0.22, 1, 0.36, 1); }
+            .news-feature-media:hover img { scale: 1.04; }
+            .news-row:hover .news-row-thumb { scale: 1.05; }
+            .news-row-titleline img { transition: translate 0.25s ease; }
+            .news-row:hover .news-row-titleline img { translate: 3px -3px; }
+            .news-row-title { transition: color 0.2s ease; }
+            .news-row:hover .news-row-title { color: #89351d; }
             .news-view {
                 display: flex;
                 justify-content: center;
-                margin-top: 28px;
+                margin-top: var(--cta-gap);
             }
             .news-empty {
                 margin-top: 48px;
@@ -2787,18 +2728,14 @@ document.addEventListener('keydown', function(e) {
                 color: #5f5e5e;
             }
             @media (max-width: 720px) {
-                .news-section { padding: 40px 0 48px; }
-                .news-wrap { width: min(1690px, calc(100% - 32px)); }
                 .news-row { gap: 12px; padding: 14px 0; }
                 .news-row-thumb,
                 .news-row-thumb--empty { width: 96px; height: 84px; }
             }
             @media (min-width: 1024px) {
-                .news-section { padding: 72px 0 80px; }
                 .news-layout {
                     grid-template-columns: minmax(0, 784fr) minmax(0, 771fr);
                     column-gap: clamp(28px, 4vw, 64px);
-                    margin-top: 40px;
                     align-items: start;
                 }
             }
@@ -2820,15 +2757,17 @@ document.addEventListener('keydown', function(e) {
             };
         @endphp
         <div class="news-wrap">
-            <div class="news-kicker">
-                <span class="news-kicker-dash" aria-hidden="true"></span>
-                <p>{{ $newsContent['label'] }}</p>
+            <div data-reveal>
+                <div class="news-kicker">
+                    <span class="news-kicker-dash reveal-line" aria-hidden="true"></span>
+                    <p>{{ $newsContent['label'] }}</p>
+                </div>
+                <h2 class="news-heading">{!! $newsHeadingHtml !!}</h2>
             </div>
-            <h2 class="news-heading">{!! $newsHeadingHtml !!}</h2>
 
             @if($featuredNews)
                 <div class="news-layout">
-                    <article>
+                    <article data-reveal>
                         <button type="button" class="news-feature-media" onclick="openNewsDetail({{ $featuredNews->id }})">
                             @if($featuredNews->image_url)
                                 <img src="{{ $featuredNews->image_url }}" alt="{{ $featuredNews->title }}">
@@ -2845,7 +2784,7 @@ document.addEventListener('keydown', function(e) {
                         @if($featuredNews->excerpt)
                             <p class="news-feature-excerpt">{{ $featuredNews->excerpt }}</p>
                         @endif
-                        <button type="button" class="news-story-btn" onclick="openNewsDetail({{ $featuredNews->id }})">
+                        <button type="button" class="news-story-btn site-btn site-btn--sm" onclick="openNewsDetail({{ $featuredNews->id }})">
                             Read the story
                             <span class="news-story-icon" aria-hidden="true">
                                 <img src="{{ asset('images/news-story-arrow-a.svg') }}" alt="" width="11.4333" height="11.4333">
@@ -2855,7 +2794,7 @@ document.addEventListener('keydown', function(e) {
                     </article>
 
                     @if($sideNews->isNotEmpty())
-                        <div class="news-side">
+                        <div class="news-side" data-reveal-stagger>
                             @foreach($sideNews as $item)
                                 <button type="button" class="news-row" onclick="openNewsDetail({{ $item->id }})">
                                     <span class="news-row-copy">
@@ -2881,8 +2820,8 @@ document.addEventListener('keydown', function(e) {
                         </div>
                     @endif
                 </div>
-                <div class="news-view">
-                    <a href="{{ route('news.index') }}" class="gallery-explore">
+                <div class="news-view" data-reveal>
+                    <a href="{{ route('news.index') }}" class="gallery-explore site-btn">
                         View all Articles
                         <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                     </a>
@@ -2900,9 +2839,9 @@ document.addEventListener('keydown', function(e) {
             $gallerySection = \App\Models\Setting::getGallerySection();
             $galleryTitle = trim((string) ($gallerySection['title'] ?? ''));
         @endphp
-        <div class="gallery-wrap">
+        <div class="gallery-wrap" data-reveal>
             <div class="gallery-marker">
-                <span class="gallery-dash" aria-hidden="true"></span>
+                <span class="gallery-dash reveal-line" aria-hidden="true"></span>
                 <p class="gallery-kicker">{{ $gallerySection['label'] }}</p>
             </div>
             <h2 class="gallery-title">
@@ -2915,7 +2854,7 @@ document.addEventListener('keydown', function(e) {
         </div>
 
         @if($galleryCollections->isNotEmpty())
-            <div class="gallery-scroller" tabindex="0" aria-label="Photo collections">
+            <div class="gallery-scroller" tabindex="0" aria-label="Photo collections" data-reveal-stagger>
                 @foreach($galleryCollections as $collection)
                     @php
                         $previewImages = $collection->images->take(4);
@@ -2947,8 +2886,8 @@ document.addEventListener('keydown', function(e) {
                     </a>
                 @endforeach
             </div>
-            <div class="gallery-action">
-                <a href="{{ route('gallery.index') }}" class="gallery-explore">
+            <div class="gallery-action" data-reveal>
+                <a href="{{ route('gallery.index') }}" class="gallery-explore site-btn">
                     Explore gallery
                     <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
                 </a>
@@ -3016,6 +2955,81 @@ document.addEventListener('keydown', function(e) {
             </div>
         </div>
     </section> --}}
+
+    <style>
+        html { scroll-behavior: smooth; }
+        .reveal-ready [data-reveal]:not(.reveal-done),
+        .reveal-ready [data-reveal-stagger] > :not(.reveal-done) {
+            transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            transition-delay: var(--reveal-delay, 0s);
+        }
+        .reveal-ready [data-reveal]:not(.is-revealed),
+        .reveal-ready [data-reveal-stagger] > :not(.is-revealed) {
+            opacity: 0;
+            transform: translate3d(0, 32px, 0);
+        }
+        .reveal-line {
+            transform-origin: left center;
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.25s;
+        }
+        .reveal-ready [data-reveal]:not(.is-revealed) .reveal-line { transform: scaleX(0); }
+        .impact-section { padding: var(--section-y) 0; }
+        .impact-kicker { margin: 0; font-size: var(--kicker-size); line-height: 1.15; }
+        .impact-heading {
+            margin: var(--kicker-gap) 0 0;
+            font-family: "Plus Jakarta Sans", Inter, sans-serif;
+            font-size: var(--heading-size);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        .impact-layout {
+            display: flex;
+            flex-direction: column;
+            gap: var(--heading-gap);
+        }
+        @media (min-width: 1536px) {
+            .impact-layout { flex-direction: row; align-items: center; gap: 56px; }
+            .impact-intro { flex: 0 0 clamp(260px, 14vw, 380px); }
+        }
+        .impact-stat { transition: background-color 0.35s ease; }
+        .impact-stat:hover { background-color: #171c26; }
+        .impact-stat > img { transition: translate 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+        .impact-stat:hover > img { translate: 0 -4px; }
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+        }
+    </style>
+    <script>
+        (function () {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+            var targets = document.querySelectorAll('[data-reveal], [data-reveal-stagger] > *');
+            if (!targets.length) return;
+            document.documentElement.classList.add('reveal-ready');
+
+            var observer = new IntersectionObserver(function (entries) {
+                var batch = entries
+                    .filter(function (entry) { return entry.isIntersecting || entry.boundingClientRect.bottom < 0; })
+                    .map(function (entry) { return entry.target; })
+                    .sort(function (a, b) {
+                        return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1;
+                    });
+
+                batch.forEach(function (el, index) {
+                    var delay = Math.min(index, 6) * 90;
+                    observer.unobserve(el);
+                    el.style.setProperty('--reveal-delay', delay + 'ms');
+                    el.classList.add('is-revealed');
+                    window.setTimeout(function () {
+                        el.classList.add('reveal-done');
+                        el.style.removeProperty('--reveal-delay');
+                    }, delay + 1000);
+                });
+            }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+            targets.forEach(function (el) { observer.observe(el); });
+        })();
+    </script>
 @endsection
 
 <style>
@@ -3026,9 +3040,8 @@ document.addEventListener('keydown', function(e) {
 .initiatives-section {
     position: relative;
     isolation: isolate;
-    min-height: 760px;
     overflow: hidden;
-    padding: 160px 0 112px;
+    padding: var(--section-y) 0 max(24px, calc(var(--section-y) - 64px));
     background: #f7f7f5;
     color: #111111;
 }
@@ -3059,9 +3072,6 @@ document.addEventListener('keydown', function(e) {
 }
 
 .initiatives-heading {
-    max-width: 1548px;
-    margin: 0 auto;
-    padding: 0 24px;
     transition: opacity 650ms ease, transform 650ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -3082,26 +3092,26 @@ document.addEventListener('keydown', function(e) {
     margin: 0;
     color: #89351d;
     font-family: "Space Grotesk", sans-serif;
-    font-size: 14px;
+    font-size: var(--kicker-size);
     font-weight: 700;
-    line-height: 16px;
+    line-height: 1.15;
     letter-spacing: 1.1px;
     text-transform: uppercase;
 }
 
 .initiatives-heading h2 {
-    margin: 12px 0 0;
+    margin: var(--kicker-gap) 0 0;
     color: #1b1c1a;
     font-family: "Plus Jakarta Sans", Inter, sans-serif;
-    font-size: 44px;
+    font-size: var(--heading-size);
+    letter-spacing: -0.02em;
     font-weight: 700;
     line-height: 1.1;
 }
 
 .initiatives-viewport {
     width: 100%;
-    margin-top: 36px;
-    padding-block: 75px;
+    padding-block: var(--heading-gap) 64px;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
@@ -3124,7 +3134,7 @@ document.addEventListener('keydown', function(e) {
     display: flex;
     width: max-content;
     gap: 20px;
-    margin-inline: auto;
+    padding-inline: var(--site-edge);
     align-items: flex-start;
 }
 
@@ -3443,34 +3453,7 @@ document.addEventListener('keydown', function(e) {
     transform: translateY(0);
 }
 
-@media (max-width: 1919px) {
-    .initiatives-track {
-        margin-inline: 0;
-        padding-inline: 24px;
-    }
-}
-
 @media (max-width: 767px) {
-    .initiatives-section {
-        min-height: 0;
-        padding: 96px 0 72px;
-    }
-
-    .initiatives-heading h2 {
-        font-size: 34px;
-        line-height: 1.15;
-    }
-
-    .initiatives-viewport {
-        margin-top: 28px;
-        scroll-padding-inline: 24px;
-    }
-
-    .initiatives-track {
-        gap: 20px;
-        padding-inline: 24px;
-    }
-
     .initiative-card {
         flex-basis: 170px;
         width: 170px;
@@ -3590,12 +3573,12 @@ document.addEventListener('keydown', function(e) {
 .gallery-section {
     background: #fff;
     color: #111;
-    padding: 3.25rem 0 3.75rem;
+    padding: var(--section-y) 0;
 }
 
 .gallery-wrap,
 .gallery-empty {
-    width: min(1640px, calc(100% - 2rem));
+    width: var(--site-width);
     margin-inline: auto;
 }
 
@@ -3617,21 +3600,22 @@ document.addEventListener('keydown', function(e) {
     margin: 0;
     color: #89351d;
     font-family: "Space Grotesk", Inter, sans-serif;
-    font-size: 14px;
+    font-size: var(--kicker-size);
     font-weight: 700;
     letter-spacing: 1.1px;
-    line-height: 16px;
+    line-height: 1.15;
     text-transform: uppercase;
 }
 
 .gallery-title {
-    max-width: 760px;
-    margin: 16px 0 0;
+    max-width: 16em;
+    margin: var(--kicker-gap) 0 0;
     color: #111;
-    font-family: Poppins, "Plus Jakarta Sans", Inter, sans-serif;
-    font-size: clamp(1.75rem, 3.2vw, 46px);
-    font-weight: 600;
-    line-height: 1.15;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: var(--heading-size);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
 }
 
 .gallery-empty {
@@ -3643,12 +3627,12 @@ document.addEventListener('keydown', function(e) {
 .gallery-scroller {
     display: flex;
     gap: 16px;
-    margin-top: 32px;
+    margin-top: calc(var(--heading-gap) - 12px);
     overflow-x: auto;
-    padding-bottom: 8px;
-    padding-left: max(1rem, calc((100% - 1640px) / 2 + 1rem));
-    padding-right: max(1rem, calc((100% - 1640px) / 2 + 1rem));
-    scroll-padding-inline: max(1rem, calc((100% - 1640px) / 2 + 1rem));
+    padding-top: 12px;
+    padding-bottom: 20px;
+    padding-inline: var(--site-edge);
+    scroll-padding-inline: var(--site-edge);
     cursor: grab;
     user-select: none;
     touch-action: pan-x;
@@ -3667,13 +3651,14 @@ document.addEventListener('keydown', function(e) {
 }
 
 .gallery-card {
+    --gallery-card-w: min(78vw, clamp(420px, 18vw + 220px, 620px));
     scroll-snap-align: start;
     flex: 0 0 auto;
     display: flex;
     gap: 2px;
-    width: min(78vw, 480px);
-    height: calc(min(78vw, 480px) * 292 / 480);
-    border-radius: 8px;
+    width: var(--gallery-card-w);
+    height: calc(var(--gallery-card-w) * 292 / 480);
+    border-radius: clamp(8px, 0.6vw, 14px);
     overflow: hidden;
     background: #f7f4ee;
     text-decoration: none;
@@ -3783,48 +3768,34 @@ document.addEventListener('keydown', function(e) {
     display: none;
 }
 
+.gallery-card {
+    transition: translate 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
+}
+
+.gallery-card-lead > img,
+.gallery-card-thumb img {
+    transition: scale 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery-card:hover {
+    translate: 0 -6px;
+    box-shadow: 0 22px 40px -22px rgba(19, 24, 14, 0.55);
+}
+
+.gallery-card:hover .gallery-card-lead > img,
+.gallery-card:hover .gallery-card-thumb img {
+    scale: 1.06;
+}
+
 .gallery-action {
     display: flex;
     justify-content: center;
-    margin-top: 44px;
-}
-
-.gallery-explore {
-    display: inline-flex;
-    align-items: center;
-    height: 53px;
-    padding: 10px 24px;
-    border-radius: 9999px;
-    background: #b36855;
-    color: #faf7f2;
-    font-family: "Plus Jakarta Sans", Inter, sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 21px;
-    text-decoration: none;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12), 0 2px 4px -2px rgba(0, 0, 0, 0.43);
-}
-
-.gallery-explore img {
-    margin-left: 8px;
+    margin-top: calc(var(--cta-gap) - 20px);
 }
 
 @media (min-width: 1100px) {
     .gallery-scroller {
         gap: 28px;
-        padding-left: max(2rem, calc((100% - 1640px) / 2 + 2rem));
-        padding-right: max(2rem, calc((100% - 1640px) / 2 + 2rem));
-        scroll-padding-inline: max(2rem, calc((100% - 1640px) / 2 + 2rem));
-    }
-
-    .gallery-wrap,
-    .gallery-empty {
-        width: min(1640px, calc(100% - 4rem));
-    }
-
-    .gallery-card {
-        width: 480px;
-        height: 292px;
     }
 }
 
@@ -4021,7 +3992,7 @@ document.addEventListener('keydown', function(e) {
 
 @media (max-width: 767px) {
     .initiatives-viewport {
-        padding-block: 32px;
+        padding-block: var(--heading-gap) 32px;
     }
 
     #projects .tooltip-popup {
@@ -4137,29 +4108,40 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-// Counter animation for stats
+// Counter animation for stats: counts up once the stats scroll into view.
 document.addEventListener('DOMContentLoaded', function() {
     const counters = document.querySelectorAll('.counter');
-    const speed = 200;
+    if (!counters.length) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
 
-    counters.forEach(counter => {
-        const updateCounter = () => {
-            const target = parseInt(counter.getAttribute('data-target'));
-            const current = parseInt(counter.innerText);
-            const increment = Math.ceil(target / speed);
-            
-            if (current < target) {
-                counter.innerText = Math.min(current + increment, target);
-                setTimeout(updateCounter, 1);
-            } else {
-                counter.innerText = target;
-            }
+    const duration = 1800;
+    const easeOutExpo = (t) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+
+    const run = (counter) => {
+        const raw = counter.getAttribute('data-target') || '0';
+        const target = parseFloat(raw) || 0;
+        const decimals = (raw.split('.')[1] || '').length;
+        const start = performance.now();
+        const tick = (now) => {
+            const progress = easeOutExpo(Math.min((now - start) / duration, 1));
+            counter.textContent = (target * progress).toFixed(decimals);
+            if (progress < 1) requestAnimationFrame(tick);
         };
+        requestAnimationFrame(tick);
+    };
 
-        // Keep the real value in server-rendered HTML, then animate in the browser.
-        counter.innerText = '0';
-        updateCounter();
-    });
+    // Keep the real value in server-rendered HTML, then animate in the browser.
+    counters.forEach((counter) => { counter.textContent = '0'; });
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            observer.unobserve(entry.target);
+            run(entry.target);
+        });
+    }, { threshold: 0.6 });
+
+    counters.forEach((counter) => observer.observe(counter));
 });
 </script>
 

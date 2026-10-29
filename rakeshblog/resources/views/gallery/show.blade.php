@@ -40,59 +40,61 @@
 <style>
 .collection-page {
     min-height: 100vh;
-    background: #f7f4ee;
+    background: #fff;
     color: #1e1e1a;
-    padding: 8rem 1.5rem 5rem;
+    padding: var(--page-top) 0 var(--section-y);
 }
 
 .collection-wrap {
-    max-width: 72rem;
+    width: var(--site-width);
     margin: 0 auto;
 }
 
 .collection-back {
-    color: #735A12;
-    font-size: 0.75rem;
+    display: inline-block;
+    margin-bottom: clamp(20px, 1vw + 12px, 36px);
+    color: #89351d;
+    font-family: "Space Grotesk", Inter, sans-serif;
+    font-size: var(--kicker-size);
     font-weight: 700;
-    letter-spacing: 0.14em;
+    letter-spacing: 1.1px;
+    line-height: 1.15;
+    text-decoration: none;
     text-transform: uppercase;
 }
 
-.collection-back {
-    display: inline-block;
-    margin-bottom: 1.5rem;
-    text-decoration: none;
-}
-
 .collection-back:hover {
-    color: #1e1e1a;
+    color: #b36855;
 }
 
 .collection-head {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 1.5rem;
-    margin: 0.75rem 0 2rem;
+    gap: 12px 24px;
+    margin: 0 0 var(--heading-gap);
 }
 
 .collection-head h1 {
-    font-family: "Playfair Display", serif;
-    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    margin: 0;
+    font-family: "Plus Jakarta Sans", Inter, sans-serif;
+    font-size: var(--page-title-size);
     font-weight: 700;
-    line-height: 1.1;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
 }
 
 .collection-head p {
+    margin: 0;
     color: #5a5a52;
-    font-size: 0.95rem;
+    font-size: clamp(14px, 0.2vw + 12.5px, 17px);
     white-space: nowrap;
 }
 
 .collection-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, clamp(150px, 14vw + 80px, 440px)), 1fr));
+    gap: clamp(8px, 0.8vw + 4px, 20px);
 }
 
 .collection-photo {
@@ -100,17 +102,22 @@
     padding: 0;
     border: 0;
     background: #e7e1d6;
-    border-radius: 0.75rem;
+    border-radius: clamp(8px, 0.6vw, 14px);
     overflow: hidden;
     cursor: zoom-in;
 }
 
-
 .collection-photo img {
     display: block;
     width: 100%;
-    height: 240px;
+    aspect-ratio: 4 / 3;
+    height: auto;
     object-fit: cover;
+    transition: scale 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.collection-photo:hover img {
+    scale: 1.05;
 }
 
 .collection-lightbox {
@@ -149,16 +156,6 @@
     text-transform: uppercase;
     padding: 0.55rem 0.9rem;
     cursor: pointer;
-}
-
-@media (min-width: 800px) {
-    .collection-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-
-    .collection-photo img {
-        height: 260px;
-    }
 }
 
 @media (max-width: 640px) {
