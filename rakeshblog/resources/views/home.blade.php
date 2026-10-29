@@ -981,23 +981,23 @@
     </section>
   <!-- Mission Section -->
     @php
-        $missionItems = [
-            ['number' => '01', 'title' => 'Education', 'body' => 'Making learning practical, accessible and future-ready.'],
-            ['number' => '02', 'title' => 'Youth Empowerment', 'body' => 'Equipping young minds with skills, confidence and purpose.'],
-            ['number' => '03', 'title' => 'Technology', 'body' => 'Using technology to solve real problems in communities.'],
-            ['number' => '04', 'title' => 'Local Economy', 'body' => 'Creating opportunities that strengthen local communities.'],
-            ['number' => '05', 'title' => 'Sustainability', 'body' => 'Building projects that respect nature and culture.'],
-            ['number' => '06', 'title' => 'Nation First', 'body' => 'Every step I take is for Nepal and her future.'],
-        ];
+        $missionContent = \App\Models\Setting::getMissionContent();
+        $missionItems = $missionContent['items'];
+        $missionLabel = $missionContent['label'];
+        $missionButtonLabel = $missionContent['button_label'];
     @endphp
     <section id="about" class="mission-scroll text-[#1e1e1a] scroll-mt-20" aria-labelledby="mission-heading">
         <div class="mission-scroll__list">
-            <p class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>My Missions</p>
-            @foreach($missionItems as $item)
+            <p class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>{{ $missionLabel }}</p>
+            @foreach($missionItems as $index => $item)
                 <div class="mission-scroll__listItem">
                     <div class="mission-scroll__listNum">{{ $item['number'] }}</div>
                     <h3 class="mission-scroll__listTitle">{{ $item['title'] }}</h3>
                     <p class="mission-scroll__listBody">{{ $item['body'] }}</p>
+                    <button type="button" class="mission-scroll__more mission-scroll__more--list" data-mission-open="{{ $index }}">
+                        {{ $missionButtonLabel }}
+                        <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
+                    </button>
                 </div>
             @endforeach
         </div>
@@ -1020,21 +1020,33 @@
                         @endforeach
                     </div>
                 </div>
-                <p id="mission-heading" class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>My Missions</p>
+                <p id="mission-heading" class="mission-scroll__kicker"><span class="mission-scroll__dash" aria-hidden="true"></span>{{ $missionLabel }}</p>
                 <div class="mission-scroll__textZone">
                     <div class="mission-scroll__textViewport" id="missionText">
-                        @foreach($missionItems as $item)
+                        @foreach($missionItems as $index => $item)
                             <article class="mission-scroll__reason">
                                 <h3 class="mission-scroll__headline">{{ $item['title'] }}</h3>
                                 <p class="mission-scroll__body">{{ $item['body'] }}</p>
-                                <a href="#projects" class="mission-scroll__more">
-                                    Learn More
+                                <button type="button" class="mission-scroll__more" data-mission-open="{{ $index }}">
+                                    {{ $missionButtonLabel }}
                                     <img src="{{ asset('images/gallery-explore-arrow.svg') }}" alt="" width="9.46875" height="3.75">
-                                </a>
+                                </button>
                             </article>
                         @endforeach
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div id="missionModal" class="mission-modal" hidden>
+            <div class="mission-modal__backdrop" data-mission-close></div>
+            <div class="mission-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="missionModalTitle">
+                <button type="button" class="mission-modal__close" data-mission-close aria-label="Close mission details">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+                <p class="mission-modal__number" id="missionModalNumber"></p>
+                <h3 class="mission-modal__title" id="missionModalTitle"></h3>
+                <div class="mission-modal__body" id="missionModalBody"></div>
             </div>
         </div>
     </section>
@@ -1082,6 +1094,7 @@
         .mission-scroll__listNum { color: #111111; font-family: "Plus Jakarta Sans", sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -0.04em; }
         .mission-scroll__listTitle { margin: 8px 0 0; font-family: Poppins, sans-serif; font-size: 32px; font-weight: 600; letter-spacing: -0.6px; color: #111111; }
         .mission-scroll__listBody { margin: 8px 0 0; color: #59554f; font-family: "Plus Jakarta Sans", sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5; }
+        .mission-scroll__more--list { margin-top: 16px; }
         .mission-scroll__track { position: relative; width: 100%; height: 600vh; }
         .mission-scroll__sticky {
             position: sticky;
@@ -1190,6 +1203,7 @@
             align-items: center;
             height: 36px;
             padding: 0 14px 0 16px;
+            border: 0;
             border-radius: 9999px;
             background: #b36855;
             color: #faf7f2;
@@ -1200,10 +1214,124 @@
             letter-spacing: 0.2px;
             text-decoration: none;
             white-space: nowrap;
+            cursor: pointer;
             box-shadow: 0 8px 18px -10px rgba(137, 53, 29, 0.85);
         }
         .mission-scroll__more img { margin-left: 8px; }
         .mission-scroll__more:hover { filter: brightness(1.06); }
+        .mission-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .mission-modal[hidden] { display: none !important; }
+        .mission-modal__backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(17, 17, 17, 0.55);
+            backdrop-filter: blur(4px);
+        }
+        .mission-modal__dialog {
+            position: relative;
+            z-index: 1;
+            width: min(760px, 100%);
+            max-height: min(88vh, 820px);
+            overflow: auto;
+            padding: 32px 28px 28px;
+            border-radius: 24px;
+            background: #fff;
+            box-shadow: 0 24px 60px rgba(17, 17, 17, 0.28);
+        }
+        .mission-modal__close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid #efeeeb;
+            border-radius: 9999px;
+            background: #fff;
+            color: #59554f;
+            cursor: pointer;
+        }
+        .mission-modal__close:hover { color: #111111; border-color: #d5cec2; }
+        .mission-modal__number {
+            margin: 0;
+            color: #89351d;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+        .mission-modal__title {
+            margin: 8px 0 0;
+            color: #111111;
+            font-family: Poppins, sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-weight: 600;
+            letter-spacing: -0.04em;
+            line-height: 1.15;
+            padding-right: 40px;
+        }
+        .mission-modal__body {
+            margin-top: 16px;
+            color: #3a3a34;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            font-size: 16px;
+            line-height: 1.7;
+        }
+        .mission-modal__body > *:first-child { margin-top: 0; }
+        .mission-modal__body p { margin: 0 0 1em; }
+        .mission-modal__body h2,
+        .mission-modal__body h3,
+        .mission-modal__body h4 {
+            margin: 1.15em 0 0.45em;
+            color: #111111;
+            font-family: Poppins, sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+        }
+        .mission-modal__body h2 { font-size: 1.5rem; }
+        .mission-modal__body h3 { font-size: 1.25rem; }
+        .mission-modal__body h4 { font-size: 1.1rem; }
+        .mission-modal__body ul,
+        .mission-modal__body ol {
+            margin: 0 0 1em;
+            padding-left: 1.35rem;
+        }
+        .mission-modal__body li { margin: 0.3em 0; }
+        .mission-modal__body a { color: #89351d; text-decoration: underline; text-underline-offset: 2px; }
+        .mission-modal__body blockquote {
+            margin: 0 0 1em;
+            padding: 0.15em 0 0.15em 1rem;
+            border-left: 3px solid #b36855;
+            color: #59554f;
+        }
+        .mission-modal__body img {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            margin: 1.1em 0;
+            border-radius: 16px;
+            object-fit: cover;
+            box-shadow: 0 12px 28px rgba(17, 17, 17, 0.12);
+        }
+        .mission-modal__body figure { margin: 1.1em 0; }
+        .mission-modal__body figcaption {
+            margin-top: 0.45em;
+            color: #8a8a82;
+            font-size: 0.875rem;
+            line-height: 1.4;
+        }
         .mission-scroll__textViewport { position: relative; height: 150px; width: min(560px, 54vw); overflow: hidden; }
         .mission-scroll__reason {
             position: absolute;
@@ -1287,6 +1415,53 @@
             .mission-scroll__list { display: block !important; }
         }
     </style>
+    <script>
+        (function () {
+            const missions = @json($missionItems);
+            const modal = document.getElementById('missionModal');
+            const numberEl = document.getElementById('missionModalNumber');
+            const titleEl = document.getElementById('missionModalTitle');
+            const bodyEl = document.getElementById('missionModalBody');
+            if (!modal || !numberEl || !titleEl || !bodyEl) return;
+
+            function openMission(index) {
+                const item = missions[index];
+                if (!item) return;
+                numberEl.textContent = item.number || '';
+                titleEl.textContent = item.title || '';
+                const html = String(item.description || '').trim();
+                if (html && /<[a-z][\s\S]*>/i.test(html)) {
+                    bodyEl.innerHTML = html;
+                } else {
+                    bodyEl.textContent = html || item.body || '';
+                }
+                modal.hidden = false;
+                document.body.style.overflow = 'hidden';
+                modal.querySelector('.mission-modal__dialog')?.scrollTo(0, 0);
+            }
+
+            function closeMission() {
+                modal.hidden = true;
+                document.body.style.overflow = '';
+            }
+
+            document.querySelectorAll('[data-mission-open]').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    openMission(Number(button.getAttribute('data-mission-open')));
+                });
+            });
+
+            modal.querySelectorAll('[data-mission-close]').forEach(function (el) {
+                el.addEventListener('click', closeMission);
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && !modal.hidden) {
+                    closeMission();
+                }
+            });
+        })();
+    </script>
     <script>
         (function () {
             const section = document.getElementById('about');

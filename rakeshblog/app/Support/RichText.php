@@ -18,7 +18,7 @@ class RichText
             return '';
         }
 
-        $allowed = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'a', 'blockquote', 'span', 'mark', 'hr'];
+        $allowed = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'a', 'blockquote', 'span', 'mark', 'hr', 'img', 'figure', 'figcaption', 'div'];
         $removed = ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button'];
 
         $document = new DOMDocument();
@@ -83,7 +83,9 @@ class RichText
         $tag = strtolower($element->tagName);
         $keep = match ($tag) {
             'a' => ['href', 'title', 'target'],
+            'img' => ['src', 'alt', 'title', 'width', 'height'],
             'span', 'mark' => ['style'],
+            'div' => ['class'],
             default => [],
         };
         $remove = [];
@@ -105,6 +107,18 @@ class RichText
             } else {
                 $element->setAttribute('style', $style);
             }
+        }
+
+        if ($tag === 'img') {
+            $src = trim($element->getAttribute('src'));
+            $safeSrc = (str_starts_with($src, '/') && ! str_starts_with($src, '//'))
+                || (bool) preg_match('#^https?://#i', $src);
+
+            if (! $safeSrc) {
+                $element->parentNode?->removeChild($element);
+            }
+
+            return;
         }
 
         if ($tag !== 'a' || ! $element->hasAttribute('href')) {

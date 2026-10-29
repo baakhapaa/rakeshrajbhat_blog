@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Support\AboutVideo;
 use App\Support\MediaStorage;
+use App\Support\RichText;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -16,8 +17,9 @@ class HomeContentController extends Controller
     {
         $home = Setting::getHomeContent();
         $about = Setting::getAboutContent();
+        $mission = Setting::getMissionContent();
 
-        return view('admin.home.edit', compact('home', 'about'));
+        return view('admin.home.edit', compact('home', 'about', 'mission'));
     }
 
     public function updateHome(Request $request)
@@ -207,6 +209,62 @@ class HomeContentController extends Controller
         ]));
 
         return redirect()->route('admin.home-content.edit', ['tab' => 'about'])->with('success', 'About me updated successfully!');
+    }
+
+    public function updateMission(Request $request)
+    {
+        $validated = $request->validate([
+            'mission_label' => 'required|string|max:80',
+            'mission_button_label' => 'required|string|max:40',
+            'mission_title' => 'required|array|min:2|max:12',
+            'mission_title.*' => 'required|string|max:80',
+            'mission_body' => 'required|array|min:2|max:12',
+            'mission_body.*' => 'required|string|max:90',
+            'mission_description' => 'required|array|min:2|max:12',
+            'mission_description.*' => 'nullable|string|max:200000',
+        ], [
+            'mission_title.required' => 'Add at least two mission items.',
+            'mission_title.min' => 'Add at least two mission items.',
+            'mission_title.max' => 'You can add up to 12 mission items.',
+            'mission_title.*.required' => 'Each mission needs a title.',
+            'mission_body.*.required' => 'Each mission needs a short description.',
+        ]);
+
+        if (
+            count($validated['mission_title']) !== count($validated['mission_body'])
+            || count($validated['mission_title']) !== count($validated['mission_description'])
+        ) {
+            return back()->withErrors([
+                'mission_title' => 'Each mission needs a title, short description, and long description.',
+            ])->withInput();
+        }
+
+        $items = [];
+
+        foreach ($validated['mission_title'] as $index => $title) {
+            $description = RichText::clean($validated['mission_description'][$index] ?? '');
+
+            if (trim(strip_tags($description)) === '' && ! str_contains($description, '<img')) {
+                return back()->withErrors([
+                    'mission_description.'.$index => 'Each mission needs a long description for the Learn More modal.',
+                ])->withInput();
+            }
+
+            $items[] = [
+                'number' => str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT),
+                'title' => trim($title),
+                'body' => trim((string) ($validated['mission_body'][$index] ?? '')),
+                'description' => $description,
+            ];
+        }
+
+        Setting::setValue('mission_content', Setting::encodeJson([
+            'label' => trim($validated['mission_label']),
+            'button_label' => trim($validated['mission_button_label']),
+            'items' => $items,
+        ]));
+
+        return redirect()->route('admin.home-content.edit', ['tab' => 'mission'])->with('success', 'Missions updated successfully!');
     }
 
     private function aboutMediaKind(UploadedFile $file): ?string

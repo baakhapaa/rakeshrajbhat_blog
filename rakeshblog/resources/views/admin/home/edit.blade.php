@@ -5,7 +5,7 @@
 @section('content')
 @php
     $homeTab = old('_tab', request('tab', 'hero'));
-    if (! in_array($homeTab, ['hero', 'about'], true)) {
+    if (! in_array($homeTab, ['hero', 'about', 'mission'], true)) {
         $homeTab = 'hero';
     }
 @endphp
@@ -35,6 +35,9 @@
         </button>
         <button type="button" onclick="switchHomeTab('about')" id="tabAbout" class="px-4 py-2 text-sm font-medium transition border-b-2 {{ $homeTab === 'about' ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 hover:text-white border-transparent' }}">
             About me
+        </button>
+        <button type="button" onclick="switchHomeTab('mission')" id="tabMission" class="px-4 py-2 text-sm font-medium transition border-b-2 {{ $homeTab === 'mission' ? 'text-[#D4AF37] border-[#D4AF37]' : 'text-white/60 hover:text-white border-transparent' }}">
+            Missions
         </button>
     </div>
 
@@ -355,6 +358,113 @@
             Save about me
         </button>
     </form>
+
+    <form action="{{ route('admin.home-content.update-mission') }}" method="POST" id="missionTab" class="space-y-6 {{ $homeTab === 'mission' ? '' : 'hidden' }}">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="_tab" value="mission">
+
+        <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
+            <h2 class="text-xl font-semibold text-white mb-6">Section</h2>
+
+            <div class="mb-4">
+                <label for="mission_label" class="block text-white/70 text-sm font-medium mb-2">Label</label>
+                <input type="text" id="mission_label" name="mission_label" value="{{ old('mission_label', $mission['label']) }}" maxlength="80"
+                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
+                @error('mission_label')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="mission_button_label" class="block text-white/70 text-sm font-medium mb-2">Learn More button label</label>
+                <input type="text" id="mission_button_label" name="mission_button_label" value="{{ old('mission_button_label', $mission['button_label']) }}" maxlength="40"
+                    class="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none transition">
+                @error('mission_button_label')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        @php
+            $missionItems = $mission['items'];
+            $oldMissionTitles = old('mission_title');
+            if (is_array($oldMissionTitles)) {
+                $oldMissionBodies = old('mission_body', []);
+                $oldMissionDescriptions = old('mission_description', []);
+                $missionItems = [];
+                foreach ($oldMissionTitles as $index => $title) {
+                    $missionItems[] = [
+                        'title' => $title,
+                        'body' => $oldMissionBodies[$index] ?? '',
+                        'description' => $oldMissionDescriptions[$index] ?? '',
+                    ];
+                }
+            }
+        @endphp
+        <div class="bg-[#1a1f26] rounded-xl border border-white/5 p-6">
+            <h2 class="text-xl font-semibold text-white mb-2">Mission items</h2>
+            <p class="text-sm text-white/40 mb-6">Open one mission at a time to edit it. Use the arrows to change the order shown on the homepage. Add 2 to 12 missions.</p>
+
+            <div id="missionItemRows" class="space-y-3">
+                @foreach($missionItems as $index => $item)
+                    <div class="mission-item-row rounded-xl border border-white/10 overflow-hidden" data-open="false">
+                        <div class="mission-item-header flex flex-wrap items-center gap-2 px-4 py-3 bg-white/[0.03]">
+                            <button type="button" class="mission-item-toggle flex min-w-0 flex-1 items-center gap-3 text-left">
+                                <i class="fa-solid fa-chevron-down mission-item-chevron text-xs text-white/40 transition-transform" aria-hidden="true"></i>
+                                <span class="shrink-0 text-sm font-medium text-[#D4AF37]">Mission <span class="mission-item-number">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span></span>
+                                <span class="mission-item-summary truncate text-sm text-white/70">{{ $item['title'] !== '' ? $item['title'] : 'Untitled mission' }}</span>
+                            </button>
+                            <div class="flex items-center gap-1">
+                                <button type="button" class="mission-item-up inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white/60 hover:text-white hover:border-white/20" aria-label="Move mission up" title="Move up">
+                                    <i class="fa-solid fa-arrow-up text-xs" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" class="mission-item-down inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white/60 hover:text-white hover:border-white/20" aria-label="Move mission down" title="Move down">
+                                    <i class="fa-solid fa-arrow-down text-xs" aria-hidden="true"></i>
+                                </button>
+                                <button type="button" class="remove-mission-item px-3 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+                            </div>
+                        </div>
+                        <div class="mission-item-body hidden space-y-3 border-t border-white/10 px-4 py-4">
+                            <div>
+                                <label class="block text-white/70 text-sm font-medium mb-2">Title</label>
+                                <input type="text" name="mission_title[]" value="{{ $item['title'] }}" maxlength="80" placeholder="Title" class="mission-item-title w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-white/70 text-sm font-medium mb-2">Short description</label>
+                                <textarea name="mission_body[]" rows="4" maxlength="90" placeholder="Shown on the homepage dial" class="mission-item-body-input min-h-[6.5rem] w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">{{ $item['body'] }}</textarea>
+                                <p class="mt-1 text-xs text-white/40">Keep this short for the dial. Best around <span class="text-white/60">60 characters</span>. Maximum <span class="text-white/60">90 characters</span> so it still fits on phones. Longer text belongs in the long description. <span class="mission-body-count text-white/50">0/90</span></p>
+                            </div>
+                            <div>
+                                <label class="block text-white/70 text-sm font-medium mb-2">Long description</label>
+                                <p class="mb-2 text-xs text-white/40">Style headings, bold text, lists, and colours. Use the image button to add multiple photos for the Learn More modal.</p>
+                                <textarea id="mission_description_{{ $index }}" name="mission_description[]" rows="8" class="mission-item-description w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">{{ $item['description'] }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            @error('mission_title')
+                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
+            @enderror
+            @error('mission_title.*')
+                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
+            @enderror
+            @error('mission_body.*')
+                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
+            @enderror
+            @error('mission_description.*')
+                <p class="text-red-400 text-sm mt-3">{{ $message }}</p>
+            @enderror
+
+            <button type="button" id="addMissionItem" class="mt-4 px-4 py-2 rounded-lg border border-white/10 text-white/80 hover:text-white">Add mission</button>
+        </div>
+
+        <button type="submit" class="bg-[#D4AF37] text-[#0b0e12] px-6 py-2 rounded-lg font-semibold hover:bg-[#c4a030] transition-all">
+            Save missions
+        </button>
+    </form>
 </div>
 
 <template id="aboutFactTemplate">
@@ -365,11 +475,49 @@
     </div>
 </template>
 
+<template id="missionItemTemplate">
+    <div class="mission-item-row rounded-xl border border-white/10 overflow-hidden" data-open="false">
+        <div class="mission-item-header flex flex-wrap items-center gap-2 px-4 py-3 bg-white/[0.03]">
+            <button type="button" class="mission-item-toggle flex min-w-0 flex-1 items-center gap-3 text-left">
+                <i class="fa-solid fa-chevron-down mission-item-chevron text-xs text-white/40 transition-transform" aria-hidden="true"></i>
+                <span class="shrink-0 text-sm font-medium text-[#D4AF37]">Mission <span class="mission-item-number">01</span></span>
+                <span class="mission-item-summary truncate text-sm text-white/70">Untitled mission</span>
+            </button>
+            <div class="flex items-center gap-1">
+                <button type="button" class="mission-item-up inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white/60 hover:text-white hover:border-white/20" aria-label="Move mission up" title="Move up">
+                    <i class="fa-solid fa-arrow-up text-xs" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="mission-item-down inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white/60 hover:text-white hover:border-white/20" aria-label="Move mission down" title="Move down">
+                    <i class="fa-solid fa-arrow-down text-xs" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="remove-mission-item px-3 py-2 text-sm text-red-300 hover:text-red-200">Remove</button>
+            </div>
+        </div>
+        <div class="mission-item-body hidden space-y-3 border-t border-white/10 px-4 py-4">
+            <div>
+                <label class="block text-white/70 text-sm font-medium mb-2">Title</label>
+                <input type="text" name="mission_title[]" value="" maxlength="80" placeholder="Title" class="mission-item-title w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-white/70 text-sm font-medium mb-2">Short description</label>
+                <textarea name="mission_body[]" rows="4" maxlength="90" placeholder="Shown on the homepage dial" class="mission-item-body-input min-h-[6.5rem] w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none"></textarea>
+                <p class="mt-1 text-xs text-white/40">Keep this short for the dial. Best around <span class="text-white/60">60 characters</span>. Maximum <span class="text-white/60">90 characters</span> so it still fits on phones. Longer text belongs in the long description. <span class="mission-body-count text-white/50">0/90</span></p>
+            </div>
+            <div>
+                <label class="block text-white/70 text-sm font-medium mb-2">Long description</label>
+                <p class="mb-2 text-xs text-white/40">Style headings, bold text, lists, and colours. Use the image button to add multiple photos for the Learn More modal.</p>
+                <textarea id="mission_description_new" name="mission_description[]" rows="8" class="mission-item-description w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white focus:border-[#D4AF37] focus:outline-none"></textarea>
+            </div>
+        </div>
+    </div>
+</template>
+
 <script>
     function switchHomeTab(tab) {
         const panels = {
             hero: [document.getElementById('heroTab'), document.getElementById('tabHero')],
             about: [document.getElementById('aboutTab'), document.getElementById('tabAbout')],
+            mission: [document.getElementById('missionTab'), document.getElementById('tabMission')],
         };
 
         Object.values(panels).forEach(function (pair) {
@@ -417,6 +565,290 @@
             factRows.appendChild(row);
             bindFactRow(row);
         });
+
+        const missionRows = document.getElementById('missionItemRows');
+        const missionTemplate = document.getElementById('missionItemTemplate');
+        const missionForm = document.getElementById('missionTab');
+        const missionUploadUrl = @json(route('admin.upload-image'));
+        const missionCsrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+            || document.querySelector('input[name="_token"]')?.value
+            || '';
+        let missionEditorSeq = 0;
+        const hasMissionErrors = {{ ($errors->has('mission_title') || $errors->has('mission_title.*') || $errors->has('mission_body.*') || $errors->has('mission_description.*')) ? 'true' : 'false' }};
+
+        function updateMissionSummary(row) {
+            const titleInput = row.querySelector('.mission-item-title');
+            const summary = row.querySelector('.mission-item-summary');
+            if (!titleInput || !summary) {
+                return;
+            }
+            const value = titleInput.value.trim();
+            summary.textContent = value !== '' ? value : 'Untitled mission';
+        }
+
+        function updateMissionBodyCount(row) {
+            const bodyInput = row.querySelector('.mission-item-body-input');
+            const count = row.querySelector('.mission-body-count');
+            if (!bodyInput || !count) {
+                return;
+            }
+            count.textContent = bodyInput.value.length + '/90';
+        }
+
+        function missionDescriptionField(row) {
+            return row.querySelector('.mission-item-description');
+        }
+
+        function saveMissionEditor(row) {
+            const field = missionDescriptionField(row);
+            if (!field || typeof tinymce === 'undefined') {
+                return;
+            }
+            const editor = tinymce.get(field.id);
+            if (editor) {
+                editor.save();
+            }
+        }
+
+        function destroyMissionEditor(row) {
+            const field = missionDescriptionField(row);
+            if (!field || typeof tinymce === 'undefined') {
+                return;
+            }
+            const editor = tinymce.get(field.id);
+            if (editor) {
+                editor.save();
+                editor.remove();
+            }
+        }
+
+        function ensureMissionDescriptionId(row) {
+            const field = missionDescriptionField(row);
+            if (!field) {
+                return null;
+            }
+            if (!field.id || field.id === 'mission_description_new' || document.querySelectorAll('#' + CSS.escape(field.id)).length > 1) {
+                missionEditorSeq += 1;
+                field.id = 'mission_description_' + Date.now() + '_' + missionEditorSeq;
+            }
+            return field;
+        }
+
+        function initMissionEditor(row) {
+            if (typeof tinymce === 'undefined') {
+                return;
+            }
+            const field = ensureMissionDescriptionId(row);
+            if (!field || tinymce.get(field.id)) {
+                return;
+            }
+
+            tinymce.init({
+                target: field,
+                base_url: 'https://cdn.jsdelivr.net/npm/tinymce@8.8.2',
+                suffix: '.min',
+                license_key: 'gpl',
+                width: '100%',
+                height: 360,
+                menubar: false,
+                branding: false,
+                promotion: false,
+                skin: 'oxide-dark',
+                toolbar_mode: 'wrap',
+                plugins: 'lists link image',
+                toolbar: 'blocks | bold italic underline strikethrough | fontsize forecolor backcolor | alignleft aligncenter alignright | bullist numlist | link image blockquote | undo redo',
+                block_formats: 'Paragraph=p; Heading 2=h2; Heading 3=h3; Heading 4=h4',
+                font_size_formats: '14px 16px 18px 20px 24px 28px',
+                automatic_uploads: true,
+                images_reuse_filename: false,
+                images_upload_handler: function (blobInfo) {
+                    return new Promise(function (resolve, reject) {
+                        const formData = new FormData();
+                        formData.append('image', blobInfo.blob(), blobInfo.filename());
+                        formData.append('folder', 'mission');
+
+                        fetch(missionUploadUrl, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': missionCsrf,
+                                'Accept': 'application/json',
+                            },
+                            body: formData,
+                        })
+                            .then(function (response) {
+                                return response.json().then(function (data) {
+                                    if (!response.ok || !data.success || !data.path) {
+                                        throw new Error(data.message || 'Image upload failed');
+                                    }
+                                    return data.path;
+                                });
+                            })
+                            .then(resolve)
+                            .catch(function (error) {
+                                reject(error.message || 'Image upload failed');
+                            });
+                    });
+                },
+                content_style: [
+                    'body { background:#1a1f26; color:#e5e7eb; font-family: Inter, Helvetica, Arial, sans-serif; font-size:16px; line-height:1.65; margin:1rem; }',
+                    'h2,h3,h4 { color:#f8fafc; font-weight:700; line-height:1.25; margin:0.85em 0 0.4em; }',
+                    'h2 { font-size:1.5rem; } h3 { font-size:1.25rem; } h4 { font-size:1.1rem; }',
+                    'a { color:#D4AF37; }',
+                    'ul,ol { padding-left:1.4rem; }',
+                    'blockquote { border-left:3px solid #D4AF37; margin-left:0; padding-left:1rem; color:#d1d5db; }',
+                    'img { max-width:100%; height:auto; border-radius:12px; margin:0.85rem 0; display:block; }'
+                ].join(' '),
+            });
+        }
+
+        function setMissionOpen(row, open) {
+            const body = row.querySelector('.mission-item-body');
+            const chevron = row.querySelector('.mission-item-chevron');
+            row.dataset.open = open ? 'true' : 'false';
+            if (body) {
+                body.classList.toggle('hidden', !open);
+            }
+            if (chevron) {
+                chevron.classList.toggle('rotate-180', open);
+            }
+            if (open) {
+                initMissionEditor(row);
+            } else {
+                destroyMissionEditor(row);
+            }
+        }
+
+        function closeAllMissions(except) {
+            missionRows.querySelectorAll('.mission-item-row').forEach(function (row) {
+                if (row !== except) {
+                    setMissionOpen(row, false);
+                }
+            });
+        }
+
+        function renumberMissionRows() {
+            const rows = missionRows.querySelectorAll('.mission-item-row');
+            rows.forEach(function (row, index) {
+                const label = row.querySelector('.mission-item-number');
+                if (label) {
+                    label.textContent = String(index + 1).padStart(2, '0');
+                }
+                const up = row.querySelector('.mission-item-up');
+                const down = row.querySelector('.mission-item-down');
+                if (up) {
+                    up.disabled = index === 0;
+                    up.classList.toggle('opacity-30', index === 0);
+                    up.classList.toggle('pointer-events-none', index === 0);
+                }
+                if (down) {
+                    down.disabled = index === rows.length - 1;
+                    down.classList.toggle('opacity-30', index === rows.length - 1);
+                    down.classList.toggle('pointer-events-none', index === rows.length - 1);
+                }
+            });
+        }
+
+        function bindMissionRow(row) {
+            const toggle = row.querySelector('.mission-item-toggle');
+            const titleInput = row.querySelector('.mission-item-title');
+            const up = row.querySelector('.mission-item-up');
+            const down = row.querySelector('.mission-item-down');
+            const remove = row.querySelector('.remove-mission-item');
+
+            toggle.addEventListener('click', function () {
+                const willOpen = row.dataset.open !== 'true';
+                closeAllMissions(row);
+                setMissionOpen(row, willOpen);
+            });
+
+            titleInput.addEventListener('input', function () {
+                updateMissionSummary(row);
+            });
+
+            const bodyInput = row.querySelector('.mission-item-body-input');
+            if (bodyInput) {
+                bodyInput.addEventListener('input', function () {
+                    updateMissionBodyCount(row);
+                });
+            }
+
+            up.addEventListener('click', function () {
+                const wasOpen = row.dataset.open === 'true';
+                destroyMissionEditor(row);
+                const previous = row.previousElementSibling;
+                if (!previous) {
+                    return;
+                }
+                missionRows.insertBefore(row, previous);
+                renumberMissionRows();
+                if (wasOpen) {
+                    setMissionOpen(row, true);
+                }
+            });
+
+            down.addEventListener('click', function () {
+                const wasOpen = row.dataset.open === 'true';
+                destroyMissionEditor(row);
+                const next = row.nextElementSibling;
+                if (!next) {
+                    return;
+                }
+                missionRows.insertBefore(next, row);
+                renumberMissionRows();
+                if (wasOpen) {
+                    setMissionOpen(row, true);
+                }
+            });
+
+            remove.addEventListener('click', function () {
+                if (missionRows.querySelectorAll('.mission-item-row').length <= 2) {
+                    return;
+                }
+                destroyMissionEditor(row);
+                row.remove();
+                renumberMissionRows();
+            });
+
+            updateMissionSummary(row);
+            updateMissionBodyCount(row);
+            setMissionOpen(row, false);
+        }
+
+        missionRows.querySelectorAll('.mission-item-row').forEach(bindMissionRow);
+        renumberMissionRows();
+
+        if (hasMissionErrors) {
+            const firstRow = missionRows.querySelector('.mission-item-row');
+            if (firstRow) {
+                setMissionOpen(firstRow, true);
+            }
+        }
+
+        document.getElementById('addMissionItem').addEventListener('click', function () {
+            if (missionRows.querySelectorAll('.mission-item-row').length >= 12) {
+                return;
+            }
+            const row = missionTemplate.content.firstElementChild.cloneNode(true);
+            missionRows.appendChild(row);
+            ensureMissionDescriptionId(row);
+            bindMissionRow(row);
+            renumberMissionRows();
+            closeAllMissions(row);
+            setMissionOpen(row, true);
+            const titleInput = row.querySelector('.mission-item-title');
+            if (titleInput) {
+                titleInput.focus();
+            }
+        });
+
+        if (missionForm) {
+            missionForm.addEventListener('submit', function () {
+                missionRows.querySelectorAll('.mission-item-row').forEach(saveMissionEditor);
+                if (typeof tinymce !== 'undefined') {
+                    tinymce.triggerSave();
+                }
+            });
+        }
 
         const mediaInput = document.getElementById('about_media');
         const mediaPreview = document.getElementById('aboutMediaPreview');
