@@ -6,24 +6,37 @@
 @section('meta_description', 'Bring a practical AI, ICT and cybersecurity bootcamp to your municipality or school, with project-based learning and documented outcomes.')
 
 @section('content')
+@php
+    $page = $page ?? \App\Support\BootcampPage::content();
+@endphp
 <!-- Book a Bootcamp Section -->
 <section id="bootcamp" class="site-theme pt-32 pb-24 text-[#1b1c1a] scroll-mt-20 relative">
     <div class="max-w-7xl mx-auto px-6 relative z-10">
         <div class="text-center max-w-4xl mx-auto mb-20">
-            <div class="site-kicker center">
-                <span aria-hidden="true"></span>
-                <p>Bootcamp</p>
-            </div>
-            <h2 class="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-6 text-balance text-[#111]">
-                Bring a bootcamp to your municipality
-            </h2>
-            <p class="text-[#3a3a34] text-lg max-w-3xl mx-auto leading-relaxed">
-                Let's work together to give your municipality's youth the practical AI, coding, and future-ready skills they need to thrive in the modern world.
-            </p>
+            @if($page['hero_kicker'] !== '')
+                <div class="site-kicker center">
+                    <span aria-hidden="true"></span>
+                    <p>{{ $page['hero_kicker'] }}</p>
+                </div>
+            @endif
+            @if($page['hero_heading'] !== '')
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight mb-6 text-balance text-[#111]">
+                    {{ $page['hero_heading'] }}
+                </h2>
+            @endif
+            @if($page['hero_intro'] !== '')
+                <p class="text-[#3a3a34] text-lg max-w-3xl mx-auto leading-relaxed">
+                    {{ $page['hero_intro'] }}
+                </p>
+            @endif
         </div>
 
-        <!-- Main Content Grid (Same 2-col layout as your homepage) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        @php
+            $showProcess = ($page['steps'] ?? []) !== [];
+            $showExpertise = ($page['offerings'] ?? []) !== [];
+            $showAside = $showProcess || $showExpertise;
+        @endphp
+        <div class="grid grid-cols-1 {{ $showAside ? 'lg:grid-cols-2' : '' }} gap-16 items-start">
             
             <!-- LEFT SIDE: Booking Form -->
             <div id="bootcamp-form" class="bg-white rounded-2xl shadow-xl p-8 md:p-10 hover:shadow-2xl transition-shadow duration-300">
@@ -126,34 +139,21 @@
                             class="w-full px-4 py-3 bg-[#f2f2f2] border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition text-[#1e1e1a] placeholder-gray-400">
                     </div>
 
-                    <!-- Who is this for? -->
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-[#3a3a34] mb-2">
-                            <i class="fas fa-user-graduate text-[#D4AF37] mr-1"></i> Who is this for?
-                        </label>
-                        <div class="flex flex-wrap gap-4 pt-1">
-                            <label class="flex items-center gap-2 cursor-pointer text-[#1e1e1a]">
-                                <input type="checkbox" name="audience[]" value="Students" class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]">
-                                <span class="text-sm">Students</span>
+                    @if(($page['audiences'] ?? []) !== [])
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-[#3a3a34] mb-2">
+                                <i class="fas fa-user-graduate text-[#D4AF37] mr-1"></i> Who is this for?
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer text-[#1e1e1a]">
-                                <input type="checkbox" name="audience[]" value="Youth" class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]">
-                                <span class="text-sm">Youth</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer text-[#1e1e1a]">
-                                <input type="checkbox" name="audience[]" value="Teachers" class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]">
-                                <span class="text-sm">Teachers</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer text-[#1e1e1a]">
-                                <input type="checkbox" name="audience[]" value="Entrepreneurs" class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]">
-                                <span class="text-sm">Local Entrepreneurs</span>
-                            </label>
-                            <label class="flex items-center gap-2 cursor-pointer text-[#1e1e1a]">
-                                <input type="checkbox" name="audience[]" value="Community Members" class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]">
-                                <span class="text-sm">Community Members</span>
-                            </label>
+                            <div class="flex flex-wrap gap-4 pt-1">
+                                @foreach($page['audiences'] as $audience)
+                                    <label class="flex items-center gap-2 cursor-pointer text-[#1e1e1a]">
+                                        <input type="checkbox" name="audience[]" value="{{ $audience }}" @checked(in_array($audience, old('audience', []), true)) class="rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]">
+                                        <span class="text-sm">{{ $audience }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @endif
 
                     <!-- Requirements -->
                     <div class="md:col-span-2">
@@ -178,99 +178,61 @@
                 </form>
             </div>
 
-            <!-- RIGHT SIDE: Process & Expertise -->
-            <div class="space-y-10">
-                
-                <!-- Simple Process -->
-                <div>
-                    <div class="site-kicker"><span aria-hidden="true"></span><p>Simple process</p></div>
-                    <h2 class="text-3xl font-serif font-bold text-[#1e1e1a] mb-6">How It Works</h2>
-                    
-                    <div class="grid grid-cols-2 gap-4">
-                        <!-- Step 1 -->
-                        <div class="bg-[#f2f2f2] p-5 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg">
-                            <div class="text-3xl font-bold text-[#D4AF37] mb-1">01</div>
-                            <h3 class="font-bold text-[#1e1e1a] text-sm">You Tell Us</h3>
-                            <p class="text-xs text-[#3a3a34] mt-1">Share your needs, goals, and audience.</p>
-                        </div>
+            @if($showAside)
+                <div class="space-y-10">
+                    @if($showProcess)
+                        <div>
+                            @if($page['process_label'] !== '')
+                                <div class="site-kicker"><span aria-hidden="true"></span><p>{{ $page['process_label'] }}</p></div>
+                            @endif
+                            @if($page['process_heading'] !== '')
+                                <h2 class="text-3xl font-serif font-bold text-[#1e1e1a] mb-6">{{ $page['process_heading'] }}</h2>
+                            @endif
 
-                        <!-- Step 2 -->
-                        <div class="bg-[#f2f2f2] p-5 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg">
-                            <div class="text-3xl font-bold text-[#D4AF37] mb-1">02</div>
-                            <h3 class="font-bold text-[#1e1e1a] text-sm">We Design It</h3>
-                            <p class="text-xs text-[#3a3a34] mt-1">Custom curriculum tailored for your area.</p>
+                            <div class="grid grid-cols-2 gap-4">
+                                @foreach($page['steps'] as $step)
+                                    <div class="bg-[#f2f2f2] p-5 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg">
+                                        <div class="text-3xl font-bold text-[#D4AF37] mb-1">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</div>
+                                        @if($step['title'] !== '')
+                                            <h3 class="font-bold text-[#1e1e1a] text-sm">{{ $step['title'] }}</h3>
+                                        @endif
+                                        @if($step['body'] !== '')
+                                            <p class="text-xs text-[#3a3a34] mt-1">{{ $step['body'] }}</p>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
+                    @endif
 
-                        <!-- Step 3 -->
-                        <div class="bg-[#f2f2f2] p-5 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg">
-                            <div class="text-3xl font-bold text-[#D4AF37] mb-1">03</div>
-                            <h3 class="font-bold text-[#1e1e1a] text-sm">We Deliver</h3>
-                            <p class="text-xs text-[#3a3a34] mt-1">Run the bootcamp program on the ground.</p>
-                        </div>
+                    @if($showExpertise)
+                        <div>
+                            @if($page['expertise_label'] !== '')
+                                <div class="site-kicker"><span aria-hidden="true"></span><p>{{ $page['expertise_label'] }}</p></div>
+                            @endif
+                            @if($page['expertise_heading'] !== '')
+                                <h2 class="text-3xl font-serif font-bold text-[#1e1e1a] mb-6">{{ $page['expertise_heading'] }}</h2>
+                            @endif
 
-                        <!-- Step 4 -->
-                        <div class="bg-[#f2f2f2] p-5 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg">
-                            <div class="text-3xl font-bold text-[#D4AF37] mb-1">04</div>
-                            <h3 class="font-bold text-[#1e1e1a] text-sm">Measure Impact</h3>
-                            <p class="text-xs text-[#3a3a34] mt-1">Provide impact reports for your records.</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4">
+                                @foreach($page['offerings'] as $offering)
+                                    <div class="bg-[#f2f2f2] p-4 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg">
+                                        <div class="text-[#D4AF37] mb-2 flex justify-center text-xl">
+                                            <i class="fas {{ $offering['icon'] }}"></i>
+                                        </div>
+                                        @if($offering['kicker'] !== '')
+                                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">{{ $offering['kicker'] }}</p>
+                                        @endif
+                                        @if($offering['title'] !== '')
+                                            <p class="text-[11px] font-bold text-[#1e1e1a]">{{ $offering['title'] }}</p>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
-
-                <!-- What We Deliver -->
-                <div>
-                    <div class="site-kicker"><span aria-hidden="true"></span><p>Our expertise</p></div>
-                    <h2 class="text-3xl font-serif font-bold text-[#1e1e1a] mb-6">What Can We Deliver?</h2>
-
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                        <!-- Box 1 -->
-                        <div class="bg-[#f2f2f2] p-4 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg cursor-pointer">
-                            <div class="text-[#D4AF37] mb-2 flex justify-center text-xl">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">Workshop</p>
-                            <p class="text-[11px] font-bold text-[#1e1e1a]">ICT & AI</p>
-                        </div>
-
-                        <!-- Box 2 -->
-                        <div class="bg-[#f2f2f2] p-4 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg cursor-pointer">
-                            <div class="text-[#D4AF37] mb-2 flex justify-center text-xl">
-                                <i class="fas fa-laptop-code"></i>
-                            </div>
-                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">Skill Sikka</p>
-                            <p class="text-[11px] font-bold text-[#1e1e1a]">Digital Learning</p>
-                        </div>
-
-                        <!-- Box 3 -->
-                        <div class="bg-[#f2f2f2] p-4 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg cursor-pointer">
-                            <div class="text-[#D4AF37] mb-2 flex justify-center text-xl">
-                                <i class="fas fa-code"></i>
-                            </div>
-                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">Coding</p>
-                            <p class="text-[11px] font-bold text-[#1e1e1a]">Programming</p>
-                        </div>
-
-                        <!-- Box 4 -->
-                        <div class="bg-[#f2f2f2] p-4 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg cursor-pointer">
-                            <div class="text-[#D4AF37] mb-2 flex justify-center text-xl">
-                                <i class="fas fa-rocket"></i>
-                            </div>
-                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">Startup</p>
-                            <p class="text-[11px] font-bold text-[#1e1e1a]">Entrepreneur</p>
-                        </div>
-
-                        <!-- Box 5 -->
-                        <div class="bg-[#f2f2f2] p-4 text-center rounded-xl border border-[#D4AF37]/15 hover:border-[#D4AF37] hover:bg-white transition-all shadow-lg cursor-pointer">
-                            <div class="text-[#D4AF37] mb-2 flex justify-center text-xl">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <p class="text-[10px] text-gray-500 font-bold uppercase mb-1">Future</p>
-                            <p class="text-[11px] font-bold text-[#1e1e1a]">Career & Skills</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+            @endif
         </div>
 
     </div>

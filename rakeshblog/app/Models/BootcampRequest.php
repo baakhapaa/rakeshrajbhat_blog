@@ -19,11 +19,13 @@ class BootcampRequest extends Model
         'preferred_date',
         'audience',
         'requirements',
-        'status'
+        'status',
+        'read_at',
     ];
 
     protected $casts = [
         'preferred_date' => 'date',
-        'participants' => 'integer'
+        'participants' => 'integer',
+        'read_at' => 'datetime',
     ];
 }

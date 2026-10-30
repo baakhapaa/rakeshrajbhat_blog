@@ -89,10 +89,11 @@
 
     {{-- Messages --}}
     @php
-        $messagesOpen = Str::startsWith(Route::currentRouteName(), 'admin.messages');
+        $messagesOpen = Str::startsWith(Route::currentRouteName(), 'admin.messages')
+            || Str::startsWith(Route::currentRouteName(), 'admin.bootcamp.requests');
         $messageChannel = request()->routeIs('admin.messages.contact')
             ? 'contact'
-            : (request()->routeIs('admin.messages.work') ? 'work' : request()->route('message')?->channel);
+            : (request()->routeIs('admin.messages.work') ? 'work' : (Str::startsWith(Route::currentRouteName(), 'admin.bootcamp.requests') ? 'bootcamp' : request()->route('message')?->channel));
     @endphp
     <details class="group" @if($messagesOpen) open @endif>
         <summary class="messages-summary flex cursor-pointer list-none items-center justify-between rounded-lg px-4 py-3 text-gray-300 transition-all duration-200 hover:bg-white/5 hover:text-white {{ $messagesOpen ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : '' }}">
@@ -114,6 +115,12 @@
                 {{ $messageChannel === 'work' ? 'bg-[#D4AF37]/10 text-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
                 <i class="fa-solid fa-handshake inline-block w-5 text-center text-sm mr-3" aria-hidden="true"></i>
                 Work Message
+            </a>
+            <a href="{{ route('admin.bootcamp.requests') }}"
+                class="flex items-center rounded-lg px-4 py-2 text-sm transition-all duration-200
+                {{ $messageChannel === 'bootcamp' ? 'bg-[#D4AF37]/10 text-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+                <i class="fa-solid fa-chalkboard-user inline-block w-5 text-center text-sm mr-3" aria-hidden="true"></i>
+                Bootcamp Requests
             </a>
         </div>
     </details>
@@ -154,6 +161,16 @@
             <span class="flex items-center">
                 <i class="fa-solid fa-diagram-project inline-block w-5 text-center text-base mr-3" aria-hidden="true"></i>
                 Projects
+            </span>
+        </a>
+
+        {{-- Bootcamp page --}}
+        <a href="{{ route('admin.bootcamp.edit') }}"
+            class="block px-4 py-3 rounded-lg transition-all duration-200
+            {{ Route::currentRouteName() === 'admin.bootcamp.edit' ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-r-2 border-[#D4AF37]' : 'text-gray-300 hover:bg-white/5 hover:text-white' }}">
+            <span class="flex items-center">
+                <i class="fa-solid fa-chalkboard-user inline-block w-5 text-center text-base mr-3" aria-hidden="true"></i>
+                Bootcamp
             </span>
         </a>
 

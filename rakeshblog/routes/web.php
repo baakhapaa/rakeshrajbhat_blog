@@ -28,6 +28,7 @@ use App\Http\Controllers\BootcampController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\LegalPageController;
 use App\Http\Controllers\Admin\MessageController;
+use App\Http\Controllers\Admin\BootcampController as AdminBootcampController;
 use App\Http\Controllers\Admin\NewsletterSubscriberController;
 use App\Http\Controllers\Admin\LegalPageController as AdminLegalPageController;
 use App\Models\Blog;
@@ -295,6 +296,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::put('/home-content/mission', [HomeContentController::class, 'updateMission'])->name('home-content.update-mission');
         Route::get('/legal', [AdminLegalPageController::class, 'edit'])->name('legal.edit');
         Route::put('/legal', [AdminLegalPageController::class, 'update'])->name('legal.update');
+
+        Route::get('/bootcamp', [AdminBootcampController::class, 'edit'])->name('bootcamp.edit');
+        Route::put('/bootcamp', [AdminBootcampController::class, 'update'])->name('bootcamp.update');
+        Route::get('/bootcamp/requests', [AdminBootcampController::class, 'requests'])->name('bootcamp.requests');
+        Route::get('/bootcamp/requests/{bootcampRequest}', [AdminBootcampController::class, 'show'])->name('bootcamp.requests.show');
+        Route::delete('/bootcamp/requests/{bootcampRequest}', [AdminBootcampController::class, 'destroy'])->name('bootcamp.requests.destroy');
 
         Route::get('/newsletter/export', [NewsletterSubscriberController::class, 'export'])->name('newsletter.export');
         Route::get('/newsletter', [NewsletterSubscriberController::class, 'index'])->name('newsletter.index');

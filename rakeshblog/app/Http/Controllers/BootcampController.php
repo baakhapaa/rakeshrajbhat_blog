@@ -7,6 +7,8 @@ use App\Models\BootcampRequest;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BootcampRequestMail;
 use Illuminate\Support\Facades\Log;
+use App\Support\BootcampPage;
+use Illuminate\Validation\Rule;
 
 class BootcampController extends Controller
 {
@@ -15,7 +17,9 @@ class BootcampController extends Controller
      */
     public function index()
     {
-        return view('partials.bootcamp');
+        return view('partials.bootcamp', [
+            'page' => BootcampPage::content(),
+        ]);
     }
 
     /**
@@ -23,7 +27,8 @@ class BootcampController extends Controller
      */
     public function submit(Request $request)
     {
-        // Validate the request
+        $audiences = BootcampPage::audienceLabels();
+
         $validated = $request->validate([
             'org_name' => 'required|string|max:255',
             'district' => 'required|string|max:255',
@@ -32,9 +37,11 @@ class BootcampController extends Controller
             'contact_phone' => 'required|string|max:20',
             'participants' => 'required|integer|min:1',
             'preferred_date' => 'required|date|after:today',
-            'audience' => 'nullable|array',
-            'audience.*' => 'string',
-            'requirements' => 'nullable|string',
+            'audience' => ['nullable', 'array', 'max:'.max(count($audiences), 1)],
+            'audience.*' => $audiences === []
+                ? ['prohibited']
+                : ['string', 'max:60', Rule::in($audiences)],
+            'requirements' => 'nullable|string|max:2000',
         ]);
 
         // Prepare email data
