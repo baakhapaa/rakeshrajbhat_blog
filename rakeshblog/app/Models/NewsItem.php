@@ -22,6 +22,7 @@ class NewsItem extends Model
         'excerpt',
         'content',
         'image_url',
+        'image_is_custom',
         'images',
         'published_at',
         'is_active',
@@ -29,6 +30,7 @@ class NewsItem extends Model
 
     protected $casts = [
         'images' => 'array',
+        'image_is_custom' => 'boolean',
         'published_at' => 'datetime',
         'is_active' => 'boolean',
     ];
@@ -65,16 +67,23 @@ class NewsItem extends Model
         });
     }
 
-    public function deleteStoredImages(): void
+    public function deleteStoredImages(?string $keepUrl = null): void
     {
         $urls = array_merge([$this->image_url], $this->images ?? []);
+        $keepPath = MediaStorage::path($keepUrl);
 
         foreach ($urls as $url) {
             $path = MediaStorage::path(is_string($url) ? $url : null);
 
-            if ($path && str_starts_with($path, 'news/')) {
-                MediaStorage::delete($path);
+            if (! $path || ! str_starts_with($path, 'news/')) {
+                continue;
             }
+
+            if ($keepPath && $path === $keepPath) {
+                continue;
+            }
+
+            MediaStorage::delete($path);
         }
     }
 }

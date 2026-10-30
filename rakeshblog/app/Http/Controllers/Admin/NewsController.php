@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\NewsItem;
 use App\Models\Setting;
 use App\Services\NewsSourceReader;
+use App\Support\MediaStorage;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 use RuntimeException;
@@ -58,10 +60,12 @@ class NewsController extends Controller
         $existing = NewsItem::query()->where('source_hash', $payload['source_hash'])->first();
 
         if ($existing) {
-            $existing->deleteStoredImages();
-            $existing->update($payload);
+            $keptImage = (bool) $existing->image_is_custom;
+            $this->replaceFromSource($existing, $payload);
 
-            return back()->with('success', 'That link was already added, so the story and images were refreshed.');
+            return back()->with('success', $keptImage
+                ? 'That link was already added, so the story was refreshed. The image you set is still used on the site.'
+                : 'That link was already added, so the story and images were refreshed.');
         }
 
         NewsItem::query()->create($payload);
@@ -86,6 +90,48 @@ class NewsController extends Controller
         return back()->with('success', 'News category saved.');
     }
 
+    public function updateImage(Request $request, NewsItem $news)
+    {
+        $validated = $request->validate([
+            'image' => ['required', 'image', 'mimes:jpeg,jpg,png,webp,gif', 'max:4096'],
+        ], [
+            'image.required' => 'Choose an image to use for this news item.',
+            'image.image' => 'Use a JPG, PNG, WEBP, or GIF image.',
+            'image.mimes' => 'Use a JPG, PNG, WEBP, or GIF image.',
+            'image.max' => 'That image is too large. Use one under 4 MB.',
+        ]);
+
+        $path = $validated['image']->store('news', 'media');
+
+        if ($path === false) {
+            return back()->with('error', 'The image could not be saved. Please try again.');
+        }
+
+        $url = Storage::disk('media')->url($path);
+        $previous = $news->image_url;
+        $images = array_values(array_filter(
+            $news->images ?? [],
+            fn ($image) => is_string($image) && $image !== '' && $image !== $previous
+        ));
+        array_unshift($images, $url);
+
+        $news->update([
+            'image_url' => $url,
+            'images' => $images,
+            'image_is_custom' => true,
+        ]);
+
+        if (is_string($previous) && $previous !== $url && ! in_array($previous, $images, true)) {
+            $storedPath = MediaStorage::path($previous);
+
+            if ($storedPath && str_starts_with($storedPath, 'news/')) {
+                MediaStorage::delete($storedPath);
+            }
+        }
+
+        return back()->with('success', 'News image updated. It now shows on the site.');
+    }
+
     public function refresh(NewsItem $news, NewsSourceReader $reader)
     {
         try {
@@ -94,10 +140,12 @@ class NewsController extends Controller
             return back()->with('error', $exception->getMessage());
         }
 
-        $news->deleteStoredImages();
-        $news->update($payload);
+        $keptImage = (bool) $news->image_is_custom;
+        $this->replaceFromSource($news, $payload);
 
-        return back()->with('success', 'Story and images refreshed from the source.');
+        return back()->with('success', $keptImage
+            ? 'Story refreshed. The image you set is still used on the site.'
+            : 'Story and images refreshed from the source.');
     }
 
     public function destroy(NewsItem $news)
@@ -105,5 +153,27 @@ class NewsController extends Controller
         $news->delete();
 
         return back()->with('success', 'News removed from the homepage.');
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function replaceFromSource(NewsItem $news, array $payload): void
+    {
+        $keepImage = $news->image_is_custom ? $news->image_url : null;
+
+        $news->deleteStoredImages(is_string($keepImage) ? $keepImage : null);
+
+        if (is_string($keepImage) && $keepImage !== '') {
+            $images = array_values(array_filter(
+                $payload['images'] ?? [],
+                fn ($image) => is_string($image) && $image !== '' && $image !== $keepImage
+            ));
+            array_unshift($images, $keepImage);
+            $payload['image_url'] = $keepImage;
+            $payload['images'] = $images;
+        }
+
+        $news->update($payload);
     }
 }

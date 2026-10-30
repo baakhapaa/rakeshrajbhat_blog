@@ -275,6 +275,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::put('/news/section', [AdminNewsController::class, 'updateSection'])->name('news.update-section');
         Route::put('/news/{news}/category', [AdminNewsController::class, 'updateCategory'])->name('news.update-category');
+        Route::post('/news/{news}/image', [AdminNewsController::class, 'updateImage'])->name('news.update-image');
         Route::post('/news/{news}/refresh', [AdminNewsController::class, 'refresh'])->name('news.refresh');
         Route::resource('news', AdminNewsController::class)->only(['index', 'store', 'destroy']);
 

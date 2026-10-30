@@ -10,7 +10,7 @@
         </div>
         <div>
             <h1 class="text-3xl font-serif font-bold text-white">News & Updates</h1>
-            <p class="text-gray-400 text-sm mt-0.5">Paste a news link. The story and images are taken from that page and shown on the homepage.</p>
+            <p class="text-gray-400 text-sm mt-0.5">Paste a news link. The story and images are taken from that page and shown on the homepage. Hover a picture to replace it.</p>
         </div>
     </div>
 
@@ -21,6 +21,10 @@
     @if(session('error'))
         <div class="bg-red-500/10 border border-red-500/20 text-red-400 px-5 py-4 rounded-2xl mb-6">{{ session('error') }}</div>
     @endif
+
+    @error('image')
+        <div class="bg-red-500/10 border border-red-500/20 text-red-400 px-5 py-4 rounded-2xl mb-6">{{ $message }}</div>
+    @enderror
 
     <div class="bg-[#1a1f26] rounded-2xl border border-white/5 p-6 mb-6">
         <h2 class="text-xl font-semibold text-white mb-1">Add a news link</h2>
@@ -62,7 +66,7 @@
     <div class="bg-[#1a1f26] rounded-2xl border border-white/5 overflow-hidden">
         @forelse($items as $item)
             <div class="flex flex-col md:flex-row md:items-center gap-4 p-5 border-b border-white/5 last:border-b-0">
-                <div class="w-full md:w-36 h-24 rounded-xl overflow-hidden bg-white/5 flex-shrink-0">
+                <div class="group relative w-full md:w-36 h-24 rounded-xl overflow-hidden bg-white/5 flex-shrink-0">
                     @if($item->image_url)
                         <img src="{{ $item->image_url }}" alt="" class="w-full h-full object-cover">
                     @else
@@ -70,6 +74,14 @@
                             <i class="fas fa-newspaper text-2xl"></i>
                         </div>
                     @endif
+                    <form action="{{ route('admin.news.update-image', $item) }}" method="POST" enctype="multipart/form-data" class="absolute inset-0">
+                        @csrf
+                        <label class="absolute inset-0 flex cursor-pointer flex-col items-center justify-center gap-1 bg-[#0b0e12]/75 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 focus-within:opacity-100">
+                            <i class="fas fa-camera text-sm text-[#D4AF37]"></i>
+                            <span class="text-[11px] font-semibold tracking-wide">Change image</span>
+                            <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif" class="sr-only" aria-label="Change image for {{ $item->title }}" onchange="if (this.files.length) this.form.submit()">
+                        </label>
+                    </form>
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="text-xs text-[#D4AF37] uppercase tracking-wider mb-1">{{ $item->source_name ?: 'News' }}</p>
