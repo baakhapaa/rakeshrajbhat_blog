@@ -3229,14 +3229,16 @@ document.addEventListener('keydown', function(e) {
     width: max-content;
     gap: 20px;
     padding-inline: var(--site-edge);
-    align-items: flex-start;
+    align-items: stretch;
 }
 
 .initiative-card {
     position: relative;
+    display: flex;
     flex: 0 0 calc((100vw - 120px) / 5.2);
+    flex-direction: column;
     width: calc((100vw - 120px) / 5.2);
-    height: 350px;
+    min-height: 350px;
     color: #111111;
     text-align: center;
     scroll-snap-align: center;
@@ -3252,8 +3254,12 @@ document.addEventListener('keydown', function(e) {
 
 .project-default {
     position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
-    height: 100%;
+    padding: 128px 12px 39px;
     transition: opacity 0.25s ease, transform 0.35s ease;
 }
 
@@ -3267,11 +3273,6 @@ document.addEventListener('keydown', function(e) {
     box-shadow: 0 16px 38px rgba(31, 38, 48, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.62);
     -webkit-backdrop-filter: blur(20px) saturate(145%);
     backdrop-filter: blur(20px) saturate(145%);
-}
-
-.initiative-card:nth-child(1) .initiative-card-surface,
-.initiative-card:nth-child(5) .initiative-card-surface {
-    inset-block: 38px 0;
 }
 
 .initiative-mark {
@@ -3318,10 +3319,8 @@ document.addEventListener('keydown', function(e) {
 }
 
 .initiative-card h3 {
-    position: absolute;
-    top: 128px;
-    right: 12px;
-    left: 12px;
+    position: relative;
+    width: 100%;
     margin: 0;
     color: #111111;
     font-family: Poppins, "Plus Jakarta Sans", sans-serif;
@@ -3331,45 +3330,27 @@ document.addEventListener('keydown', function(e) {
     letter-spacing: -0.02em;
 }
 
-.initiative-card:nth-child(1) h3,
-.initiative-card:nth-child(5) h3 {
-    top: 128px;
-}
-
 .initiative-card > p,
 .initiative-card .project-default > p {
-    position: absolute;
-    top: 178px;
-    left: 50%;
-    width: calc(100% - 32px);
-    max-width: calc(100% - 44px);
-    max-height: 72px;
-    margin: 0;
-    overflow: hidden;
+    position: relative;
+    width: calc(100% - 20px);
+    margin: 26px 0 8px;
     color: #46433f;
     font-family: "Plus Jakarta Sans", Inter, sans-serif;
     font-size: 14px;
     font-weight: 500;
     line-height: 1.5;
-    transform: translateX(-50%);
-}
-
-.initiative-card:nth-child(1) > p,
-.initiative-card:nth-child(1) .project-default > p,
-.initiative-card:nth-child(5) > p,
-.initiative-card:nth-child(5) .project-default > p {
-    top: 178px;
+    overflow-wrap: anywhere;
 }
 
 .initiative-read-more {
-    position: absolute;
-    top: 267px;
-    left: 50%;
+    position: relative;
     display: inline-flex;
     min-height: 44px;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    margin-top: auto;
     color: #89351d;
     font-family: "Plus Jakarta Sans", Inter, sans-serif;
     font-size: 14px;
@@ -3377,12 +3358,6 @@ document.addEventListener('keydown', function(e) {
     letter-spacing: 1.1px;
     text-decoration: none;
     text-transform: uppercase;
-    transform: translateX(-50%);
-}
-
-.initiative-card:nth-child(1) .initiative-read-more,
-.initiative-card:nth-child(5) .initiative-read-more {
-    top: 267px;
 }
 
 .tooltip-container .project-default {
@@ -3574,24 +3549,24 @@ document.addEventListener('keydown', function(e) {
 
 @media (max-width: 767px) {
     .initiative-card {
-        flex-basis: 170px;
-        width: 170px;
-        height: 330px;
-        min-height: 330px;
-        max-height: 330px;
+        flex-basis: min(240px, 78vw);
+        width: min(240px, 78vw);
+        min-height: calc(32px + 11rem);
     }
 
-    .initiative-card-surface,
-    .initiative-card:nth-child(1) .initiative-card-surface,
-    .initiative-card:nth-child(5) .initiative-card-surface {
-        inset: 34px 0 0;
+    .project-default {
+        padding: 74px 14px 14px;
+    }
+
+    .initiative-card-surface {
+        inset: 32px 0 0;
     }
 
     .initiative-mark,
     .initiative-mark img,
     .initiative-mark > span {
-        width: 72px;
-        height: 72px;
+        width: 64px;
+        height: 64px;
     }
 
     .initiative-mark,
@@ -3601,35 +3576,21 @@ document.addEventListener('keydown', function(e) {
     }
 
     .initiative-card h3 {
-        top: 109px;
-        font-size: 14px;
-    }
-
-    .initiative-card:nth-child(1) h3,
-    .initiative-card:nth-child(5) h3 {
-        top: 109px;
+        font-size: 16px;
     }
 
     .initiative-card > p,
     .initiative-card .project-default > p {
-        top: 150px;
-        width: calc(100% - 20px);
-        max-height: 50px;
-        font-size: 11px;
+        width: 100%;
+        margin: 6px 0 0;
+        font-size: 13px;
+        line-height: 1.4;
     }
 
-    .initiative-card:nth-child(1) > p,
-    .initiative-card:nth-child(1) .project-default > p,
-    .initiative-card:nth-child(5) > p,
-    .initiative-card:nth-child(5) .project-default > p {
-        top: 150px;
-    }
-
-    .initiative-read-more,
-    .initiative-card:nth-child(1) .initiative-read-more,
-    .initiative-card:nth-child(5) .initiative-read-more {
-        top: 220px;
-        font-size: 11px;
+    .initiative-read-more {
+        min-height: 32px;
+        margin-top: 6px;
+        font-size: 12px;
     }
 }
 
@@ -4142,6 +4103,7 @@ document.addEventListener('keydown', function(e) {
     }
 
     #projects:has(.initiative-card.is-open) {
+        z-index: 2;
         overflow: visible !important;
     }
 
