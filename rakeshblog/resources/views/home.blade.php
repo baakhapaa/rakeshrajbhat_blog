@@ -1484,14 +1484,19 @@
 
         @media (max-width: 768px) {
             .mission-scroll {
-                --dial-size: min(34vh, 250px);
-                --dial-center: -0.22;
-                --number-margin: 4px;
+                --dial-size: min(80vw, 44svh, 340px);
+                --dial-center: -0.3;
+                --number-margin: 6px;
+            }
+
+            .mission-scroll__track {
+                height: calc((90svh - 72px) * 3);
             }
 
             .mission-scroll__sticky {
                 top: 72px;
-                height: 380px;
+                height: calc(100svh - 72px);
+                min-height: 400px;
             }
 
             .mission-scroll__rings {
@@ -1510,26 +1515,27 @@
                 filter: drop-shadow(8px 12px 28px rgba(30, 30, 26, 0.05));
             }
 
-            .mission-scroll__markerNum { font-size: clamp(32px, 9vw, 44px); }
+            .mission-scroll__markerNum { font-size: clamp(40px, 11vw, 52px); }
 
             .mission-scroll__textZone {
-                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 48px);
-                right: 12px;
+                left: calc(var(--dial-size) * (var(--dial-center) + 0.5) + 76px);
+                right: 16px;
+                top: 50%;
                 transform: translateY(-50%);
             }
 
             .mission-scroll__textViewport {
                 width: 100%;
-                min-height: 170px;
-                height: min(260px, 42vh);
+                min-height: 0;
+                height: min(260px, 40svh);
             }
 
             .mission-scroll__reason {
                 grid-template-columns: minmax(0, 1fr);
                 /* grid-template-rows: minmax(0, 1fr) auto; */
-                row-gap: 10px;
+                row-gap: 14px;
                 align-content: center;
-                padding-left:10px;
+                padding-left: 0;
             }
 
             .mission-scroll__copy {
@@ -1546,11 +1552,11 @@
                 justify-self: start;
             }
 
-            .mission-scroll__headline { font-size: 20px; letter-spacing: 0; }
+            .mission-scroll__headline { font-size: 24px; letter-spacing: 0; }
 
             .mission-scroll__body {
-                margin-top: 8px;
-                font-size: 13px;
+                margin-top: 10px;
+                font-size: 15px;
                 line-height: 1.45;
                 max-height: fit-content;
                 overflow: visible;
@@ -1558,37 +1564,28 @@
 
             .mission-scroll__kicker {
                 font-size: 16px;
-                top: calc(50% - 150px);
-                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + var(--number-margin));
+                top: 24px;
+                left: 20px;
             }
 
             .mission-scroll__dash { width: 28px; height: 3px; }
+
+            #research.studies-section {
+                padding-top: 28px;
+            }
         }
 
         @media (max-width: 480px) {
-            .mission-scroll {
-                --dial-size: min(30vh, 210px);
-                --dial-center: -0.28;
-            }
-
             .mission-scroll__textZone {
-                left: calc(var(--dial-size) * var(--dial-center) + var(--dial-size) * 0.5 + 40px);
-                right: 10px;
-            }
-
-            .mission-scroll__textViewport {
-                width: 100%;
-                min-height: 0;
-                height: 200px;
+                left: calc(var(--dial-size) * (var(--dial-center) + 0.5) + 68px);
+                right: 14px;
             }
 
             .mission-scroll__body {
-                font-size: 10px;
+                font-size: 14px;
                 max-height: fit-content;
                 overflow: visible;
             }
-
-            .mission-scroll__markerNum { font-size: clamp(28px, 8.5vw, 38px); }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1671,9 +1668,11 @@
             };
             function applyMotionScale() {
                 const narrow = window.innerWidth <= 768;
-                CONFIG.exitY = narrow ? 90 : 200;
-                CONFIG.headlineYOffset = narrow ? 20 : 45;
-                CONFIG.bodyYOffset = narrow ? 12 : 25;
+                CONFIG.exitY = narrow ? 72 : 200;
+                CONFIG.headlineYOffset = narrow ? 16 : 45;
+                CONFIG.bodyYOffset = narrow ? 10 : 25;
+                CONFIG.stiffness = 85;
+                CONFIG.damping = 26;
             }
             const COLOR_FADED = "rgba(0, 0, 0, 0.26)";
             const COLOR_ACTIVE = "#111111";
@@ -1728,13 +1727,31 @@
             const spring = { value: 0, target: 0, velocity: 0 };
             let trackTop = 0;
             let travel = 1;
+            let pinOffset = 0;
+            const mobileQuery = window.matchMedia('(max-width: 768px)');
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
             function readProgress() {
-                return clamp((window.scrollY - trackTop) / travel, 0, 1);
+                return clamp((window.scrollY - (trackTop - pinOffset)) / travel, 0, 1);
             }
 
             function layout() {
                 applyMotionScale();
+                if (mobileQuery.matches && !reducedMotion.matches) {
+                    sticky.style.height = '';
+                    const stickyHeight = sticky.offsetHeight;
+                    const step = Math.round(stickyHeight * 0.42);
+                    track.style.height = (stickyHeight + step * (total - 1)) + 'px';
+                    pinOffset = parseFloat(getComputedStyle(sticky).top) || 0;
+                    const rect = track.getBoundingClientRect();
+                    trackTop = rect.top + window.scrollY;
+                    travel = Math.max(1, (track.offsetHeight - stickyHeight) * 0.9);
+                    spring.value = spring.target = readProgress();
+                    return;
+                }
+                pinOffset = 0;
+                track.style.height = '';
+                sticky.style.height = '';
                 const rect = track.getBoundingClientRect();
                 trackTop = rect.top + window.scrollY;
                 travel = Math.max(1, track.offsetHeight - sticky.offsetHeight);
@@ -1802,6 +1819,7 @@
             }
 
             window.addEventListener("resize", layout);
+            mobileQuery.addEventListener("change", layout);
             layout();
             render();
             requestAnimationFrame(frame);
