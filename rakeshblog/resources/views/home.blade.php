@@ -4358,14 +4358,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const projectCards = track.querySelectorAll('.tooltip-container');
 
-    const syncMobilePause = () => {
-        paused = mobileQuery.matches && Boolean(track.querySelector('.tooltip-container.is-open'));
+    const syncAutoPause = () => {
+        paused = mobileQuery.matches
+            ? Boolean(track.querySelector('.tooltip-container.is-open'))
+            : Boolean(track.querySelector('.initiative-card:hover'));
         lastFrame = performance.now();
     };
 
     const closeMobilePopups = () => {
         projectCards.forEach((card) => card.classList.remove('is-open'));
-        syncMobilePause();
+        syncAutoPause();
     };
 
     const centerCard = (card) => {
@@ -4382,7 +4384,7 @@ document.addEventListener('DOMContentLoaded', function () {
         projectCards.forEach((item) => item.classList.remove('is-open'));
         centerCard(card);
         card.classList.add('is-open');
-        syncMobilePause();
+        syncAutoPause();
         return true;
     };
 
@@ -4390,17 +4392,19 @@ document.addEventListener('DOMContentLoaded', function () {
         pointerId = null;
         dragging = false;
         track.classList.remove('is-dragging');
-        syncMobilePause();
+        syncAutoPause();
     };
 
     projectCards.forEach((card) => {
         card.addEventListener('mouseenter', () => {
             if (mobileQuery.matches) return;
             card.classList.add('is-open');
+            syncAutoPause();
         });
         card.addEventListener('mouseleave', () => {
             if (mobileQuery.matches) return;
             card.classList.remove('is-open');
+            syncAutoPause();
         });
     });
 
@@ -4506,7 +4510,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.addEventListener('resize', () => {
         if (!mobileQuery.matches) closeMobilePopups();
-        else syncMobilePause();
+        else syncAutoPause();
         measure();
         render();
     });
