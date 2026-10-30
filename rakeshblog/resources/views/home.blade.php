@@ -3559,15 +3559,14 @@ document.addEventListener('keydown', function(e) {
         flex-basis: 170px;
         width: 170px;
         height: 330px;
+        min-height: 330px;
+        max-height: 330px;
     }
 
-    .initiative-card-surface {
-        inset: 34px 0 0;
-    }
-
+    .initiative-card-surface,
     .initiative-card:nth-child(1) .initiative-card-surface,
     .initiative-card:nth-child(5) .initiative-card-surface {
-        inset-block: 44px 0;
+        inset: 34px 0 0;
     }
 
     .initiative-mark,
@@ -3577,24 +3576,25 @@ document.addEventListener('keydown', function(e) {
         height: 72px;
     }
 
+    .initiative-mark,
     .initiative-card:nth-child(1) .initiative-mark,
     .initiative-card:nth-child(5) .initiative-mark {
         top: 0;
     }
 
     .initiative-card h3 {
-        top: 125px;
+        top: 109px;
         font-size: 14px;
     }
 
     .initiative-card:nth-child(1) h3,
     .initiative-card:nth-child(5) h3 {
-        top: 125px;
+        top: 109px;
     }
 
     .initiative-card > p,
     .initiative-card .project-default > p {
-        top: 170px;
+        top: 150px;
         width: calc(100% - 20px);
         max-height: 50px;
         font-size: 11px;
@@ -3604,17 +3604,14 @@ document.addEventListener('keydown', function(e) {
     .initiative-card:nth-child(1) .project-default > p,
     .initiative-card:nth-child(5) > p,
     .initiative-card:nth-child(5) .project-default > p {
-        top: 170px;
+        top: 150px;
     }
 
-    .initiative-read-more {
-        top: 262px;
-        font-size: 11px;
-    }
-
+    .initiative-read-more,
     .initiative-card:nth-child(1) .initiative-read-more,
     .initiative-card:nth-child(5) .initiative-read-more {
-        top: 262px;
+        top: 220px;
+        font-size: 11px;
     }
 }
 
@@ -4104,6 +4101,19 @@ document.addEventListener('keydown', function(e) {
     #projects .tooltip-popup {
         min-height: 390px;
         padding: 20px;
+    }
+
+    #projects .tooltip-container:hover:not(.is-open) .project-default {
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+    }
+
+    #projects .tooltip-container:hover:not(.is-open) .tooltip-popup,
+    #projects .initiative-card:first-child:hover:not(.is-open) .tooltip-popup {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
     }
 
     #projects:has(.initiative-card.is-open) {
