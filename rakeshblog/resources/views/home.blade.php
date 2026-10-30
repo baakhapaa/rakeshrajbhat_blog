@@ -3550,6 +3550,11 @@ document.addEventListener('keydown', function(e) {
 }
 
 @media (max-width: 767px) {
+    .initiatives-section {
+        padding-top: 80px;
+        padding-bottom: 80px;
+    }
+
     .initiative-card {
         flex-basis: min(240px, 78vw);
         width: min(240px, 78vw);
@@ -4006,21 +4011,22 @@ document.addEventListener('keydown', function(e) {
     width: min(460px, calc(100vw - 32px));
     min-height: 430px;
     max-height: min(520px, calc(100vh - 32px));
-    padding: 12px 24px 24px;
+    padding: 0 24px 20px;
     color: #1e1e1a;
-    background: rgba(255, 255, 255, 0.56);
-    border-color: rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.48);
+    background: color-mix(in srgb, var(--initiative-bg, #ffffff) 20%, rgba(255, 255, 255, 0.4));
+    border-color: rgba(255, 255, 255, 0.68);
     border-radius: 16px;
-    box-shadow: 0 22px 48px rgba(31, 38, 48, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.72);
-    -webkit-backdrop-filter: blur(28px) saturate(155%);
-    backdrop-filter: blur(28px) saturate(155%);
+    box-shadow: 0 16px 38px rgba(31, 38, 48, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.62);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
+    backdrop-filter: blur(20px) saturate(145%);
     overflow: auto;
 }
 
 #projects .initiatives-viewport:has(.initiative-card:first-child:hover),
 #projects .initiatives-viewport:has(.initiative-card:first-child.is-open) {
-    -webkit-mask-image: linear-gradient(to right, #000 0%, #000 97%, transparent);
-    mask-image: linear-gradient(to right, #000 0%, #000 97%, transparent);
+    -webkit-mask-image: none;
+    mask-image: none;
 }
 
 #projects .initiative-card:first-child .tooltip-popup {
@@ -4061,7 +4067,7 @@ document.addEventListener('keydown', function(e) {
     height: 126px;
     align-self: center;
     margin: 0 0 4px;
-    padding: 8px;
+    padding: 0;
     background: rgba(255, 255, 255, 0.22);
     border-color: rgba(255, 255, 255, 0.65);
     border-radius: 50%;
@@ -4088,7 +4094,7 @@ document.addEventListener('keydown', function(e) {
 
     #projects .tooltip-popup {
         min-height: 390px;
-        padding: 12px 20px 20px;
+        padding: 0 20px 16px;
     }
 
     #projects .tooltip-container:hover:not(.is-open) .project-default {
@@ -4117,17 +4123,10 @@ document.addEventListener('keydown', function(e) {
 
     #projects:has(.initiative-card.is-open) .initiatives-viewport,
     #projects:has(.initiative-card.is-open) .carousel-container {
+        position: relative;
+        z-index: 3;
         mask-image: none;
         -webkit-mask-image: none;
-    }
-
-    #projects .initiative-card:first-child .tooltip-popup {
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0.85);
-    }
-
-    #projects .initiative-card:first-child.is-open .tooltip-popup {
-        transform: translate(-50%, -50%) scale(1);
     }
 
     html:has(#projects .initiative-card.is-open) {
