@@ -3132,11 +3132,13 @@ document.addEventListener('keydown', function(e) {
 }
 
 .initiatives-section {
+    padding: 100px 0 72px;
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    padding: var(--section-y) 0 max(24px, calc(var(--section-y) - 64px));
     background: #f7f7f5;
+    padding-top: 80px;
+    padding-bottom: 40px;
     color: #111111;
 }
 
@@ -3238,7 +3240,7 @@ document.addEventListener('keydown', function(e) {
     flex: 0 0 calc((100vw - 120px) / 5.2);
     flex-direction: column;
     width: calc((100vw - 120px) / 5.2);
-    min-height: 350px;
+    min-height: 352px;
     color: #111111;
     text-align: center;
     scroll-snap-align: center;
@@ -3551,7 +3553,7 @@ document.addEventListener('keydown', function(e) {
     .initiative-card {
         flex-basis: min(240px, 78vw);
         width: min(240px, 78vw);
-        min-height: calc(32px + 11rem);
+        min-height: calc(40px + 12rem);
     }
 
     .project-default {
@@ -3589,7 +3591,7 @@ document.addEventListener('keydown', function(e) {
 
     .initiative-read-more {
         min-height: 32px;
-        margin-top: 6px;
+        margin-top: 14px;
         font-size: 12px;
     }
 }
@@ -4004,7 +4006,7 @@ document.addEventListener('keydown', function(e) {
     width: min(460px, calc(100vw - 32px));
     min-height: 430px;
     max-height: min(520px, calc(100vh - 32px));
-    padding: 24px;
+    padding: 12px 24px 24px;
     color: #1e1e1a;
     background: rgba(255, 255, 255, 0.56);
     border-color: rgba(255, 255, 255, 0.78);
@@ -4086,7 +4088,7 @@ document.addEventListener('keydown', function(e) {
 
     #projects .tooltip-popup {
         min-height: 390px;
-        padding: 20px;
+        padding: 12px 20px 20px;
     }
 
     #projects .tooltip-container:hover:not(.is-open) .project-default {
@@ -4298,7 +4300,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let dragging = false;
     let suppressClick = false;
     let paused = false;
-    let ignoreClicksUntil = 0;
     let direction = 1;
     const autoSpeed = 18; // slower drift to match the Figma motion cadence more closely
     const mobileQuery = window.matchMedia('(max-width: 767px)');
@@ -4379,14 +4380,25 @@ document.addEventListener('DOMContentLoaded', function () {
         render();
     };
 
-    const openMobilePopup = (card) => {
-        if (!card.querySelector('.tooltip-popup')) return false;
-        projectCards.forEach((item) => item.classList.remove('is-open'));
-        centerCard(card);
-        card.classList.add('is-open');
+    track.addEventListener('click', (event) => {
+        if (suppressClick || !mobileQuery.matches || event.target.closest('a[href]')) return;
+
+        const card = event.target.closest('.initiative-card');
+        if (!card || !track.contains(card) || !card.querySelector('.tooltip-popup')) return;
+
+        const wasOpen = card.classList.contains('is-open');
+        closeMobilePopups();
+        if (!wasOpen) {
+            centerCard(card);
+            card.classList.add('is-open');
+        }
         syncAutoPause();
-        return true;
-    };
+    }, true);
+
+    document.addEventListener('click', (event) => {
+        if (!mobileQuery.matches || event.target.closest('.initiative-card, .tooltip-popup')) return;
+        if (track.querySelector('.tooltip-container.is-open')) closeMobilePopups();
+    });
 
     const releaseCard = () => {
         pointerId = null;
@@ -4410,7 +4422,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const beginPointer = (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
-        if (mobileQuery.matches && event.pointerType === 'mouse' && performance.now() < ignoreClicksUntil) return;
         if (event.target.closest('.tooltip-popup a[href]')) return;
 
         measure();
@@ -4432,6 +4443,9 @@ document.addEventListener('DOMContentLoaded', function () {
             if (Math.abs(deltaY) > Math.abs(delta)) {
                 pointerId = null;
                 return;
+            }
+            if (mobileQuery.matches && track.querySelector('.tooltip-container.is-open')) {
+                closeMobilePopups();
             }
             dragged = true;
             dragging = true;
@@ -4470,43 +4484,6 @@ document.addEventListener('DOMContentLoaded', function () {
         render();
         lastFrame = performance.now();
     }, { passive: false });
-
-    track.addEventListener('click', (event) => {
-        if (suppressClick) {
-            event.preventDefault();
-            event.stopPropagation();
-            return;
-        }
-        if (!mobileQuery.matches) return;
-
-        if (performance.now() < ignoreClicksUntil) {
-            event.preventDefault();
-            event.stopPropagation();
-            return;
-        }
-
-        const card = event.target.closest('.initiative-card');
-        if (!card || !track.contains(card)) return;
-        if (!card.classList.contains('is-open') && !card.querySelector('.tooltip-popup')) return;
-        if (event.target.closest('.tooltip-popup a[href]')) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        ignoreClicksUntil = performance.now() + 450;
-
-        if (card.classList.contains('is-open')) {
-            closeMobilePopups();
-            return;
-        }
-        openMobilePopup(card);
-    }, true);
-
-    document.addEventListener('click', (event) => {
-        if (!mobileQuery.matches || performance.now() < ignoreClicksUntil) return;
-        if (event.target.closest('.initiative-card, .tooltip-popup')) return;
-        if (!track.querySelector('.tooltip-container.is-open')) return;
-        closeMobilePopups();
-    });
 
     window.addEventListener('resize', () => {
         if (!mobileQuery.matches) closeMobilePopups();
