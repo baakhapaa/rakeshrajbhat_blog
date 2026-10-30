@@ -3188,13 +3188,13 @@ document.addEventListener('keydown', function(e) {
 .initiatives-viewport {
     width: 100%;
     padding-block: var(--heading-gap) 64px;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
+    overflow: hidden;
+    overscroll-behavior-x: none;
     scrollbar-width: none;
-    scroll-snap-type: x mandatory;
+    scroll-snap-type: none;
     -webkit-mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
     mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
-    touch-action: pan-x;
+    touch-action: pan-y;
 }
 
 .initiatives-viewport::-webkit-scrollbar {
@@ -3652,6 +3652,13 @@ document.addEventListener('keydown', function(e) {
     will-change: transform;
     touch-action: pan-y;
     user-select: none;
+}
+
+#projects .initiatives-viewport,
+#projects .carousel-track,
+#projects .initiative-card,
+#projects .initiative-card a {
+    touch-action: pan-y;
 }
 
 .carousel-track:hover {
@@ -4305,8 +4312,10 @@ document.addEventListener('DOMContentLoaded', function () {
     let lastFrame = 0;
     let pointerId = null;
     let startX = 0;
+    let startY = 0;
     let startPosition = 0;
     let dragged = false;
+    let dragging = false;
     let suppressClick = false;
     let paused = false;
     let ignoreClicksUntil = 0;
@@ -4320,6 +4329,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const render = () => {
+        if (carousel.scrollLeft) carousel.scrollLeft = 0;
         track.style.transform = `translate3d(${-position}px, 0, 0)`;
     };
 
@@ -4328,7 +4338,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const elapsed = Math.min(timestamp - lastFrame, 50);
         lastFrame = timestamp;
 
-        if (pointerId === null && !paused && maxPosition) {
+        if (!dragging && !paused && maxPosition) {
             position += direction * (elapsed / 1000) * autoSpeed;
             if (position >= maxPosition) {
                 position = maxPosition;
@@ -4344,30 +4354,32 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const finishDrag = () => {
-        if (pointerId === null) return;
+        if (pointerId === null && !dragging) return;
 
         const activePointerId = pointerId;
+        const traveled = position - startPosition;
         pointerId = null;
-        track.releasePointerCapture?.(activePointerId);
-        track.classList.remove('is-dragging');
+        dragging = false;
+        if (activePointerId !== null) {
+            try { carousel.releasePointerCapture(activePointerId); } catch (error) {}
+            try { track.releasePointerCapture(activePointerId); } catch (error) {}
+        }
+        track.classList.remove('is-dragging', 'is-settling');
 
         if (dragged) {
             suppressClick = true;
-            track.classList.add('is-settling');
-            window.setTimeout(() => track.classList.remove('is-settling'), 190);
+            if (traveled > 2) direction = 1;
+            else if (traveled < -2) direction = -1;
             window.setTimeout(() => { suppressClick = false; }, 0);
         }
 
         lastFrame = performance.now();
     };
 
-    const isProjectLink = (event) => Boolean(event.target.closest('a, button'));
-
     const projectCards = track.querySelectorAll('.tooltip-container');
 
     const syncMobilePause = () => {
-        if (!mobileQuery.matches) return;
-        paused = Boolean(track.querySelector('.tooltip-container.is-open'));
+        paused = mobileQuery.matches && Boolean(track.querySelector('.tooltip-container.is-open'));
         lastFrame = performance.now();
     };
 
@@ -4394,20 +4406,12 @@ document.addEventListener('DOMContentLoaded', function () {
         return true;
     };
 
-    const releaseCard = (event) => {
-        if (!mobileQuery.matches) return;
+    const releaseCard = () => {
         pointerId = null;
+        dragging = false;
         track.classList.remove('is-dragging');
-        if (!track.querySelector('.tooltip-container.is-open')) paused = false;
-        lastFrame = performance.now();
+        syncMobilePause();
     };
-
-    carousel.addEventListener('pointerenter', () => {
-        if (!mobileQuery.matches) paused = true;
-    });
-    carousel.addEventListener('pointerleave', () => {
-        if (!mobileQuery.matches) paused = false;
-    });
 
     projectCards.forEach((card) => {
         card.addEventListener('mouseenter', () => {
@@ -4420,45 +4424,68 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    track.addEventListener('pointerdown', (event) => {
+    const beginPointer = (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
         if (mobileQuery.matches && event.pointerType === 'mouse' && performance.now() < ignoreClicksUntil) return;
-        if (isProjectLink(event) && !(mobileQuery.matches && event.target.closest('.initiative-card'))) return;
+        if (event.target.closest('.tooltip-popup a[href]')) return;
 
         measure();
         pointerId = event.pointerId;
         startX = event.clientX;
+        startY = event.clientY;
         startPosition = position;
         dragged = false;
-        track.classList.add('is-dragging');
-        track.setPointerCapture?.(pointerId);
-    });
+        dragging = false;
+    };
 
-    track.addEventListener('pointermove', (event) => {
+    const movePointer = (event) => {
         if (event.pointerId !== pointerId) return;
 
         const delta = event.clientX - startX;
-        if (Math.abs(delta) > 5) dragged = true;
-        if (!dragged) return;
+        const deltaY = event.clientY - startY;
+        if (!dragged) {
+            if (Math.abs(delta) < 8 && Math.abs(deltaY) < 8) return;
+            if (Math.abs(deltaY) > Math.abs(delta)) {
+                pointerId = null;
+                return;
+            }
+            dragged = true;
+            dragging = true;
+            track.classList.add('is-dragging');
+            try { carousel.setPointerCapture(event.pointerId); } catch (error) {}
+        }
 
         position = Math.min(Math.max(startPosition - delta, 0), maxPosition);
         render();
         event.preventDefault();
-    });
-
-    const endPointer = (event) => {
-        finishDrag();
-        releaseCard(event);
     };
 
-    track.addEventListener('pointerup', endPointer);
-    track.addEventListener('pointercancel', endPointer);
-    track.addEventListener('lostpointercapture', () => {
-        pointerId = null;
-        track.classList.remove('is-dragging');
-    });
+    const endPointer = (event) => {
+        if (pointerId !== null && event.pointerId !== pointerId) return;
+        finishDrag();
+        releaseCard();
+    };
+
+    carousel.addEventListener('pointerdown', beginPointer);
+    carousel.addEventListener('pointermove', movePointer);
+    carousel.addEventListener('pointerup', endPointer);
+    carousel.addEventListener('pointercancel', endPointer);
+    window.addEventListener('pointermove', movePointer);
     window.addEventListener('pointerup', endPointer);
     window.addEventListener('pointercancel', endPointer);
+
+    carousel.addEventListener('wheel', (event) => {
+        if (paused || dragging) return;
+        const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : (event.shiftKey ? event.deltaY : 0);
+        if (!delta) return;
+        measure();
+        if (!maxPosition) return;
+        event.preventDefault();
+        position = Math.min(Math.max(position + delta, 0), maxPosition);
+        direction = delta > 0 ? 1 : -1;
+        render();
+        lastFrame = performance.now();
+    }, { passive: false });
 
     track.addEventListener('click', (event) => {
         if (suppressClick) {
@@ -4498,10 +4525,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     window.addEventListener('resize', () => {
-        if (!mobileQuery.matches) {
-            closeMobilePopups();
-            paused = carousel.matches(':hover');
-        }
+        if (!mobileQuery.matches) closeMobilePopups();
+        else syncMobilePause();
         measure();
         render();
     });
