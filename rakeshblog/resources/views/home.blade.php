@@ -1490,8 +1490,8 @@
             }
 
             .mission-scroll__sticky {
-                top: 5rem;
-                height: calc(100svh - 5rem);
+                top: 72px;
+                height: 380px;
             }
 
             .mission-scroll__rings {
@@ -1578,8 +1578,8 @@
 
             .mission-scroll__textViewport {
                 width: 100%;
-                min-height: 180px;
-                height: min(280px, 46vh);
+                min-height: 0;
+                height: 200px;
             }
 
             .mission-scroll__body {
