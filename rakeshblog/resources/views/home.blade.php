@@ -3651,10 +3651,21 @@ document.addEventListener('keydown', function(e) {
     animation-play-state: paused;
 }
 
-/* Pointer dragging is enabled by the scoped script below. */
+/* Pointer dragging on touch devices in mobile layout (or coarse pointers); not with mouse. */
 .carousel-track.carousel-drag-ready {
     animation: none;
-    cursor: grab;
+}
+
+@media (max-width: 767px) {
+    .carousel-track.carousel-drag-ready {
+        cursor: grab;
+    }
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .carousel-track.carousel-drag-ready {
+        cursor: grab;
+    }
 }
 
 .carousel-track.carousel-drag-ready.is-dragging {
@@ -4088,6 +4099,11 @@ document.addEventListener('keydown', function(e) {
 }
 
 @media (max-width: 767px) {
+    html, body {
+        overflow-x: clip;
+        overscroll-behavior-x: none;
+    }
+
     .initiatives-viewport {
         padding-block: var(--heading-gap) 32px;
     }
@@ -4279,7 +4295,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-/* Projects-only pointer carousel: supports mouse dragging and touch swipes. */
+/* Projects carousel: touch swipe on phones/tablets (mobile layout or coarse pointer). No mouse drag. */
 document.addEventListener('DOMContentLoaded', function () {
     const carousel = document.querySelector('#projects .carousel-container');
     const track = carousel?.querySelector('.carousel-track');
@@ -4419,17 +4435,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    const beginPointer = (event) => {
-        if (event.pointerType === 'mouse' && event.button !== 0) return;
-        if (event.target.closest('.tooltip-popup a[href]')) return;
-
-        measure();
-        pointerId = event.pointerId;
-        startX = event.clientX;
-        startY = event.clientY;
-        startPosition = position;
-        dragged = false;
-        dragging = false;
+    const beginPointer = () => {
+        // Dragging this row slides the page and leaves a black gap, so swipes do nothing.
     };
 
     const movePointer = (event) => {
@@ -4470,6 +4477,22 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('pointermove', movePointer);
     window.addEventListener('pointerup', endPointer);
     window.addEventListener('pointercancel', endPointer);
+
+    let swipeX = 0;
+    let swipeY = 0;
+    carousel.addEventListener('touchstart', (event) => {
+        const touch = event.touches[0];
+        if (!touch) return;
+        swipeX = touch.clientX;
+        swipeY = touch.clientY;
+    }, { passive: true });
+    carousel.addEventListener('touchmove', (event) => {
+        const touch = event.touches[0];
+        if (!touch) return;
+        const dx = Math.abs(touch.clientX - swipeX);
+        const dy = Math.abs(touch.clientY - swipeY);
+        if (dx > dy && dx > 8) event.preventDefault();
+    }, { passive: false });
 
     carousel.addEventListener('wheel', (event) => {
         if (paused || dragging) return;
