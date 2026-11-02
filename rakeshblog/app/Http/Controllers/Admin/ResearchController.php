@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Research;
 use App\Models\Setting;
-use App\Services\SiteAnalytics;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
@@ -87,9 +86,7 @@ class ResearchController extends Controller
             }
         }
 
-        $viewCounts = SiteAnalytics::viewCounts('research', $researchItems->pluck('id'));
-
-        return view('admin.research.index', compact('researchItems', 'researchSection', 'featuredPage', 'researchCategories', 'homeFilters', 'viewCounts'));
+        return view('admin.research.index', compact('researchItems', 'researchSection', 'featuredPage', 'researchCategories', 'homeFilters'));
     }
 
     public function updateSection(Request $request)

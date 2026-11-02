@@ -8,13 +8,17 @@ use App\Models\PageView;
 use App\Models\Research;
 use App\Models\SiteVisit;
 use App\Support\TrafficSource;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class SiteAnalytics
 {
     public const RANGES = [7, 30, 90];
+
+    public const CONTENT_MODELS = ['blog' => Blog::class, 'news' => NewsItem::class, 'research' => Research::class];
+
+    public const CONTENT_PER_PAGE = 10;
 
     private const TIMEZONE = 'Asia/Kathmandu';
     private const LOCAL_DAY_SQL = 'DATE(DATE_ADD(%s, INTERVAL 345 MINUTE))';
@@ -202,40 +206,65 @@ class SiteAnalytics
     }
 
     /**
-     * Views per blog, news item and research item, with the top country and top source of its readers.
+     * Paginated list of every item of one content type with views and locations (10 per page).
      */
-    public function contentPerformance(int $limit = 25): Collection
+    public function contentBreakdownPaginated(string $type, int $page = 1): LengthAwarePaginator
     {
-        $base = PageView::query()
-            ->join('site_visits', 'site_visits.id', '=', 'page_views.site_visit_id')
-            ->where('page_views.created_at', '>=', $this->since())
-            ->whereNotNull('page_views.content_type');
+        $modelClass = self::CONTENT_MODELS[$type];
+        $table = (new $modelClass)->getTable();
+        $since = $this->since();
 
-        $rows = (clone $base)
-            ->selectRaw('page_views.content_type, page_views.content_id, COUNT(*) as views, COUNT(DISTINCT site_visits.visitor_hash) as visitors')
-            ->groupBy('page_views.content_type', 'page_views.content_id')
-            ->orderByDesc('views')
-            ->limit($limit)
-            ->get();
+        $rangeSub = PageView::query()
+            ->leftJoin('site_visits', 'site_visits.id', '=', 'page_views.site_visit_id')
+            ->where('page_views.content_type', $type)
+            ->where('page_views.created_at', '>=', $since)
+            ->selectRaw('page_views.content_id, COUNT(*) as range_views, COUNT(DISTINCT site_visits.visitor_hash) as range_visitors')
+            ->groupBy('page_views.content_id');
 
-        if ($rows->isEmpty()) {
-            return collect();
-        }
+        $allTimeSub = PageView::query()
+            ->where('content_type', $type)
+            ->selectRaw('content_id, COUNT(*) as all_views')
+            ->groupBy('content_id');
 
-        $topCountry = $this->topPerContent($base, 'site_visits.country');
-        $topSource = $this->topPerContent($base, 'site_visits.source');
-        $titles = $this->contentTitles($rows);
+        $paginator = $modelClass::query()
+            ->select("{$table}.*")
+            ->selectRaw('COALESCE(range_stats.range_views, 0) as range_views')
+            ->selectRaw('COALESCE(range_stats.range_visitors, 0) as range_visitors')
+            ->selectRaw('COALESCE(all_time_stats.all_views, 0) as all_views')
+            ->leftJoinSub($rangeSub, 'range_stats', fn ($join) => $join->on("{$table}.id", '=', 'range_stats.content_id'))
+            ->leftJoinSub($allTimeSub, 'all_time_stats', fn ($join) => $join->on("{$table}.id", '=', 'all_time_stats.content_id'))
+            ->orderByDesc('range_views')
+            ->orderByDesc('all_views')
+            ->orderByDesc("{$table}.created_at")
+            ->paginate(self::CONTENT_PER_PAGE, ["{$table}.*"], 'articles_page', $page);
 
-        return $rows->map(function ($row) use ($topCountry, $topSource, $titles) {
-            $key = $row->content_type . ':' . $row->content_id;
+        $ids = $paginator->getCollection()->pluck('id');
 
+        $locations = $ids->isEmpty()
+            ? collect()
+            : PageView::query()
+                ->leftJoin('site_visits', 'site_visits.id', '=', 'page_views.site_visit_id')
+                ->where('page_views.content_type', $type)
+                ->where('page_views.created_at', '>=', $since)
+                ->whereIn('page_views.content_id', $ids)
+                ->selectRaw('page_views.content_id, site_visits.country, site_visits.city, COUNT(*) as total')
+                ->groupBy('page_views.content_id', 'site_visits.country', 'site_visits.city')
+                ->get()
+                ->groupBy('content_id');
+
+        return $paginator->through(function ($item) use ($type, $locations) {
             return [
-                'type' => ucfirst($row->content_type),
-                'title' => $titles[$key] ?? 'Deleted item #' . $row->content_id,
-                'views' => (int) $row->views,
-                'visitors' => (int) $row->visitors,
-                'country' => isset($topCountry[$key]) ? self::countryName($topCountry[$key]) : '—',
-                'source' => isset($topSource[$key]) ? TrafficSource::label($topSource[$key]) : '—',
+                'id' => $item->id,
+                'title' => $item->title ?: 'Untitled #' . $item->id,
+                'url' => match ($type) {
+                    'blog' => $item->is_published ? route('blog.show', $item->slug) : null,
+                    'research' => route('admin.research.show', $item->id),
+                    default => null,
+                },
+                'views' => (int) $item->range_views,
+                'visitors' => (int) $item->range_visitors,
+                'all_views' => (int) $item->all_views,
+                'countries' => self::foldLocations($locations->get($item->id, collect())),
             ];
         });
     }
@@ -264,38 +293,25 @@ class SiteAnalytics
     }
 
     /**
-     * Most viewed items of one content type in the selected range.
+     * Groups content_id/country/city view rows into countries, each with its cities, most views first.
      */
-    public function topContent(string $type, int $limit = 5): Collection
+    private static function foldLocations(Collection $rows): array
     {
-        $rows = PageView::query()
-            ->leftJoin('site_visits', 'site_visits.id', '=', 'page_views.site_visit_id')
-            ->where('page_views.created_at', '>=', $this->since())
-            ->where('page_views.content_type', $type)
-            ->selectRaw('page_views.content_id, COUNT(*) as views, COUNT(DISTINCT site_visits.visitor_hash) as visitors')
-            ->groupBy('page_views.content_id')
-            ->orderByDesc('views')
-            ->limit($limit)
-            ->get();
-
-        $models = ['blog' => Blog::class, 'news' => NewsItem::class, 'research' => Research::class];
-        $items = $models[$type]::query()->whereIn('id', $rows->pluck('content_id'))->get()->keyBy('id');
-
-        return $rows->map(function ($row) use ($items, $type) {
-            $item = $items->get($row->content_id);
-
-            return [
-                'title' => $item->title ?? 'Deleted item #' . $row->content_id,
-                'views' => (int) $row->views,
-                'visitors' => (int) $row->visitors,
-                'url' => match (true) {
-                    $item === null => null,
-                    $type === 'blog' => route('blog.show', $item->slug),
-                    $type === 'research' => route('admin.research.show', $item->id),
-                    default => route('admin.news.index'),
-                },
-            ];
-        });
+        return $rows
+            ->groupBy(fn ($row) => $row->country ?? '')
+            ->map(fn (Collection $group, string $code) => [
+                'code' => $code !== '' ? $code : null,
+                'name' => self::countryName($code !== '' ? $code : null),
+                'views' => (int) $group->sum('total'),
+                'cities' => $group
+                    ->filter(fn ($row) => $row->city)
+                    ->sortByDesc('total')
+                    ->mapWithKeys(fn ($row) => [$row->city => (int) $row->total])
+                    ->all(),
+            ])
+            ->sortByDesc('views')
+            ->values()
+            ->all();
     }
 
     /**
@@ -363,46 +379,5 @@ class SiteAnalytics
             ->pluck('total', 'label')
             ->map(fn ($total) => (int) $total)
             ->all();
-    }
-
-    /**
-     * @return array<string, string>  "type:id" => most common value of $column
-     */
-    private function topPerContent($base, string $column): array
-    {
-        $top = [];
-
-        (clone $base)
-            ->whereNotNull($column)
-            ->selectRaw("page_views.content_type, page_views.content_id, {$column} as value, COUNT(*) as total")
-            ->groupBy('page_views.content_type', 'page_views.content_id', DB::raw($column))
-            ->orderByDesc('total')
-            ->get()
-            ->each(function ($row) use (&$top) {
-                $top[$row->content_type . ':' . $row->content_id] ??= $row->value;
-            });
-
-        return $top;
-    }
-
-    private function contentTitles(Collection $rows): array
-    {
-        $models = ['blog' => Blog::class, 'news' => NewsItem::class, 'research' => Research::class];
-        $titles = [];
-
-        foreach ($rows->groupBy('content_type') as $type => $group) {
-            if (!isset($models[$type])) {
-                continue;
-            }
-
-            $models[$type]::query()
-                ->whereIn('id', $group->pluck('content_id'))
-                ->pluck('title', 'id')
-                ->each(function ($title, $id) use (&$titles, $type) {
-                    $titles[$type . ':' . $id] = $title;
-                });
-        }
-
-        return $titles;
     }
 }

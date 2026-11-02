@@ -20,7 +20,7 @@
         </div>
         <nav class="analytics-range" aria-label="Date range">
             @foreach($ranges as $option)
-                <a href="{{ route('admin.analytics', array_filter(['range' => $option, 'page' => $selectedPage])) }}"
+                <a href="{{ route('admin.analytics', array_filter(['range' => $option, 'page' => $selectedPage, 'content' => $contentType])) }}"
                    class="{{ $option === $range ? 'is-active' : '' }}">{{ $option }} days</a>
             @endforeach
         </nav>
@@ -118,78 +118,101 @@
         </section>
     </div>
 
-    {{-- TOP 5 PER TYPE --}}
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-        @foreach($topLists as $heading => $list)
-            @php $topViews = max(1, (int) ($list['items']->first()['views'] ?? 0)); @endphp
-            <section class="analytics-section">
-                <header class="analytics-section__header">
-                    <h2><i class="fas {{ $list['icon'] }} text-[#D4AF37] mr-2"></i>{{ $heading }}</h2>
-                    <p>Most viewed in the last {{ $range }} days.</p>
-                </header>
-                <div class="analytics-section__body">
-                    @if($list['items']->isEmpty())
-                        <p class="analytics-empty">No views in this period yet.</p>
-                    @else
-                        <ol class="analytics-top">
-                            @foreach($list['items'] as $index => $item)
-                                <li>
-                                    <span class="analytics-top__rank">{{ $index + 1 }}</span>
-                                    <div class="analytics-top__main">
-                                        <div class="analytics-top__row">
-                                            @if($item['url'])
-                                                <a href="{{ $item['url'] }}" target="_blank" class="analytics-top__title" title="{{ $item['title'] }}">{{ $item['title'] }}</a>
-                                            @else
-                                                <span class="analytics-top__title" title="{{ $item['title'] }}">{{ $item['title'] }}</span>
-                                            @endif
-                                            <span class="analytics-top__views">{{ number_format($item['views']) }}</span>
-                                        </div>
-                                        <div class="analytics-bars__track"><span style="width: {{ round($item['views'] / $topViews * 100, 1) }}%"></span></div>
-                                        <p class="analytics-top__meta">{{ number_format($item['visitors']) }} {{ $item['visitors'] === 1 ? 'visitor' : 'visitors' }}</p>
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ol>
-                    @endif
-                </div>
-            </section>
-        @endforeach
-    </div>
-
-    {{-- BLOG AND NEWS PERFORMANCE --}}
+    {{-- VIEWS BY ARTICLE --}}
+    @php
+        $contentLabels = ['blog' => ['Blogs', 'blogs'], 'news' => ['News', 'news items'], 'research' => ['Research', 'research items']];
+    @endphp
     <section class="analytics-section mb-6">
-        <header class="analytics-section__header">
-            <h2>Blog, news and research views</h2>
-            <p>Views of each article, with the country and source most of its readers came from.</p>
+        <header class="analytics-section__header analytics-section__header--split">
+            <div>
+                <h2>Views by article</h2>
+                <p>Every item with its views and where its readers are. Click a row to see all its locations. {{ $contentArticles->perPage() }} per page.</p>
+            </div>
+            <select id="contentTypeSelect" class="analytics-select" aria-label="Content type">
+                @foreach($contentLabels as $type => [$label])
+                    <option value="{{ $type }}" @selected($contentType === $type)>{{ $label }}</option>
+                @endforeach
+            </select>
         </header>
         <div class="analytics-section__body overflow-x-auto">
-            @if($content->isEmpty())
-                <p class="analytics-empty">No blog, news or research views recorded yet.</p>
+            @if($contentArticles->isEmpty())
+                <p class="analytics-empty">No {{ $contentLabels[$contentType][1] }} yet.</p>
             @else
                 <table class="analytics-table">
                     <thead>
                         <tr>
                             <th>Title</th>
-                            <th>Type</th>
-                            <th class="text-right">Views</th>
+                            <th class="text-right whitespace-nowrap">Views ({{ $range }} days)</th>
+                            <th class="text-right whitespace-nowrap">All time</th>
                             <th class="text-right">Visitors</th>
-                            <th>Top country</th>
-                            <th>Top source</th>
+                            <th>Locations</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($content as $item)
-                            <tr>
-                                <td class="text-white max-w-[360px] truncate" title="{{ $item['title'] }}">{{ $item['title'] }}</td>
-                                <td><span class="analytics-pill">{{ $item['type'] }}</span></td>
-                                <td class="text-right text-[#D4AF37] font-semibold">{{ number_format($item['views']) }}</td>
+                        @foreach($contentArticles as $item)
+                            @php $hasLocations = !empty($item['countries']); @endphp
+                            <tr class="{{ $hasLocations ? 'analytics-content__row' : '' }}" @if($hasLocations) data-toggle-row="{{ $contentType }}-{{ $item['id'] }}" tabindex="0" aria-expanded="false" @endif>
+                                <td class="text-white max-w-[340px] truncate" title="{{ $item['title'] }}">
+                                    @if($hasLocations)<i class="fas fa-chevron-right analytics-content__caret"></i>@endif
+                                    @if($item['url'])
+                                        <a href="{{ $item['url'] }}" target="_blank" class="analytics-content__link">{{ $item['title'] }}</a>
+                                    @else
+                                        {{ $item['title'] }}
+                                    @endif
+                                </td>
+                                <td class="text-right font-semibold {{ $item['views'] > 0 ? 'text-[#D4AF37]' : 'text-white/30' }}">{{ number_format($item['views']) }}</td>
+                                <td class="text-right">{{ number_format($item['all_views']) }}</td>
                                 <td class="text-right">{{ number_format($item['visitors']) }}</td>
-                                <td>{{ $item['country'] }}</td>
-                                <td>{{ $item['source'] }}</td>
+                                <td>
+                                    @if(!$hasLocations)
+                                        <span class="text-white/30">No views yet</span>
+                                    @else
+                                        <div class="analytics-chips">
+                                            @foreach(array_slice($item['countries'], 0, 3) as $country)
+                                                <span class="analytics-chip">{{ $country['name'] }} <strong>{{ number_format($country['views']) }}</strong></span>
+                                            @endforeach
+                                            @if(count($item['countries']) > 3)
+                                                <span class="analytics-chip analytics-chip--more">+{{ count($item['countries']) - 3 }} more</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </td>
                             </tr>
+                            @if($hasLocations)
+                                <tr class="analytics-content__detail" data-detail-row="{{ $contentType }}-{{ $item['id'] }}" hidden>
+                                    <td colspan="5">
+                                        <div class="analytics-locations">
+                                            @foreach($item['countries'] as $country)
+                                                <div class="analytics-location">
+                                                    <div class="analytics-bars__row">
+                                                        <span class="analytics-bars__label">
+                                                            @if($country['code'])<span class="analytics-code">{{ $country['code'] }}</span>@endif{{ $country['name'] }}
+                                                        </span>
+                                                        <span class="analytics-bars__value">{{ number_format($country['views']) }}<small>{{ round($country['views'] / max(1, $item['views']) * 100) }}%</small></span>
+                                                    </div>
+                                                    <div class="analytics-bars__track"><span style="width: {{ round($country['views'] / max(1, $item['views']) * 100, 1) }}%"></span></div>
+                                                    @if(!empty($country['cities']))
+                                                        <p class="analytics-location__cities">
+                                                            {{ collect($country['cities'])->map(fn ($count, $city) => $city . ' ' . number_format($count))->implode(' · ') }}
+                                                        </p>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endif
                         @endforeach
                     </tbody>
                 </table>
+                @if($contentArticles->hasPages())
+                    <div class="analytics-content__pager">
+                        <p class="analytics-content__pager-meta">
+                            Showing {{ $contentArticles->firstItem() }}–{{ $contentArticles->lastItem() }} of {{ number_format($contentArticles->total()) }} {{ $contentLabels[$contentType][1] }}
+                        </p>
+                        {{ $contentArticles->withQueryString()->links() }}
+                    </div>
+                @endif
             @endif
         </div>
     </section>
@@ -298,6 +321,7 @@
             @if($demographics['configured'])
                 <form method="GET" action="{{ route('admin.analytics') }}">
                     <input type="hidden" name="range" value="{{ $range }}">
+                    <input type="hidden" name="content" value="{{ $contentType }}">
                     <select name="page" class="analytics-select" onchange="this.form.submit()">
                         @foreach($demographicPages as $path => $label)
                             <option value="{{ $path }}" @selected($selectedPage === $path)>{{ \Illuminate\Support\Str::limit($label, 60) }}</option>
@@ -525,68 +549,142 @@
         font-size: 13px;
     }
 
-    .analytics-top {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr);
-        gap: 14px;
+    .analytics-content__row {
+        cursor: pointer;
+        transition: background 0.15s ease;
     }
 
-    .analytics-top li {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
+    .analytics-content__row:hover,
+    .analytics-content__row:focus-visible {
+        background: rgba(255, 255, 255, 0.025);
+        outline: none;
     }
 
-    .analytics-top__rank {
-        flex: 0 0 26px;
-        height: 26px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    .analytics-content__caret {
+        width: 12px;
+        margin-right: 8px;
+        color: rgba(255, 255, 255, 0.35);
+        font-size: 10px;
+        transition: transform 0.2s ease;
+    }
+
+    .analytics-content__row[aria-expanded="true"] .analytics-content__caret {
+        transform: rotate(90deg);
         color: #D4AF37;
-        background: rgba(212, 175, 55, 0.1);
-        font-size: 12px;
-        font-weight: 700;
     }
 
-    .analytics-top__main {
-        flex: 1;
-        min-width: 0;
-    }
-
-    .analytics-top__row {
-        display: flex;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 6px;
-    }
-
-    .analytics-top__title {
-        min-width: 0;
-        color: rgba(255, 255, 255, 0.85);
-        font-size: 13px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+    .analytics-content__link {
+        color: inherit;
         text-decoration: none;
     }
 
-    a.analytics-top__title:hover {
+    .analytics-content__link:hover {
         color: #D4AF37;
     }
 
-    .analytics-top__views {
-        color: #D4AF37;
-        font-size: 13px;
-        font-weight: 700;
-        white-space: nowrap;
+    .analytics-content__detail > td {
+        padding: 6px 10px 18px 30px;
+        background: rgba(0, 0, 0, 0.12);
     }
 
-    .analytics-top__meta {
-        color: rgba(255, 255, 255, 0.35);
+    .analytics-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .analytics-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 9px;
+        border-radius: 999px;
         font-size: 11px;
-        margin-top: 5px;
+        white-space: nowrap;
+        color: rgba(255, 255, 255, 0.75);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .analytics-chip strong {
+        color: #D4AF37;
+        font-weight: 600;
+    }
+
+    .analytics-chip--more {
+        color: rgba(255, 255, 255, 0.45);
+    }
+
+    .analytics-locations {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 14px 24px;
+        padding-top: 10px;
+    }
+
+    .analytics-location {
+        min-width: 0;
+    }
+
+    .analytics-location__cities {
+        margin-top: 6px;
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 11px;
+    }
+
+    .analytics-content__pager {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .analytics-content__pager-meta {
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 12px;
+    }
+
+    .analytics-content__pager nav {
+        margin-left: auto;
+    }
+
+    .analytics-content__pager .pagination {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .analytics-content__pager .page-link,
+    .analytics-content__pager .page-item span {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.65);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .analytics-content__pager .page-item.active span {
+        color: #0b0e12;
+        background: #D4AF37;
+        border-color: #D4AF37;
+    }
+
+    .analytics-content__pager .page-item.disabled span {
+        opacity: 0.35;
+    }
+
+    .analytics-content__pager .page-link:hover {
+        color: #fff;
+        border-color: rgba(212, 175, 55, 0.35);
     }
 
     .analytics-range {
@@ -709,6 +807,36 @@
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.6.0/dist/jsvectormap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.6.0/dist/maps/world.js"></script>
 <script>
+    (() => {
+        const typeSelect = document.getElementById('contentTypeSelect');
+
+        typeSelect?.addEventListener('change', () => {
+            const url = new URL(window.location.href);
+            url.searchParams.set('content', typeSelect.value);
+            url.searchParams.set('articles_page', '1');
+            window.location.href = url.toString();
+        });
+
+        const toggleRow = (row) => {
+            const detail = document.querySelector(`[data-detail-row="${row.dataset.toggleRow}"]`);
+            if (!detail) return;
+            detail.hidden = !detail.hidden;
+            row.setAttribute('aria-expanded', String(!detail.hidden));
+        };
+
+        document.querySelectorAll('[data-toggle-row]').forEach((row) => {
+            row.addEventListener('click', (event) => {
+                if (!event.target.closest('a')) toggleRow(row);
+            });
+            row.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    toggleRow(row);
+                }
+            });
+        });
+    })();
+
     (() => {
         const countries = @json($countries->values());
 

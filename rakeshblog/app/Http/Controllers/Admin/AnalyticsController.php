@@ -22,6 +22,14 @@ class AnalyticsController extends Controller
             $selectedPage = '';
         }
 
+        $contentType = (string) $request->query('content', 'blog');
+
+        if (!array_key_exists($contentType, SiteAnalytics::CONTENT_MODELS)) {
+            $contentType = 'blog';
+        }
+
+        $articlesPage = max(1, (int) $request->query('articles_page', 1));
+
         return view('admin.analytics.index', [
             'range' => $range,
             'ranges' => SiteAnalytics::RANGES,
@@ -29,12 +37,8 @@ class AnalyticsController extends Controller
             'daily' => $analytics->dailyTraffic(),
             'sources' => $analytics->sources(),
             'referrers' => $analytics->topReferrers(),
-            'content' => $analytics->contentPerformance(),
-            'topLists' => [
-                'Top 5 Blogs' => ['icon' => 'fa-newspaper', 'items' => $analytics->topContent('blog')],
-                'Top 5 Research' => ['icon' => 'fa-flask', 'items' => $analytics->topContent('research')],
-                'Top 5 News' => ['icon' => 'fa-rss', 'items' => $analytics->topContent('news')],
-            ],
+            'contentArticles' => $analytics->contentBreakdownPaginated($contentType, $articlesPage),
+            'contentType' => $contentType,
             'countries' => $analytics->countryStats(),
             'cities' => $analytics->cities(),
             'devices' => $analytics->devices(),

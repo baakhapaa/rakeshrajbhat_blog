@@ -159,7 +159,6 @@
                             <th class="px-6 py-3">Category</th>
                             <th class="px-6 py-3 text-center">Featured</th>
                             <th class="px-6 py-3 text-center">Status</th>
-                            <th class="px-6 py-3 text-center">Views</th>
                             <th class="px-6 py-3">Date</th>
                             <th class="px-6 py-3 text-right">Actions</th>
                         </tr>
@@ -216,12 +215,6 @@
                                             {{ $blog->is_published ? 'Published' : 'Draft' }}
                                         </button>
                                     </form>
-                                </td>
-                                <td class="px-6 py-4 text-center whitespace-nowrap">
-                                    <span class="inline-flex items-center gap-1.5 text-sm text-white">
-                                        <i class="fas fa-eye text-xs text-[#D4AF37]"></i>
-                                        {{ number_format($viewCounts[$blog->id] ?? 0) }}
-                                    </span>
                                 </td>
                                 <td class="px-6 py-4 text-white/60 text-sm">
                                     {{ $blog->published_at ? $blog->published_at->format('M d, Y') : $blog->created_at->format('M d, Y') }}

@@ -296,7 +296,6 @@
                         <th class="text-left py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Status</th>
                         <th class="text-left py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Featured</th>
                         <th class="text-left py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Add to Home</th>
-                        <th class="text-center py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Views</th>
                         <th class="text-left py-4 px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
                             <a href="{{ route('admin.research.index', array_merge(request()->all(), ['sort' => 'created_at', 'direction' => request('direction') == 'asc' ? 'desc' : 'asc'])) }}" 
                                class="flex items-center gap-1 hover:text-white transition-all duration-200 group">
@@ -396,12 +395,6 @@
                                     </span>
                                 </button>
                             </td>
-                            <td class="py-4 px-4 text-center whitespace-nowrap">
-                                <span class="inline-flex items-center gap-1.5 text-sm text-white">
-                                    <i class="fas fa-eye text-xs text-[#D4AF37]"></i>
-                                    {{ number_format($viewCounts[$item->id] ?? 0) }}
-                                </span>
-                            </td>
                             <td class="py-4 px-4 text-sm text-gray-400">
                                 <span title="{{ $item->created_at->format('M d, Y h:i A') }}" class="inline-flex items-center gap-1">
                                     <i class="far fa-calendar-alt text-[10px] text-gray-500"></i>
@@ -434,7 +427,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="py-16 text-center text-gray-400">
+                            <td colspan="9" class="py-16 text-center text-gray-400">
                                 <div class="flex flex-col items-center">
                                     <div class="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-4">
                                         <i class="fas fa-flask text-4xl text-white/10"></i>
