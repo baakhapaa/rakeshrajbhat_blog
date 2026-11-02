@@ -3651,21 +3651,10 @@ document.addEventListener('keydown', function(e) {
     animation-play-state: paused;
 }
 
-/* Pointer dragging on touch devices in mobile layout (or coarse pointers); not with mouse. */
+/* Pointer dragging is enabled for mouse and touch. */
 .carousel-track.carousel-drag-ready {
     animation: none;
-}
-
-@media (max-width: 767px) {
-    .carousel-track.carousel-drag-ready {
-        cursor: grab;
-    }
-}
-
-@media (hover: none) and (pointer: coarse) {
-    .carousel-track.carousel-drag-ready {
-        cursor: grab;
-    }
+    cursor: grab;
 }
 
 .carousel-track.carousel-drag-ready.is-dragging {
@@ -4295,7 +4284,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-/* Projects carousel: touch swipe on phones/tablets (mobile layout or coarse pointer). No mouse drag. */
+/* Projects carousel: drag with a mouse on desktop and a finger on phones. */
 document.addEventListener('DOMContentLoaded', function () {
     const carousel = document.querySelector('#projects .carousel-container');
     const track = carousel?.querySelector('.carousel-track');
@@ -4435,8 +4424,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    const beginPointer = () => {
-        // Dragging this row slides the page and leaves a black gap, so swipes do nothing.
+    const beginPointer = (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        if (event.target.closest('.tooltip-popup a[href]')) return;
+
+        measure();
+        pointerId = event.pointerId;
+        startX = event.clientX;
+        startY = event.clientY;
+        startPosition = position;
+        dragged = false;
+        dragging = false;
     };
 
     const movePointer = (event) => {
