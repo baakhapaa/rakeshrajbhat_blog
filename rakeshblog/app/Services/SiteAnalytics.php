@@ -23,18 +23,53 @@ class SiteAnalytics
     private const TIMEZONE = 'Asia/Kathmandu';
     private const LOCAL_DAY_SQL = 'DATE(DATE_ADD(%s, INTERVAL 345 MINUTE))';
 
-    public function __construct(private int $days = 30)
+    /**
+     * @param  int|null  $days  Number of days to cover, or null for all time.
+     */
+    public function __construct(private ?int $days = 30)
     {
     }
 
-    public function days(): int
+    public function days(): ?int
     {
         return $this->days;
     }
 
-    public function since(): Carbon
+    public function since(): ?Carbon
     {
-        return self::localDayStart($this->days - 1);
+        return $this->days === null ? null : self::localDayStart($this->days - 1);
+    }
+
+    /**
+     * Limits a query to the selected range. All time leaves the query unchanged.
+     */
+    private function applySince($query, string $column = 'created_at')
+    {
+        return $this->since() ? $query->where($column, '>=', $this->since()) : $query;
+    }
+
+    /**
+     * Days the daily charts should plot, from the first recorded visit when viewing all time.
+     */
+    private function chartSpan(): int
+    {
+        if ($this->days !== null) {
+            return $this->days;
+        }
+
+        $first = collect([
+            PageView::query()->min('created_at'),
+            SiteVisit::query()->min('created_at'),
+        ])->filter()->min();
+
+        if (!$first) {
+            return 7;
+        }
+
+        $start = Carbon::parse($first)->timezone(self::TIMEZONE)->startOfDay();
+        $today = now(self::TIMEZONE)->startOfDay();
+
+        return max(1, (int) $start->diffInDays($today, true) + 1);
     }
 
     /**
@@ -50,33 +85,32 @@ class SiteAnalytics
      */
     public function dailyTraffic(): array
     {
-        $views = PageView::query()
-            ->where('created_at', '>=', $this->since())
+        $views = $this->applySince(PageView::query())
             ->selectRaw(sprintf(self::LOCAL_DAY_SQL, 'created_at') . ' as day, COUNT(*) as total')
             ->groupBy('day')
             ->pluck('total', 'day');
 
-        $visits = SiteVisit::query()
-            ->where('created_at', '>=', $this->since())
+        $visits = $this->applySince(SiteVisit::query())
             ->selectRaw(sprintf(self::LOCAL_DAY_SQL, 'created_at') . ' as day, COUNT(*) as visits, COUNT(DISTINCT visitor_hash) as visitors')
             ->groupBy('day')
             ->get()
             ->keyBy('day');
 
-        $sourceRows = SiteVisit::query()
-            ->where('created_at', '>=', $this->since())
+        $sourceRows = $this->applySince(SiteVisit::query())
             ->selectRaw(sprintf(self::LOCAL_DAY_SQL, 'created_at') . ' as day, source, COUNT(*) as total')
             ->groupBy('day', 'source')
             ->get();
 
         $series = ['labels' => [], 'views' => [], 'visits' => [], 'visitors' => [], 'sources' => []];
         $dates = [];
+        $span = $this->chartSpan();
+        $labelFormat = $span > 366 ? 'M j, Y' : 'M j';
 
-        for ($i = $this->days - 1; $i >= 0; $i--) {
+        for ($i = $span - 1; $i >= 0; $i--) {
             $date = now(self::TIMEZONE)->subDays($i);
             $key = $date->toDateString();
             $dates[] = $key;
-            $series['labels'][] = $date->format('M j');
+            $series['labels'][] = $date->format($labelFormat);
             $series['views'][] = (int) ($views[$key] ?? 0);
             $series['visits'][] = (int) ($visits[$key]->visits ?? 0);
             $series['visitors'][] = (int) ($visits[$key]->visitors ?? 0);
@@ -93,6 +127,8 @@ class SiteAnalytics
             $series['sources'][TrafficSource::label($source)] = array_map(fn ($day) => (int) ($byDay[$day] ?? 0), $dates);
         }
 
+        $series['dates'] = $dates;
+
         return $series;
     }
 
@@ -101,16 +137,16 @@ class SiteAnalytics
      */
     public function countryStats(): Collection
     {
-        $views = PageView::query()
-            ->join('site_visits', 'site_visits.id', '=', 'page_views.site_visit_id')
-            ->where('page_views.created_at', '>=', $this->since())
+        $views = $this->applySince(
+            PageView::query()->join('site_visits', 'site_visits.id', '=', 'page_views.site_visit_id'),
+            'page_views.created_at',
+        )
             ->whereNotNull('site_visits.country')
             ->selectRaw('site_visits.country, COUNT(*) as total')
             ->groupBy('site_visits.country')
             ->pluck('total', 'country');
 
-        $rows = SiteVisit::query()
-            ->where('created_at', '>=', $this->since())
+        $rows = $this->applySince(SiteVisit::query())
             ->whereNotNull('country')
             ->selectRaw('country, COUNT(*) as visits, COUNT(DISTINCT visitor_hash) as visitors')
             ->groupBy('country')
@@ -156,6 +192,22 @@ class SiteAnalytics
         })->all();
     }
 
+    /**
+     * Page views, visits and unique visitors inside the selected range.
+     *
+     * @return array{views: int, visits: int, visitors: int}
+     */
+    public function rangeTotals(): array
+    {
+        $visits = $this->applySince(SiteVisit::query());
+
+        return [
+            'views' => $this->applySince(PageView::query())->count(),
+            'visits' => (clone $visits)->count(),
+            'visitors' => (clone $visits)->distinct()->count('visitor_hash'),
+        ];
+    }
+
     public function sources(): array
     {
         $counts = $this->visitCounts('source');
@@ -166,15 +218,14 @@ class SiteAnalytics
             ->all();
     }
 
-    public function topReferrers(int $limit = 10): Collection
+    public function topReferrers(?int $limit = 10): Collection
     {
-        return SiteVisit::query()
-            ->where('created_at', '>=', $this->since())
+        return $this->applySince(SiteVisit::query())
             ->whereNotNull('referrer_host')
             ->selectRaw('referrer_host, source, COUNT(*) as total')
             ->groupBy('referrer_host', 'source')
             ->orderByDesc('total')
-            ->limit($limit)
+            ->when($limit, fn ($query) => $query->limit($limit))
             ->get()
             ->map(fn ($row) => [
                 'host' => $row->referrer_host,
@@ -183,7 +234,7 @@ class SiteAnalytics
             ]);
     }
 
-    public function cities(int $limit = 10): array
+    public function cities(?int $limit = 10): array
     {
         return $this->visitCounts('city', $limit);
     }
@@ -195,14 +246,47 @@ class SiteAnalytics
             ->all();
     }
 
-    public function browsers(int $limit = 8): array
+    public function browsers(?int $limit = 8): array
     {
         return $this->visitCounts('browser', $limit);
     }
 
-    public function operatingSystems(int $limit = 8): array
+    public function operatingSystems(?int $limit = 8): array
     {
         return $this->visitCounts('os', $limit);
+    }
+
+    /**
+     * Every item of one content type with views and locations for the selected range.
+     */
+    public function contentBreakdownAll(string $type): Collection
+    {
+        $modelClass = self::CONTENT_MODELS[$type];
+        $table = (new $modelClass)->getTable();
+        [$rangeSub, $allTimeSub] = $this->contentStatQueries($type);
+
+        $columns = ['id', 'title'];
+
+        if ($type === 'blog') {
+            $columns[] = 'slug';
+            $columns[] = 'is_published';
+        }
+
+        $items = $modelClass::query()
+            ->select(array_map(fn (string $column) => "{$table}.{$column}", $columns))
+            ->selectRaw('COALESCE(range_stats.range_views, 0) as range_views')
+            ->selectRaw('COALESCE(range_stats.range_visitors, 0) as range_visitors')
+            ->selectRaw('COALESCE(all_time_stats.all_views, 0) as all_views')
+            ->leftJoinSub($rangeSub, 'range_stats', fn ($join) => $join->on("{$table}.id", '=', 'range_stats.content_id'))
+            ->leftJoinSub($allTimeSub, 'all_time_stats', fn ($join) => $join->on("{$table}.id", '=', 'all_time_stats.content_id'))
+            ->orderByDesc('range_views')
+            ->orderByDesc('all_views')
+            ->orderByDesc("{$table}.created_at")
+            ->get();
+
+        $locations = $this->contentLocations($type);
+
+        return $items->map(fn ($item) => $this->presentContentItem($item, $type, $locations));
     }
 
     /**
@@ -212,19 +296,7 @@ class SiteAnalytics
     {
         $modelClass = self::CONTENT_MODELS[$type];
         $table = (new $modelClass)->getTable();
-        $since = $this->since();
-
-        $rangeSub = PageView::query()
-            ->leftJoin('site_visits', 'site_visits.id', '=', 'page_views.site_visit_id')
-            ->where('page_views.content_type', $type)
-            ->where('page_views.created_at', '>=', $since)
-            ->selectRaw('page_views.content_id, COUNT(*) as range_views, COUNT(DISTINCT site_visits.visitor_hash) as range_visitors')
-            ->groupBy('page_views.content_id');
-
-        $allTimeSub = PageView::query()
-            ->where('content_type', $type)
-            ->selectRaw('content_id, COUNT(*) as all_views')
-            ->groupBy('content_id');
+        [$rangeSub, $allTimeSub] = $this->contentStatQueries($type);
 
         $paginator = $modelClass::query()
             ->select("{$table}.*")
@@ -238,35 +310,67 @@ class SiteAnalytics
             ->orderByDesc("{$table}.created_at")
             ->paginate(self::CONTENT_PER_PAGE, ["{$table}.*"], 'articles_page', $page);
 
-        $ids = $paginator->getCollection()->pluck('id');
+        $locations = $this->contentLocations($type, $paginator->getCollection()->pluck('id'));
 
-        $locations = $ids->isEmpty()
-            ? collect()
-            : PageView::query()
-                ->leftJoin('site_visits', 'site_visits.id', '=', 'page_views.site_visit_id')
-                ->where('page_views.content_type', $type)
-                ->where('page_views.created_at', '>=', $since)
-                ->whereIn('page_views.content_id', $ids)
-                ->selectRaw('page_views.content_id, site_visits.country, site_visits.city, COUNT(*) as total')
-                ->groupBy('page_views.content_id', 'site_visits.country', 'site_visits.city')
-                ->get()
-                ->groupBy('content_id');
+        return $paginator->through(fn ($item) => $this->presentContentItem($item, $type, $locations));
+    }
 
-        return $paginator->through(function ($item) use ($type, $locations) {
-            return [
-                'id' => $item->id,
-                'title' => $item->title ?: 'Untitled #' . $item->id,
-                'url' => match ($type) {
-                    'blog' => $item->is_published ? route('blog.show', $item->slug) : null,
-                    'research' => route('admin.research.show', $item->id),
-                    default => null,
-                },
-                'views' => (int) $item->range_views,
-                'visitors' => (int) $item->range_visitors,
-                'all_views' => (int) $item->all_views,
-                'countries' => self::foldLocations($locations->get($item->id, collect())),
-            ];
-        });
+    /**
+     * @return array{0: \Illuminate\Database\Eloquent\Builder, 1: \Illuminate\Database\Eloquent\Builder}
+     */
+    private function contentStatQueries(string $type): array
+    {
+        $since = $this->since();
+
+        $rangeSub = PageView::query()
+            ->leftJoin('site_visits', 'site_visits.id', '=', 'page_views.site_visit_id')
+            ->where('page_views.content_type', $type)
+            ->when($since, fn ($query) => $query->where('page_views.created_at', '>=', $since))
+            ->selectRaw('page_views.content_id, COUNT(*) as range_views, COUNT(DISTINCT site_visits.visitor_hash) as range_visitors')
+            ->groupBy('page_views.content_id');
+
+        $allTimeSub = PageView::query()
+            ->where('content_type', $type)
+            ->selectRaw('content_id, COUNT(*) as all_views')
+            ->groupBy('content_id');
+
+        return [$rangeSub, $allTimeSub];
+    }
+
+    private function contentLocations(string $type, ?Collection $ids = null): Collection
+    {
+        if ($ids !== null && $ids->isEmpty()) {
+            return collect();
+        }
+
+        $since = $this->since();
+
+        return PageView::query()
+            ->leftJoin('site_visits', 'site_visits.id', '=', 'page_views.site_visit_id')
+            ->where('page_views.content_type', $type)
+            ->when($since, fn ($query) => $query->where('page_views.created_at', '>=', $since))
+            ->when($ids, fn ($query) => $query->whereIn('page_views.content_id', $ids))
+            ->selectRaw('page_views.content_id, site_visits.country, site_visits.city, COUNT(*) as total')
+            ->groupBy('page_views.content_id', 'site_visits.country', 'site_visits.city')
+            ->get()
+            ->groupBy('content_id');
+    }
+
+    private function presentContentItem(object $item, string $type, Collection $locations): array
+    {
+        return [
+            'id' => $item->id,
+            'title' => $item->title ?: 'Untitled #' . $item->id,
+            'url' => match ($type) {
+                'blog' => $item->is_published ? route('blog.show', $item->slug) : null,
+                'research' => route('admin.research.show', $item->id),
+                default => null,
+            },
+            'views' => (int) $item->range_views,
+            'visitors' => (int) $item->range_visitors,
+            'all_views' => (int) $item->all_views,
+            'countries' => self::foldLocations($locations->get($item->id, collect())),
+        ];
     }
 
     /**
@@ -369,8 +473,7 @@ class SiteAnalytics
      */
     private function visitCounts(string $column, ?int $limit = null): array
     {
-        return SiteVisit::query()
-            ->where('created_at', '>=', $this->since())
+        return $this->applySince(SiteVisit::query())
             ->whereNotNull($column)
             ->selectRaw("{$column} as label, COUNT(*) as total")
             ->groupBy($column)

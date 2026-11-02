@@ -199,6 +199,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('/logout', 'logout')->name('logout');
         });
 
+        Route::get('/analytics/export/articles', [AnalyticsController::class, 'exportArticles'])->name('analytics.export-articles');
+        Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
         
         // Image Upload Routes

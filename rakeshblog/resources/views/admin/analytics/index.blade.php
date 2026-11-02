@@ -15,15 +15,22 @@
             </div>
             <div>
                 <h1 class="text-3xl font-serif font-bold text-white">Analytics</h1>
-                <p class="text-gray-500 text-xs mt-0.5">Website visits, traffic sources, readers and devices. Charts and breakdowns cover the last {{ $range }} days (Nepal time).</p>
+                <p class="text-gray-500 text-xs mt-0.5">Website visits, traffic sources, readers and devices. Charts and breakdowns cover {{ $range ? 'the last ' . $range . ' days' : 'all time' }} (Nepal time).</p>
             </div>
         </div>
-        <nav class="analytics-range" aria-label="Date range">
-            @foreach($ranges as $option)
-                <a href="{{ route('admin.analytics', array_filter(['range' => $option, 'page' => $selectedPage, 'content' => $contentType])) }}"
-                   class="{{ $option === $range ? 'is-active' : '' }}">{{ $option }} days</a>
-            @endforeach
-        </nav>
+        <div class="analytics-toolbar">
+            <nav class="analytics-range" aria-label="Date range">
+                @foreach($ranges as $option)
+                    <a href="{{ route('admin.analytics', array_filter(['range' => $option, 'page' => $selectedPage, 'content' => $contentType])) }}"
+                       class="{{ $option === $range ? 'is-active' : '' }}">{{ $option }} days</a>
+                @endforeach
+                <a href="{{ route('admin.analytics', array_filter(['range' => 'all', 'page' => $selectedPage, 'content' => $contentType])) }}"
+                   class="{{ $range === null ? 'is-active' : '' }}">All time</a>
+            </nav>
+            <a href="{{ route('admin.analytics.export', array_filter(['range' => $range ?? 'all', 'page' => $selectedPage])) }}" class="analytics-export">
+                <i class="fas fa-download"></i> Export report
+            </a>
+        </div>
     </div>
 
     {{-- TOTAL WEBSITE VIEWS --}}
@@ -126,13 +133,22 @@
         <header class="analytics-section__header analytics-section__header--split">
             <div>
                 <h2>Views by article</h2>
-                <p>Every item with its views and where its readers are. Click a row to see all its locations. {{ $contentArticles->perPage() }} per page.</p>
+                <p>Every item with its views and where its readers are. Click a row to see all its locations. {{ $contentArticles->perPage() }} per page. Each export includes every item for this date range.</p>
             </div>
-            <select id="contentTypeSelect" class="analytics-select" aria-label="Content type">
-                @foreach($contentLabels as $type => [$label])
-                    <option value="{{ $type }}" @selected($contentType === $type)>{{ $label }}</option>
-                @endforeach
-            </select>
+            <div class="analytics-article-tools">
+                <select id="contentTypeSelect" class="analytics-select" aria-label="Content type">
+                    @foreach($contentLabels as $type => [$label])
+                        <option value="{{ $type }}" @selected($contentType === $type)>{{ $label }}</option>
+                    @endforeach
+                </select>
+                <div class="analytics-exports" aria-label="Export views by article">
+                    @foreach($contentLabels as $type => [$label])
+                        <a href="{{ route('admin.analytics.export-articles', ['range' => $range ?? 'all', 'content' => $type]) }}" class="analytics-export analytics-export--small">
+                            <i class="fas fa-download"></i> {{ $label }} CSV
+                        </a>
+                    @endforeach
+                </div>
+            </div>
         </header>
         <div class="analytics-section__body overflow-x-auto">
             @if($contentArticles->isEmpty())
@@ -142,7 +158,7 @@
                     <thead>
                         <tr>
                             <th>Title</th>
-                            <th class="text-right whitespace-nowrap">Views ({{ $range }} days)</th>
+                            <th class="text-right whitespace-nowrap">Views ({{ $range ? $range . ' days' : 'all time' }})</th>
                             <th class="text-right whitespace-nowrap">All time</th>
                             <th class="text-right">Visitors</th>
                             <th>Locations</th>
@@ -316,11 +332,11 @@
         <header class="analytics-section__header analytics-section__header--split">
             <div>
                 <h2>Age and gender</h2>
-                <p>Estimated by Google Analytics 4 for the last {{ $range }} days. Updates every 6 hours.</p>
+                <p>Estimated by Google Analytics 4 for {{ $range ? 'the last ' . $range . ' days' : 'all time' }}. Updates every 6 hours.</p>
             </div>
             @if($demographics['configured'])
                 <form method="GET" action="{{ route('admin.analytics') }}">
-                    <input type="hidden" name="range" value="{{ $range }}">
+                    <input type="hidden" name="range" value="{{ $range ?? 'all' }}">
                     <input type="hidden" name="content" value="{{ $contentType }}">
                     <select name="page" class="analytics-select" onchange="this.form.submit()">
                         @foreach($demographicPages as $path => $label)
@@ -689,6 +705,7 @@
 
     .analytics-range {
         display: inline-flex;
+        flex-wrap: wrap;
         padding: 4px;
         border-radius: 12px;
         background: #1a1f26;
@@ -702,6 +719,7 @@
         font-size: 13px;
         font-weight: 500;
         text-decoration: none;
+        white-space: nowrap;
         transition: background 0.2s ease, color 0.2s ease;
     }
 
@@ -712,6 +730,56 @@
     .analytics-range a.is-active {
         color: #0b0e12;
         background: #D4AF37;
+    }
+
+    .analytics-toolbar,
+    .analytics-article-tools {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .analytics-exports {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .analytics-export {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(212, 175, 55, 0.35);
+        background: rgba(212, 175, 55, 0.12);
+        color: #D4AF37;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .analytics-export:hover {
+        background: #D4AF37;
+        color: #0b0e12;
+    }
+
+    .analytics-export--small {
+        padding: 6px 10px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    @media (min-width: 640px) {
+        .analytics-toolbar,
+        .analytics-article-tools,
+        .analytics-exports {
+            align-items: flex-end;
+            justify-content: flex-end;
+        }
     }
 
     .analytics-chart--line {

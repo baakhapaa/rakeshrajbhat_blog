@@ -32,13 +32,13 @@ class Ga4Reports
      *
      * @return array{configured: bool, error: ?string, age: array<string, int>, gender: array<string, int>}
      */
-    public static function demographics(int $days = 30, ?string $pagePath = null): array
+    public static function demographics(?int $days = 30, ?string $pagePath = null): array
     {
         if (!self::isConfigured()) {
             return ['configured' => false, 'error' => null, 'age' => [], 'gender' => []];
         }
 
-        $key = 'ga4.demographics.' . md5($days . '|' . $pagePath);
+        $key = 'ga4.demographics.' . md5(($days ?? 'all') . '|' . $pagePath);
         $cached = Cache::get($key);
 
         if (is_array($cached)) {
@@ -72,11 +72,14 @@ class Ga4Reports
     /**
      * @return array<string, int>
      */
-    private static function breakdown(BetaAnalyticsDataClient $client, string $dimension, int $days, ?string $pagePath): array
+    private static function breakdown(BetaAnalyticsDataClient $client, string $dimension, ?int $days, ?string $pagePath): array
     {
         $request = (new RunReportRequest())
             ->setProperty('properties/' . config('services.ga4.property_id'))
-            ->setDateRanges([new DateRange(['start_date' => $days . 'daysAgo', 'end_date' => 'today'])])
+            ->setDateRanges([new DateRange([
+                'start_date' => $days === null ? '2020-01-01' : $days . 'daysAgo',
+                'end_date' => 'today',
+            ])])
             ->setDimensions([new Dimension(['name' => $dimension])])
             ->setMetrics([new Metric(['name' => 'activeUsers'])]);
 
