@@ -95,6 +95,18 @@ class AnalyticsController extends Controller
                 fn (array $referrer) => [$referrer['host'], $referrer['source'], $referrer['count']],
             )->all());
 
+            $articleRows = [];
+
+            foreach (self::CONTENT_LABELS as $type => $label) {
+                foreach ($analytics->contentBreakdownAll($type) as $item) {
+                    foreach ($this->articleLocationRows($item) as $row) {
+                        $articleRows[] = array_merge([$label], $row);
+                    }
+                }
+            }
+
+            $this->section($file, 'Views by article', ['Type', 'Title', 'URL', 'Views', 'All-time views', 'Visitors', 'Country', 'City', 'Location views'], $articleRows);
+
             $this->section($file, 'Traffic by country', ['Country', 'Code', 'Visits', 'Visitors', 'Page views', 'Share'], $analytics->countryStats()->map(
                 fn (array $country) => [$country['name'], $country['code'], $country['visits'], $country['visitors'], $country['views'], $country['share'] . '%'],
             )->all());
