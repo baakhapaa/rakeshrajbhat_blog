@@ -84,7 +84,13 @@
                     </form>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-xs text-[#D4AF37] uppercase tracking-wider mb-1">{{ $item->source_name ?: 'News' }}</p>
+                    <div class="flex flex-wrap items-center gap-3 mb-1">
+                        <p class="text-xs text-[#D4AF37] uppercase tracking-wider">{{ $item->source_name ?: 'News' }}</p>
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-0.5 text-xs text-white/80">
+                            <i class="fas fa-eye text-[10px] text-[#D4AF37]"></i>
+                            {{ number_format($viewCounts[$item->id] ?? 0) }} {{ ($viewCounts[$item->id] ?? 0) === 1 ? 'view' : 'views' }}
+                        </span>
+                    </div>
                     <h3 class="text-white font-semibold leading-snug">{{ $item->title }}</h3>
                     <a href="{{ $item->source_url }}" target="_blank" rel="noopener noreferrer" class="text-sm text-gray-500 hover:text-white break-all">{{ $item->source_url }}</a>
                     <form action="{{ route('admin.news.update-category', $item) }}" method="POST" class="mt-3 flex items-center gap-2">

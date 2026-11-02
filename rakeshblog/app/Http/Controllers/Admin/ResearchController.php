@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Research;
 use App\Models\Setting;
+use App\Services\SiteAnalytics;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
@@ -86,7 +87,9 @@ class ResearchController extends Controller
             }
         }
 
-        return view('admin.research.index', compact('researchItems', 'researchSection', 'featuredPage', 'researchCategories', 'homeFilters'));
+        $viewCounts = SiteAnalytics::viewCounts('research', $researchItems->pluck('id'));
+
+        return view('admin.research.index', compact('researchItems', 'researchSection', 'featuredPage', 'researchCategories', 'homeFilters', 'viewCounts'));
     }
 
     public function updateSection(Request $request)
@@ -565,6 +568,7 @@ class ResearchController extends Controller
     {
         try {
             $research = Research::findOrFail($id);
+            \App\Services\VisitTracker::markContent(request(), 'research', $research->id);
             
             // Get video embed URL
             $embedUrl = null;

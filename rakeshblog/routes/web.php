@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\HomeContentController;
 use App\Http\Controllers\Admin\AdminQuizController;
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
@@ -197,6 +198,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('/dashboard', 'dashboard')->name('dashboard');
             Route::post('/logout', 'logout')->name('logout');
         });
+
+        Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
         
         // Image Upload Routes
         Route::post('/upload-image', [ImageController::class, 'upload'])->name('upload-image');

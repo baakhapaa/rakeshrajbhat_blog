@@ -96,6 +96,24 @@
         </div>
     </div>
 
+    {{-- WEBSITE VIEWS --}}
+    @php
+        $viewsSince = now()->subDays(30)->startOfDay();
+        $monthViews = \App\Models\PageView::where('created_at', '>=', $viewsSince)->count();
+        $monthVisitors = \App\Models\SiteVisit::where('created_at', '>=', $viewsSince)->distinct()->count('visitor_hash');
+    @endphp
+    <a href="{{ route('admin.analytics') }}" class="dashboard-card group flex items-center justify-between gap-4 mb-8 no-underline">
+        <div>
+            <div class="flex items-center gap-2 mb-3">
+                <span class="icon-wrapper"><i class="fas fa-eye"></i></span>
+                <span class="stat-label">Total Views (30 days)</span>
+            </div>
+            <p class="stat-number">{{ number_format($monthViews) }}</p>
+            <p class="stat-description">{{ number_format($monthVisitors) }} visitors · open Analytics for sources, locations and devices</p>
+        </div>
+        <div class="stat-icon gold"><i class="fas fa-chart-pie"></i></div>
+    </a>
+
     {{-- =========================================================
         QUICK ACTIONS + ADMIN INFORMATION
     ========================================================== --}}

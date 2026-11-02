@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\NewsItem;
 use App\Models\Setting;
 use App\Services\NewsSourceReader;
+use App\Services\SiteAnalytics;
 use App\Support\MediaStorage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -19,8 +20,9 @@ class NewsController extends Controller
     {
         $items = NewsItem::query()->latest()->get();
         $section = Setting::getNewsContent();
+        $viewCounts = SiteAnalytics::viewCounts('news', $items->pluck('id'));
 
-        return view('admin.news.index', compact('items', 'section'));
+        return view('admin.news.index', compact('items', 'section', 'viewCounts'));
     }
 
     public function updateSection(Request $request)

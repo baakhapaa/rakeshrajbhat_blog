@@ -8,6 +8,7 @@ use App\Models\Quiz;
 use App\Models\Setting;
 use App\Models\QuizQuestion;
 use App\Helpers\ActivityLogger;
+use App\Services\SiteAnalytics;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -57,7 +58,9 @@ class BlogController extends Controller
             $blogCategories = Blog::query()->whereNotNull('category')->distinct()->orderBy('category')->pluck('category')->filter()->values()->all();
         }
 
-        return view('admin.blogs.index', compact('blogs', 'totalBlogs', 'featuredCount', 'publishedCount', 'draftCount', 'blogPage', 'blogCategories'));
+        $viewCounts = SiteAnalytics::viewCounts('blog', $blogs->pluck('id'));
+
+        return view('admin.blogs.index', compact('blogs', 'totalBlogs', 'featuredCount', 'publishedCount', 'draftCount', 'blogPage', 'blogCategories', 'viewCounts'));
     }
 
     public function create()

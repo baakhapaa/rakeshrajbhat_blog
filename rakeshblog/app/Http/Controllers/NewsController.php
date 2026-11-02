@@ -24,6 +24,8 @@ class NewsController extends Controller
             abort(404);
         }
 
+        \App\Services\VisitTracker::markContent(request(), 'news', $newsItem->id);
+
         return response()->json([
             'success' => true,
             'data' => [

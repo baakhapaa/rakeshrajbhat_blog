@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    'ga4' => [
+        'measurement_id' => env('GA_MEASUREMENT_ID'),
+        'property_id' => env('GA4_PROPERTY_ID'),
+        'credentials' => env('GA4_CREDENTIALS'),
+    ],
+
+    'geoip' => [
+        'city_db' => env('GEOIP_CITY_DB'),
+    ],
+
 ];

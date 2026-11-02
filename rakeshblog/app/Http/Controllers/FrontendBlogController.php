@@ -86,8 +86,10 @@ class FrontendBlogController extends Controller
             ])
             ->firstOrFail();
 
-        // Increment view count
-        $blog->increment('views');
+        if (\App\Services\VisitTracker::isTrackable(request())) {
+            $blog->increment('views');
+            \App\Services\VisitTracker::markContent(request(), 'blog', $blog->id);
+        }
 
         // Get related blogs (same category)
         $relatedBlogs = Blog::where('category', $blog->category)

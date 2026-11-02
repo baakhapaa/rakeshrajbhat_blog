@@ -47,6 +47,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.site-theme')
+    @if(config('services.ga4.measurement_id') && !\Illuminate\Support\Facades\Auth::guard('admin')->check())
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ urlencode(config('services.ga4.measurement_id')) }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', @json(config('services.ga4.measurement_id')));
+        </script>
+    @endif
 </head>
 <body class="bg-[#101417] text-[#0f1419] antialiased font-sans">
     @include('partials.header')
