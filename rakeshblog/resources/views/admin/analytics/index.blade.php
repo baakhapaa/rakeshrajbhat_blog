@@ -334,16 +334,29 @@
                 <h2>Age and gender</h2>
                 <p>Estimated by Google Analytics 4 for {{ $range ? 'the last ' . $range . ' days' : 'all time' }}. Updates every 6 hours.</p>
             </div>
-            @if($demographics['configured'])
-                <form method="GET" action="{{ route('admin.analytics') }}">
-                    <input type="hidden" name="range" value="{{ $range ?? 'all' }}">
-                    <input type="hidden" name="content" value="{{ $contentType }}">
-                    <select name="page" class="analytics-select" onchange="this.form.submit()">
-                        @foreach($demographicPages as $path => $label)
-                            <option value="{{ $path }}" @selected($selectedPage === $path)>{{ \Illuminate\Support\Str::limit($label, 60) }}</option>
-                        @endforeach
-                    </select>
-                </form>
+            @if($demographics['configured'] && !$demographics['error'])
+                <div class="analytics-ga-tools">
+                    <form method="GET" action="{{ route('admin.analytics') }}" class="analytics-picker">
+                        <input type="hidden" name="range" value="{{ $range ?? 'all' }}">
+                        <input type="hidden" name="content" value="{{ $contentType }}">
+                        <details class="analytics-picker__details">
+                            <summary class="analytics-picker__summary">
+                                <span>{{ $demographicPages[$selectedPage] ?? 'Whole website' }}</span>
+                                <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                            </summary>
+                            <div class="analytics-picker__menu" role="listbox">
+                                @foreach($demographicPages as $path => $label)
+                                    <button type="submit" name="page" value="{{ $path }}" title="{{ $label }}" class="{{ $selectedPage === $path ? 'is-active' : '' }}" role="option" @if($selectedPage === $path) aria-selected="true" @endif>
+                                        {{ $label }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </details>
+                    </form>
+                    <a href="{{ route('admin.analytics.export-google', array_filter(['range' => $range ?? 'all', 'page' => $selectedPage])) }}" class="analytics-export analytics-export--small">
+                        <i class="fas fa-download"></i> Google Analytics CSV
+                    </a>
+                </div>
             @endif
         </header>
         <div class="analytics-section__body">
@@ -436,6 +449,7 @@
         align-items: center;
         justify-content: space-between;
         gap: 12px;
+        overflow: visible;
     }
 
     .analytics-section__header h2 {
@@ -563,6 +577,114 @@
         background: #11151a;
         color: #fff;
         font-size: 13px;
+    }
+
+    .analytics-ga-tools {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        width: min(100%, 22rem);
+        margin-left: auto;
+        flex: 0 0 auto;
+    }
+
+    .analytics-ga-tools .analytics-export {
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    .analytics-picker {
+        position: relative;
+        width: 100%;
+    }
+
+    .analytics-picker__details {
+        position: relative;
+        width: 100%;
+    }
+
+    .analytics-picker__summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: #11151a;
+        color: #fff;
+        font-size: 13px;
+        line-height: 1.3;
+        list-style: none;
+        cursor: pointer;
+    }
+
+    .analytics-picker__summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .analytics-picker__summary span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .analytics-picker__summary i {
+        flex: 0 0 auto;
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.55);
+    }
+
+    .analytics-picker__details[open] .analytics-picker__summary i {
+        transform: rotate(180deg);
+    }
+
+    .analytics-picker__menu {
+        position: absolute;
+        z-index: 40;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        max-height: 280px;
+        overflow-y: auto;
+        padding: 4px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: #11151a;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    .analytics-picker__menu button {
+        display: block;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        padding: 8px 8px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 13px;
+        line-height: 1.3;
+        text-align: left;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .analytics-picker__menu button:hover,
+    .analytics-picker__menu button.is-active {
+        background: #2563eb;
+        color: #fff;
     }
 
     .analytics-content__row {
