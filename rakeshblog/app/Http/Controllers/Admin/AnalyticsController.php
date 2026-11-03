@@ -131,6 +131,32 @@ class AnalyticsController extends Controller
         });
     }
 
+    public function exportGoogle(Request $request): StreamedResponse
+    {
+        $range = $this->range($request);
+        $analytics = new SiteAnalytics($range);
+        $pages = $analytics->demographicPages();
+        $selectedPage = $this->selectedPage($request, $pages);
+        $pageLabel = $pages[$selectedPage] ?? 'Whole website';
+        $demographics = Ga4Reports::demographics($range, $selectedPage !== '' ? $selectedPage : null);
+        $slug = $selectedPage === '' ? 'whole-website' : trim((string) preg_replace('/[^A-Za-z0-9]+/', '-', $selectedPage), '-');
+
+        return $this->csv('google-analytics-' . $slug . '-' . $this->rangeSlug($range) . '.csv', function ($file) use ($range, $pageLabel, $demographics) {
+            $this->preamble($file, 'Google Analytics', $range);
+            fputcsv($file, ['Page', $pageLabel]);
+            fputcsv($file, []);
+
+            if (!$demographics['configured']) {
+                fputcsv($file, ['Google Analytics is not connected.']);
+            } elseif ($demographics['error']) {
+                fputcsv($file, [$demographics['error']]);
+            } else {
+                $this->section($file, 'Age', ['Age', 'Active users'], $this->pairs($demographics['age']));
+                $this->section($file, 'Gender', ['Gender', 'Active users'], $this->pairs($demographics['gender']));
+            }
+        });
+    }
+
     public function exportArticles(Request $request): StreamedResponse
     {
         $range = $this->range($request);

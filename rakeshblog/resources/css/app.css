@@ -7,7 +7,7 @@
   --color-brand-accent: #f7f2e8;
   --color-brand-light: #faf9f6;
   --color-brand-card: #fcfcf9;
-  
+
   --font-family-serif: "Playfair Display", serif;
   --font-family-sans: Inter, "Noto Sans Devanagari", sans-serif;
 }
@@ -30,7 +30,7 @@
     background: transparent !important;
     box-shadow: none !important;
   }
-  
+
   .font-serif {
     font-family: var(--font-family-serif);
   }
@@ -54,7 +54,7 @@
   .font-inter {
     font-family: Inter, "Noto Sans Devanagari", sans-serif;
   }
-  
+
   .text-balance {
     text-wrap: balance;
   }
@@ -67,19 +67,19 @@
     border: 1px solid rgba(212, 175, 55, 0.15);
     transition: all 0.25s ease;
   }
-  
+
   .card-glass:hover {
     border-color: var(--color-brand-gold);
     background: rgba(255, 255, 245, 0.96);
     box-shadow: 0 12px 28px -8px rgba(0,0,0,0.08);
     transform: translateY(-4px);
   }
-  
+
   .dark-card {
     background: #1b1f24;
     border: 1px solid #2a2f36;
   }
-  
+
   .dark-card:hover {
     border-color: var(--color-brand-gold);
     background: #23282e;
@@ -103,15 +103,15 @@
     #statsSlider {
         transition: none !important;
     }
-    
+
     .dot-btn.active {
         animation: none !important;
     }
-    
+
     .slider-slide {
         transition: none !important;
     }
-    
+
     #prevBtn, #nextBtn {
         transition: none !important;
     }
@@ -142,7 +142,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.28);
+    background: #fbf9f6bf;
     color: #89351d;
     border: 2px solid #b36855;
     cursor: pointer;

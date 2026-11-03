@@ -200,6 +200,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         });
 
         Route::get('/analytics/export/articles', [AnalyticsController::class, 'exportArticles'])->name('analytics.export-articles');
+        Route::get('/analytics/export/google', [AnalyticsController::class, 'exportGoogle'])->name('analytics.export-google');
         Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
         Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
         
