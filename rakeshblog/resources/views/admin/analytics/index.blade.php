@@ -255,9 +255,9 @@
                                     <th class="text-right">Share</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach($countries->take(12) as $country)
-                                    <tr>
+                            <tbody id="countryTableBody">
+                                @foreach($countries as $country)
+                                    <tr data-country-row @if($loop->index >= 12) hidden @endif>
                                         <td class="text-white">
                                             <span class="analytics-code">{{ $country['code'] }}</span>{{ $country['name'] }}
                                         </td>
@@ -271,6 +271,14 @@
                                 @endforeach
                             </tbody>
                         </table>
+                        @if($countries->count() > 12)
+                            <div class="analytics-content__pager" id="countryPager">
+                                <p class="analytics-content__pager-meta" id="countryPagerMeta"></p>
+                                <nav aria-label="Countries">
+                                    <ul class="pagination" id="countryPagerPages"></ul>
+                                </nav>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -681,8 +689,11 @@
         display: inline-block;
         padding: 6px 12px;
         border-radius: 8px;
+        font: inherit;
         font-size: 12px;
+        line-height: 1.2;
         text-decoration: none;
+        cursor: pointer;
         color: rgba(255, 255, 255, 0.65);
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.06);
@@ -907,6 +918,47 @@
 
     (() => {
         const countries = @json($countries->values());
+        const countryRows = [...document.querySelectorAll('[data-country-row]')];
+        const countryPerPage = 12;
+        const countryPages = Math.ceil(countryRows.length / countryPerPage);
+        const countryMeta = document.getElementById('countryPagerMeta');
+        const countryPager = document.getElementById('countryPagerPages');
+
+        const showCountryPage = (page) => {
+            const current = Math.min(Math.max(page, 1), countryPages);
+            const start = (current - 1) * countryPerPage;
+            countryRows.forEach((row, index) => {
+                row.hidden = index < start || index >= start + countryPerPage;
+            });
+            if (countryMeta) {
+                const end = Math.min(start + countryPerPage, countryRows.length);
+                countryMeta.textContent = `Showing ${start + 1}–${end} of ${countryRows.length} countries`;
+            }
+            if (!countryPager) return;
+            countryPager.innerHTML = '';
+            const addItem = (label, target, disabled, active) => {
+                const item = document.createElement('li');
+                item.className = 'page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '');
+                if (disabled || active) {
+                    const span = document.createElement('span');
+                    span.textContent = label;
+                    item.appendChild(span);
+                } else {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'page-link';
+                    button.textContent = label;
+                    button.addEventListener('click', () => showCountryPage(target));
+                    item.appendChild(button);
+                }
+                countryPager.appendChild(item);
+            };
+            addItem('Prev', current - 1, current === 1, false);
+            for (let number = 1; number <= countryPages; number++) addItem(String(number), number, false, number === current);
+            addItem('Next', current + 1, current === countryPages, false);
+        };
+
+        if (countryPages > 1) showCountryPage(1);
 
         if (window.jsVectorMap && document.getElementById('countryMap')) {
             const byCode = Object.fromEntries(countries.map((c) => [c.code, c]));
